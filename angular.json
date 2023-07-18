@@ -102,6 +102,37 @@
           }
         }
       }
+    },
+    "rp-travel-ui": {
+      "projectType": "library",
+      "root": "projects/rp-travel-ui",
+      "sourceRoot": "projects/rp-travel-ui/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/rp-travel-ui/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/rp-travel-ui/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/rp-travel-ui/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/rp-travel-ui/src/test.ts",
+            "tsConfig": "projects/rp-travel-ui/tsconfig.spec.json",
+            "karmaConfig": "projects/rp-travel-ui/karma.conf.js"
+          }
+        }
+      }
     }
   }
 }
