@@ -28,12 +28,11 @@ export class HomePageService {
 /**
  * 
  * @param baseCurrency 
- * this if for fetching all currencies and update my all currencies state (allCurrency:currencyModel[])
- * also updates loader statee (laoder:boolean)
+ * this is for fetching all currencies and update my all currencies state (allCurrency:currencyModel[])
+ * also updates loader statee (loader:boolean)
  */
   getCurrency(baseCurrency:string){
     this.loader = true
-
     this.subscription.add(
       this.api.currencyApi(baseCurrency).subscribe((res:currencyModel[])=>{
         if(res){
