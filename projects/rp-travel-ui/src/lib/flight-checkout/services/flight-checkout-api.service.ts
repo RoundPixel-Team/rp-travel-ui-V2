@@ -21,9 +21,9 @@ export class FlightCheckoutApiService {
    * @param providerKey 
    * @returns all information about the selected flight according to its searchId , sequence number and provider key
    */
-  getSelectedFlight(searchid: string,sequenceNum: number,providerKey: string) {
+  getSelectedFlight(searchid: string,sequenceNum: number,providerKey: number) {
     let api = `${this.env.searchflow}/api/GetSelectedFlight?searchid=${searchid}&SequenceNum=${sequenceNum}&PKey=${providerKey}`;
-    return this.http.get<selectedFlight>(api).pipe(retry(3),take(1),catchError(err=>{console.log(err);throw err}));
+    return this.http.get<selectedFlight>(api).pipe(retry(3),take(1),catchError(err=>{throw err}));
   }
 
 

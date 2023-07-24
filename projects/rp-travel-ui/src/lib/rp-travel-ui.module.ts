@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RpTravelUiComponent } from './rp-travel-ui.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -9,11 +10,15 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
     RpTravelUiComponent
   ],
   imports: [
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule,
+    FormsModule,
   ],
   exports: [
     RpTravelUiComponent,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule,
+    FormsModule,
   ],
   providers:[HttpClient]
 })
