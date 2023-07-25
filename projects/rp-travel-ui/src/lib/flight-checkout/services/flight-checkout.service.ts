@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { FlightCheckoutApiService } from './flight-checkout-api.service';
-import { selectedFlight } from '../interfaces';
+import { flightOfflineService, selectedFlight } from '../interfaces';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Injectable({
@@ -16,6 +16,23 @@ export class FlightCheckoutService {
    * here is the loaded selected data 
    */
   selectedFlight : selectedFlight | undefined = undefined
+
+  /**
+   * here is all the loaded offline services
+   */
+  allOfflineServices : flightOfflineService[] = []
+  
+  /**
+   * here is the chosen/selected offline service 
+   */
+  selectedOfflineServices : string[] = []
+
+
+  /**
+   * offline services loading state ..
+   */
+  offlineServicesLoader : boolean = false
+
 
   /**
    * loading state ..
@@ -80,7 +97,38 @@ export class FlightCheckoutService {
     )
   }
 
+  /**
+   * 
+   * @param searchId 
+   * @param pos 
+   * this is for fetching the flight offline services data and update offline service state (offlineServices:flightOfflineServices[])
+   * also update offlineServicesLoader state
+   */
+  getAllOfflineServices(searchId:string,pos:string){
+    this.offlineServicesLoader = true
+    this.subscription.add(
+      this.api.offlineServices(searchId,pos).subscribe((res)=>{
+        this.allOfflineServices = res
+        this.offlineServicesLoader = false
+      },(err)=>{
+        console.log('get selected flight offline services error ->',err)
+        this.offlineServicesLoader = false
+      })
+    )
+  }
 
+
+  /**
+   * 
+   * @param adults 
+   * @param childs 
+   * @param infants 
+   * @param passportFlag
+   * this function is responsible for creating/building the checkout forms for each passenger according to number
+   * of adults and childs and infants and updates the state of the form [usersForm]
+   * it also build these forms depending on the paspport flag either required or not
+   * if is been called automatically once the selected flight state is containg data 
+   */
   buildUsersForm(adults:number,childs:number,infants:number,passportFlag:boolean){
     // build form when passports details are required
     if(passportFlag){
@@ -308,6 +356,25 @@ export class FlightCheckoutService {
       )
     }
     }
+  }
+
+
+  /**
+   * 
+   * @param service 
+   * this for adding a new offline service with the selected flight
+   */
+  addOfflineService(service : flightOfflineService){
+    this.selectedOfflineServices.push(service.serviceCode)
+  }
+
+  /**
+   * 
+   * @param service 
+   * this is to remove an already selected offline service with the selected flight
+   */
+  removeOfflineService(service : flightOfflineService){
+    this.selectedOfflineServices = this.selectedOfflineServices.filter((s)=>{return s != service.serviceCode})
   }
 
 
