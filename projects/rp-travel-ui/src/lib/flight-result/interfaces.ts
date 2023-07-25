@@ -24,7 +24,7 @@ export interface searchCriteria {
     currency: string;
     flights: searchCriteriaFlights[];
     flightType: string;
-    infantNum: string;
+    infantNum: number;
     language: string;
     pos: string;
     preferredAirline: any;

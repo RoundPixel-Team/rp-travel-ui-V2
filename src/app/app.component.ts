@@ -1,4 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { EnvironmentService, HomePageService } from 'rp-travel-ui';
 
 @Component({
@@ -11,6 +12,7 @@ export class AppComponent implements OnInit{
   title = 'rp-travel-ui-V2';
   public service1 = inject(HomePageService)
   public environment = inject(EnvironmentService)
+  private router = inject(Router)
 
   /**
    * while app initilization
@@ -46,5 +48,11 @@ export class AppComponent implements OnInit{
   ngOnInit(): void { 
     this.service1.getCurrency('KWD')
   }  
+
+  goToCheckout(){
+    this.router.navigate(
+      ['/checkout'], 
+      { queryParams: {'sid': '2023B6I1S914H20B40I00S50H40I00', 'sequenceNum': 5, 'providerKey': 52 } })
+  }
 
 }
