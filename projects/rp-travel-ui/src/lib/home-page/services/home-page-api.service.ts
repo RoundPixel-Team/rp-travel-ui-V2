@@ -43,13 +43,16 @@ export class HomePageApiService {
    */
   pointOfSale(): Observable<pointOfSaleModel> {
     let api = "https://api.ipify.org/?format=json";
-    return this.http.get<string>(api).pipe(
+    return this.http.get<any>(api).pipe(
       retry(2),
       take(1),
-      mergeMap((result) =>
-        this.http.get<pointOfSaleModel>(
-          `https://ipapi.co/${result}/json/`
+      mergeMap((result) =>{
+        console.log("show me first response",result)
+       return  this.http.get<pointOfSaleModel>(
+          `https://ipapi.co/${result.ip}/json/`
         )
+      }
+        
       ),
       catchError(err=>{console.log(err);throw err})
     );
