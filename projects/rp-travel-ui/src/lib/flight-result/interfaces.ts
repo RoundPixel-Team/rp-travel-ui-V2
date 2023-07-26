@@ -53,7 +53,7 @@ export interface airItineraries {
     flightSignature?:string;
     overNight?:number;
     stopsTime?:number;
-    experiance?:number;
+    experiance:number;
     sequenceNum: number;
     isRefundable: boolean;
     itinTotalFare: itinTotalFare;
@@ -142,7 +142,7 @@ export interface itinTotalFare {
 }
 
 export interface flight {
-    flightDTO?: FlightDTO[];
+    flightDTO: FlightDTO[];
     elapsedTime: number;
     stopsNum: number;
     flightAirline?:FlightAirline
@@ -256,4 +256,23 @@ export interface passengerFareBreakDownDTOs{
     taxCode:string,
     taxCurrencyCode:string,
     taxName?:string | null
+}
+export class SearchFlightModule { 
+  
+  constructor (
+    public lan:string,
+    public currency:string,
+    public pointOfReservation:string,
+    public flightType:string,
+    public flightsInfo:string,
+    public passengers:string,
+    public Cclass:string,
+    public serachId:any,
+    public showDirect :boolean,
+    public preferredAirLine :string,
+
+
+    
+    ){} 
+
 }
