@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Subscription, take } from 'rxjs';
-import { SearchFlightModule, airItineraries } from '../interfaces';
+import { FlightSearchResult, SearchFlightModule, airItineraries } from '../interfaces';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FlightResultApiService } from './flight-result-api.service';
 import { searchFlightModel } from '../../flight-search/interfaces';
@@ -10,9 +10,13 @@ import { searchFlightModel } from '../../flight-search/interfaces';
   providedIn: 'root'
 })
 export class FlightResultService {
-  // response?: FlightSearchResult;
   api = inject(FlightResultApiService)
-
+  response?: FlightSearchResult
+  FilterData?:airItineraries[]
+  normalError: string = ''
+  normalErrorStatus: boolean = false
+  loading: boolean = false
+  ResultFound: boolean = false
   router = inject(Router)
   route = inject(ActivatedRoute)
   filterForm = new FormGroup({
@@ -39,71 +43,85 @@ export class FlightResultService {
  * get all data from the router to call api to get flightResultData
  * from Api  searchFlight
  **/
-  getDataFromUrl() {
-    this.route.params.pipe(take(1)).subscribe(
-      (params: Params) => {
+  getDataFromUrl(lang:string,currency:string,pointOfReservation:string,flightType:string,flightsInfo:string,serachId:string,passengers:string,Cclass:string, showDirect:boolean) {
+    console.log("show url in services", lang,currency,pointOfReservation,flightType,flightsInfo,serachId,passengers,Cclass, showDirect)
 
-        let lang = params['language']
-        let currency = params['currency'];
-        let pointOfReservation = params['SearchPoint'];
-        let flightType = params['flightType'];
-        let flightsInfo = params['flightInfo'];
-
-        let serachId = params['searchId'];
-        let passengers = params['passengers'];
-        let Cclass = params['Cclass'];
-        let showDirect: boolean;
-
-        if (params['directOnly'] == 'false') {
-          showDirect = false;
-        }
-        else {
-          showDirect = true;
-        }
+        
         let searchApi: SearchFlightModule = new SearchFlightModule(lang, currency, pointOfReservation, flightType, flightsInfo, passengers, Cclass, serachId, showDirect, 'all');
         if (SearchFlightModule) {
           let myapi = searchApi;
-          // this.api.searchFlight({ searchFlight: myapi })
+          console.log("myapi" ,myapi)
+
+          this.subscription.add(this.api.searchFlight(myapi).subscribe(
+            (result) => {
+              if (result.status == 'Valid') {
+                this.loading = false;
+                this.ResultFound = true;
+                this.response = result;
+                // console.log("result" ,  this.response ,result)
+                this.FilterData= result.airItineraries;
+
+
+
+
+              } else {
+                this.normalError = "No result found. <br> please search again"
+                this.normalErrorStatus = true;
+                this.loading = false;
+                this.ResultFound = false;
+              }
+
+
+            }
+          ));
         }
-      });
+      
   }
 
   /**
     * 
     * @param type 
-    * @param data 
+    
     * sort result base on type:number return data: airItineraries[] sorting by condition or type  
     * 
     */
 
-  sortMyResult(type: number, data: airItineraries[]): airItineraries[] {
-
-    console.log(type);
+  sortMyResult(type: number) {
+if(this.response != undefined)
+{    console.log(type);
     if (type == 1) {
-      return [...data].sort((a, b) => { return a.itinTotalFare.amount - b.itinTotalFare.amount })
+      this.FilterData= [...this.response.airItineraries].sort((a, b) => { return a.itinTotalFare.amount - b.itinTotalFare.amount })
+      // console.log("sortData" ,this.FilterData)
+
     }
     if (type == 2) {
-      return [...data].sort((a, b) => { return a.totalDuration - b.totalDuration })
+      this.FilterData= [...this.response.airItineraries].sort((a, b) => { return a.totalDuration - b.totalDuration })
     }
     if (type == 3) {
-      return [...data].sort((a, b) => { return <any>new Date(a.deptDate) - <any>new Date(b.deptDate) })
+      this.FilterData= [...this.response.airItineraries].sort((a, b) => { return <any>new Date(a.deptDate) - <any>new Date(b.deptDate) })
     }
     if (type == 4) {
-      return [...data].sort((a, b) => { return <any>new Date(b.deptDate) - <any>new Date(a.deptDate) })
+      this.FilterData= [...this.response.airItineraries].sort((a, b) => { return <any>new Date(b.deptDate) - <any>new Date(a.deptDate) })
     }
     if (type == 5) {
-      return [...data].sort((a, b) => { return <any>new Date(a.allJourney.flights[1].flightDTO[0].departureDate) - <any>new Date(b.allJourney.flights[1].flightDTO[0].departureDate) })
+      this.FilterData= [...this.response.airItineraries].sort((a, b) => { return <any>new Date(a.allJourney.flights[1].flightDTO[0].departureDate) - <any>new Date(b.allJourney.flights[1].flightDTO[0].departureDate) })
     }
 
     if (type == 6) {
-      return [...data].sort((a, b) => { return <any>new Date(b.allJourney.flights[1].flightDTO[0].departureDate) - <any>new Date(a.allJourney.flights[1].flightDTO[0].departureDate) })
+      this.FilterData= [...this.response.airItineraries].sort((a, b) => { return <any>new Date(b.allJourney.flights[1].flightDTO[0].departureDate) - <any>new Date(a.allJourney.flights[1].flightDTO[0].departureDate) })
     }
 
     if (type == 7) {
-      return [...data].sort((a, b) => { return a.experiance - b.experiance })
+      this.FilterData= [...this.response.airItineraries].sort((a, b) => { return a.experiance - b.experiance })
     }
-    return [...data]
+    // return [...this.response.airItineraries]
+  
+  
   }
+  }
+
+
+  
   /**
    * Find Min And Max Values Of Flight Duration  And Update Filtiration Slider
    **/
