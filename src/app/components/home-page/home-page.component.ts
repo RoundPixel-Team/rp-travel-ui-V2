@@ -17,6 +17,9 @@ export class HomePageComponent implements OnInit {
     this.homePageService.getAirports('en');
     this.homePageService.getCountries('en');
     this.homePageService.getPointOfSale();
+    this.homePageService.getAllOffers('EG');
+    this.homePageService.getOfferById(37);
+    
 
   }
 

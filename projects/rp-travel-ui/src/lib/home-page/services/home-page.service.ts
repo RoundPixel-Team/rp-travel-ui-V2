@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HomePageApiService } from './home-page-api.service';
-import { airPorts, countries, currencyModel, pointOfSaleModel } from '../interfaces';
+import { OfferDTO,airPorts, countries, currencyModel, pointOfSaleModel } from '../interfaces';
 import { Subscription } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
 
 
 @Injectable({
@@ -10,6 +11,7 @@ import { Subscription } from 'rxjs';
 export class HomePageService {
 
   api = inject(HomePageApiService)
+  route=inject(ActivatedRoute)
   subscription : Subscription = new Subscription()
 
   /**
@@ -24,6 +26,10 @@ export class HomePageService {
    * here is all available airports
    */
    allCountries :countries[]=[]
+/**
+ * here is all available offers
+ */
+   allOffers:OfferDTO[]=[]
   /**
    * here is all available point of sales
    */
@@ -32,7 +38,10 @@ export class HomePageService {
    * loading state ..
    */
   loader : boolean = false
-  response:string = ''
+
+  id= this.route.snapshot.paramMap.get("id");
+  offerById!: OfferDTO;
+;
   constructor() { }
 
 
@@ -77,6 +86,12 @@ export class HomePageService {
       })
     )
   }
+   /**
+ * 
+ * @param currentLang 
+ * this is for fetching all countries (allCountries :countries[]) based on current language
+ * also updates loader state (loader:boolean)
+ */
   getCountries(currentLang:string){
     this.loader = true
     this.subscription.add(
@@ -91,7 +106,9 @@ export class HomePageService {
       })
     )
   }
-
+/**
+ * this is for fetching and updating Point of Sale and also updates loader state
+ */
 getPointOfSale(){
   this.loader = true
   this.subscription.add(
@@ -106,6 +123,52 @@ getPointOfSale(){
       })
   )
 }
+  /**
+ * 
+ * @param pos 
+ * this is for fetching all offers (allOffers :OfferDTO[]) based on current POS
+ * also updates loader state (loader:boolean)
+ */
+getAllOffers(pos:string){
+  this.loader = true
+  this.subscription.add(
+    this.api.AllOffers(pos).subscribe((res:OfferDTO[])=>{
+      if(res){
+       
+        this.allOffers=res;
+        this.loader = false;
+        console.log(res,'show offers');
+       
+      }
+    },(err:any)=>{
+      console.log('get all offers error ->',err)
+      this.loader = false
+    })
+  )
+}
+/**
+ * 
+ * @param id 
+ * @returns single offer depending on given id
+ */
+getOfferById(id:number | string){
+  this.loader= true;
+  this.subscription.add(
+    this.api.OfferBYId(id).subscribe((res)=>{
+      console.log('get ID',id);
+      if (res){
+        this.offerById=res;
+        this.loader= false;
+        console.log("Offer",res);
+      }
+        
+      },(err:any)=>{
+        console.log('get offer by ID err==>',err);
+        this.loader= false;
+    })
+  )
+}
+
   /**
    * this function is responsible to destory any opened subscription on this service
    */

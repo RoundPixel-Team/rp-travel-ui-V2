@@ -26,4 +26,19 @@
     </li>
 </ul> -->
 
+<!-- Testing point of sale return -->
 <div *ngIf="homePageService.pointOfSale">Point of sale country: {{homePageService.pointOfSale.country}}</div>
+
+<!-- Testing return all offers -->
+<ul>
+    <li *ngFor="let offer of homePageService.allOffers">
+        <div style="display: flex;">
+           
+            <div>{{offer.OfferName}}</div>
+        </div>
+    </li>
+</ul>
+
+<!-- Test returning offer by ID -->
+
+<div *ngIf="homePageService.offerById"> TEST GET SINGLE OFFER : {{homePageService.offerById.OfferDescription}}</div>

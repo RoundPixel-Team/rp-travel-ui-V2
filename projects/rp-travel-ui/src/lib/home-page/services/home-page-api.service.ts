@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, catchError, mergeMap, retry, take } from 'rxjs';
-import { airPorts, countries, currencyModel, pointOfSaleModel } from '../interfaces';
+import { Observable, catchError, map, mergeMap, retry, take } from 'rxjs';
+import { OfferDTO, airPorts, countries, currencyModel, pointOfSaleModel } from '../interfaces';
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentService } from '../../shared/services/environment.service';
 
@@ -68,5 +68,29 @@ export class HomePageApiService {
     let api = `${this.env.backOffice}/api/GetAllCountriesByLangName?LangCode=${lang}`;
     return this.http.get<countries[]>(api).pipe( retry(2),take(1),catchError(err=>{console.log(err);throw err})
     );
+  }
+/**
+ * 
+ * @param pos 
+ * @returns All offers depending on the current point of sale
+ */
+  AllOffers(pos: string):Observable<OfferDTO[]> {
+    let API = `${this.env.offers.getAll}${pos}`;
+    return this.http.get<OfferDTO[]>(API).pipe(
+     take(1),retry(3), catchError(err => { console.log(err, "ERROR IN GETTING ALL OFFERS"); throw err })
+    )
+  }
+   /**
+ * 
+ * @param id 
+ * @returns offer depending on the current ID
+ */
+  OfferBYId(id: number | string):Observable<OfferDTO> {
+    let API = `${this.env.offers.getByID}${id}`;
+    return this.http.get<OfferDTO>(API).pipe(
+      retry(3), take(1), map(
+        (res: any) => { return res }
+      ), catchError(err => { console.log(err, "ERROR IN GETTING OFFER BY ID"); throw err })
+    )
   }
 }
