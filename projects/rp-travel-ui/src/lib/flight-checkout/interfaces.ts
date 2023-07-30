@@ -57,3 +57,31 @@ export interface passengerInfoModel  {
         passengersDetails:passengerInfoModel[
        ]
    }
+
+   export interface BreakDownView{
+    ADT:{
+      totalFare:[number,string],
+      ScFare:[number,string,number]
+    },
+    CNN:{
+      totalFare:[number,string],
+      ScFare:[number,string,number]
+    },
+    INF:{
+      totalFare:[number,string],
+      ScFare:[number,string,number]
+    }
+  }
+
+
+  export interface Cobon {
+    promotionDetails: promotionDetails
+    status: string
+}
+
+export interface promotionDetails {
+    promoCode: string,
+    discountAmount: number,
+    discountCode: any,
+    newFare: number
+}

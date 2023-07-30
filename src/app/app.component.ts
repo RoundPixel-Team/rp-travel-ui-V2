@@ -46,13 +46,13 @@ export class AppComponent implements OnInit{
   console.log('search flow end point -->',this.environment.searchflow);
 }
   ngOnInit(): void { 
-    this.service1.getCurrency('KWD')
+    this.service1.getCurrency('KWD') 
   }  
 
   goToCheckout(){
     this.router.navigate(
       ['/checkout'], 
-      { queryParams: {'sid': '2023B6I2S737H70B40I90S80H90I70', 'sequenceNum': 5, 'providerKey': 52 } })
+      { queryParams: {'sid': '2023B6I0S30H40B20I80S30H30I60', 'sequenceNum': 2, 'providerKey': 52 } })
   }
 
 }
