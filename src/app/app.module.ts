@@ -6,17 +6,22 @@ import { AppComponent } from './app.component';
 import { RpTravelUiModule } from 'rp-travel-ui';
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { CheckoutComponent } from './components/checkout/checkout.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SearchboxComponent } from './components/searchbox/searchbox.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomePageComponent,
-    CheckoutComponent
+    CheckoutComponent,
+    SearchboxComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    RpTravelUiModule
+    RpTravelUiModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent] 

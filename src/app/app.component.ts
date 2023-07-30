@@ -54,5 +54,8 @@ export class AppComponent implements OnInit{
       ['/checkout'], 
       { queryParams: {'sid': '2023B6I1S914H20B40I00S50H40I00', 'sequenceNum': 5, 'providerKey': 52 } })
   }
+  goToSearchbox(){
+    this.router.navigate(['/searchbox']);
+  }
 
 }

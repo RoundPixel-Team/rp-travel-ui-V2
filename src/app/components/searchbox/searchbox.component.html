@@ -1,0 +1,14 @@
+<form [formGroup]="searchBox.searchFlight">
+
+  <label>Class: </label>
+  <input  type="text" formControlName="class">
+
+  <label>return Date: </label>
+  <input type="text" formControlName="returnDate">
+
+  <label>Flight Type: </label>
+  <input type="text" formControlName="flightType">
+
+  <button (click)="onSubmit()"> Submit </button>
+
+</form>

@@ -19,7 +19,7 @@ export interface searchFlightModel{
 */
 export interface searchBoxModel{
     flightType: string
-    direct: boolean
+    Direct: boolean
     flights: searchBoxFlights[]
     passengers:searchBoxPassengers
     class:string

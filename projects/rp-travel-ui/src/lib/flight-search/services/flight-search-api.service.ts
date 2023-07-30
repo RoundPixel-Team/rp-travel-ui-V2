@@ -6,7 +6,6 @@ import { EnvironmentService } from '../../shared/services/environment.service';
   providedIn: 'root'
 })
 export class FlightSearchApiService {
-
   public http = inject(HttpClient)
   public env = inject(EnvironmentService)
 
