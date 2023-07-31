@@ -100,7 +100,8 @@ GetAllOffers(pos: string):Observable<{offers:OfferDTO[]}> {
    * @param LanguageCode 
    * @param body 
    * @param searchID 
-   * @returns It takes source, language and searchID parameters and post the body of the request as the booked offer model(body:BookedOffer)
+   * @returns It takes source, language and searchID parameters and post the body 
+   * of the request as the booked offer model(body:BookedOffer)
    */
   BookOffers(Source: string, LanguageCode:string,body:BookedOffer,searchID:string ) {
 

@@ -228,7 +228,7 @@ export interface Airlines{
  */
 export interface BookedOffer {
   
-    PhoneNumber: string | null,
+    PhoneNumber: string ,
     PhoneCountryCode: string,
     Email: string,
     FullName: string,

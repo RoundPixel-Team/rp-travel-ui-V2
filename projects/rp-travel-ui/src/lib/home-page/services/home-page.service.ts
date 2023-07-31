@@ -24,7 +24,7 @@ export class HomePageService {
    */
   allAirports :airPorts[]=[]
    /**
-   * here is all available airports
+   * here is all available countries
    */
    allCountries :countries[]=[]
 /**
@@ -32,21 +32,18 @@ export class HomePageService {
  */
    allOffers:OfferDTO[]=[]
   /**
-   * here is all available point of sales
+   * here is all available point of sale
    */
   pointOfSale!:pointOfSaleModel
   /**
    * loading state ..
    */
   loader : boolean = false
-/**
- * getting selected offer ID from params
- */
-  id= this.route.snapshot.paramMap.get("id");
+
   /**
    * Getting selected offer data
    */
-  singleOffer!: OfferDTO;
+  selectedOffer!: OfferDTO;
 
   /**number of nights properties */
   numberOfNights!: number;
@@ -58,16 +55,11 @@ export class HomePageService {
    * getting offer images
    */
   offerImages: string[] =[];
-/**
- * Book offer request header parameters
- */
-  source!: string;
-  langCode!: string | null;
-  searchId!: string;
-/**store form value to api */
+
+/**book offer API request value*/
   submittedForm!:BookedOffer
 /**
- * Creating booking an offer form
+ * Creating booking offer form
  */
   offerCheckOutForm = new FormGroup({
     FullName: new FormControl("", [
@@ -92,8 +84,6 @@ export class HomePageService {
       Validators.minLength(2),
     ]),
   });
-  PhoneNumber: any;
-  phonecountrycode!: string;
   constructor() { }
 
 
@@ -212,7 +202,7 @@ getOfferById(id:number | string){
     this.api.getOfferBYId(id).subscribe((res)=>{
       console.log('get ID',id);
       if (res){
-        this.singleOffer=res;
+        this.selectedOffer=res;
         this.loader= false;
         console.log("Offer",res);
        
@@ -232,52 +222,44 @@ getOfferById(id:number | string){
  *  depending on the offer code.
  */
 extractOfferData(id:number | string){
-  this.subscription.add(this.api.getOfferBYId(id).subscribe(res=>{
-    if (res){
-        this.singleOffer=res
-        this.offerImages =res.offerImage? [res.offerImage.url] : []
-        this.singleOffer.offerServices.map(offerService=>{
-          let startDate=new Date(res.startDate);
-          let endDate=new Date(res.endDate);
-          let differenceInTime=startDate.getTime()-endDate.getTime();
-          this.numberOfNights=differenceInTime / (1000 * 3600 * 24);
-          if(offerService.serviceType=='1'){            
-              this.api.retriveItinerary(offerService.offlineItinerary).subscribe((res:Itinerary) =>{
-                if(res){
-                  this.offlineItinerary=res;
-                }
-              })
+  
+    this.offerImages =this.selectedOffer.offerImage? [this.selectedOffer.offerImage.url] : []
+    let startDate=new Date(this.selectedOffer.startDate);
+    let endDate=new Date(this.selectedOffer.endDate);
+    let differenceInTime=startDate.getTime()-endDate.getTime();
+    this.numberOfNights=differenceInTime / (1000 * 3600 * 24);
+    this.selectedOffer.offerServices.map(offerService=>{
+      if(offerService.serviceType=='1'){            
+          this.subscription.add(this.api.retriveItinerary(offerService.offlineItinerary).subscribe((res:Itinerary) =>{
+            if(res){
+              this.offlineItinerary=res;
+            }
+          })
 
-            
+        
 
-            
-          }
-        })
-    }
-  }))
+        
+    )}
+    })
+    
+ 
 }
 /**
  * 
  * @returns submit offer booking form logic
  */
-formSubmit(){
-this.source='web';
-this.id=this.route.snapshot.paramMap.get("id");
- if (localStorage.getItem('lang')==null){
-  this.langCode='en'
-}else{
-  this.langCode=localStorage.getItem('lang');
-}
+bookOffer(source:string,langCode:string,phonecountrycode:string){
+let offerId=this.route.snapshot.paramMap.get("id");
 if(this.offerCheckOutForm.valid){
 let Body: BookedOffer = {
   Email: this.offerCheckOutForm.value["Email"]!,
   FullName: this.offerCheckOutForm.value["FullName"]!,
   Nationality: this.offerCheckOutForm.value["Nationality"]!,
   PhoneNumber: this.offerCheckOutForm.value["PhoneNumber"]!,
-  PhoneCountryCode: this.phonecountrycode,
-  SelectedOfferCode:Number(this.id) ,
+  PhoneCountryCode: phonecountrycode,
+  SelectedOfferCode:Number(offerId),
 };
-this.api.BookOffers(this.source,this.langCode!,Body,this.id!).subscribe((res:BookedOffer)=>{
+this.api.BookOffers(source,langCode!,Body,offerId!).subscribe((res:BookedOffer)=>{
   if (res){
     this.submittedForm=res;
   }
