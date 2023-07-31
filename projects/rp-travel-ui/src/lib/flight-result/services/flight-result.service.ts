@@ -12,24 +12,51 @@ import { DatePipe } from '@angular/common';
   providedIn: 'root'
 })
 export class FlightResultService {
+  
   api = inject(FlightResultApiService)
+    /**
+   * response Data from Api  b type FlightSearchResult
+   */
   response?: FlightSearchResult
+  /**
+   * response airItineraries Data from Api  b type airItineraries
+   */
   FilterData?: airItineraries[]
+/**
+   * load error message when no data back from api
+   */
   normalError: string = ''
+
+  /**
+   * flight Type 
+   */
   FlightType: string = 'RoundTrip'
   normalErrorStatus: boolean = false
+   /**
+   * loading state ..
+   */
   loading: boolean = false
+
+  
   ResultFound: boolean = false
+   /**
+   *  Min value price 
+   * 
+   */
   priceMinValue: number = 0;
+   /**
+   *  Max value price 
+   * 
+   */
   priceMaxValue: number = 5000;
   FilterChanges$: Subscription = new Subscription();
   options?: Options;
   rate: number = 1;
   code: string = "KWD"
-  airlinesA: any[] = [];
+  airlinesA: string[] = [];
   airlinesForm: any = [];
-  bookingSites: any[] = ['KhaleejGate', 'other'];
-  bookingSitesForm: any[] = []
+  bookingSites: string[] = ['KhaleejGate', 'other'];
+  bookingSitesForm: boolean[] = []
   departingMin: number = 0;
   departingMax: number = 7000
   optionsdeparting?: Options;
@@ -63,6 +90,8 @@ export class FlightResultService {
     priceSlider: new FormControl([0, 0]),
     durationSlider: new FormControl([0, 0]),
     dpartingSlider: new FormControl([0, 0]),
+    arrivingSlider: new FormControl([0, 0]),
+
     returnSlider: new FormControl([30, 7000]),
     experience: new FormGroup({
       overNight: new FormControl(false),
@@ -103,43 +132,18 @@ export class FlightResultService {
             // console.log("result" ,  this.response ,result)
             this.FilterData = result.airItineraries;
             this.FilterChanges$.unsubscribe();
-            this.filterForm = new FormGroup({
-              airline: new FormGroup({
-                airlines: new FormArray([]),
-              }),
-              bookingSite: new FormGroup({
-                bookingSites: new FormArray([])
-              }),
+          
 
-              stopsForm: new FormGroup({
-                noStops: new FormControl(false),
-                oneStop: new FormControl(false),
-                twoAndm: new FormControl(false),
-              }),
-              sameAirline: new FormControl(false),
-
-              priceSlider: new FormControl([0, 0]),
-              durationSlider: new FormControl([0, 0]),
-              dpartingSlider: new FormControl([0, 0]),
-              returnSlider: new FormControl([30, 7000]),
-              experience: new FormGroup({
-                overNight: new FormControl(false),
-                longStops: new FormControl(false)
-              }),
-
-              flexibleTickets: new FormGroup({
-                refund: new FormControl(false),
-                nonRefund: new FormControl(false)
-              })
-            });
-
-            this.findDepartingnMinMax(this.response.airItineraries)
+            this.findDepartingnMinMax(this.response.airItineraries);
+            this.filterForm.get("durationSlider")?.setValue(this.findDurationMinMax(this.response.airItineraries));
+            this.filterForm.get("durationSlider")?.updateValueAndValidity();
+         
             this.findDepartingnMinMax(this.response.airItineraries)
             this.findArrivingMinMax(this.response.airItineraries)
             this.minAnMax(this.response.airItineraries);
             this.filterForm.get('priceSlider')?.setValue(this.minAnMax(this.response.airItineraries));
-
-            this.airlinesA = this.response.airlines;
+            this.stopsvalues(),
+              this.airlinesA = this.response.airlines;
             this.airlinesForm = []
             this.airlinesA.forEach(element => {
               (<FormArray>this.filterForm.get('airline')?.get('airlines')).push(new FormControl(false));
@@ -149,6 +153,17 @@ export class FlightResultService {
             this.bookingSites.forEach(element => {
               (<FormArray>this.filterForm.get('bookingSite')?.get('bookingSites')).push(new FormControl(false));
             })
+
+
+
+
+
+
+
+
+           
+
+
           }
 
 
@@ -311,7 +326,7 @@ export class FlightResultService {
         max = t;
       }
     });
-    console.log("Arrival", max, min);
+
 
     this.arrivingMin = min;
     this.arrivingMax = max;
@@ -341,7 +356,69 @@ export class FlightResultService {
     return tm
   }
 
+  /**
+*  filter by stops value
+**/
 
+  stopsvalues() {
+    let out: number[] = [];
+    if (this.filterForm.get('stopsForm')?.get('noStops')?.value) {
+      out.push(0)
+    }
+    if (this.filterForm.get('stopsForm')?.get('oneStop')?.value) {
+      out.push(1)
+    }
+    if (this.filterForm.get('stopsForm')?.get('twoAndm')?.value) {
+      out.push(2);
+      out.push(3);
+      out.push(4);
+    }
+
+    if (!this.filterForm.get('stopsForm')?.get('noStops')?.value && !this.filterForm.get('stopsForm')?.get('oneStop')?.value && !this.filterForm.get('stopsForm')?.get('twoAndm')?.value) {
+      out = [0, 1, 2, 3, 4];
+    }
+    console.log("stopsvalues", out, this.filterForm.get('stopsForm')?.get('noStops')?.value)
+
+    return out
+  }
+
+  //filter by airline
+  filteringbyairline(val:any[]){
+    let airL:any[]=[];
+      for (let index = 0; index < val.length; index++) {
+        const element = val[index];
+        if(element){
+          airL.push(this.airlinesA[index]);
+        }
+        
+      };
+      if(airL.length == 0){
+      let out = airL;
+      return  out
+      }
+      else{
+         return airL;
+      }
+  }
+ //filter by booking sites
+  filteringbyBookingSites(val:any[]){
+    let selectedSites:any[]=[];
+      for (let index = 0; index < val.length; index++) {
+        const element = val[index];
+        if(element){
+          selectedSites.push(this.bookingSites[index]);
+        }
+        
+      };
+      if(selectedSites.length == 0){
+      let out = selectedSites;
+      return  out
+      }
+      else{
+         return selectedSites;
+      }
+  }
+  
   /**
    * this function is responsible to destory any opened subscription on this service
    */

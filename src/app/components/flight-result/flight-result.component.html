@@ -1,3 +1,34 @@
 <p>flight-result works!</p>
 <button (click)="sort(1)">SortData</button>
 
+<p>filter</p>
+
+
+<form [formGroup]="FlightResultService.filterForm">
+
+    <p>
+       pricefilter
+    </p>
+ 
+        <div class="custom-slider"> 
+   
+        <div class="row" formGroupName="stopsForm">
+            <div class="col-12">
+            
+            <input type="checkbox"formControlName="noStops"> Direct
+            </div>
+          
+        </div>
+
+        <ng-container formGroupName="airline">
+            <ng-container formArrayName='airlines'>
+              <ng-container *ngFor="let item of this.FlightResultService.airlinesA;let i= index">
+                <div class="row pl-3">
+                  <input type="checkbox"   class="filterCheckbox" [formControlName]="i">{{FlightResultService.airlinesA[i]}}
+                </div>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+
+        </div>
+</form>

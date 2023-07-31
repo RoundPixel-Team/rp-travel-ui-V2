@@ -7,6 +7,7 @@ import { RpTravelUiModule } from 'rp-travel-ui';
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { CheckoutComponent } from './components/checkout/checkout.component';
 import { FlightResultComponent } from './components/flight-result/flight-result.component';
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { FlightResultComponent } from './components/flight-result/flight-result.
   imports: [
     BrowserModule,
     AppRoutingModule,
-    RpTravelUiModule
+    RpTravelUiModule,
+    NgxSliderModule
   ],
   providers: [],
   bootstrap: [AppComponent] 

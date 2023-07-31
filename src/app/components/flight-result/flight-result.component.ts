@@ -1,6 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { FlightResultService } from 'projects/rp-travel-ui/src/lib/flight-result/services/flight-result.service';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-flight-result',
@@ -10,11 +12,13 @@ import { FlightResultService } from 'projects/rp-travel-ui/src/lib/flight-result
 export class FlightResultComponent implements OnInit {
   FlightResultService = inject(FlightResultService)
   route = inject(ActivatedRoute)
+  filterFormm: FormGroup  = this.FlightResultService.filterForm
   constructor() { }
 
   ngOnInit(): void {
     console.log('new lang', location.pathname)
     let url = location.href
+    
     this.route.params.subscribe(
       (params: Params) => {
         console.log("lang", params['language'], params['directOnly'])
@@ -40,10 +44,15 @@ export class FlightResultComponent implements OnInit {
 
       });
       console.log("sortData" ,this.FlightResultService.FilterData)
+      console.log("Arrival", this.FlightResultService.arrivingMin, this.FlightResultService.arrivingMax);
+      console.log("airlinesA", this.FlightResultService.airlinesA)
+      console.log("airlinesA", this.FlightResultService.bookingSites)
+     
+      }
 
-    //    console.log(this.FlightResultService.getDataFromUrl())
-  }
-
+     
+   
+    
   sort(val: number) {
     if (this.FlightResultService.response != undefined) {
        this.FlightResultService.sortMyResult(val) 
