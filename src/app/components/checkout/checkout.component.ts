@@ -25,6 +25,10 @@ export class CheckoutComponent implements OnInit {
         // this.flight.fetchLastPassengerData()
       })
     )
+
+    this.subscription.add(this.flight.paymentLink.subscribe((res)=>{
+      console.log("show me link update" , res)
+    }))
     
   }
 

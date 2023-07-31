@@ -51,11 +51,10 @@ export interface passengerInfoModel  {
    }
    
    export interface  passengersModel {  
-       bookingEmail:string,
-        UserCurrency:string,
-        DiscountCode: any,
-        passengersDetails:passengerInfoModel[
-       ]
+      bookingEmail:string,
+      UserCurrency:string,
+      DiscountCode: any,
+      passengersDetails:passengerInfoModel[]
    }
 
    export interface BreakDownView{
