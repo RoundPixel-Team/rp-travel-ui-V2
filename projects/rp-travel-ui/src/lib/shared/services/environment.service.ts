@@ -6,7 +6,7 @@ import { enviromentModel } from '../interfaces';
 })
 export class EnvironmentService {
 
-    offlineSeats ='http://178.63.214.219:7025'
+  offlineSeats=    "http://178.63.214.221:7026" //ticket boarding ofline seats
     searchflow =  'https://flightsearch.rhlaty.com'
     BookingFlow = 'https://flightflow.rhlaty.com'
     FareRules =   'https://flightprov.rhlaty.com'
@@ -21,9 +21,11 @@ export class EnvironmentService {
     backOffice =  'https://backofficeapi.rhlaty.com'
     FlightTop =   'https://flightsearch.rhlaty.com'
     offers= {
-      getAll:     'http://41.215.243.36:7893/api/GetAllOffersAPI?POS=',
-      getByID:    'http://41.215.243.36:7893/api/GetOfferByIdAPI?OfferId=',
-      BookOffer:  'http://41.215.243.36:7895/api/BookOffer',
+      //Ticket boarding offers endpoints
+      getAll: 'http://178.63.214.221:7893/api/GetAllOffersAPI?POS=',
+      getAllActive: 'https://flightsearch.ticketboarding.com/api/GetOffers?POS=',
+      getByID: 'https://flightsearch.ticketboarding.com/api/SelectOffer?OfferId=',
+      BookOffer: "https://flightflow.ticketboarding.com/api/BookOffer",
       RetriveItineraryDetails:'/api/Admin/RetriveItineraryDetails'
     }
 

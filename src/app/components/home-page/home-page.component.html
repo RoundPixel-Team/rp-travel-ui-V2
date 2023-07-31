@@ -34,11 +34,11 @@
     <li *ngFor="let offer of homePageService.allOffers">
         <div style="display: flex;">
            
-            <div>{{offer.OfferName}}</div>
+            <div>{{offer.offerName}}</div>
         </div>
     </li>
 </ul>
 
 <!-- Test returning offer by ID -->
 
-<div *ngIf="homePageService.offerById"> TEST GET SINGLE OFFER : {{homePageService.offerById.OfferDescription}}</div>
+<div *ngIf="homePageService.singleOffer"> TEST GET SINGLE OFFER : {{homePageService.singleOffer.offerDescription}}</div>

@@ -73,7 +73,7 @@ export interface hotelCities {
 
 
 /**
- * dynamic top destinations Mdel according to backend response
+ * dynamic top destinations Model according to backend response
  */
 export interface topCityFlight {
     id: number,
@@ -102,26 +102,28 @@ export interface tripIdeas {
  * Offers Models according to backend response
  */
 export interface OfferDTO {
-    OfferCode: number;
-    OfferName: string;
-    OfferDescription: string;
-    OfferTag:number;    
+    agentId: string;
+    bookedQuantity:number;
+    currency: string;
+    endDate: Date;
+    imageID:number;
+    netProfit:number;
+    offerCode: number;
+    offerDays: OfferDay[];
+    offerDescription: string;
+    offerImage: Image;
+    offerName: string;
+    offerProvider: string;
+    offerServices:OfferService[]
+    offerStatus: number;
+    offerTag:number;   
+    paymentMethod: string;
     pos: string;
+    salesChannel: string;
     totalSellPrice: number;
     startDate: Date;
-    endDate: Date;
-    offerImage: Image;
-    currency: string;
-    offerDays: OfferDay[];
-    netProfit: number;
     totalCostPrice: number;
     totalQuantity: number;
-    offerProvider: string;
-    AgentId: string;
-    paymentMethod: string;
-    salesChannel: string;
-    offerStatus: number;
-    offerServices:OfferService[]
 }
 
 export interface OfferDay {
@@ -137,7 +139,7 @@ export interface OfferService {
     includedCities: IncludedCity[];
     serviceImage: Image[];
     airline:Airlines[],
-    offlineItinerary: number,
+    offlineItinerary: number |string,
     hotelName:string,
     hotelRate:number,
     roomBasis:string,
@@ -191,18 +193,18 @@ export interface imageObject {
     dayIndex?: number
 }
 export interface BookedOffersFilterObject {
-    OfferBookingNo: string,
+    OfferBookingNo?: string,
     PhoneNumber: string,
     PhoneCountryCode: string,
     Email: string,
     FullName: string,
     Nationality: string,
     SelectedOfferCode: string,
-    BookingDate: string,
-    ProviderID: string,
-    BookedOfferStatus: string,
-    IncludedCities:Cities[],
-    BookingStatusName:string
+    BookingDate?: string,
+    ProviderID?: string,
+    BookedOfferStatus?: string,
+    IncludedCities?:Cities[],
+    BookingStatusName?:string
 }
 export interface Cities{
     
@@ -210,11 +212,7 @@ export interface Cities{
           CityName: string,
           CityType: string
 }
-export interface BookedOffersFilterfilterObj {
-    BookedOfferStatus: string,
-    email: string,
-    Nationality: string
-}
+
 
 
 export interface Airlines{
@@ -224,4 +222,126 @@ export interface Airlines{
     alternativeBusinessName:string,
     airlineLogo:string,
     passportDetailsRequired:boolean
+}
+/**
+ * Book an offer form model
+ */
+export interface BookedOffer {
+  
+    PhoneNumber: string | null,
+    PhoneCountryCode: string,
+    Email: string,
+    FullName: string,
+    Nationality: string,
+    SelectedOfferCode: number
+  }
+/**
+ * Offline seats interfaces according to backend response
+ */
+export interface Itinerary {
+    airItineraryId?: string
+    flightType:string,
+    departureAirportCode:string,
+    arrivalAirportCode:string,
+    airline:string,
+    status:boolean | string,
+    flightContractId:number | string, 
+    onWardFlightsDTO:OnWardFlightsDTO[],
+    TotalFlightFare:totalFlightFare,
+    ItineraryAvailabilitiesDTO:AddAvailablity,
+    ItineraryCalendarDTOs:itineraryCalendarDTO[]
+}
+
+export interface OnWardFlightsDTO  {
+    elapsedTime:number | string,
+    onWardFlightId?: string,
+    airItineraryId?: string,
+    departureAirportCode: string,
+    arrivalAirportCode: string,
+    flightSegmentsDTO:FlightSegmentsDTO[]     
+}
+
+export interface FlightSegmentsDTO {
+    AirlineLogo?:string
+    departureDate:	string,
+    arrivalDate:	string,
+    duration:number | string
+    DepartureOffset:number | string,
+    ArrivalOffset:number | string,
+    IsStopSegment:boolean | string,
+    airlineRefrence:string,
+    ArrivalTerminal:string,
+    DepartureTerminal:string,
+    MarketingAirlineCode:string,
+    OperatedAirlineCode:string,
+    DepartureAirportCode:string,
+    ArrivalAirportCode:string,
+    EquipmentNumber:any,
+    FlightNumber:any,
+    ArrivalTime:string,
+    DepartureTime:string,
+    MealCode:string,
+    TransitTime:string,
+    seqNum : number | string,
+    passengerBaggageInfosDTO:PassengerBaggageInfoDTO[]
+
+}
+
+export interface PassengerBaggageInfoDTO{
+    baggageCode?:	string
+    passengerType:	string
+    airlineCode:	string
+    weight:	        number | string
+    unit:	        string
+    size:	        number | string
+    flightSegmentId?:string
+}
+export interface totalFlightFare {
+    currency: string,
+    taxeFare: number | string,
+    flightFare: number | string,
+    totalFare: number | string
+  }
+  export interface AddAvailablity {
+
+    id?: string,
+    numOfAvailSeats: number | string,
+    maxUesd: number | string,
+    adtPrice: number | string,
+    cnnPrice: number | string,
+    infPrice: number | string,
+    adtPublishPrice: number | string,
+    cnnPublishPrice: number | string,
+    infPublishPrice: number | string,
+    adtPromoPrice: number | string,
+    cnnPromoPrice: number | string,
+    infPromoPrice: number | string,
+    adtTaxes: number | string,
+    cnnTaxes: number | string,
+    infTaxes: number | string,
+    pnr: string,
+    status: boolean | string,
+    cabinClass: string,
+    currency: string ,
+    isRefundable: boolean | string,
+    availableType: string,
+    airItineraryId?: string,
+    availableFrom: string,
+    availableTo: string
+  
+}
+export interface itineraryCalendarDTO {
+    id?: string,
+    numOfAvailSeats: number | string,
+    numUsed: number | string,
+    maxUesd: number | string,
+    date: string,
+    departureAirportCode: string,
+    arrivalAirportCode: string,
+    pos: string,
+    airline: string,
+    cabineClass: string,
+    status: boolean | string,
+    flightType: string,
+    airItineraryId?: string
 }

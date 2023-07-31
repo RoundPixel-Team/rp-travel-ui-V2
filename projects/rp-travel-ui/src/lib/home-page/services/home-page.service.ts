@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { HomePageApiService } from './home-page-api.service';
-import { OfferDTO,airPorts, countries, currencyModel, pointOfSaleModel } from '../interfaces';
+import { BookedOffer, Image, Itinerary, OfferDTO,airPorts, countries, currencyModel, pointOfSaleModel } from '../interfaces';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 
 @Injectable({
@@ -38,10 +39,61 @@ export class HomePageService {
    * loading state ..
    */
   loader : boolean = false
-
+/**
+ * getting selected offer ID from params
+ */
   id= this.route.snapshot.paramMap.get("id");
-  offerById!: OfferDTO;
-;
+  /**
+   * Getting selected offer data
+   */
+  singleOffer!: OfferDTO;
+
+  /**number of nights properties */
+  numberOfNights!: number;
+  /**
+   * getting offline itinerary
+   */
+  offlineItinerary!:Itinerary;
+  /**
+   * getting offer images
+   */
+  offerImages: string[] =[];
+/**
+ * Book offer request header parameters
+ */
+  source!: string;
+  langCode!: string | null;
+  searchId!: string;
+/**store form value to api */
+  submittedForm!:BookedOffer
+/**
+ * Creating booking an offer form
+ */
+  offerCheckOutForm = new FormGroup({
+    FullName: new FormControl("", [
+      Validators.required,
+
+      Validators.minLength(3),
+    ]),
+
+    Email: new FormControl("", [
+      Validators.required,
+      Validators.email,
+      Validators.minLength(9),
+    ]),
+
+    PhoneNumber: new FormControl("", [
+      Validators.required,
+      Validators.maxLength(5),
+    ]),
+
+    Nationality: new FormControl("", [
+      Validators.required,
+      Validators.minLength(2),
+    ]),
+  });
+  PhoneNumber: any;
+  phonecountrycode!: string;
   constructor() { }
 
 
@@ -107,7 +159,9 @@ export class HomePageService {
     )
   }
 /**
- * this is for fetching and updating Point of Sale and also updates loader state
+                  
+ * this is for fetching and updating Point of Sale (pointOfSale:pointOfSaleModel) 
+ *and also updates loader state
  */
 getPointOfSale(){
   this.loader = true
@@ -132,10 +186,10 @@ getPointOfSale(){
 getAllOffers(pos:string){
   this.loader = true
   this.subscription.add(
-    this.api.AllOffers(pos).subscribe((res:OfferDTO[])=>{
+    this.api.GetAllOffers(pos).subscribe((res)=>{
       if(res){
        
-        this.allOffers=res;
+        this.allOffers=res.offers;
         this.loader = false;
         console.log(res,'show offers');
        
@@ -149,17 +203,19 @@ getAllOffers(pos:string){
 /**
  * 
  * @param id 
- * @returns single offer depending on given id
+ * @returns this is for fetching  and updating single offer (offerById:OfferDTO) depending on given id
+ * and also updates the loader state.
  */
 getOfferById(id:number | string){
   this.loader= true;
   this.subscription.add(
-    this.api.OfferBYId(id).subscribe((res)=>{
+    this.api.getOfferBYId(id).subscribe((res)=>{
       console.log('get ID',id);
       if (res){
-        this.offerById=res;
+        this.singleOffer=res;
         this.loader= false;
         console.log("Offer",res);
+       
       }
         
       },(err:any)=>{
@@ -168,7 +224,69 @@ getOfferById(id:number | string){
     })
   )
 }
+/**
+ * 
+ * @param id 
+ * @returns this function is responsible for mapping & extracting the offer service properties.
+ *  Also,it's responsible for retrieving the offline itinerary from the api in case of offline seats
+ *  depending on the offer code.
+ */
+extractOfferData(id:number | string){
+  this.subscription.add(this.api.getOfferBYId(id).subscribe(res=>{
+    if (res){
+        this.singleOffer=res
+        this.offerImages =res.offerImage? [res.offerImage.url] : []
+        this.singleOffer.offerServices.map(offerService=>{
+          let startDate=new Date(res.startDate);
+          let endDate=new Date(res.endDate);
+          let differenceInTime=startDate.getTime()-endDate.getTime();
+          this.numberOfNights=differenceInTime / (1000 * 3600 * 24);
+          if(offerService.serviceType=='1'){            
+              this.api.retriveItinerary(offerService.offlineItinerary).subscribe((res:Itinerary) =>{
+                if(res){
+                  this.offlineItinerary=res;
+                }
+              })
 
+            
+
+            
+          }
+        })
+    }
+  }))
+}
+/**
+ * 
+ * @returns submit offer booking form logic
+ */
+formSubmit(){
+this.source='web';
+this.id=this.route.snapshot.paramMap.get("id");
+ if (localStorage.getItem('lang')==null){
+  this.langCode='en'
+}else{
+  this.langCode=localStorage.getItem('lang');
+}
+if(this.offerCheckOutForm.valid){
+let Body: BookedOffer = {
+  Email: this.offerCheckOutForm.value["Email"]!,
+  FullName: this.offerCheckOutForm.value["FullName"]!,
+  Nationality: this.offerCheckOutForm.value["Nationality"]!,
+  PhoneNumber: this.offerCheckOutForm.value["PhoneNumber"]!,
+  PhoneCountryCode: this.phonecountrycode,
+  SelectedOfferCode:Number(this.id) ,
+};
+this.api.BookOffers(this.source,this.langCode!,Body,this.id!).subscribe((res:BookedOffer)=>{
+  if (res){
+    this.submittedForm=res;
+  }
+})
+}else{
+  return;
+}
+
+}
   /**
    * this function is responsible to destory any opened subscription on this service
    */

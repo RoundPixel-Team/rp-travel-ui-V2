@@ -41,7 +41,7 @@ export class AppComponent implements OnInit{
   }
 
   // configure my endpoints on the application startup (app initilization)
-  this.environment.envConfiguration(envObject);
+  // this.environment.envConfiguration(envObject);
   console.log('search flow end point -->',this.environment.searchflow);
 }
   ngOnInit(): void { 

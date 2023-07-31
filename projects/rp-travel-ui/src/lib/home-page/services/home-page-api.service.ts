@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map, mergeMap, retry, take } from 'rxjs';
-import { OfferDTO, airPorts, countries, currencyModel, pointOfSaleModel } from '../interfaces';
-import { HttpClient } from '@angular/common/http';
+import { BookedOffer, Itinerary, OfferDTO, airPorts, countries, currencyModel, pointOfSaleModel } from '../interfaces';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EnvironmentService } from '../../shared/services/environment.service';
+import { Serializer } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root'
@@ -72,20 +73,20 @@ export class HomePageApiService {
 /**
  * 
  * @param pos 
- * @returns All offers depending on the current point of sale
+ * @returns All offers of type OfferDTO[] depending on the current point of sale
  */
-  AllOffers(pos: string):Observable<OfferDTO[]> {
-    let API = `${this.env.offers.getAll}${pos}`;
-    return this.http.get<OfferDTO[]>(API).pipe(
-     take(1),retry(3), catchError(err => { console.log(err, "ERROR IN GETTING ALL OFFERS"); throw err })
-    )
-  }
+GetAllOffers(pos: string):Observable<{offers:OfferDTO[]}> {
+  let API = `${this.env.offers.getAllActive}${pos}`;
+  return this.http.get<{offers:OfferDTO[]}>(API).pipe(
+   take(1),retry(3), catchError(err => { console.log(err, "ERROR IN GETTING ALL OFFERS"); throw err })
+  )
+}
    /**
  * 
  * @param id 
- * @returns offer depending on the current ID
+ * @returns a specific offer of type OfferDTO[] depending on the given ID
  */
-  OfferBYId(id: number | string):Observable<OfferDTO> {
+  getOfferBYId(id: number | string):Observable<OfferDTO> {
     let API = `${this.env.offers.getByID}${id}`;
     return this.http.get<OfferDTO>(API).pipe(
       retry(3), take(1), map(
@@ -93,4 +94,40 @@ export class HomePageApiService {
       ), catchError(err => { console.log(err, "ERROR IN GETTING OFFER BY ID"); throw err })
     )
   }
+  /**
+   * 
+   * @param Source 
+   * @param LanguageCode 
+   * @param body 
+   * @param searchID 
+   * @returns It takes source, language and searchID parameters and post the body of the request as the booked offer model(body:BookedOffer)
+   */
+  BookOffers(Source: string, LanguageCode:string,body:BookedOffer,searchID:string ) {
+
+    let API = `${this.env.offers.BookOffer}`;
+    const httpOptions = {
+      headers: new HttpHeaders({
+ 
+        'Source': Source,'LanguageCode':LanguageCode,'searchID':searchID
+      })
+    };
+    let Body ={
+      BookedOffer:body
+    }
+    return this.http.post(API, Body,httpOptions).pipe(
+      take(1),
+      map(
+        (result:any) => { console.log("show backend book offer response",result); return result }
+      )
+    )
+  
+  }
+     /**
+ * @param id
+ * @returns itinerary depending on the given ID if the service type is offline.
+ */
+     retriveItinerary(id:number |string ) {
+      let API: string = `${this.env.offlineSeats}${this.env.offers.RetriveItineraryDetails}?ItineraryId=${id}`;
+      return this.http.get<Itinerary>(API).pipe(retry(3), take(1), catchError(err => { console.log(err); throw err }));
+    }
 }
