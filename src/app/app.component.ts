@@ -42,17 +42,17 @@ export class AppComponent implements OnInit{
   }
 
   // configure my endpoints on the application startup (app initilization)
-  this.environment.envConfiguration(envObject);
+  // this.environment.envConfiguration(envObject);
   console.log('search flow end point -->',this.environment.searchflow);
 }
   ngOnInit(): void { 
-    this.service1.getCurrency('KWD')
+    this.service1.getCurrency('KWD') 
   }  
 
   goToCheckout(){
     this.router.navigate(
       ['/checkout'], 
-      { queryParams: {'sid': '2023B6I1S914H20B40I00S50H40I00', 'sequenceNum': 5, 'providerKey': 52 } })
+      { queryParams: {'sid': '2023B6I0S30H40B20I80S30H30I60', 'sequenceNum': 2, 'providerKey': 52 } })
   }
   goToFlightResult(){
     // this._router.navigate(['SecondComponent', {p1: this.property1, p2: property2 }]);

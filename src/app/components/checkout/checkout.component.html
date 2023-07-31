@@ -11,4 +11,55 @@
         </ng-container>
     </form>
 </div>
+
+<ng-container *ngIf="flight.selectedFlight">
+    <ng-container *ngIf="flight.selectedFlight.airItineraryDTO.passengerFareBreakDownDTOs">
+        <ng-container *ngFor="let fare of flight.selectedFlight.airItineraryDTO.passengerFareBreakDownDTOs">
+            ssssssssssssssssssssssssssssssssssssssssss
+            <ng-container *ngIf="flight.fareBreackup">
+                
+              <ng-container [ngSwitch]="fare.passengerType">
+                <div class="summary-prices row justify-content-around" *ngSwitchCase= "'ADT'">
+        
+                  <span class="fare-title col-6">Adults:</span>
+                  <span class="fare-amount col-6">{{flight.fareBreackup.ADT.totalFare[1] 
+                    }}{{flight.fareBreackup.ADT.totalFare[0]  }}</span>
+                  <sub>{{flight.fareBreackup.ADT.ScFare[2]}}
+                    X
+                    {{flight.fareBreackup.ADT.ScFare[1] }}
+                    {{flight.fareBreackup.ADT.ScFare[0] }}
+                  </sub>
+        
+                </div>
+                <div class="summary-prices row justify-content-around" *ngSwitchCase="'CNN'">
+        
+                  <span class="fare-title col-6">Childs:
+                  </span>
+                  <span class="fare-amount col-6">{{flight.fareBreackup.CNN.totalFare[1] 
+                    }}{{flight.fareBreackup.CNN.totalFare[0]  }}</span>
+                  <sub>{{flight.fareBreackup.CNN.ScFare[2]}}
+                    X
+                    {{flight.fareBreackup.CNN.ScFare[1] }}
+                    {{flight.fareBreackup.CNN.ScFare[0] }}
+                  </sub>
+        
+                </div>
+                <div class="summary-prices row justify-content-around" *ngSwitchCase="'INF'">
+                  <span class="fare-title col-6 mb-1">Infants:</span>
+                  <span class="fare-amount col-6">{{flight.fareBreackup.INF.totalFare[1] 
+                    }}{{flight.fareBreackup.INF.totalFare[0]  }}</span>
+                  <sub>{{flight.fareBreackup.INF.ScFare[2]}}
+                    X
+                    {{flight.fareBreackup.INF.ScFare[1] }}
+                    {{flight.fareBreackup.INF.ScFare[0] }}
+                  </sub>
+                </div>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+    </ng-container>
+</ng-container>
+
+<button (click)="flight.saveBooking()">Save Booking</button>
+
       
