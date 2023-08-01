@@ -19,6 +19,11 @@ export class HomePageService {
    * here is all available currencies
    */
   allCurrency : currencyModel[] = []
+
+  /**
+   * Here's the value of selected currency
+   */
+  selectedCurrency! : string;
   /**
    * here is all available airports
    */
@@ -259,11 +264,16 @@ let Body: BookedOffer = {
   PhoneCountryCode: phonecountrycode,
   SelectedOfferCode:Number(offerId),
 };
-this.api.BookOffers(source,langCode!,Body,offerId!).subscribe((res:BookedOffer)=>{
-  if (res){
-    this.submittedForm=res;
-  }
-})
+this.subscription.add(
+  this.api.BookOffers(source,langCode!,Body,offerId!).subscribe((res:BookedOffer)=>{
+    if (res){
+      this.submittedForm=res;
+    }
+  },(err:any)=>{
+    console.log('Book offer err==>',err);
+    })
+)
+
 }else{
   return;
 }
