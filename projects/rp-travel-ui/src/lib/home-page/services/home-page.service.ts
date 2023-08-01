@@ -23,7 +23,7 @@ export class HomePageService {
   /**
    * Here's the value of selected currency
    */
-  selectedCurrency! : string;
+  selectedCurrency! : currencyModel;
   /**
    * here is all available airports
    */
