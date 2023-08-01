@@ -33,7 +33,7 @@ export interface searchBoxFlights{
 }
 
 export interface searchBoxPassengers{
-    adult:number
-    child:number
-    infent:number
+    adults:number | undefined
+    child:number | undefined
+    infent:number | undefined
 }

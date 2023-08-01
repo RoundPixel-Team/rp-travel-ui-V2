@@ -5,23 +5,27 @@ import { FlightSearchService } from 'projects/rp-travel-ui/src/public-api';
 @Component({
   selector: 'app-searchbox',
   templateUrl: './searchbox.component.html',
-  styleUrls: ['./searchbox.component.css']
+  styleUrls: ['./searchbox.component.css'],
 })
 export class SearchboxComponent implements OnInit {
-  compForm?: FormGroup;
-  public searchBox = inject(FlightSearchService)
 
-  constructor() { }
+  public searchBox = inject(FlightSearchService);
+
+  constructor() {}
 
   ngOnInit() {
-    // this.searchForm.initSearchForm();
-    this.compForm = this.searchBox.searchFlight;
     this.searchBox.initSearchForm();
-
-    console.log("herrrreeeee", this.compForm.value);
+    console.log("DATEEE", this.searchBox.todayDate());
+    // this.searchBox.setDepCity('2023-03-15');
+    // this.compForm = this.searchBox.searchFlight;
+    // this.searchBox.initSearchForm();
+    // console.log("herrrreeeee", this.compForm.value);
+    // this.searchBox.addFlight();
+    // this.searchBox.changeAdultPassenger(4);
+    // this.searchBox.changeChildPassenger(3);
+    // console.log(this.searchBox.changeInfentPassenger(4));
   }
-  onSubmit(){
+  onSubmit() {
     this.searchBox.onSubmit();
   }
-
 }

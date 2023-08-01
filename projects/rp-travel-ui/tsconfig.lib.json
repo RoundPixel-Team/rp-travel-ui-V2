@@ -3,6 +3,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "../../out-tsc/lib",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "declaration": true,
     "declarationMap": true,
     "inlineSources": true,
@@ -11,5 +13,8 @@
   "exclude": [
     "src/test.ts",
     "**/*.spec.ts"
-  ]
+  ],
+  
+  
 }
+
