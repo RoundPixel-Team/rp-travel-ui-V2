@@ -1,1 +1,44 @@
-<p>home-page works!</p>
+
+<!-- Test currency retrun -->
+<ul>
+    <li *ngFor="let curr of homePageService.allCurrency">
+        <div style="display: flex;">
+            <img width="15" height="15" [src]="curr.Image_Url">
+            <div>{{curr.Currency_Name}}</div>
+        </div>
+    </li>
+</ul>
+<!-- Test countires return, **uncomment to see the result -->
+<!-- <ul>
+    <li *ngFor="let country of homePageService.allCountries">
+        <div style="display: flex;">
+            <div>{{country.countryName}}</div>
+        </div>
+    </li>
+</ul> -->
+<!-- Test airports return , **uncomment to see the result-->
+
+<!-- <ul>
+    <li *ngFor="let airport of homePageService.allAirports">
+        <div style="display: flex;">
+            <div>{{airport.airportName}}</div>
+        </div>
+    </li>
+</ul> -->
+
+<!-- Testing point of sale return -->
+<div *ngIf="homePageService.pointOfSale">Point of sale country: {{homePageService.pointOfSale.country}}</div>
+
+<!-- Testing return all offers -->
+<ul>
+    <li *ngFor="let offer of homePageService.allOffers">
+        <div style="display: flex;">
+           
+            <div>{{offer.offerName}}</div>
+        </div>
+    </li>
+</ul>
+
+<!-- Test returning offer by ID -->
+
+<div *ngIf="homePageService.selectedOffer"> TEST GET SINGLE OFFER : {{homePageService.selectedOffer.offerDescription}}</div>

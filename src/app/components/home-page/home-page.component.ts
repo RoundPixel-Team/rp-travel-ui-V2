@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { HomePageService } from 'rp-travel-ui';
 
 @Component({
   selector: 'app-home-page',
@@ -7,9 +8,19 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomePageComponent implements OnInit {
 
+  public homePageService = inject(HomePageService)
+
   constructor() { }
 
   ngOnInit(): void {
+    this.homePageService.getCurrency('KWD');
+    this.homePageService.getAirports('en');
+    this.homePageService.getCountries('en');
+    this.homePageService.getPointOfSale();
+    this.homePageService.getAllOffers('KW');
+    this.homePageService.getOfferById(72);
+    
+
   }
 
 }
