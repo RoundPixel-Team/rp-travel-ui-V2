@@ -11,7 +11,7 @@ import { CheckoutComponent } from './components/checkout/checkout.component';
   declarations: [
     AppComponent,
     HomePageComponent,
-    CheckoutComponent
+    CheckoutComponent,
   ],
   imports: [
     BrowserModule,

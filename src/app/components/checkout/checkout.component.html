@@ -26,8 +26,8 @@
                     }}{{flight.fareBreackup.ADT.totalFare[0]  }}</span>
                   <sub>{{flight.fareBreackup.ADT.ScFare[2]}}
                     X
-                    {{flight.fareBreackup.ADT.ScFare[1] }}
-                    {{flight.fareBreackup.ADT.ScFare[0] }}
+                    {{flight.fareBreackup.ADT.ScFare[1] |exchange:'code'}}
+                    {{flight.fareBreackup.ADT.ScFare[0] |exchange:'value'}}
                   </sub>
         
                 </div>
@@ -39,8 +39,8 @@
                     }}{{flight.fareBreackup.CNN.totalFare[0]  }}</span>
                   <sub>{{flight.fareBreackup.CNN.ScFare[2]}}
                     X
-                    {{flight.fareBreackup.CNN.ScFare[1] }}
-                    {{flight.fareBreackup.CNN.ScFare[0] }}
+                    {{flight.fareBreackup.CNN.ScFare[1] |exchange:'code'}}
+                    {{flight.fareBreackup.CNN.ScFare[0] |exchange:'value'}}
                   </sub>
         
                 </div>
@@ -50,8 +50,8 @@
                     }}{{flight.fareBreackup.INF.totalFare[0]  }}</span>
                   <sub>{{flight.fareBreackup.INF.ScFare[2]}}
                     X
-                    {{flight.fareBreackup.INF.ScFare[1] }}
-                    {{flight.fareBreackup.INF.ScFare[0] }}
+                    {{flight.fareBreackup.INF.ScFare[1] |exchange:'code'}}
+                    {{flight.fareBreackup.INF.ScFare[0] |exchange:'value'}}
                   </sub>
                 </div>
               </ng-container>
@@ -61,5 +61,6 @@
 </ng-container>
 
 <button (click)="flight.saveBooking('KWD')">Save Booking</button>
+<button (click)="changeCurrency()">Change Currency</button>
 
       
