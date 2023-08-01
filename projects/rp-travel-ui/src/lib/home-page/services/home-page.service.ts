@@ -20,10 +20,17 @@ export class HomePageService {
    */
   allCurrency : currencyModel[] = []
 
-  /**
+/**
    * Here's the value of selected currency
    */
-  selectedCurrency! : currencyModel;
+selectedCurrency : currencyModel = {
+  Currency_Code: "KWD",
+  Currency_Name: "Kuwait Dinar" ,
+  ID: 2027,
+  Image_Url: "https://images.khaleejgate.com/Content/Currencies/KWD.JPG",
+  Is_Base_Currency: true,
+  rate: 1
+};
   /**
    * here is all available airports
    */
