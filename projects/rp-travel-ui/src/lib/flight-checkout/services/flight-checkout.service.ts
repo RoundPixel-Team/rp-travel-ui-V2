@@ -150,7 +150,15 @@ export class FlightCheckoutService {
     this.offlineServicesLoader = true
     this.subscription.add(
       this.api.offlineServices(searchId,pos).subscribe((res)=>{
-        this.allOfflineServices = res
+        this.allOfflineServices = [...res.map((s)=>{
+          if(s.recommended){
+            return {...s,added:true}
+          }
+          else{
+            return {...s,added:false}
+          }
+          
+        })]
         this.offlineServicesLoader = false
       },(err)=>{
         console.log('get selected flight offline services error ->',err)
@@ -408,10 +416,12 @@ export class FlightCheckoutService {
    * also adding offline service cost to the whole price
    */
   addOfflineService(service : flightOfflineService){
+    let serviceIndex = this.allOfflineServices.findIndex((s)=>{return s.serviceCode == service.serviceCode})
     this.selectedOfflineServices.push(service.serviceCode)
     if(this.selectedFlight != undefined){
       this.selectedFlight.airItineraryDTO.itinTotalFare.amount += service.servicePrice
     }
+    this.allOfflineServices[serviceIndex].added = true
   }
 
   /**
@@ -421,10 +431,12 @@ export class FlightCheckoutService {
    * also removing offline service from the whole price
    */
   removeOfflineService(service : flightOfflineService){
+    let serviceIndex = this.allOfflineServices.findIndex((s)=>{return s.serviceCode == service.serviceCode})
     this.selectedOfflineServices = this.selectedOfflineServices.filter((s)=>{return s != service.serviceCode})
     if(this.selectedFlight != undefined){
       this.selectedFlight.airItineraryDTO.itinTotalFare.amount -= service.servicePrice
     }
+    this.allOfflineServices[serviceIndex].added = false
   }
 
 
