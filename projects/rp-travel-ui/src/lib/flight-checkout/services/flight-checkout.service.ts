@@ -31,6 +31,16 @@ export class FlightCheckoutService {
    */
   selectedOfflineServices : string[] = []
 
+  /**
+   * here is the recommened service which is added to the cost/ticket by default
+   */
+  recommendedOfflineService! : flightOfflineService 
+
+  /**
+   * here is the price with the recopmmened offline service added
+   */
+  priceWithRecommenedService: number = 0;
+
 
   /**
    * offline services loading state ..
@@ -116,7 +126,7 @@ export class FlightCheckoutService {
         if(res){
           // updating the selected flight state
           this.selectedFlight = res
-      
+          this.priceWithRecommenedService = res.airItineraryDTO.itinTotalFare.amount
           // initilize users forms
           this.buildUsersForm(
             res.searchCriteria.adultNum,
@@ -152,6 +162,8 @@ export class FlightCheckoutService {
       this.api.offlineServices(searchId,pos).subscribe((res)=>{
         this.allOfflineServices = [...res.map((s)=>{
           if(s.recommended){
+            this.recommendedOfflineService = s
+            this.priceWithRecommenedService += s.servicePrice
             return {...s,added:true}
           }
           else{
@@ -420,6 +432,7 @@ export class FlightCheckoutService {
     this.selectedOfflineServices.push(service.serviceCode)
     if(this.selectedFlight != undefined){
       this.selectedFlight.airItineraryDTO.itinTotalFare.amount += service.servicePrice
+      this.priceWithRecommenedService += service.servicePrice
     }
     this.allOfflineServices[serviceIndex].added = true
   }
@@ -435,6 +448,7 @@ export class FlightCheckoutService {
     this.selectedOfflineServices = this.selectedOfflineServices.filter((s)=>{return s != service.serviceCode})
     if(this.selectedFlight != undefined){
       this.selectedFlight.airItineraryDTO.itinTotalFare.amount -= service.servicePrice
+      this.priceWithRecommenedService -= service.servicePrice
     }
     this.allOfflineServices[serviceIndex].added = false
   }
