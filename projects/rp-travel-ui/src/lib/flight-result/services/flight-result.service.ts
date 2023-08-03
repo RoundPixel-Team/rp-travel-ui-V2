@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Subscription, take } from 'rxjs';
-import { FlightSearchResult, SearchFlightModule, airItineraries } from '../interfaces';
+import { FlightSearchResult, SearchFlightModule, airItineraries, filterFlightInterface, flight, flightResultFilter } from '../interfaces';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FlightResultApiService } from './flight-result-api.service';
 import { searchFlightModel } from '../../flight-search/interfaces';
@@ -12,19 +12,19 @@ import { DatePipe } from '@angular/common';
   providedIn: 'root'
 })
 export class FlightResultService {
-  
+  moreT: boolean[] = [];
   api = inject(FlightResultApiService)
-    /**
-   * response Data from Api  b type FlightSearchResult
-   */
+  /**
+ * response Data from Api  b type FlightSearchResult
+ */
   response?: FlightSearchResult
   /**
    * response airItineraries Data from Api  b type airItineraries
    */
-  FilterData?: airItineraries[]
-/**
-   * load error message when no data back from api
-   */
+  FilterData: airItineraries[] = []
+  /**
+     * load error message when no data back from api
+     */
   normalError: string = ''
 
   /**
@@ -32,25 +32,31 @@ export class FlightResultService {
    */
   FlightType: string = 'RoundTrip'
   normalErrorStatus: boolean = false
-   /**
-   * loading state ..
-   */
-  loading: boolean = false
+  /**
+  * loading state ..
+  */
+  loading: boolean = true
+  roundT: boolean = false;
 
-  
   ResultFound: boolean = false
-   /**
-   *  Min value price 
-   * 
-   */
+  /**
+  *  Min value price 
+  * 
+  */
   priceMinValue: number = 0;
-   /**
-   *  Max value price 
-   * 
-   */
+  /**
+  *  Max value price 
+  * 
+  */
   priceMaxValue: number = 5000;
   FilterChanges$: Subscription = new Subscription();
-  options?: Options;
+  options: Options = {
+    floor: 0,
+    ceil: 5000,
+    translate: (value: number): string => {
+      return Math.round(value).toString();
+    },
+  };;
   rate: number = 1;
   code: string = "KWD"
   airlinesA: string[] = [];
@@ -59,19 +65,21 @@ export class FlightResultService {
   bookingSitesForm: boolean[] = []
   departingMin: number = 0;
   departingMax: number = 7000
-  optionsdeparting?: Options;
+  optionsdeparting: Options = this.options;
 
   arrivingMin: number = 0;
   arrivingMax: number = 7000
-  optionsArriving?: Options;
+  optionsArriving: Options = this.options;
   minValue: number = 0
   maxValue: number = 5000
 
   durationMin: number = 0;
   durationMax: number = 7000;
-  optionsDurathion?: Options;
+  optionsDurathion: Options = this.options
   router = inject(Router)
   route = inject(ActivatedRoute)
+  filter?: flightResultFilter;
+
   filterForm = new FormGroup({
     airline: new FormGroup({
       airlines: new FormArray([]),
@@ -105,7 +113,7 @@ export class FlightResultService {
   });
   subscription: Subscription = new Subscription()
   // datePipe =inject(DatePipe)
-
+  orgnizedResponce: airItineraries[] = [];
   constructor() { }
 
 
@@ -121,7 +129,7 @@ export class FlightResultService {
     let searchApi: SearchFlightModule = new SearchFlightModule(lang, currency, pointOfReservation, flightType, flightsInfo, passengers, Cclass, serachId, showDirect, 'all');
     if (SearchFlightModule) {
       let myapi = searchApi;
-      console.log("myapi", myapi)
+      // console.log("myapi", myapi)
 
       this.subscription.add(this.api.searchFlight(myapi).subscribe(
         (result) => {
@@ -131,13 +139,45 @@ export class FlightResultService {
             this.response = result;
             // console.log("result" ,  this.response ,result)
             this.FilterData = result.airItineraries;
+            this.orgnizedResponce = this.orgnize(this.FilterData);
+
             this.FilterChanges$.unsubscribe();
-          
+            this.filterForm = new FormGroup({
+              airline: new FormGroup({
+                airlines: new FormArray([])
+              }),
+
+              bookingSite: new FormGroup({
+                bookingSites: new FormArray([])
+              }),
+
+              stopsForm: new FormGroup({
+                noStops: new FormControl(false),
+                oneStop: new FormControl(false),
+                twoAndm: new FormControl(false)
+              }),
+              sameAirline: new FormControl(false),
+              priceSlider: new FormControl([0, 0]),
+              durationSlider: new FormControl([0, 7000]),
+              dpartingSlider: new FormControl([0, 20000]),
+              arrivingSlider: new FormControl([0, 20000]),
+              returnSlider: new FormControl([0, 7000]),
+
+              experience: new FormGroup({
+                overNight: new FormControl(false),
+                longStops: new FormControl(false)
+              }),
+
+              flexibleTickets: new FormGroup({
+                refund: new FormControl(false),
+                nonRefund: new FormControl(false)
+              })
+            });
 
             this.findDepartingnMinMax(this.response.airItineraries);
             this.filterForm.get("durationSlider")?.setValue(this.findDurationMinMax(this.response.airItineraries));
             this.filterForm.get("durationSlider")?.updateValueAndValidity();
-         
+
             this.findDepartingnMinMax(this.response.airItineraries)
             this.findArrivingMinMax(this.response.airItineraries)
             this.minAnMax(this.response.airItineraries);
@@ -153,6 +193,7 @@ export class FlightResultService {
             this.bookingSites.forEach(element => {
               (<FormArray>this.filterForm.get('bookingSite')?.get('bookingSites')).push(new FormControl(false));
             })
+            this.updateFilter()
 
 
 
@@ -161,7 +202,6 @@ export class FlightResultService {
 
 
 
-           
 
 
           }
@@ -181,6 +221,124 @@ export class FlightResultService {
       ));
     }
 
+  }
+  updateFilter() {
+    this.subscription.add(
+      this.filterForm.valueChanges.subscribe((val) => {
+
+        if (this.filterForm.touched) {
+          // console.log("")
+
+          let filter: flightResultFilter = new flightResultFilter(
+            this.filterForm.get("sameAirline")?.value!,
+            this.filterForm.get("priceSlider")?.value![0],
+            this.filterForm?.get("priceSlider")?.value![1],
+            this.filterForm.get("durationSlider")?.value![0],
+            this.filterForm.get("durationSlider")?.value![1],
+            this.filterForm.get("dpartingSlider")?.value![0],
+            this.filterForm.get("dpartingSlider")?.value![1],
+            this.filterForm.get("arrivingSlider")?.value![0],
+            this.filterForm.get("arrivingSlider")?.value![1],
+            this.filterForm.get("returnSlider")?.value![0],
+            this.filterForm.get("returnSlider")?.value![1],
+            this.stopsvalues(),
+            [this.filterForm.get('experience')?.get('overNight')?.value!],
+            [this.filterForm.get('flexibleTickets')?.get('refund')?.value!, this.filterForm.get('flexibleTickets')?.get('nonRefund')?.value!],
+
+            this.filteringbyairline(this.filterForm.get('airline')?.get('airlines')?.value!),
+
+
+            this.filteringbyBookingSites(this.filterForm.get('bookingSite')?.get('bookingSites')?.value!)
+
+
+          );
+
+
+
+          this.oneForAll(filter, this.FilterData, this.roundT);
+
+          // let t2 = performance.now();
+          // console.log(t2 - t1 + "ms");
+        }
+        else {
+          console.log("FILTER CHANGED", val)
+        }
+      })
+    );
+  }
+
+  // filter func
+
+
+  // new filteration method
+  oneForAll(filter: filterFlightInterface, fligtsArray: airItineraries[], round: boolean) {
+
+    let filterdarray: any[] = [];
+    fligtsArray.forEach(element => {
+
+      // price test
+
+
+
+      if (element.itinTotalFare.amount >= filter.priceMin! && element.itinTotalFare.amount <= filter.priceMax!) {
+
+        //duration test
+        if (element.totalDuration >= filter.durationMin! && element.totalDuration <= filter.durationMax!) {
+
+          //departion test
+          if (this.convertToMin(element.deptDate) >= filter.depatingMin! && this.convertToMin(element.deptDate) <= filter.departingMax!) {
+
+            //stops filter
+            if (this.stopscheck(filter.stops!, element.allJourney.flights)) {
+              // airline test
+              if (filter.airlines!.indexOf(element.allJourney.flights[0]['flightAirline']['airlineName']) !== -1 || filter.airlines?.length == 0) {
+
+                //return test
+                if (false) {
+                  // if(!round){
+                  // if(this.convertToMin(element.allJourney.flights[1]['flightDTO'][0]['departureDate'])>= filter.returnMin! && this.convertToMin(element.allJourney.flights[1]['flightDTO']['depart']) <= filter.returnMax!){
+
+                  //   filterdarray.push(element);
+                  // }
+                  // else{
+                  //   return
+                  // }
+                }
+                else {
+                  filterdarray.push(element);
+                }
+              }
+
+              else {
+                return
+              }
+            }
+            else {
+              return
+            }
+          }
+          else {
+            return
+          }
+        }
+        else {
+          return
+        }
+
+      }
+      else {
+        return
+      }
+
+    });
+    let t1 = performance.now();
+
+    this.orgnizedResponce = this.orgnize(filterdarray);
+    //  this.valuesoftrue(this.orgnizedResponce);
+    this.valuesoftrueM(this.orgnizedResponce);
+    let t2 = performance.now();
+    console.log("orgnizing and true value", t2 - t1 + "ms");
+    console.log('should be filterd', this.orgnizedResponce);
   }
 
   /**
@@ -219,10 +377,23 @@ export class FlightResultService {
       if (type == 7) {
         this.FilterData = [...this.response.airItineraries].sort((a, b) => { return a.experiance - b.experiance })
       }
-      // return [...this.response.airItineraries]
 
 
     }
+  }
+  /**
+ * check value stop 
+ **/
+  stopscheck(stops: number[], flight: flight[]) {
+    let status: Boolean = true;
+    let t1 = performance.now();
+    flight.forEach(element => {
+      if (stops.indexOf(element.stopsNum) == -1) {
+        status = false;
+      }
+
+    });
+    return status
   }
 
   /**
@@ -327,6 +498,7 @@ export class FlightResultService {
       }
     });
 
+    console.log("Arrival", max, min);
 
     this.arrivingMin = min;
     this.arrivingMax = max;
@@ -383,42 +555,97 @@ export class FlightResultService {
   }
 
   //filter by airline
-  filteringbyairline(val:any[]){
-    let airL:any[]=[];
-      for (let index = 0; index < val.length; index++) {
-        const element = val[index];
-        if(element){
-          airL.push(this.airlinesA[index]);
-        }
-        
-      };
-      if(airL.length == 0){
+  filteringbyairline(val: any[]) {
+    let airL: any[] = [];
+    for (let index = 0; index < val.length; index++) {
+      const element = val[index];
+      if (element) {
+        airL.push(this.airlinesA[index]);
+      }
+
+    };
+    if (airL.length == 0) {
       let out = airL;
-      return  out
-      }
-      else{
-         return airL;
-      }
+      return out
+    }
+    else {
+      return airL;
+    }
   }
- //filter by booking sites
-  filteringbyBookingSites(val:any[]){
-    let selectedSites:any[]=[];
-      for (let index = 0; index < val.length; index++) {
-        const element = val[index];
-        if(element){
-          selectedSites.push(this.bookingSites[index]);
-        }
-        
-      };
-      if(selectedSites.length == 0){
+  //filter by booking sites
+  filteringbyBookingSites(val: string[]) {
+    let selectedSites: any[] = [];
+    for (let index = 0; index < val.length; index++) {
+      const element = val[index];
+      if (element) {
+        selectedSites.push(this.bookingSites[index]);
+      }
+
+    };
+    if (selectedSites.length == 0) {
       let out = selectedSites;
-      return  out
-      }
-      else{
-         return selectedSites;
-      }
+      return out
+    }
+    else {
+      return selectedSites;
+    }
   }
-  
+  //grouping by price and airline
+  orgnize(array: any[]) {
+
+    let ar = array
+    let out: any[] = []
+    ar.forEach(element => {
+
+      // check Nostop in each flight
+      // this.checkStops(element);
+      let price: number = Math.round(element.itinTotalFare.amount);
+      let airLine: string = element.allJourney.flights[0]['flightAirline']['airlineCode'];
+      // console.log(airLine);
+      let lairLine: string = airLine
+
+      let item = [];
+      if (out.length == 0) {
+        item.push(element);
+        out.push(item);
+      }
+      else {
+        let found: boolean = false;
+        let i = 0
+        while (i < out.length || i > 60) {
+          let elmentO = out[i];
+          let first = elmentO[0];
+          let price2: number = Math.round(first.itinTotalFare.amount);
+          let lairLine2: string = first.allJourney.flights[0]['flightAirline']['airlineCode'];
+          if (lairLine === lairLine2 && price === price2) {
+            elmentO.push(element);
+            found = true;
+            break
+          }
+          else {
+            i = i + 1
+          }
+        }
+        if (!found) {
+          item.push(element);
+          out.push(item);
+        }
+      }
+
+    });
+    return out
+  }
+  // create an array with the same length of the output
+  valuesoftrueM(array: airItineraries[]) {
+    let out: any[] = [];
+    let arryalengty = array.length;
+    for (let index = 0; index < arryalengty; index++) {
+      let truth: boolean = true;
+      out.push(truth);
+
+    }
+    return this.moreT = out;
+  }
   /**
    * this function is responsible to destory any opened subscription on this service
    */
