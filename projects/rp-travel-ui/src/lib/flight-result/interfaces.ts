@@ -96,25 +96,46 @@ export interface flighFilterForm{
  * [this is a generic model for the filter containing all filter criteria and you can use only what you need]
  */
 
-export interface flightResultFilter{
-    sameAirline?:boolean,
-    priceMin?:number,
-    priceMax?:number,
-    durationMin?:number,
-    durationMax?:number,
-    depatingMin?:number,
-    departingMax?:number,
-    arrivingMin?:number,
-    arrivingMax?:number,
-    returnMin?:number,
-    returnMax?:number,
-    stops?:{noStops:boolean,oneStop:boolean,twoAndm:boolean},
-    experience?:{overNight:boolean,longStops:boolean},
-    flexibleTicket?:{refund:boolean,nonRefund:boolean},
-    airlines?:string[],
-    bookingSites?:string[]
+export class flightResultFilter{
+  constructor(
+    public sameAirline:boolean,
+    public  priceMin?:number,
+    public  priceMax?:number,
+    public durationMin?:number,
+    public durationMax?:number,
+    public depatingMin?:number,
+    public departingMax?:number,
+    public  arrivingMin?:number,
+    public arrivingMax?:number,
+    public returnMin?:number,
+    public returnMax?:number,
+    public stops?:number[],
+    public experience?:boolean[],
+    public flexibleTicket?:boolean[],
+    public airlines?:string[],
+    public bookingSites?:string[]
+  ){}
 }
 
+
+export interface filterFlightInterface{
+   sameAirline?:boolean,
+  priceMin?:number,
+  priceMax?:number,
+ durationMin?:number,
+  durationMax?:number,
+   depatingMin?:number,
+   departingMax?:number,
+    arrivingMin?:number,
+   arrivingMax?:number,
+   returnMin?:number,
+   returnMax?:number,
+   stops?:number[],
+   experience?:boolean[],
+   flexibleTicket?:boolean[],
+   airlines?:string[],
+   bookingSites?:string[]
+}
 
 /**
  * this model is mapping to flight fare rules response
@@ -145,7 +166,7 @@ export interface flight {
     flightDTO: FlightDTO[];
     elapsedTime: number;
     stopsNum: number;
-    flightAirline?:FlightAirline
+    flightAirline:FlightAirline
 }
 
 export interface FlightDTO {

@@ -9,16 +9,47 @@
     <p>
        pricefilter
     </p>
- 
+    <ngx-slider  formControlName="priceSlider" [value]="FlightResultService.priceMinValue" [highValue]="FlightResultService.priceMaxValue" [options]="options">
+    </ngx-slider>
+    <p>departing</p>
+    <ngx-slider *ngIf="!FlightResultService.loading"  formControlName="dpartingSlider"[options]="options" [value]="FlightResultService.departingMin"
+                        [highValue]="FlightResultService.departingMax">
+                        </ngx-slider>
+    <p>
+      Arrival
+   </p>
+   <ngx-slider formControlName="arrivingSlider"  [value]="FlightResultService.arrivingMin"
+   [highValue]="FlightResultService.arrivingMax"[options]="options">
+   </ngx-slider>
+   <p>
+    duration
+   </p>
+   <ngx-slider  *ngIf="!FlightResultService.loading" formControlName="durationSlider" [value]="FlightResultService.durationMin" [highValue]="FlightResultService.durationMax" [options]="options">
+  </ngx-slider>
         <div class="custom-slider"> 
    
-        <div class="row" formGroupName="stopsForm">
-            <div class="col-12">
+        <div formGroupName="stopsForm">
             
-            <input type="checkbox"formControlName="noStops"> Direct
-            </div>
+            <input type="checkbox" formControlName="noStops"> Direct
+            <input type="checkbox" formControlName="oneStop">One 
+            <input type="checkbox" formControlName="twoAndm">2+ Stops
+
           
         </div>
+        <p>experience</p>
+        <div class=""  formGroupName="experience">
+
+          <input type="checkbox" formControlName="overNight"> overNight
+          <input type="checkbox" formControlName="longStops">longStops
+        </div>
+        <p>flexibleTickets</p>
+        <div class=""  formGroupName="flexibleTickets">
+
+          <input type="checkbox" formControlName="refund"> Ref
+          <input type="checkbox" formControlName="nonRefund">non-Ref
+        </div>
+
+
 
         <ng-container formGroupName="airline">
             <ng-container formArrayName='airlines'>
