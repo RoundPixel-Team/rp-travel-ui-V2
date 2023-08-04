@@ -15,7 +15,7 @@ export class SearchboxComponent implements OnInit {
 
   ngOnInit() {
     this.searchBox.initSearchForm();
-    console.log("DATEEE", this.searchBox.todayDate());
+    console.log("DATEEE", this.searchBox.setRetDate(this.searchBox.searchFlight.controls['returnDate'].value));
     // this.searchBox.setDepCity('2023-03-15');
     // this.compForm = this.searchBox.searchFlight;
     // this.searchBox.initSearchForm();

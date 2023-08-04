@@ -19,9 +19,9 @@ export class FlightSearchService {
   //#region Variablses
   searchFlight: FormGroup = new FormGroup({});
   localForm?: searchBoxModel | undefined; //used to get previous searchbox data from local storage
-  flightType?: string;
+  flightType?: string; //used to save value of flight type from paramter of initSearchForm function
   passengers?: searchBoxPassengers;
-  searchForm?: searchBoxModel;
+  // searchForm?: searchBoxModel;
   lastFlight?: searchBoxFlights;
   passengerAlert: AlertMsgModel = {
     arMsg: '',
@@ -239,6 +239,13 @@ export class FlightSearchService {
     }
   }
   /**
+   * this function is responsible to update the flight Type
+   * @param flightType (oneWay or roundTrip or multiCity)
+   */
+  changeFlightType(flightType:string){
+    this.searchFlight.controls['flightType'].setValue(flightType);
+  }
+  /**
    * this function is responsible to get flights form array
    */
   public get flightsArray(): FormArray {
@@ -286,25 +293,14 @@ export class FlightSearchService {
       return this.removeFlightAlert;
     }
   }
-
-  /**
-   * this function is responsible to check maximum number of passenger
-   */
-  // maxValueReached(passengerForm: FormGroup): boolean  {
-  //   if ( passengerForm.controls['adults'].value + passengerForm.controls['child'].value + passengerForm.controls['infent'].value > 9)
-  //   {
-  //     return  true ;
-  //   }
-  //   return  false ;
-  // }
-
   /**
    * this function is responsible to get Total Number of passengers
+   * @return object of string error message (passengerAlert)
+   * if message is empty then the validation is true
    */
   getTotalPassengers(adult: number, child: number, infent: number) {
     return adult + child + infent;
   }
-
   /**
    * this function is responsible to change Value Of Adult passenger
    * @return object of string error message (passengerAlert)
@@ -332,6 +328,7 @@ export class FlightSearchService {
   /**
    * this function is responsible to change Value Of child passenger
    * @return object of string error message (passengerAlert)
+   * if message is empty then the validation is true
    */
   changeChildPassenger(num: number) {
     //get total number of passenger with new selected child value
@@ -353,16 +350,13 @@ export class FlightSearchService {
   }
   /**
    * this function is responsible to change Value Of infent passenger
-   * @return object of string error message (passengerAlert)
+   * @return object of string error message (passengerAlert) 
+   * if message is empty then the validation is true
    */
   changeInfentPassenger(num: number) {
     let adultVal = this.searchFlight?.get('passengers.adults')?.value;
     //get total number of passenger with new selected infent value
-    let Total = this.getTotalPassengers(
-      adultVal,
-      this.searchFlight?.get('passengers.child')?.value,
-      num
-    );
+    let Total = this.getTotalPassengers(adultVal, this.searchFlight?.get('passengers.child')?.value,num);
     if (num <= adultVal && Total <= 9) {
       this.searchFlight?.get('passengers.child')?.setValue(num);
       this.passengerAlert.arMsg = ' ';
@@ -383,36 +377,87 @@ export class FlightSearchService {
   setClassValue(classVal: string) {
     this.searchFlight.controls['class'].setValue(classVal);
   }
-
   /**
    * this function is responsible to return current Date
    */
   todayDate() {
     let date = new Date();
-    return date.toISOString().split("T")[0];
+    return date.toISOString().split('T')[0];
   }
-
   /**
-   * this function is responsible to set the value of depart city after validate it
+   * this function is responsible to set the value of depart Date after validate it
    * @params depart date should be format as 2023-08-01
-   * @params flightIndex number for 
+   * @params flightIndex number for
+   * @retuen object with empty message if validation is true or object with error messages 
    */
-  setDepCity(depDate: any, flightIndex:number){
-    let date = new Date(depDate).toISOString().split("T")[0] //making date as 2023-08-01 format to check the condition
-    if(date < this.todayDate()){
-      (<FormArray>this.searchFlight?.get('Flights')).at(flightIndex).get("departingD")?.setValue(this.todayDate())
-        this.dateAlert.enMsg ="You Shouldn't select a Previous Date";
-        this.dateAlert.arMsg ='لا يجب عليك تحديد تاريخ سابق';
-      return this.dateAlert;
+  setDepDate(depDate: any, flightIndex: number) {
+    let date = new Date(depDate).toISOString().split('T')[0]; //making date as 2023-08-01 format to check the condition
+    //check if date is previous than today or not
+    if (date < this.todayDate()) {
+      (<FormArray>this.searchFlight?.get('Flights')).at(flightIndex).get('departingD')?.setValue(this.todayDate());
+      this.dateAlert.enMsg = "You Shouldn't select a Previous Date";
+      this.dateAlert.arMsg = 'لا يجب عليك تحديد تاريخ سابق';
+    } 
+    else {
+      //check if the return date equal to depart (when the user enters the return date first)
+      if (this.searchFlight.controls['returnDate'].value == date) {        
+        this.dateAlert.enMsg ='This Date Is Similar to Return date, You Should Select Another one';
+        this.dateAlert.arMsg ='هذا التاريخ مشابه لتاريخ العودة ، يجب عليك تحديد تاريخ آخر';
+        (<FormArray>this.searchFlight?.get('Flights')).at(flightIndex).get('departingD')?.setValue(this.todayDate());
+      } else {
+        (<FormArray>this.searchFlight?.get('Flights'))
+          .at(flightIndex)
+          .get('departingD')
+          ?.setValue(depDate);
+      }
     }
+    return this.dateAlert;
+  }
+  /**
+   * this function is responsible to set the value of Return Date after validate it
+   * @params Return date should be format as 2023-08-01
+   * @retuen object with empty message if validation is true or object with error messages 
+   */
+  setRetDate(retDate:any){
+    let date = new Date(retDate).toISOString().split('T')[0]; //making date as 2023-08-01 format to check the condition
+    let depDate = (<FormArray>this.searchFlight?.get('Flights')).at(0)?.get('departingD')?.value;
+    //check if date is previous than today
+    if(date <= this.todayDate()){
+      this.dateAlert.enMsg = "You Should select a date after this day";
+      this.dateAlert.arMsg = 'يجب عليك تحديد تاريخ بعد هذا اليوم';
+    }
+    //check of date is is previous than depart date
+    else if(date < depDate){
+      this.dateAlert.enMsg = "You Should Select a date After your Depart Date";
+      this.dateAlert.arMsg = 'يجب عليك تحديد تاريخ بعد تاريخ المغادرة الخاص بك';
+    }
+    //if all validation is true then goto to else condition
     else{
-      (<FormArray>this.searchFlight?.get('Flights')).at(flightIndex).get("departingD")?.setValue(depDate)
-      return this.dateAlert;
+      this.searchFlight.controls['returnDate'].setValue(date);
     }
+    return this.dateAlert;
   }
 
   onSubmit() {
-    localStorage.setItem('form', JSON.stringify(this.searchFlight.value));
+    if(this.searchFlight.invalid){
+      this.searchFlight.markAllAsTouched(); //used this function to make a red border around invalid inputs
+    }
+    else{
+      //call all functions validation for all passengers type and flight dates
+      let adult = this.changeAdultPassenger(this.searchFlight?.get('passengers.adult')?.value).enMsg
+      let child = this.changeAdultPassenger(this.searchFlight?.get('passengers.child')?.value).enMsg
+      let infent = this.changeAdultPassenger(this.searchFlight?.get('passengers.infent')?.value).enMsg
+      let depDate = this.changeAdultPassenger((<FormArray>this.searchFlight?.get('flights')).at(0)?.get('departingD')?.value).enMsg
+      let retDate = this.changeAdultPassenger(this.searchFlight.controls['returnDate'].value).enMsg
+      //If All Validations and conditions are true then save the form at local storage and go to search Results
+        if(!adult && !child && !infent && !depDate){
+          localStorage.setItem('form', JSON.stringify(this.searchFlight.value));
+          //make link for search Results
+        }
+        else{
+          console.log("ERROR", adult, child, infent, depDate, retDate)
+        }
+    }
   }
 
   /**
