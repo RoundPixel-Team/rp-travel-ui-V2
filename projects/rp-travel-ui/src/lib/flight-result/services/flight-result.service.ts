@@ -252,6 +252,10 @@ export class FlightResultService {
     }
 
   }
+  /**
+ * update filter input
+ * 
+ **/
   updateFilter() {
     this.subscription.add(
       this.filterForm.valueChanges.subscribe((val) => {
@@ -682,7 +686,6 @@ export class FlightResultService {
 
 
 
-  //filter by airline
   filteringbyairline(val: any[]) {
     let airL: any[] = [];
     for (let index = 0; index < val.length; index++) {
