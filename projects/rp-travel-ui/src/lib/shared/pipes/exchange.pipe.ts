@@ -13,7 +13,6 @@ export class ExchangePipe implements PipeTransform {
 
   transform(value: any, args?: any): any {
     this.currentCurruncy = this.home.selectedCurrency;
-    console.log("show me now bonded currency", this.currentCurruncy)
     if(!value || !args) {
       return value;
     }
