@@ -1,14 +1,25 @@
 <form [formGroup]="searchBox.searchFlight">
-
+  <ng-container formArrayName="Flights">
+    <ng-container *ngFor="let item of searchBox.flightsArray['controls'] | slice:0:1 let i= index;">
+      <ng-container [formGroupName]="i">
+        <p>{{i}}</p>
+        <label>Depart City: </label>
+        <input type="text" formControlName="departing" />
+        <label>Return City: </label>
+        <input type="text" formControlName="landing"/>
+        <label>Depart Date: </label>
+        <input type="text" formControlName="departingD"/>
+      </ng-container>
+    </ng-container>
+  </ng-container>
   <label>Class: </label>
-  <input  type="text" formControlName="class">
+  <input type="text" formControlName="class" />
 
   <label>return Date: </label>
-  <input type="text" formControlName="returnDate">
+  <input type="text" formControlName="returnDate" />
 
   <label>Flight Type: </label>
-  <input type="text" formControlName="flightType">
+  <input type="text" formControlName="flightType" />
 
-  <button (click)="onSubmit()"> Submit </button>
-
+  <button (click)="onSubmit()">Submit</button>
 </form>

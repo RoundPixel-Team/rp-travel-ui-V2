@@ -14,8 +14,16 @@ export class SearchboxComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    this.searchBox.initSearchForm();
-    console.log("DATEEE", this.searchBox.setRetDate(this.searchBox.searchFlight.controls['returnDate'].value));
+//JSON.parse(localStorage.getItem('form')as string)
+    let form = JSON.parse(localStorage.getItem('form') as string)
+    this.searchBox.initSearchForm(form);
+
+    // console.log("DATEEE", this.searchBox.getAirportCode(0,'-','KWI-DXB'));
+    // console.log("FLIGHT INFO", this.searchBox.getFlightInfo(1,'-'));
+    // console.log("FLIGHT INFOoooo", this.searchBox.flightInfoFormatter(this.searchBox.getFlightInfo(1,'-')));
+    // console.log("PASSENGER", this.searchBox.searchFlight.get('passengers')?.value);
+    // console.log("PASSENGER", this.searchBox.passengerFormatter(this.searchBox.searchFlight.get('passengers')?.value));
+    // console.log("RESULT LINK", this.searchBox.getSearchresultLink('en','KWD','EG',1,'-'));
     // this.searchBox.setDepCity('2023-03-15');
     // this.compForm = this.searchBox.searchFlight;
     // this.searchBox.initSearchForm();
@@ -26,6 +34,12 @@ export class SearchboxComponent implements OnInit {
     // console.log(this.searchBox.changeInfentPassenger(4));
   }
   onSubmit() {
-    this.searchBox.onSubmit();
+    console.log("SUBMIT", this.searchBox.searchFlight.valid);
+    console.log("FORM form", this.searchBox.flightsArray);
+    
+    console.log("FINAL RESULT", this.searchBox.onSubmit('en','KWD','EG',1,'-'));
+    if(this.searchBox.onSubmit('en','KWD','EG',1,'-')){
+      localStorage.setItem('form', JSON.stringify(this.searchBox.searchFlight.value))
+    }
   }
 }

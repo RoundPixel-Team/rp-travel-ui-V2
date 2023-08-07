@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RpTravelUiComponent } from './rp-travel-ui.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 
 
 
@@ -20,6 +21,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule,
     FormsModule,
   ],
-  providers:[HttpClient]
+  providers:[HttpClient, DatePipe]
 })
 export class RpTravelUiModule { }

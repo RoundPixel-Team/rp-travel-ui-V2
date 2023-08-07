@@ -20,7 +20,7 @@ export interface searchFlightModel{
 export interface searchBoxModel{
     flightType: string
     Direct: boolean
-    flights: searchBoxFlights[]
+    Flights: searchBoxFlights[]
     passengers:searchBoxPassengers
     class:string
     returnDate:string
@@ -29,7 +29,7 @@ export interface searchBoxModel{
 export interface searchBoxFlights{
     departing:string
     landing:string
-    departingDate:string
+    departingD:string|null
 }
 
 export interface searchBoxPassengers{
