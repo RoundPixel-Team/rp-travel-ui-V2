@@ -5,7 +5,7 @@ import { FlightSearchResult, SearchFlightModule, airItineraries, filterFlightInt
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FlightResultApiService } from './flight-result-api.service';
 import { searchFlightModel } from '../../flight-search/interfaces';
-import { Options } from '@angular-slider/ngx-slider';
+// import { Options } from '@angular-slider/ngx-slider';
 import { DatePipe } from '@angular/common';
 
 @Injectable({
@@ -58,13 +58,13 @@ export class FlightResultService {
  *  optins init and return data as string 
  * 
  */
-  options: Options = {
-    floor: 0,
-    ceil: 5000,
-    translate: (value: number): string => {
-      return Math.round(value).toString();
-    },
-  };
+  // options: Options = {
+  //   floor: 0,
+  //   ceil: 5000,
+  //   translate: (value: number): string => {
+  //     return Math.round(value).toString();
+  //   },
+  // };
   /**
  * inital rate currecy code kwd
  * 
@@ -87,19 +87,19 @@ export class FlightResultService {
  *  inital slider for filter return feh date min and max 
  * 
  */
-  departingMin: number = 0;
-  departingMax: number = 7000
-  optionsdeparting: Options = this.options;
+  // departingMin: number = 0;
+  // departingMax: number = 7000
+  // optionsdeparting: Options = this.options;
 
-  arrivingMin: number = 0;
-  arrivingMax: number = 7000
-  optionsArriving: Options = this.options;
-  minValue: number = 0
-  maxValue: number = 5000
+  // arrivingMin: number = 0;
+  // arrivingMax: number = 7000
+  // optionsArriving: Options = this.options;
+  // minValue: number = 0
+  // maxValue: number = 5000
 
-  durationMin: number = 0;
-  durationMax: number = 7000;
-  optionsDurathion: Options = this.options
+  // durationMin: number = 0;
+  // durationMax: number = 7000;
+  // optionsDurathion: Options = this.options
 
   /**
   *  inital from filter
@@ -450,18 +450,18 @@ export class FlightResultService {
     let minValue = sortedRes[0].itinTotalFare.amount;
     let maxValue1 = sortedRes[sortedRes.length - 1].itinTotalFare.amount;
 
-    this.options = {
-      floor: minValue,
-      ceil: Math.round(maxValue1 + 10),
-      translate: (value: number): string => {
-        return Math.round(value).toString();
-      },
-    };
-    console.log("MinAndMax", minValue, this.maxValue);
-    this.priceMinValue = minValue;
-    this.priceMaxValue = Math.round(maxValue1 + 10);
-    this.maxValue = Math.round(maxValue1 + 10);
-    return [minValue, this.maxValue]
+    // this.options = {
+    //   floor: minValue,
+    //   ceil: Math.round(maxValue1 + 10),
+    //   translate: (value: number): string => {
+    //     return Math.round(value).toString();
+    //   },
+    // };
+    // console.log("MinAndMax", minValue, this.maxValue);
+    // this.priceMinValue = minValue;
+    // this.priceMaxValue = Math.round(maxValue1 + 10);
+    // this.maxValue = Math.round(maxValue1 + 10);
+    return [minValue]
   }
 
   /**
@@ -473,18 +473,18 @@ export class FlightResultService {
     let min = sorted[sorted.length - 1]['totalDuration'];
     let max = sorted[0]['totalDuration'];
     console.log("Duration", max, min);
-    this.durationMax = max + 100;
-    this.durationMin = min;
-    this.optionsDurathion = {
-      floor: min,
-      ceil: max + 100,
-      noSwitching: true,
-      translate: (value: number): string => {
-        let h = value / 60 | 0;
-        let m = value % 60 | 0;
-        return h + "h" + ":" + m + "m";
-      }
-    }
+    // this.durationMax = max + 100;
+    // this.durationMin = min;
+    // this.optionsDurathion = {
+    //   floor: min,
+    //   ceil: max + 100,
+    //   noSwitching: true,
+    //   translate: (value: number): string => {
+    //     let h = value / 60 | 0;
+    //     let m = value % 60 | 0;
+    //     return h + "h" + ":" + m + "m";
+    //   }
+    // }
     return [min, max + 100];
   }
   /**
@@ -504,19 +504,19 @@ export class FlightResultService {
     });
     console.log("Depart", max, min);
 
-    this.departingMin = min;
-    this.departingMax = max;
-    this.optionsdeparting = {
-      floor: min,
-      ceil: max,
-      noSwitching: false,
-      translate: (value: number): string => {
-        let h = value / 60 | 0;
-        let m = value % 60 | 0;
-        return h + "h" + ":" + m + "m";
-        // return this.datePipe.transform(value * 1000, 'HH:mm a')
-      }
-    };
+    // this.departingMin = min;
+    // this.departingMax = max;
+    // this.optionsdeparting = {
+    //   floor: min,
+    //   ceil: max,
+    //   noSwitching: false,
+    //   translate: (value: number): string => {
+    //     let h = value / 60 | 0;
+    //     let m = value % 60 | 0;
+    //     return h + "h" + ":" + m + "m";
+    //     // return this.datePipe.transform(value * 1000, 'HH:mm a')
+    //   }
+    // };
     return [min, max];
   }
 
@@ -539,18 +539,18 @@ export class FlightResultService {
 
     console.log("Arrival", max, min);
 
-    this.arrivingMin = min;
-    this.arrivingMax = max;
-    this.optionsArriving = {
-      floor: min,
-      ceil: max,
-      noSwitching: true,
-      translate: (value: number): string => {
-        let h = value / 60 | 0;
-        let m = value % 60 | 0;
-        return h + "h" + ":" + m + "m";
-      }
-    };
+    // this.arrivingMin = min;
+    // this.arrivingMax = max;
+    // this.optionsArriving = {
+    //   floor: min,
+    //   ceil: max,
+    //   noSwitching: true,
+    //   translate: (value: number): string => {
+    //     let h = value / 60 | 0;
+    //     let m = value % 60 | 0;
+    //     return h + "h" + ":" + m + "m";
+    //   }
+    // };
     return [min, max];
   }
 

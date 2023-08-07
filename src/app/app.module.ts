@@ -14,11 +14,14 @@ import { SearchboxComponent } from './components/searchbox/searchbox.component';
     AppComponent,
     HomePageComponent,
     CheckoutComponent,
+    SearchboxComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     RpTravelUiModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent] 
