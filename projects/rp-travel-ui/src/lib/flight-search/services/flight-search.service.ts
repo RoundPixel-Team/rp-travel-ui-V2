@@ -51,7 +51,6 @@ export class FlightSearchService {
    * this function is responsible to fill the searchbox form from local storage if it has a previous data
    */
   initSearchForm(form:searchBoxModel) {
-    console.log("FORMMMMM",form);
     if (form) {
       this.flightType = form.flightType;
       //get the flight type based
@@ -154,7 +153,6 @@ export class FlightSearchService {
         ]),
       })
     );
-    console.log("formData in oneway", this.searchFlight.value)
   }
   /**
    * this function is responsible to fill the roundTrip searchbox data from data storage
@@ -694,6 +692,11 @@ export class FlightSearchService {
         retDate = this.setRetDate(this.searchFlight.controls['returnDate'].value);
         //change between depart and land cities and pushing it to flights array
         this.setRetFlight();
+      }
+      else if(this.searchFlight.controls['flightType']?.value == 'oneway' || this.searchFlight.controls['flightType']?.value == 'OneWay' || this.searchFlight.controls['flightType']?.value == 'oneWay'){
+        if(this.flightsArray.length>1){
+          this.removeFlight(1);
+        }
       }
 
       //If All Validations and conditions are true then save the form at local storage and go to search Results
