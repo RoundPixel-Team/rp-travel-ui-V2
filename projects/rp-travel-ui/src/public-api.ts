@@ -40,3 +40,15 @@ export * from './lib/flight-search/interfaces'
 export * from './lib/user-managment/services/user-managment-api.service'
 export * from './lib/user-managment/services/user-managment.service'
 export * from './lib/user-managment/interfaces'
+
+
+// pipes
+export * from './lib/shared/pipes/cod-to-city.pipe'
+export * from './lib/shared/pipes/councode.pipe'
+export * from './lib/shared/pipes/duration-to-hour-min.pipe'
+export * from './lib/shared/pipes/filter-city.pipe'
+export * from './lib/shared/pipes/highlighter.pipe'
+export * from './lib/shared/pipes/hotelecites.pipe'
+export * from './lib/shared/pipes/hour-minute.pipe'
+export * from './lib/shared/pipes/limit-to.pipe'
+export * from './lib/shared/pipes/exchange.pipe'

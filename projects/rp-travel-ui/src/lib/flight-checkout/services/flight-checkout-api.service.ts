@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { EnvironmentService } from '../../shared/services/environment.service';
-import { flightOfflineService, passengersModel, selectedFlight } from '../interfaces';
+import { Cobon, flightOfflineService, passengersModel, selectedFlight } from '../interfaces';
 import { catchError, mergeMap, retry, take } from 'rxjs';
 
 @Injectable({
@@ -36,6 +36,21 @@ export class FlightCheckoutApiService {
   offlineServices(SID: string,POS:string) {
     let api = `${this.env.BookingFlow}/api/GetOfflineServices?SID=${SID}&POS=${POS}`;
     return this.http.get<flightOfflineService[]>(api).pipe(retry(2),take(1),catchError(err=>{console.log(err);throw err}));
+  }
+
+
+  /**
+   * 
+   * @param promo 
+   * @param Sid 
+   * @param sequenceNum 
+   * @param pkey 
+   * @returns disscount amount if the copoun code is active and valid
+   */
+  activateCobon(promo: string, Sid: string, sequenceNum: any, pkey: string) {
+    //check the validity of cobon and return
+    let api = `${this.env.BookingFlow}/api/GetPromotionDetails?PromoCode=${promo}&SearchId=${Sid}&SeqNum=${sequenceNum}&PKey=${pkey}  `;
+    return this.http.get<Cobon>(api).pipe(take(1));
   }
 
 

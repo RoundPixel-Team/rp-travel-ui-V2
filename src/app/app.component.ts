@@ -10,7 +10,6 @@ import { EnvironmentService, HomePageService } from 'rp-travel-ui';
 export class AppComponent implements OnInit{
   
   title = 'rp-travel-ui-V2';
-  public service1 = inject(HomePageService)
   public environment = inject(EnvironmentService)
   private router = inject(Router)
 
@@ -45,17 +44,26 @@ export class AppComponent implements OnInit{
   this.environment.envConfiguration(envObject);
   console.log('search flow end point -->',this.environment.searchflow);
 }
-  ngOnInit(): void { 
-    this.service1.getCurrency('KWD')
+  ngOnInit(): void {
   }  
 
   goToCheckout(){
     this.router.navigate(
       ['/checkout'], 
-      { queryParams: {'sid': '2023B6I1S914H20B40I00S50H40I00', 'sequenceNum': 5, 'providerKey': 52 } })
+      { queryParams: {'sid': '2023B7I2S247H70B10I90S10H90I30', 'sequenceNum': 7, 'providerKey': 52 } })
+  }
+  goToFlightResult(){
+    // this._router.navigate(['SecondComponent', {p1: this.property1, p2: property2 }]);
+
+    this.router.navigate(
+      ['/flightResult/en/KWD/KW/RoundTrip/CAI-DXB-October%2005,%202023_DXB-CAI-October%2020,%202023/2023B6I4S732H10B00I80S30H80I00/A-1-C-0-I-0/Economy/false'],
+      
+
+     )
+  }
   }
   goToSearchbox(){
     this.router.navigate(['/searchbox']);
   }
 
-}
+
