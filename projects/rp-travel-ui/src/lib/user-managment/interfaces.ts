@@ -4,7 +4,7 @@
 export interface userLoginForm{
     Email: string,
     Password: string,
-    Isbase:number
+    Isbase?:number
 }
 
 
@@ -15,8 +15,6 @@ export interface userSignupForm{
     isbase:number,
     email: string,
     password: string,
-    firstName: string,
-    lastName: string,
     imageURL: string,
     phoneNumber: string,
     confirmPassword: string,

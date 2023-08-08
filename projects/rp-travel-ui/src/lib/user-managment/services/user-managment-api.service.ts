@@ -37,4 +37,5 @@ export class UserManagmentApiService {
     return this.http.post<userModel>(api, body).pipe(retry(3), take(1), catchError(err=>{throw err})
     )
   }
+  
 }
