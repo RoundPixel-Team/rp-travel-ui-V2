@@ -4,6 +4,7 @@ import { FlightCheckoutApiService } from './flight-checkout-api.service';
 import { BreakDownView, Cobon, flightOfflineService, passengersModel, selectedFlight } from '../interfaces';
 import { FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { passengerFareBreakDownDTOs,fare } from '../../flight-result/interfaces';
+import { HomePageService } from '../../home-page/services/home-page.service';
 
 type fareCalc = (fare:fare[])=>number;
 type calcEqfare =(flightFaresDTO: passengerFareBreakDownDTOs[],type:string,farecalc:fareCalc)=>number;
@@ -13,6 +14,7 @@ type calcEqfare =(flightFaresDTO: passengerFareBreakDownDTOs[],type:string,farec
 })
 export class FlightCheckoutService {
   api = inject(FlightCheckoutApiService)
+  home = inject(HomePageService)
   subscription : Subscription = new Subscription()
 
 
@@ -98,7 +100,9 @@ export class FlightCheckoutService {
   paymentLink = new Subject();
   paymentLinkFailure = new Subject();
 
-  
+  /**errors varriables */
+
+  selectedFlightError : boolean = false
 
   /**
    * this is a getter to return the users array forms (users) from the main form (usersForm)
@@ -126,25 +130,32 @@ export class FlightCheckoutService {
         if(res){
           // updating the selected flight state
           this.selectedFlight = res
-          this.priceWithRecommenedService = res.airItineraryDTO.itinTotalFare.amount
-          // initilize users forms
-          this.buildUsersForm(
-            res.searchCriteria.adultNum,
-            res.searchCriteria.childNum,
-            res.searchCriteria.infantNum,
-            res.passportDetailsRequired)
-            this.fetchLastPassengerData()
-
-            // assign values to fare breakup and fare disscount
-            this.calculateFareBreakupDisscount()
-            this.calculatePassengersFareBreakupValue()
-
           // updating the loading state
           this.loader = false
+          if(res.status == 'Valid'){
+            this.priceWithRecommenedService = res.airItineraryDTO.itinTotalFare.amount
+            // initilize users forms
+            this.buildUsersForm(
+              res.searchCriteria.adultNum,
+              res.searchCriteria.childNum,
+              res.searchCriteria.infantNum,
+              res.passportDetailsRequired)
+              this.fetchLastPassengerData()
+
+              // assign values to fare breakup and fare disscount
+              this.calculateFareBreakupDisscount()
+              this.calculatePassengersFareBreakupValue()
+          }
+          
+          else{
+            this.selectedFlightError = true
+          }
+
         }
       },(err:any)=>{
         console.log('get selected flight error ->',err)
         this.loader = false
+        this.selectedFlightError = true
       })
     )
   }
@@ -219,20 +230,19 @@ export class FlightCheckoutService {
               Validators.email,
               Validators.minLength(9),
             ]),
-            phonenum: new FormControl("", [
+            phoneNumber: new FormControl("", [
               Validators.required,
               Validators.maxLength(5),
             ]),
-            national: new FormControl("", [
-              Validators.required,
-              Validators.minLength(3),
+            nationality: new FormControl("", [
+              Validators.required
             ]),
             dateOfBirth: new FormControl("", [Validators.required]),
-            type: new FormControl("ADT"),
-            countryofresident: new FormControl("", [Validators.required]),
-            passportnumber: new FormControl("", [Validators.required]),
-            expdate: new FormControl("", [Validators.required]),
-            issuedcountry: new FormControl("", [Validators.required]),
+            PassengerType: new FormControl("ADT"),
+            countryOfResidence: new FormControl("", [Validators.required]),
+            PassportNumber: new FormControl("", [Validators.required]),
+            PassportExpiry: new FormControl("", [Validators.required]),
+            IssuedCountry: new FormControl("", [Validators.required]),
             position: new FormControl(this.usersArray.length + 1)
           })
         )
@@ -259,13 +269,13 @@ export class FlightCheckoutService {
               ]),
               passportnum: new FormControl("", [Validators.max(16)]),
               dateOfBirth: new FormControl("", [Validators.required]),
-              national: new FormControl("", [Validators.required]),
-              type: new FormControl("CNN"),
-              phonenum: new FormControl(""),
-              countryofresident: new FormControl("", [Validators.required]),
-              passportnumber: new FormControl("", [Validators.required]),
-              expdate: new FormControl("", [Validators.required]),
-              issuedcountry: new FormControl("", [Validators.required]),
+              nationality: new FormControl("", [Validators.required]),
+              PassengerType: new FormControl("CNN"),
+              phoneNumber: new FormControl(""),
+              countryOfResidence: new FormControl("", [Validators.required]),
+              PassportNumber: new FormControl("", [Validators.required]),
+              PassportExpiry: new FormControl("", [Validators.required]),
+              IssuedCountry: new FormControl("", [Validators.required]),
               position: new FormControl(this.usersArray.length)
             })
           )
@@ -293,13 +303,13 @@ export class FlightCheckoutService {
             ]),
             passportnum: new FormControl("", [Validators.maxLength(12)]),
             dateOfBirth: new FormControl("", [Validators.required]),
-            national: new FormControl("", [Validators.required]),
-            type: new FormControl("INF"),
-            phonenum: new FormControl(""),
-            countryofresident: new FormControl("", [Validators.required]),
-            passportnumber: new FormControl("", [Validators.required]),
-            expdate: new FormControl("", [Validators.required]),
-            issuedcountry: new FormControl("", [Validators.required]),
+            nationality: new FormControl("", [Validators.required]),
+            PassengerType: new FormControl("INF"),
+            phoneNumber: new FormControl(""),
+            countryOfResidence: new FormControl("", [Validators.required]),
+            PassportNumber: new FormControl("", [Validators.required]),
+            PassportExpiry: new FormControl("", [Validators.required]),
+            IssuedCountry: new FormControl("", [Validators.required]),
             position: new FormControl(this.usersArray.length)
           })
         )
@@ -332,20 +342,19 @@ export class FlightCheckoutService {
               Validators.email,
               Validators.minLength(9),
             ]),
-            phonenum: new FormControl("", [
+            phoneNumber: new FormControl("", [
               Validators.required,
               Validators.maxLength(5),
             ]),
-            national: new FormControl("", [
-              Validators.required,
-              Validators.minLength(3),
+            nationality: new FormControl("", [
+              Validators.required
             ]),
             dateOfBirth: new FormControl("", [Validators.required]),
-            type: new FormControl("ADT"),
-            countryofresident: new FormControl("", [Validators.required]),
-            passportnumber: new FormControl(""),
-            expdate: new FormControl(""),
-            issuedcountry: new FormControl(""),
+            PassengerType: new FormControl("ADT"),
+            countryOfResidence: new FormControl("", [Validators.required]),
+            PassportNumber: new FormControl(""),
+            PassportExpiry: new FormControl(""),
+            IssuedCountry: new FormControl(""),
             position: new FormControl(this.usersArray.length + 1)
           })
         )
@@ -372,13 +381,13 @@ export class FlightCheckoutService {
             ]),
             passportnum: new FormControl("", [Validators.max(16)]),
             dateOfBirth: new FormControl("", [Validators.required]),
-            national: new FormControl("", [Validators.required]),
-            type: new FormControl("CNN"),
-            phonenum: new FormControl(""),
-            countryofresident: new FormControl(""),
-            passportnumber: new FormControl(""),
-            expdate: new FormControl(""),
-            issuedcountry: new FormControl(""),
+            nationality: new FormControl("", [Validators.required]),
+            PassengerType: new FormControl("CNN"),
+            phoneNumber: new FormControl(""),
+            countryOfResidence: new FormControl(""),
+            PassportNumber: new FormControl(""),
+            PassportExpiry: new FormControl(""),
+            IssuedCountry: new FormControl(""),
             position: new FormControl(this.usersArray.length)
           })
         )
@@ -406,13 +415,13 @@ export class FlightCheckoutService {
           ]),
           passportnum: new FormControl("", [Validators.maxLength(12)]),
           dateOfBirth: new FormControl("", [Validators.required]),
-          national: new FormControl("", [Validators.required]),
-          type: new FormControl("INF"),
-          phonenum: new FormControl(""),
-          countryofresident: new FormControl(""),
-          passportnumber: new FormControl(""),
-          expdate: new FormControl(""),
-          issuedcountry: new FormControl(""),
+          nationality: new FormControl("", [Validators.required]),
+          PassengerType: new FormControl("INF"),
+          phoneNumber: new FormControl(""),
+          countryOfResidence: new FormControl(""),
+          PassportNumber: new FormControl(""),
+          PassportExpiry: new FormControl(""),
+          IssuedCountry: new FormControl(""),
           position: new FormControl(this.usersArray.length)
         })
       )
@@ -533,21 +542,27 @@ export class FlightCheckoutService {
     this.loader = true
     this.subscription.add(
 
+
       this.api.saveBooking(
       this.selectedFlight?.searchCriteria.searchId!,
       this.selectedFlight?.airItineraryDTO.sequenceNum!,
       this.generateSaveBookingBodyParam(currentCurrency),
       this.selectedFlight?.airItineraryDTO.pKey!.toString()!,
       this.selectedFlight?.searchCriteria.language!,
-      this.selectedOfflineServices)
+      this.selectedOfflineServices,
+      this.home.pointOfSale.ip || "00.00.000.000",
+      this.home.pointOfSale.country || 'kw'
+      )
 
     .subscribe((res)=>{
+      console.log("shoe me payment link")
       this.paymentLink.next(res)
       this.loader = false;
     },(err)=>{
       console.log("SAVE BOOKING ERROR", err)
       this.paymentLinkFailure.next(err)
       this.loader = false
+      this.selectedFlightError = true
     }))
     
   }
@@ -559,6 +574,19 @@ export class FlightCheckoutService {
    * @returns the passenger details (body param) needed by backend to make the save booking action
    */
   generateSaveBookingBodyParam(currentCurrency:string):passengersModel{
+    for(var i = 0 ; i < this.usersArray.length; i++){
+      if(this.usersArray.at(i).get('title')!.value == 'Male'){
+        this.usersArray.at(i).get('title')!.setValue('Mr')
+      }
+      else if(this.usersArray.at(i).get('title')!.value == 'Female'){
+        this.usersArray.at(i).get('title')!.setValue('Ms')
+      }
+      this.usersArray.at(i).get('phoneNumber')?.setValue(this.usersArray.at(i).get('phoneNumber')?.value.e164Number)
+      this.usersArray.at(i).get('countryOfResidence')?.setValue(this.home.allCountries
+        .filter(c=>{return c.countryName == this.usersArray.at(i).get('countryOfResidence')?.value})[0].pseudoCountryCode)
+        this.usersArray.at(i).get('IssuedCountry')?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value)
+        this.usersArray.at(i).get('nationality')?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value)
+    }
     let object : passengersModel = {
       bookingEmail:this.usersArray.at(0).get('email')?.value,
       DiscountCode:this.copounCodeDetails?.promotionDetails.discountCode || '',
