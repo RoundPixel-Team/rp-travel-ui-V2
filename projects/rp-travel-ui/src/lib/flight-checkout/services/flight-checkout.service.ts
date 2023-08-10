@@ -234,6 +234,7 @@ export class FlightCheckoutService {
               Validators.required,
               Validators.maxLength(5),
             ]),
+            countryCode: new FormControl(""),
             nationality: new FormControl("", [
               Validators.required
             ]),
@@ -272,6 +273,7 @@ export class FlightCheckoutService {
               nationality: new FormControl("", [Validators.required]),
               PassengerType: new FormControl("CNN"),
               phoneNumber: new FormControl(""),
+              countryCode: new FormControl(""),
               countryOfResidence: new FormControl("", [Validators.required]),
               PassportNumber: new FormControl("", [Validators.required]),
               PassportExpiry: new FormControl("", [Validators.required]),
@@ -306,6 +308,7 @@ export class FlightCheckoutService {
             nationality: new FormControl("", [Validators.required]),
             PassengerType: new FormControl("INF"),
             phoneNumber: new FormControl(""),
+            countryCode: new FormControl(""),
             countryOfResidence: new FormControl("", [Validators.required]),
             PassportNumber: new FormControl("", [Validators.required]),
             PassportExpiry: new FormControl("", [Validators.required]),
@@ -346,6 +349,7 @@ export class FlightCheckoutService {
               Validators.required,
               Validators.maxLength(5),
             ]),
+            countryCode: new FormControl(""),
             nationality: new FormControl("", [
               Validators.required
             ]),
@@ -384,6 +388,7 @@ export class FlightCheckoutService {
             nationality: new FormControl("", [Validators.required]),
             PassengerType: new FormControl("CNN"),
             phoneNumber: new FormControl(""),
+            countryCode: new FormControl(""),
             countryOfResidence: new FormControl(""),
             PassportNumber: new FormControl(""),
             PassportExpiry: new FormControl(""),
@@ -418,6 +423,7 @@ export class FlightCheckoutService {
           nationality: new FormControl("", [Validators.required]),
           PassengerType: new FormControl("INF"),
           phoneNumber: new FormControl(""),
+          countryCode: new FormControl(""),
           countryOfResidence: new FormControl(""),
           PassportNumber: new FormControl(""),
           PassportExpiry: new FormControl(""),
@@ -581,7 +587,10 @@ export class FlightCheckoutService {
       else if(this.usersArray.at(i).get('title')!.value == 'Female'){
         this.usersArray.at(i).get('title')!.setValue('Ms')
       }
-      this.usersArray.at(i).get('phoneNumber')?.setValue(this.usersArray.at(i).get('phoneNumber')?.value.e164Number)
+      
+      this.usersArray.at(i).get('countryCode')?.setValue((<string>this.usersArray.at(i).get('phoneNumber')?.value.dialCode).replace("+",''))
+      this.usersArray.at(i).get('phoneNumber')?.setValue(this.usersArray.at(i).get('phoneNumber')?.value.number)
+      
       this.usersArray.at(i).get('countryOfResidence')?.setValue(this.home.allCountries
         .filter(c=>{return c.countryName == this.usersArray.at(i).get('countryOfResidence')?.value})[0].pseudoCountryCode)
         this.usersArray.at(i).get('IssuedCountry')?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value)
