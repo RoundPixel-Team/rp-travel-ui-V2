@@ -99,7 +99,10 @@ export class FlightCheckoutService {
 
   paymentLink = new Subject();
   paymentLinkFailure = new Subject();
-
+  /**
+   * variable to hold the value of the selected flight language
+   */
+  selectedFlightLang = new Subject();
   /**errors varriables */
 
   selectedFlightError : boolean = false
@@ -130,6 +133,7 @@ export class FlightCheckoutService {
         if(res){
           // updating the selected flight state
           this.selectedFlight = res
+          this.selectedFlightLang.next(res.searchCriteria.language)
           // updating the loading state
           this.loader = false
           if(res.status == 'Valid'){
