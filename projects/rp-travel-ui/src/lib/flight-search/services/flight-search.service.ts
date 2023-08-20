@@ -69,7 +69,9 @@ export class FlightSearchService {
       this.flightType == 'multicity') {
         this.multiData(form);
       }
-    } else {
+    }
+    //no values on local storage 
+    else {
       this.searchFlight = new FormGroup({
         flightType: new FormControl('', [Validators.required]),
         Direct: new FormControl(false, [Validators.required]),
@@ -404,6 +406,17 @@ export class FlightSearchService {
    */
   setClassValue(classVal: string) {
     this.searchFlight.controls['class'].setValue(classVal);
+  }
+  /**
+   * this function is responsible to exchange between destinations
+   * @params item which i want to exchange (from Type searchBoxFlights)
+   */
+  switchDestination(item: FormGroup) {
+    let destination1 = item.get("landing")?.value;
+    let destination2 = item.get("departing")?.value;
+    item.get("departing")?.setValue(destination1);
+    item.get("landing")?.setValue(destination2);
+    item.updateValueAndValidity();
   }
   /**
    * this function is responsible to return current Date
