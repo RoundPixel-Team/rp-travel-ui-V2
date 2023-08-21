@@ -49,12 +49,9 @@ export class FlightResultComponent implements OnInit {
           showDirect = true;
         }
         this.FlightResultService.getDataFromUrl(lang, currency, pointOfReservation, flightType, flightsInfo, serachId, passengers, Cclass, showDirect)
-        console.log("ggfggf", this.FlightResultService.getDataFromUrl(lang, currency, pointOfReservation, flightType, flightsInfo, serachId, passengers, Cclass, showDirect))
 
       });
-      console.log("sortData" ,this.FlightResultService.FilterData)
-      console.log("airlinesA", this.FlightResultService.airlinesA)
-      console.log("airlinesA", this.FlightResultService.bookingSites)
+   
      
       }
 
