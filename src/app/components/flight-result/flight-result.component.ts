@@ -1,4 +1,3 @@
-import { Options } from '@angular-slider/ngx-slider';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
@@ -13,13 +12,7 @@ import { filter } from 'rxjs';
 export class FlightResultComponent implements OnInit {
   FlightResultService = inject(FlightResultService)
   route = inject(ActivatedRoute)
-  options: Options = {
-    floor: 0,
-    ceil: 5000,
-    translate: (value: number): string => {
-      return Math.round(value).toString();
-    },
-  };
+
 
   filterFormm: FormGroup  = this.FlightResultService.filterForm
   constructor() { }

@@ -143,7 +143,7 @@ export class FlightResultService {
 *  array return data type airItineraries[] after organize
 * 
 */
-  orgnizedResponce: airItineraries[] = [];
+  orgnizedResponce: airItineraries[][] = [];
   constructor() { }
 
 
