@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { FlightCheckoutApiService } from './flight-checkout-api.service';
-import { BreakDownView, Cobon, flightOfflineService, selectedFlight } from '../interfaces';
+import { BreakDownView, Cobon, flightOfflineService, passengersModel, selectedFlight } from '../interfaces';
 import { FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { passengerFareBreakDownDTOs,fare } from '../../flight-result/interfaces';
 
@@ -54,6 +54,11 @@ export class FlightCheckoutService {
    */
   copounCodeDetails : Cobon | undefined
 
+  /**
+   * this is containing the error while applying copoun code
+   */
+  copounCodeError : string = ''
+
 
   /**
    * this is the main form for the checkout which contains all users array forms
@@ -79,6 +84,9 @@ export class FlightCheckoutService {
    */
   fareBreackup : BreakDownView | undefined
 
+
+  paymentLink = new Subject();
+  paymentLinkFailure = new Subject();
 
   
 
@@ -444,6 +452,7 @@ export class FlightCheckoutService {
         }
       },(err)=>{
         console.log("apply copoun code ERROR",err)
+        this.copounCodeError = err
         this.copounCodeLoader = false
       })
     )
@@ -461,6 +470,11 @@ export class FlightCheckoutService {
   }
 
 
+  /**
+   * 
+   * @returns error type either main form error (email & phone number) or passenger error (error happens while entering passengers data)
+   * IT RETURNS (Valid) in the type of string this means that every thing is OK and ready to payment
+   */
   validatePassengersForm():string{
     let error : string = ''
     for(var i = 0 ; i < this.usersArray.length ; i++){
@@ -481,9 +495,51 @@ export class FlightCheckoutService {
     return error
   }
 
-  saveBooking(){
-    console.log("show me my form",this.validatePassengersForm())
+
+  /**
+   * 
+   * @param currentCurrency 
+   * here is the save booking function which returning the payment link if all params is good
+   * it updates the behaviour subject (paymentLink) with the link
+   * it also updates the behaviour subject (paymentLinkFailure) with the error
+   */
+  saveBooking(currentCurrency:string){
+    this.loader = true
+    this.subscription.add(
+
+      this.api.saveBooking(
+      this.selectedFlight?.searchCriteria.searchId!,
+      this.selectedFlight?.airItineraryDTO.sequenceNum!,
+      this.generateSaveBookingBodyParam(currentCurrency),
+      this.selectedFlight?.airItineraryDTO.pKey!.toString()!,
+      this.selectedFlight?.searchCriteria.language!,
+      this.selectedOfflineServices)
+
+    .subscribe((res)=>{
+      this.paymentLink.next(res)
+      this.loader = false;
+    },(err)=>{
+      console.log("SAVE BOOKING ERROR", err)
+      this.paymentLinkFailure.next(err)
+      this.loader = false
+    }))
     
+  }
+
+
+  /**
+   * 
+   * @param currentCurrency 
+   * @returns the passenger details (body param) needed by backend to make the save booking action
+   */
+  generateSaveBookingBodyParam(currentCurrency:string):passengersModel{
+    let object : passengersModel = {
+      bookingEmail:this.usersArray.at(0).get('email')?.value,
+      DiscountCode:this.copounCodeDetails?.promotionDetails.discountCode || '',
+      passengersDetails:this.usersArray.value,
+      UserCurrency:currentCurrency
+    }
+    return object
   }
 
 

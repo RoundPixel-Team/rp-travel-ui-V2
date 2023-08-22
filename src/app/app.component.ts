@@ -51,7 +51,7 @@ export class AppComponent implements OnInit{
   goToCheckout(){
     this.router.navigate(
       ['/checkout'], 
-      { queryParams: {'sid': '2023B6I0S30H40B20I80S30H30I60', 'sequenceNum': 2, 'providerKey': 52 } })
+      { queryParams: {'sid': '2023B6I1S328H50B30I50S60H70I80', 'sequenceNum': 2, 'providerKey': 52 } })
   }
   goToFlightResult(){
     // this._router.navigate(['SecondComponent', {p1: this.property1, p2: property2 }]);
