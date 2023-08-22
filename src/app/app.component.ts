@@ -10,7 +10,6 @@ import { EnvironmentService, HomePageService } from 'rp-travel-ui';
 export class AppComponent implements OnInit{
   
   title = 'rp-travel-ui-V2';
-  public service1 = inject(HomePageService)
   public environment = inject(EnvironmentService)
   private router = inject(Router)
 
@@ -46,7 +45,7 @@ export class AppComponent implements OnInit{
   console.log('search flow end point -->',this.environment.searchflow);
 }
   ngOnInit(): void { 
-    this.service1.getCurrency('KWD') 
+    // this.service1.getCurrency('KWD') 
   }  
 
   goToCheckout(){
