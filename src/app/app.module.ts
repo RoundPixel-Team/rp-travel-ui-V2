@@ -8,19 +8,24 @@ import { HomePageComponent } from './components/home-page/home-page.component';
 import { CheckoutComponent } from './components/checkout/checkout.component';
 import { FlightResultComponent } from './components/flight-result/flight-result.component';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SearchboxComponent } from './components/searchbox/searchbox.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomePageComponent,
     CheckoutComponent,
-    FlightResultComponent
+    FlightResultComponent,
+    SearchboxComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     RpTravelUiModule,
-    NgxSliderModule
+    NgxSliderModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent] 

@@ -63,5 +63,8 @@ export class AppComponent implements OnInit{
      )
   }
   }
+  goToSearchbox(){
+    this.router.navigate(['/searchbox']);
+  }
 
 
