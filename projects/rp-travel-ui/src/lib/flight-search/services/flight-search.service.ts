@@ -84,7 +84,7 @@ export class FlightSearchService {
               Validators.min(1),
             ]),
             child: new FormControl(0, [Validators.required, Validators.min(0)]),
-            infent: new FormControl(0, [
+            infant: new FormControl(0, [
               Validators.required,
               Validators.max(4),
               Validators.min(0),
@@ -132,7 +132,7 @@ export class FlightSearchService {
             Validators.required,
             Validators.min(0),
           ]),
-          infent: new FormControl(localForm['passengers']['infent'], [
+          infant: new FormControl(localForm['passengers']['infant'], [
             Validators.required,
             Validators.min(0),
           ]),
@@ -180,7 +180,7 @@ export class FlightSearchService {
             Validators.required,
             Validators.min(0),
           ]),
-          infent: new FormControl(localForm['passengers']['infent'], [
+          infant: new FormControl(localForm['passengers']['infant'], [
             Validators.required,
             Validators.min(0),
           ]),
@@ -239,7 +239,7 @@ export class FlightSearchService {
             Validators.required,
             Validators.min(0),
           ]),
-          infent: new FormControl(localForm['passengers']['infent'], [
+          infant: new FormControl(localForm['passengers']['infant'], [
             Validators.required,
             Validators.min(0),
           ]),
@@ -324,8 +324,8 @@ export class FlightSearchService {
    * @return object of string error message (passengerAlert)
    * if message is empty then the validation is true
    */
-  getTotalPassengers(adult: number, child: number, infent: number) {
-    return adult + child + infent;
+  getTotalPassengers(adult: number, child: number, infant: number) {
+    return adult + child + infant;
   }
   /**
    * this function is responsible to change Value Of Adult passenger
@@ -336,7 +336,7 @@ export class FlightSearchService {
     let Total = this.getTotalPassengers(
       num,
       this.searchFlight?.get('passengers.child')?.value,
-      this.searchFlight?.get('passengers.infent')?.value
+      this.searchFlight?.get('passengers.infant')?.value
     );
     if (num <= 9 && num != 0 && Total <= 9) {
       this.searchFlight?.get('passengers.adults')?.setValue(num);
@@ -361,7 +361,7 @@ export class FlightSearchService {
     let Total = this.getTotalPassengers(
       this.searchFlight?.get('passengers.adults')?.value,
       num,
-      this.searchFlight?.get('passengers.infent')?.value
+      this.searchFlight?.get('passengers.infant')?.value
     );
     if (num <= 9 && Total <= 9) {
       this.searchFlight?.get('passengers.child')?.setValue(num);
@@ -375,13 +375,13 @@ export class FlightSearchService {
     }
   }
   /**
-   * this function is responsible to change Value Of infent passenger
+   * this function is responsible to change Value Of infant passenger
    * @return object of string error message (passengerAlert)
    * if message is empty then the validation is true
    */
-  changeInfentPassenger(num: number) {
+  changeinfantPassenger(num: number) {
     let adultVal = this.searchFlight?.get('passengers.adults')?.value;
-    //get total number of passenger with new selected infent value
+    //get total number of passenger with new selected infant value
     let Total = this.getTotalPassengers(
       adultVal,
       this.searchFlight?.get('passengers.child')?.value,
@@ -394,7 +394,7 @@ export class FlightSearchService {
       return this.passengerAlert;
     } else {
       this.passengerAlert.enMsg =
-        'Infents number should be equal or less than Adults number and maximum number Of passenger Should Be 9';
+        'infants number should be equal or less than Adults number and maximum number Of passenger Should Be 9';
       this.passengerAlert.arMsg =
         'يجب أن يكون عدد الأطفال الرضع مساوياً أو أقل من عدد البالغين والحد الأقصى لعدد الركاب يجب أن يكون 9';
       return this.passengerAlert;
@@ -646,7 +646,7 @@ export class FlightSearchService {
   }
   /**
    * this function is responsible to convert array of passanger type number to A-1-C-0-I-0
-   * @params passenger object with total numbers of adults,child and Infents
+   * @params passenger object with total numbers of adults,child and infants
    * @example 'en/KWD/EG/RoundTrip/KWI-CAI-August%2019,%202023_CAI-KWI-August%2031,%202023/2023B7I0S617H00B50I90S10H20I30/A-1-C-0-I-0/Economy/false'
    */
   passengerFormatter(passengerObj: searchBoxPassengers) {
@@ -657,7 +657,7 @@ export class FlightSearchService {
       '-C-' +
       passengerObj.child +
       '-I-' +
-      passengerObj.infent;
+      passengerObj.infant;
     return passengersString;
   }
   /**
@@ -696,7 +696,7 @@ export class FlightSearchService {
       //call all functions validation for all passengers type and flight dates
       let adult = this.changeAdultPassenger(this.searchFlight?.get('passengers.adult')?.value);
       let child = this.changeChildPassenger(this.searchFlight?.get('passengers.child')?.value);
-      let infent = this.changeInfentPassenger( this.searchFlight?.get('passengers.infent')?.value);
+      let infant = this.changeinfantPassenger( this.searchFlight?.get('passengers.infant')?.value);
       var retDate: AlertMsgModel = { arMsg: '', enMsg: '' };
       let depDate = this.setDepDate((<FormArray>this.searchFlight?.get('Flights')).at(0)?.get('departingD')?.value,0);
 
@@ -713,10 +713,10 @@ export class FlightSearchService {
       }
 
       //If All Validations and conditions are true then save the form at local storage and go to search Results
-      if (!adult.enMsg &&!child.enMsg &&!infent.enMsg &&!depDate.enMsg && !retDate?.enMsg) {
+      if (!adult.enMsg &&!child.enMsg &&!infant.enMsg &&!depDate.enMsg && !retDate?.enMsg) {
         return this.getSearchresultLink(lang,currency,pointOfSale,spiltIndex,splitPattern);
       } else {
-        return { adult, child, infent, retDate, depDate };
+        return { adult, child, infant, retDate, depDate };
       }
       
     }
