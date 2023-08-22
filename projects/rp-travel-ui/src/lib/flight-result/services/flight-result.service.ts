@@ -54,6 +54,9 @@ export class FlightResultService {
   */
   priceMaxValue: number = 5000;
   FilterChanges$: Subscription = new Subscription();
+
+
+  priceOptions : any
   /**
  *  optins init and return data as string 
  * 
@@ -448,9 +451,18 @@ export class FlightResultService {
     ];
 
     let minValue = sortedRes[0].itinTotalFare.amount;
-    let maxValue1 = sortedRes[sortedRes.length - 1].itinTotalFare.amount;
+    let maxValue1 = sortedRes[sortedRes.length - 1].itinTotalFare.amount + 100;
 
 
+    this.priceOptions = {
+      floor: minValue,
+      ceil: maxValue1,
+      minLimit:minValue,
+      maxLimit:maxValue1,
+      translate: (value: number): string => {
+        return this.code + Math.round(value*this.rate);
+      }
+    };
     return [minValue]
   }
 
