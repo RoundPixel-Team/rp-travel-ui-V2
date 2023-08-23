@@ -307,10 +307,10 @@ export class FlightSearchService {
    * this function is responsible to remove flight from multi city
    * @return object of string error message (removeFlightAlert)
    */
-  removeFlight(flightIndex: number) {
+  removeFlight() {
     let len = this.flightsArray.length;
     if (len > 1) {
-      (<FormArray>this.searchFlight.get('Flights')).removeAt(flightIndex);
+      (<FormArray>this.searchFlight.get('Flights')).removeAt(len-1);
       return this.removeFlightAlert;
     } else {
       this.removeFlightAlert.enMsg = "You Don't have any flights to remove";
@@ -707,7 +707,7 @@ export class FlightSearchService {
       }
       else if(this.searchFlight.controls['flightType']?.value == 'oneway' || this.searchFlight.controls['flightType']?.value == 'OneWay' || this.searchFlight.controls['flightType']?.value == 'oneWay'){
         if(this.flightsArray.length>1){
-          this.removeFlight(1);
+          this.removeFlight();
         }
       }
 
