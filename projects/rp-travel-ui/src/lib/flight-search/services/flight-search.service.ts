@@ -309,7 +309,7 @@ export class FlightSearchService {
    */
   removeFlight(flightIndex: number) {
     let len = this.flightsArray.length;
-    if (len > 0) {
+    if (len > 1) {
       (<FormArray>this.searchFlight.get('Flights')).removeAt(flightIndex);
       return this.removeFlightAlert;
     } else {
