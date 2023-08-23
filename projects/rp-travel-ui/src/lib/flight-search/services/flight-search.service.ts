@@ -7,7 +7,6 @@ import {
   searchBoxPassengers,
   searchFlightModel,
 } from '../interfaces';
-import { FlightSearchApiService } from './flight-search-api.service';
 import { AlertMsgModel } from '../../shared/interfaces';
 import { DatePipe } from '@angular/common';
 
@@ -411,7 +410,7 @@ export class FlightSearchService {
    * this function is responsible to exchange between destinations
    * @params item which i want to exchange (from Type searchBoxFlights)
    */
-  switchDestination(item: FormGroup) {
+  switchDestination(item : any) {
     let destination1 = item.get("landing")?.value;
     let destination2 = item.get("departing")?.value;
     item.get("departing")?.setValue(destination1);
