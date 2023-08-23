@@ -8,6 +8,7 @@ import { HomePageComponent } from './components/home-page/home-page.component';
 import { CheckoutComponent } from './components/checkout/checkout.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SearchboxComponent } from './components/searchbox/searchbox.component';
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { SearchboxComponent } from './components/searchbox/searchbox.component';
     BrowserModule,
     AppRoutingModule,
     RpTravelUiModule,
+    NgxSliderModule,
     FormsModule,
     ReactiveFormsModule
   ],

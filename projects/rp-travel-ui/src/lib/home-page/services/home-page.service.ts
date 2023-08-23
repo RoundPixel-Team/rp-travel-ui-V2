@@ -246,7 +246,9 @@ extractOfferData(id:number | string){
             if(res){
               this.offlineItinerary=res;
             }
-          })
+          },(err:any)=>{
+            console.log('offline itinerary err==>',err);
+            })
 
         
 
@@ -258,7 +260,11 @@ extractOfferData(id:number | string){
 }
 /**
  * 
- * @returns submit offer booking form logic
+ * @param source 
+ * @param langCode 
+ * @param phonecountrycode 
+ * @returns it send the request of book offer form with the http headers which are the passed
+ *  parameters and with the body of the request in type of (BookedOffer)
  */
 bookOffer(source:string,langCode:string,phonecountrycode:string){
 let offerId=this.route.snapshot.paramMap.get("id");
