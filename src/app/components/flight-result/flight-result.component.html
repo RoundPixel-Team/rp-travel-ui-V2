@@ -1,4 +1,4 @@
-<p>flight-result works!</p>
+<!-- <p>flight-result works!</p>
 <button (click)="sort(1)">SortData</button>
 
 <p>filter</p>
@@ -46,52 +46,4 @@
           </ng-container>
 
         </div>
-</form>
-<div class="oneway-container" *ngFor="let flights of this.FlightResultService.orgnizedResponce">
-    
-    <div >
-      
-          <div class="" *ngIf="flights != null">
-            <div class="card-content" *ngFor="let flight of flights">
-            <div *ngIf="flight.allJourney!.flights[0] as data">
-            
-            <div class="row">
-                <div class="col-9 p-1">
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="flight-time">
-                                {{ data.flightDTO![0].departureDate | date : "shortTime" }} -
-                                {{
-                                  data.flightDTO![data.flightDTO!.length - 1].arrivalDate
-                                    | date : "shortTime"
-                                }}
-                              </div>
-                        </div>
-                 
-                    </div>
-                
-                </div>
-                <div class="col-3 align-items-center">
-                    <div class="flight-price"></div>
-                   
-                    <div class="refund-state">
-                        <div *ngIf="flight.isRefundable">
-                          Ref
-                          </div>
-                          <div *ngIf="!flight.isRefundable">
-                            non-REf
-                          </div>
-                    </div>
-
-                </div>
-            </div>
-
-            </div>
-   
-            </div>
-          </div>
-      
-       
-    </div>
-
-</div>
+</form> -->
