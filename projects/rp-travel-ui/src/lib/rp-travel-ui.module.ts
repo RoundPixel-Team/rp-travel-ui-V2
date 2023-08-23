@@ -12,7 +12,6 @@ import { HourMinutePipe } from './shared/pipes/hour-minute.pipe';
 import { LimitToPipe } from './shared/pipes/limit-to.pipe';
 import { ExchangePipe } from './shared/pipes/exchange.pipe';
 import { DatePipe } from '@angular/common';
-import { NgxSliderModule } from '@angular-slider/ngx-slider';
 
 
 
@@ -31,7 +30,6 @@ import { NgxSliderModule } from '@angular-slider/ngx-slider';
   ],
   imports: [
     HttpClientModule,
-    NgxSliderModule,
     ReactiveFormsModule,
     FormsModule,
 
@@ -49,7 +47,6 @@ import { NgxSliderModule } from '@angular-slider/ngx-slider';
     HotelecitesPipe,
     HourMinutePipe,
     LimitToPipe,
-    NgxSliderModule,
     ExchangePipe
   ],
   providers:[HttpClient, DatePipe]
