@@ -136,6 +136,10 @@ export class FlightResultService {
       nonRefund: new FormControl(false)
     })
   });
+
+  formINIT:boolean =false;
+
+  priceOptions! : Options
   subscription: Subscription = new Subscription()
 
   moreT: boolean[] = [];
@@ -164,6 +168,7 @@ export class FlightResultService {
 
       this.subscription.add(this.api.searchFlight(myapi).subscribe(
         (result) => {
+          this.formINIT =false;
           if (result.status == 'Valid') {
             this.loading = false;
             this.ResultFound = true;
@@ -223,22 +228,11 @@ export class FlightResultService {
             this.bookingSites.forEach(element => {
               (<FormArray>this.filterForm.get('bookingSite')?.get('bookingSites')).push(new FormControl(false));
             })
+            this.setSliderOptions();
+            this.filterForm.updateValueAndValidity();
+            this.formINIT = true;
             this.updateFilter()
-
-
-
-
-
-
-
-
-
-
           }
-
-
-
-
           else {
             this.normalError = "No result found. <br> please search again"
             this.normalErrorStatus = true;
@@ -259,8 +253,8 @@ export class FlightResultService {
   updateFilter() {
     this.subscription.add(
       this.filterForm.valueChanges.subscribe((val) => {
-        console.log("filter form touched condition",this.filterForm.touched)
-        if (this.filterForm.touched) {
+        console.log("filter form value",this.filterForm.value)
+        if (this.formINIT) {
           let filter: flightResultFilter = new flightResultFilter(
             this.filterForm.get("sameAirline")?.value!,
             this.filterForm.get("priceSlider")?.value![0],
@@ -842,6 +836,72 @@ export class FlightResultService {
       }
       return airlineChange;
     }
+  }
+
+
+  /**
+   * after finding the min and max values for all filtiration critirias .. update the sliders with these ,,
+   * minimum and maximum values
+   */
+  setSliderOptions(){
+    this.optionsDurathion={
+      floor: this.durationMin,
+      ceil: this.durationMax,
+      noSwitching: true,
+      translate: (value: number): string => {
+        let h = value / 60 | 0;
+        let m = value % 60 | 0;
+        return h + "h" + ":" + m + "m";
+      }
+    }
+
+  this.optionsdeparting = {
+    floor: this.departingMin,
+    ceil: this.departingMax,
+    noSwitching: false,
+    translate: (value: number): string => {
+      let h = value / 60 | 0;
+      let m = value % 60 | 0;
+      
+      return `${this.hoursFormater(h)}:${this.mFormater(m)} ${this.DayOrNight(h,m)}`;
+    }
+  };
+
+    this.optionsArriving = {
+      floor: this.arrivingMin,
+      ceil: this.arrivingMax,
+      noSwitching: true,
+      translate: (value: number): string => {
+        let h = value / 60 | 0;
+        let m = value % 60 | 0;
+        return `${this.hoursFormater(h)}:${this.mFormater(m)} ${this.DayOrNight(h,m)}`;
+      }
+    };
+
+  this.options = {
+    floor: this.priceMinValue,
+    ceil: Math.round(this.priceMaxValue + 1),
+    minLimit:Math.round(this.priceMinValue),
+    maxLimit:Math.round(this.priceMaxValue+1),
+    translate: (value: number): string => {
+      return this.code + Math.round(value*this.rate);
+    }
+  };
+  }
+
+
+  DayOrNight(h:number,m:number):string{
+    let hourOfday = h > 24?h%24:h;
+   return hourOfday+(m/100) > 12?'PM':"AM"
+  }
+  hoursFormater(h:number):string{
+    let hourOfday = h > 24?h%24:h;
+    let fHourOfday  = hourOfday >12? hourOfday -12 : hourOfday;
+  
+    return fHourOfday >= 10 ?fHourOfday.toString():`0${fHourOfday}`;
+  }
+  mFormater(m:number):string{
+  return m >=10?m.toString():`0${m}`;
   }
 
 

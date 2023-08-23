@@ -9,13 +9,15 @@ import { CheckoutComponent } from './components/checkout/checkout.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SearchboxComponent } from './components/searchbox/searchbox.component';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
+import { FlightResultComponent } from './components/flight-result/flight-result.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomePageComponent,
     CheckoutComponent,
-    SearchboxComponent
+    SearchboxComponent,
+    FlightResultComponent
   ],
   imports: [
     BrowserModule,
