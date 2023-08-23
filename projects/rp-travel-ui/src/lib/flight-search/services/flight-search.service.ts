@@ -283,12 +283,12 @@ export class FlightSearchService {
    */
   addFlight() {
     let len = this.flightsArray.length;
-    if (len > 4) {
+    if (len >= 4) {
       this.flightAlert.enMsg = "Maximum Flights Shouldn't be more than 4";
       this.flightAlert.arMsg = 'يجب ألا يزيد الحد الأقصى لعدد الرحلات عن 4';
       return this.flightAlert;
     } else {
-      if (len > 0) {
+      if (len > 1) {
         this.lastFlight = (<FormArray>this.searchFlight.get('Flights')).value[
           len - 1
         ]['landing'];
