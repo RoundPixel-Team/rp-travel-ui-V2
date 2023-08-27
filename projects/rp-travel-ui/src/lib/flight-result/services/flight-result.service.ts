@@ -157,7 +157,6 @@ export class FlightResultService {
  * from Api  searchFlight
  **/
   getDataFromUrl(lang: string, currency: string, pointOfReservation: string, flightType: string, flightsInfo: string, serachId: string, passengers: string, Cclass: string, showDirect: boolean) {
-    console.log("show url in services", lang, currency, pointOfReservation, flightType, flightsInfo, serachId, passengers, Cclass, showDirect)
     this.FlightType = flightType;
     if (this.FlightType == 'RoundTrip') {
       this.roundT = true
@@ -253,7 +252,6 @@ export class FlightResultService {
   updateFilter() {
     this.subscription.add(
       this.filterForm.valueChanges.subscribe((val) => {
-        console.log("filter form value",this.filterForm.value)
         if (this.formINIT) {
           let filter: flightResultFilter = new flightResultFilter(
             this.filterForm.get("sameAirline")?.value!,
@@ -278,7 +276,6 @@ export class FlightResultService {
           this.oneForAll(filter, this.FilterData, this.roundT);
         }
         else {
-          console.log("FILTER CHANGED", val)
         }
       })
     );
@@ -305,7 +302,6 @@ export class FlightResultService {
 
 
     ))
-    console.log('should be filterd', this.orgnizedResponce);
 
   }
 
@@ -323,7 +319,6 @@ export class FlightResultService {
       // this.checkStops(element);
       let price: number = Math.round(element.itinTotalFare.amount);
       let airLine: string = element.allJourney.flights[0]['flightAirline']['airlineCode'];
-      // console.log(airLine);
       let lairLine: string = airLine
 
       let item = [];
@@ -382,7 +377,6 @@ export class FlightResultService {
 
   sortMyResult(type: number) {
     if (this.response != undefined) {
-      console.log(type);
       if (type == 1) {
         this.FilterData = this.orgnize(
           [...this.response.airItineraries].sort((a, b) => { return a.itinTotalFare.amount - b.itinTotalFare.amount })
@@ -442,7 +436,6 @@ export class FlightResultService {
         return Math.round(value).toString();
       },
     };
-    console.log("MinAndMax", minValue, this.maxValue);
     this.priceMinValue = minValue;
     this.priceMaxValue = Math.round(maxValue1 + 10);
     this.maxValue = Math.round(maxValue1 + 10);
@@ -454,10 +447,8 @@ export class FlightResultService {
     **/
   findDurationMinMax(array: any[]) {
     let sorted = [...array].sort((a, b) => b.totalDuration - a.totalDuration);
-    // console.log(sorted);
     let min = sorted[sorted.length - 1]['totalDuration'];
     let max = sorted[0]['totalDuration'];
-    console.log("Duration", max, min);
     this.durationMax = max + 100;
     this.durationMin = min;
     this.optionsDurathion = {
@@ -487,7 +478,6 @@ export class FlightResultService {
         max = t;
       }
     });
-    console.log("Depart", max, min);
 
     this.departingMin = min;
     this.departingMax = max;
@@ -521,8 +511,6 @@ export class FlightResultService {
         max = t;
       }
     });
-
-    console.log("Arrival", max, min);
 
     this.arrivingMin = min;
     this.arrivingMax = max;
@@ -604,7 +592,6 @@ export class FlightResultService {
     if (!this.filterForm.get('stopsForm')?.get('noStops')?.value && !this.filterForm.get('stopsForm')?.get('oneStop')?.value && !this.filterForm.get('stopsForm')?.get('twoAndm')?.value) {
       out = [0, 1, 2, 3, 4];
     }
-    console.log("stopsvalues", out, this.filterForm.get('stopsForm')?.get('noStops')?.value)
 
     return out
   }
@@ -627,7 +614,6 @@ export class FlightResultService {
     else if (filter.stops![0] == 0 && filter.stops![1] == 1) {
       for (var i = 0; i < flight.allJourney.flights.length; i++) {
         if (flight.allJourney.flights[i].stopsNum > 1) {
-          console.log("this itineraray stop show", flight)
           stopFlage = false
         }
       }
