@@ -148,6 +148,14 @@ export class FlightResultService {
 * 
 */
   orgnizedResponce: airItineraries[][] = [];
+
+ 
+  /**
+   * lowest fares for sorting containers
+   */
+  cheapeastLowestFare:number = 0
+  shortestLowestFare:number = 0
+  bestExperienceLowestFare:number = 0
   constructor() { }
 
 
@@ -172,6 +180,7 @@ export class FlightResultService {
             this.loading = false;
             this.ResultFound = true;
             this.response = result;
+            this.fetchLowestFaresForSorting(this.response.airItineraries)
             this.FilterData = result.airItineraries;
             this.orgnizedResponce = this.orgnize(this.FilterData);
 
@@ -405,6 +414,16 @@ export class FlightResultService {
 
 
     }
+  }
+
+  /**
+   * get the lowest fares for all sorting criterias
+   * @param data (all the itineraries)
+   */
+  fetchLowestFaresForSorting(data:airItineraries[]){
+    this.cheapeastLowestFare = [...data].sort((a, b) => { return a.itinTotalFare.amount - b.itinTotalFare.amount })[0].itinTotalFare.amount
+    this.bestExperienceLowestFare = [...data].sort((a, b) => { return a.experiance - b.experiance })[0].itinTotalFare.amount
+    this.shortestLowestFare = [...data].sort((a, b) => { return a.totalDuration - b.totalDuration })[0].itinTotalFare.amount
   }
 
 
