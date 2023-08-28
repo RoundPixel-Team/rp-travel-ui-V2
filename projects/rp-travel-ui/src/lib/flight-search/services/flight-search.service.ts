@@ -72,7 +72,7 @@ export class FlightSearchService {
     //no values on local storage 
     else {
       this.searchFlight = new FormGroup({
-        flightType: new FormControl('', [Validators.required]),
+        flightType: new FormControl('RoundTrip', [Validators.required]),
         Direct: new FormControl(false, [Validators.required]),
         Flights: new FormArray([], [Validators.required]),
         returnDate: new FormControl(''),
@@ -699,7 +699,7 @@ export class FlightSearchService {
     return `${searchApi.lan}/${searchApi.currency}/${searchApi.pointOfReservation}/${searchApi.flightType}/${searchApi.flightsInfo}/${searchApi.serachId}/${searchApi.passengers}/${searchApi.Cclass}/${searchApi.showDirect}`;
   }
   onSubmit(lang: string,currency: string,pointOfSale: string,spiltIndex: number,splitPattern: string) {
-    if (this.searchFlight.invalid) {
+    if (!this.searchFlight.value) {
       this.searchFlight.markAllAsTouched(); //used this function to make a red border around invalid inputs
       return '';
     } else {
