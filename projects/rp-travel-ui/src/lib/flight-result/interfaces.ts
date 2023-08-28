@@ -297,3 +297,12 @@ export class SearchFlightModule {
     ){} 
 
 }
+
+export interface customAirlineFilter {
+  logo: string;
+  stops: string | number;
+  price: string | number;
+  currency: string;
+  name: string;
+  selected:boolean;
+}

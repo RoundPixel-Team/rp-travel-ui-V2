@@ -7,6 +7,7 @@ import { FlightResultApiService } from './flight-result-api.service';
 import { searchFlightModel } from '../../flight-search/interfaces';
 import { Options } from '@angular-slider/ngx-slider';
 import { DatePipe } from '@angular/common';
+import { customAirlineFilter } from '../interfaces'
 
 @Injectable({
   providedIn: 'root'
@@ -157,6 +158,18 @@ export class FlightResultService {
   cheapeastLowestFare:number = 0
   shortestLowestFare:number = 0
   bestExperienceLowestFare:number = 0
+
+
+  /**Custom airlines filter */
+  customFilteredAirline : customAirlineFilter[] = [];
+  chosenCustomFilteredAirline : string[] = [];
+  customFilteredAirlineSlice:customAirlineFilter[] = [];
+  customFilteredAirlineStart : number = 0;
+  customFilteredAirlineEnd : number = 5;
+
+  customFilteredAirlineSliceMobile:customAirlineFilter[] = [];
+  customFilteredAirlineStartMobile : number = 0;
+  customFilteredAirlineEndMobile : number = 2;
   constructor() { }
 
 
@@ -182,6 +195,7 @@ export class FlightResultService {
             this.loading = false;
             this.ResultFound = true;
             this.response = result;
+            this.filterAirlines()
             this.fetchLowestFaresForSorting(this.response.airItineraries)
             this.FilterData = result.airItineraries;
             this.orgnizedResponce = this.orgnize(this.FilterData);
@@ -389,29 +403,29 @@ export class FlightResultService {
   sortMyResult(type: number) {
     if (this.response != undefined) {
       if (type == 1) {
-        this.FilterData = this.orgnize(
-          [...this.response.airItineraries].sort((a, b) => { return a.itinTotalFare.amount - b.itinTotalFare.amount })
-        )
+        this.orgnizedResponce = 
+          [...this.orgnizedResponce].sort((a, b) => { return a[0].itinTotalFare.amount - b[0].itinTotalFare.amount })
+        
       }
       if (type == 2) {
-        this.FilterData = this.orgnize([...this.response.airItineraries].sort((a, b) => { return a.totalDuration - b.totalDuration }))
+        this.orgnizedResponce = [...this.orgnizedResponce].sort((a, b) => { return a[0].totalDuration - b[0].totalDuration })
       }
       if (type == 3) {
-        this.FilterData = this.orgnize([...this.response.airItineraries].sort((a, b) => { return <any>new Date(a.deptDate) - <any>new Date(b.deptDate) }))
+        this.orgnizedResponce = [...this.orgnizedResponce].sort((a, b) => { return <any>new Date(a[0].deptDate) - <any>new Date(b[0].deptDate) })
       }
       if (type == 4) {
-        this.FilterData = this.orgnize([...this.response.airItineraries].sort((a, b) => { return <any>new Date(b.deptDate) - <any>new Date(a.deptDate) }))
+        this.orgnizedResponce = [...this.orgnizedResponce].sort((a, b) => { return <any>new Date(b[0].deptDate) - <any>new Date(a[0].deptDate) })
       }
       if (type == 5) {
-        this.FilterData = this.orgnize([...this.response.airItineraries].sort((a, b) => { return <any>new Date(a.allJourney.flights[1].flightDTO[0].departureDate) - <any>new Date(b.allJourney.flights[1].flightDTO[0].departureDate) }))
+        this.orgnizedResponce = [...this.orgnizedResponce].sort((a, b) => { return <any>new Date(a[0].allJourney.flights[1].flightDTO[0].departureDate) - <any>new Date(b[0].allJourney.flights[1].flightDTO[0].departureDate) })
       }
 
       if (type == 6) {
-        this.FilterData = this.orgnize([...this.response.airItineraries].sort((a, b) => { return <any>new Date(b.allJourney.flights[1].flightDTO[0].departureDate) - <any>new Date(a.allJourney.flights[1].flightDTO[0].departureDate) }))
+        this.orgnizedResponce = [...this.orgnizedResponce].sort((a, b) => { return <any>new Date(b[0].allJourney.flights[1].flightDTO[0].departureDate) - <any>new Date(a[0].allJourney.flights[1].flightDTO[0].departureDate) })
       }
 
       if (type == 7) {
-        this.FilterData = this.orgnize([...this.response.airItineraries].sort((a, b) => { return a.experiance - b.experiance }))
+        this.orgnizedResponce = [...this.orgnizedResponce].sort((a, b) => { return a[0].experiance - b[0].experiance })
       }
 
 
@@ -909,6 +923,150 @@ export class FlightResultService {
   }
   mFormater(m:number):string{
   return m >=10?m.toString():`0${m}`;
+  }
+
+
+  /**
+   **Sort according to the lowest fare (amount) and then create airlines array
+   **according to the sorting to use them in filtiration
+   **/
+   filterAirlines() {
+    this.customFilteredAirline = [];
+    this.customFilteredAirlineSlice = [];
+    this.customFilteredAirlineSliceMobile = [];
+    if (!this.response) {
+      return;
+    }
+    let sorted = this.response.airItineraries.slice().sort((a, b) => {
+      return a.itinTotalFare.amount - b.itinTotalFare.amount;
+    });
+    for (var i = 0; i < this.response.airlines.length; i++) {
+      let airlineNow = this.response.airlines[i];
+      let index = sorted.findIndex(
+        (air) =>
+          air.allJourney.flights[0].flightAirline.airlineName == airlineNow
+      );
+      if (index != -1) {
+        var maxStops = sorted[index].allJourney.flights.slice().sort((a, b) => {
+          return b.stopsNum - a.stopsNum;
+        });
+        this.customFilteredAirline.push({
+          logo: sorted[index].allJourney.flights[0].flightAirline.airlineLogo,
+          stops: maxStops[0].stopsNum,
+          price: sorted[index].itinTotalFare.amount,
+          currency: sorted[index].itinTotalFare.currencyCode,
+          name: sorted[index].allJourney.flights[0].flightAirline.airlineName,
+          selected:false
+        });
+      }
+    }
+    this.customFilteredAirlineSlice = this.customFilteredAirline.slice(this.customFilteredAirlineStart,this.customFilteredAirlineEnd)
+    this.customFilteredAirlineSliceMobile = this.customFilteredAirline.slice(this.customFilteredAirlineStartMobile,this.customFilteredAirlineEndMobile)
+
+  }
+
+
+  /**
+   * navigate next on custom filter airline data
+   * @returns 
+   */
+  nextcustomFilteredAirline(){
+    if(this.customFilteredAirlineEnd == this.customFilteredAirline.length){
+      return
+    }
+    else{
+      this.customFilteredAirlineStart +=1;
+      this.customFilteredAirlineEnd +=1;
+      this.customFilteredAirlineSlice = this.customFilteredAirline.slice(this.customFilteredAirlineStart,this.customFilteredAirlineEnd)
+    }
+    
+  }
+
+  /**
+   * navigate previous on custom filter airline data
+   * @returns 
+   */
+  prevcustomFilteredAirline(){
+    if(this.customFilteredAirlineStart == 0){
+      return
+    }
+    else{
+      this.customFilteredAirlineStart -=1;
+      this.customFilteredAirlineEnd -=1;
+      this.customFilteredAirlineSlice = this.customFilteredAirline.slice(this.customFilteredAirlineStart,this.customFilteredAirlineEnd)
+    }
+  }
+
+  /**
+   * navigate next on custom mobile filter airline data
+   * @returns 
+   */
+  nextcustomFilteredAirlineMobile(){
+    if(this.customFilteredAirlineEndMobile == this.customFilteredAirline.length){
+      return
+    }
+    else{
+      this.customFilteredAirlineStartMobile +=1;
+      this.customFilteredAirlineEndMobile +=1;
+      this.customFilteredAirlineSliceMobile = this.customFilteredAirline.slice(this.customFilteredAirlineStartMobile,this.customFilteredAirlineEndMobile)
+    }
+    
+  }
+
+  /**
+   * navigate previous on custom mobile filter airline data
+   * @returns 
+   */
+  prevcustomFilteredAirlineMobile(){
+    if(this.customFilteredAirlineStartMobile == 0){
+      return
+    }
+    else{
+      this.customFilteredAirlineStartMobile -=1;
+      this.customFilteredAirlineEndMobile -=1;
+      this.customFilteredAirlineSliceMobile = this.customFilteredAirline.slice(this.customFilteredAirlineStartMobile,this.customFilteredAirlineEndMobile)
+    }
+  }
+
+  /**
+   * Choose From The Sorted Lowest Fare Airline To Filter With And Change The Form
+   **/
+  chooseCustomFilterAirline(val: customAirlineFilter, index: number) {
+    var indexForForm = this.customFilteredAirline.findIndex(
+      a=> a.name == val.name
+    );
+    var airlineIndex = this.chosenCustomFilteredAirline.findIndex(
+      (name: string) => name == val.name
+    );
+    if (airlineIndex == -1) {
+      (this.filterForm.get("airline")!.get("airlines") as FormArray)
+        .at(indexForForm)
+        .setValue(true);
+        this.chosenCustomFilteredAirline.push(val.name)
+    } else {
+      (this.filterForm.get("airline")!.get("airlines") as FormArray)
+        .at(indexForForm)
+        .setValue(false);
+        console.log("show me the index",airlineIndex)
+        this.chosenCustomFilteredAirline.splice(airlineIndex,1)
+    }
+    console.log("show me now the chosen airline",this.chosenCustomFilteredAirline)
+  }
+
+
+  /**
+   * Check If The Airline Is Selected Or Not
+   **/
+  checkCustomFilterAirline(airlineName: string) {
+    var airlineIndex = this.chosenCustomFilteredAirline.findIndex(
+      (name: string) => name == airlineName
+    );
+    if (airlineIndex == -1) {
+
+      return false;
+    } else {
+      return true;
+    }
   }
 
 
