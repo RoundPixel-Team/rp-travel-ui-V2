@@ -17,6 +17,7 @@ export class FlightResultService {
   router = inject(Router)
   route = inject(ActivatedRoute)
   filter?: flightResultFilter;
+  searchID : string = ''
   /**
  * response Data from Api  b type FlightSearchResult
  */
@@ -166,6 +167,7 @@ export class FlightResultService {
  **/
   getDataFromUrl(lang: string, currency: string, pointOfReservation: string, flightType: string, flightsInfo: string, serachId: string, passengers: string, Cclass: string, showDirect: boolean) {
     this.FlightType = flightType;
+    this.searchID = serachId
     if (this.FlightType == 'RoundTrip') {
       this.roundT = true
     }
