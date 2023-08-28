@@ -72,7 +72,7 @@ export class FlightSearchService {
     //no values on local storage 
     else {
       this.searchFlight = new FormGroup({
-        flightType: new FormControl('', [Validators.required]),
+        flightType: new FormControl('RoundTrip', [Validators.required]),
         Direct: new FormControl(false, [Validators.required]),
         Flights: new FormArray([], [Validators.required]),
         returnDate: new FormControl(''),
@@ -331,6 +331,8 @@ export class FlightSearchService {
    * @return object of string error message (passengerAlert)
    */
   changeAdultPassenger(num: number) {
+    this.passengerAlert.arMsg = '';
+    this.passengerAlert.enMsg = '';
     //get total number of passenger with new selected adult value
     let Total = this.getTotalPassengers(
       num,
@@ -356,6 +358,8 @@ export class FlightSearchService {
    * if message is empty then the validation is true
    */
   changeChildPassenger(num: number) {
+    this.passengerAlert.arMsg = '';
+      this.passengerAlert.enMsg = '';
     //get total number of passenger with new selected child value
     let Total = this.getTotalPassengers(
       this.searchFlight?.get('passengers.adults')?.value,
@@ -379,6 +383,8 @@ export class FlightSearchService {
    * if message is empty then the validation is true
    */
   changeinfantPassenger(num: number) {
+    this.passengerAlert.arMsg = '';
+      this.passengerAlert.enMsg = '';
     let adultVal = this.searchFlight?.get('passengers.adults')?.value;
     //get total number of passenger with new selected infant value
     let Total = this.getTotalPassengers(
@@ -432,6 +438,8 @@ export class FlightSearchService {
    */
   setDepDate(depDate: string, flightIndex: number) {
     let date = new Date(depDate).toISOString().split('T')[0]; //making date as 2023-08-01 format to check the condition
+    this.dateAlert.enMsg = '';
+    this.dateAlert.arMsg = '';
     //check if date is previous than today or not
     if (date < this.todayDate()) {
       (<FormArray>this.searchFlight?.get('Flights'))
@@ -466,6 +474,8 @@ export class FlightSearchService {
    * @retuen object with empty message if validation is true or object with error messages
    */
   setRetDate(retDate: string) {
+    this.retDateAlert.enMsg = '';
+    this.retDateAlert.arMsg = '';
     if (retDate) {
       let date = new Date(retDate).toISOString().split('T')[0]; //making date as 2023-08-01 format to check the condition
       let depDate = (<FormArray>this.searchFlight?.get('Flights'))
@@ -492,6 +502,7 @@ export class FlightSearchService {
       this.retDateAlert.arMsg = 'يجب عليك تحديد تاريخ العودة';
     }
     return this.retDateAlert;
+    
   }
   /**
    * this function is responsible to set the second flight of flights array if the flight type is roundtrip
@@ -688,7 +699,7 @@ export class FlightSearchService {
     return `${searchApi.lan}/${searchApi.currency}/${searchApi.pointOfReservation}/${searchApi.flightType}/${searchApi.flightsInfo}/${searchApi.serachId}/${searchApi.passengers}/${searchApi.Cclass}/${searchApi.showDirect}`;
   }
   onSubmit(lang: string,currency: string,pointOfSale: string,spiltIndex: number,splitPattern: string) {
-    if (this.searchFlight.invalid) {
+    if (!this.searchFlight.value) {
       this.searchFlight.markAllAsTouched(); //used this function to make a red border around invalid inputs
       return '';
     } else {
