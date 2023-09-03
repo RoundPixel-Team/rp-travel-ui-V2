@@ -8,6 +8,8 @@ export interface baseSearchResult {
  * this is the the model of the backend on case of status 200
  */
 export interface FlightSearchResult extends baseSearchResult  {
+    pnr?:any;
+    fareAmount?:any;
     airlines: any[];
     airItineraries: airItineraries[];
     searchCriteria: searchCriteria;
@@ -170,6 +172,7 @@ export interface flight {
 }
 
 export interface FlightDTO {
+    supplierRefID : any
     transitPosition?:string;
     transitWidth?:number;
     sequenceNum?: number;

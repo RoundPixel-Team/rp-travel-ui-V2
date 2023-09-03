@@ -41,6 +41,10 @@ export * from './lib/user-managment/services/user-managment-api.service'
 export * from './lib/user-managment/services/user-managment.service'
 export * from './lib/user-managment/interfaces'
 
+//flight confirmation
+export * from './lib/flight-confirmation/confirmation.service'
+export * from './lib/flight-confirmation/confirmation-api.service'
+export * from './lib/flight-confirmation/interfaces'
 
 // pipes
 export * from './lib/shared/pipes/cod-to-city.pipe'
