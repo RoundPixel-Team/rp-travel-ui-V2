@@ -36,7 +36,7 @@ export class FlightCheckoutService {
   /**
    * here is the recommened service which is added to the cost/ticket by default
    */
-  recommendedOfflineService! : flightOfflineService 
+  recommendedOfflineService! : flightOfflineService | undefined
 
   /**
    * here is the price with the recopmmened offline service added
@@ -747,6 +747,25 @@ export class FlightCheckoutService {
    * this function is responsible to destory any opened subscription on this service
    */
   destroyer(){
-    this.subscription.unsubscribe()
+    // this.subscription.unsubscribe()
+  this.selectedFlight  = undefined
+  this.allOfflineServices  = []
+  this.selectedOfflineServices  = []
+  this.recommendedOfflineService = undefined
+  this.priceWithRecommenedService = 0;
+  this.offlineServicesLoader = false
+  this.loader  = false
+  this.copounCodeLoader  = false
+  this.copounCodeDetails = undefined
+  this.copounCodeError  = ''
+  this.usersForm = new FormGroup({
+    users : new FormArray([])
+  });
+  this.fareDisscount = [0,'',''];
+  this.fareBreackup = undefined
+  this.paymentLink = new Subject();
+  this.paymentLinkFailure = new Subject();
+  this.selectedFlightLang = new Subject();
+  this.selectedFlightError = false
   }
 }

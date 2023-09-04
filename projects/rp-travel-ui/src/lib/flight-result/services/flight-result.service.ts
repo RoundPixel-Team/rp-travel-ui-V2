@@ -165,7 +165,7 @@ export class FlightResultService {
   chosenCustomFilteredAirline : string[] = [];
   customFilteredAirlineSlice:customAirlineFilter[] = [];
   customFilteredAirlineStart : number = 0;
-  customFilteredAirlineEnd : number = 5;
+  customFilteredAirlineEnd : number = 4;
 
   customFilteredAirlineSliceMobile:customAirlineFilter[] = [];
   customFilteredAirlineStartMobile : number = 0;
@@ -1077,6 +1077,99 @@ export class FlightResultService {
    * this function is responsible to destory any opened subscription on this service
    */
   destroyer() {
-    this.subscription.unsubscribe()
+    // this.subscription.unsubscribe()
+    this.response =undefined
+    this.FilterData = []
+    this.normalError = ''
+    this.FlightType = 'RoundTrip'
+    this.normalErrorStatus = false
+    this.loading = true
+    this.roundT = false;
+    this.airLR = []
+
+    this.ResultFound = false
+    this.priceMinValue = 0;
+    this.priceMaxValue = 5000;
+    this.FilterChanges$ = new Subscription();
+    this.options = {
+      floor: 0,
+      ceil: 5000,
+      translate: (value: number): string => {
+        return Math.round(value).toString();
+      },
+    };
+    this.rate = 1;
+    this.code = "KWD"
+    this.airlinesA = [];
+    this.airlinesForm = [];
+    this.bookingSites = ['KhaleejGate', 'other'];
+    this.bookingSitesForm = []
+    this.departingMin = 0;
+    this.departingMax = 7000
+    this.optionsdeparting = this.options;
+
+    this.arrivingMin = 0;
+    this.arrivingMax = 7000
+    this.optionsArriving = this.options;
+    this.minValue = 0
+    this.maxValue = 5000
+
+    this.durationMin = 0;
+    this.durationMax = 7000;
+    this.optionsDurathion = this.options
+    this.filterForm = new FormGroup({
+      airline: new FormGroup({
+        airlines: new FormArray([]),
+      }),
+      bookingSite: new FormGroup({
+        bookingSites: new FormArray([])
+      }),
+
+      stopsForm: new FormGroup({
+        noStops: new FormControl(false),
+        oneStop: new FormControl(false),
+        twoAndm: new FormControl(false),
+      }),
+      sameAirline: new FormControl(false),
+
+      priceSlider: new FormControl([0, 0]),
+      durationSlider: new FormControl([0, 0]),
+      dpartingSlider: new FormControl([0, 0]),
+      arrivingSlider: new FormControl([0, 0]),
+
+      returnSlider: new FormControl([30, 7000]),
+      experience: new FormGroup({
+        overNight: new FormControl(false),
+        longStops: new FormControl(false)
+      }),
+
+      flexibleTickets: new FormGroup({
+        refund: new FormControl(false),
+        nonRefund: new FormControl(false)
+      })
+    });
+
+    this.formINIT =false;
+
+    this.priceOptions = this.options
+    this.subscription = new Subscription()
+
+    this.moreT = [];
+    this.orgnizedResponce = [];
+    this.cheapeastLowestFare = 0
+    this.shortestLowestFare = 0
+    this.bestExperienceLowestFare = 0
+
+
+    /**Custom airlines filter */
+    this.customFilteredAirline = [];
+    this.chosenCustomFilteredAirline  = [];
+    this.customFilteredAirlineSlice = [];
+    this.customFilteredAirlineStart  = 0;
+    this.customFilteredAirlineEnd = 4;
+
+    this.customFilteredAirlineSliceMobile = [];
+    this.customFilteredAirlineStartMobile = 0;
+    this.customFilteredAirlineEndMobile  = 2;
   }
 }
