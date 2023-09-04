@@ -178,7 +178,9 @@ export class FlightResultService {
  * get all data from the router to call api to get flightResultData
  * from Api  searchFlight
  **/
-  getDataFromUrl(lang: string, currency: string, pointOfReservation: string, flightType: string, flightsInfo: string, serachId: string, passengers: string, Cclass: string, showDirect: boolean) {
+  getDataFromUrl(lang: string, currency: string, pointOfReservation: string, flightType: string, flightsInfo: string, serachId: string, passengers: string, Cclass: string, showDirect: boolean,endCustomAirlineFilter:number,endCustomAirlineFilterMobile:number) {
+    this.customFilteredAirlineEnd = endCustomAirlineFilter
+    this.customFilteredAirlineEndMobile = endCustomAirlineFilterMobile
     this.FlightType = flightType;
     this.searchID = serachId
     if (this.FlightType == 'RoundTrip') {
@@ -1166,7 +1168,7 @@ export class FlightResultService {
     this.chosenCustomFilteredAirline  = [];
     this.customFilteredAirlineSlice = [];
     this.customFilteredAirlineStart  = 0;
-    this.customFilteredAirlineEnd = 4;
+    this.customFilteredAirlineEnd = 5;
 
     this.customFilteredAirlineSliceMobile = [];
     this.customFilteredAirlineStartMobile = 0;
