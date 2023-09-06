@@ -517,9 +517,7 @@ export class FlightSearchService {
         landing: new FormControl(this.flightsArray.at(0).get('departing')?.value, [
           Validators.required,
         ]),
-        departingD: new FormControl(this.searchFlight.get('returnDate')?.value,[
-          Validators.required,
-        ]),
+        departingD: new FormControl(this.searchFlight.get('returnDate')?.value),
       })
     );
   }
