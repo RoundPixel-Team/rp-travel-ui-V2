@@ -179,6 +179,10 @@ export class FlightResultService {
  * from Api  searchFlight
  **/
   getDataFromUrl(lang: string, currency: string, pointOfReservation: string, flightType: string, flightsInfo: string, serachId: string, passengers: string, Cclass: string, showDirect: boolean,endCustomAirlineFilter:number,endCustomAirlineFilterMobile:number) {
+    this.loading = true
+    this.orgnizedResponce = []
+    this.FilterData = []
+    this.response = undefined
     this.customFilteredAirlineEnd = endCustomAirlineFilter
     this.customFilteredAirlineEndMobile = endCustomAirlineFilterMobile
     this.FlightType = flightType;
