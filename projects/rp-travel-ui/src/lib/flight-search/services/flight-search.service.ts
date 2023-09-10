@@ -393,7 +393,7 @@ export class FlightSearchService {
       num
     );
     if (num <= adultVal && Total <= 9) {
-      this.searchFlight?.get('passengers.child')?.setValue(num);
+      this.searchFlight?.get('passengers.infant')?.setValue(num);
       this.passengerAlert.arMsg = '';
       this.passengerAlert.enMsg = '';
       return this.passengerAlert;
