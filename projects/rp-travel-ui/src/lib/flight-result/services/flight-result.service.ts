@@ -243,9 +243,9 @@ export class FlightResultService {
             this.filterForm.get("durationSlider")?.setValue(this.findDurationMinMax(this.response.airItineraries));
             this.filterForm.get("durationSlider")?.updateValueAndValidity();
 
-            this.findDepartingnMinMax(this.response.airItineraries)
+            // this.findDepartingnMinMax(this.response.airItineraries)
             this.findArrivingMinMax(this.response.airItineraries)
-            this.minAnMax(this.response.airItineraries);
+            // this.minAnMax(this.response.airItineraries);
             this.filterForm.get('priceSlider')?.setValue(this.minAnMax(this.response.airItineraries));
             this.stopsvalues(),
               this.airlinesA = this.response.airlines;
@@ -317,7 +317,6 @@ export class FlightResultService {
 
   // new filteration method
   oneForAll(filter: filterFlightInterface, fligtsArray: airItineraries[], round: boolean) {
-
     this.orgnizedResponce = this.orgnize(fligtsArray.filter(v =>
 
       this.filterFlighWithPrice(v, filter) &&
@@ -329,7 +328,7 @@ export class FlightResultService {
       this.filterWithExperience(v, filter) &&
       this.filterFlighWithReturnTime(v, filter, this.roundT) &&
       this.completeTripOnSameAirline(v, filter) &&
-      this.filterFlightWithAirlineFunction(v, filter)
+      this.filterFlightWithAirlineFunction(v, filter,this.roundT)
 
 
     ))
@@ -641,10 +640,10 @@ export class FlightResultService {
 **/
   filterFlightWithNumberofStopsFunction(flight: airItineraries, filter: filterFlightInterface): boolean {
     let stopFlage: boolean = true;
-    // if(filter.stops[0] == 0 && filter.stops[1] == 1 && filter.stops[2] == 2 && filter.stops[3] == 3 && filter.stops[4] == 4){
-    //   stopFlage = true
-    // }
-    if (filter?.stops![0] == 0 && filter.stops?.length! == 1) {
+    if(filter.stops![0] == 0 && filter.stops![1] == 1 && filter.stops![2] == 2 && filter.stops![3] == 3 && filter.stops![4] == 4){
+      stopFlage = true
+    }
+    else if (filter?.stops![0] == 0 && filter.stops?.length! == 1) {
       for (var i = 0; i < flight.allJourney.flights.length; i++) {
         if (flight.allJourney.flights[i].stopsNum != 0) {
           stopFlage = false
@@ -668,9 +667,17 @@ export class FlightResultService {
       }
     }
 
-    else if (filter.stops![0] == 1) {
+    else if (filter.stops![0] == 1 && filter.stops?.length == 1) {
       for (var i = 0; i < flight.allJourney.flights.length; i++) {
         if (flight.allJourney.flights[i].stopsNum != 1) {
+          stopFlage = false
+        }
+      }
+    }
+
+    else if(filter.stops![0] == 1 && filter.stops![1] == 2){
+      for (var i = 0; i < flight.allJourney.flights.length; i++) {
+        if (flight.allJourney.flights[i].stopsNum < 2 && flight.allJourney.flights[i].stopsNum != 1) {
           stopFlage = false
         }
       }
@@ -703,6 +710,7 @@ export class FlightResultService {
     for (let index = 0; index < val.length; index++) {
       const element = val[index];
       if (element) {
+        
         airL.push(this.airlinesA[index]);
       }
 
@@ -716,8 +724,13 @@ export class FlightResultService {
       return airL;
     }
   }
-  filterFlightWithAirlineFunction(flight: airItineraries, filter: filterFlightInterface): boolean {
-    return filter.airlines!.indexOf(flight.allJourney.flights[0]['flightAirline']['airlineName']) !== -1 || filter.airlines?.length == 0
+  filterFlightWithAirlineFunction(flight: airItineraries, filter: filterFlightInterface,roundT:boolean): boolean {
+    if(roundT){
+      return filter.airlines!.indexOf(flight.allJourney.flights[0]['flightAirline']['airlineName']) != -1 || filter.airlines!.indexOf(flight.allJourney.flights[1]['flightAirline']['airlineName']) != -1  || filter.airlines?.length == 0
+    }else{
+      return filter.airlines!.indexOf(flight.allJourney.flights[0]['flightAirline']['airlineName']) != -1 || filter.airlines?.length == 0
+    }
+    
   }
 
   /**
@@ -1053,10 +1066,8 @@ export class FlightResultService {
       (this.filterForm.get("airline")!.get("airlines") as FormArray)
         .at(indexForForm)
         .setValue(false);
-        console.log("show me the index",airlineIndex)
         this.chosenCustomFilteredAirline.splice(airlineIndex,1)
     }
-    console.log("show me now the chosen airline",this.chosenCustomFilteredAirline)
   }
 
 
