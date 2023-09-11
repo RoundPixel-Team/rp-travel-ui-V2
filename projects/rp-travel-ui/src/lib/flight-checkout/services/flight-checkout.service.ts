@@ -133,10 +133,10 @@ export class FlightCheckoutService {
         if(res){
           // updating the selected flight state
           this.selectedFlight = res
-          this.selectedFlightLang.next(res.searchCriteria.language)
           // updating the loading state
           this.loader = false
           if(res.status == 'Valid'){
+            this.selectedFlightLang.next(res.searchCriteria.language)
             this.priceWithRecommenedService = res.airItineraryDTO.itinTotalFare.amount
             // initilize users forms
             this.buildUsersForm(
@@ -153,6 +153,7 @@ export class FlightCheckoutService {
           
           else{
             this.selectedFlightError = true
+            console.log("now error happens")
           }
 
         }
@@ -236,7 +237,7 @@ export class FlightCheckoutService {
             ]),
             phoneNumber: new FormControl("", [
               Validators.required,
-              Validators.maxLength(5),
+              Validators.maxLength(16),
             ]),
             countryCode: new FormControl(""),
             nationality: new FormControl("", [
@@ -592,8 +593,14 @@ export class FlightCheckoutService {
         this.usersArray.at(i).get('title')!.setValue('Ms')
       }
       
-      this.usersArray.at(i).get('countryCode')?.setValue((<string>this.usersArray.at(i).get('phoneNumber')?.value.dialCode).replace("+",''))
-      this.usersArray.at(i).get('phoneNumber')?.setValue(this.usersArray.at(i).get('phoneNumber')?.value.number)
+      console.log("show me phone number in form BEFORE",this.usersArray.at(i).value)
+      if(this.usersArray.at(i).get('phoneNumber')?.value != ''){
+        console.log("when only have phone number",this.usersArray.at(i).get('phoneNumber')?.value)
+        this.usersArray.at(i).get('countryCode')?.setValue((<string>this.usersArray.at(i).get('phoneNumber')?.value.dialCode).replace("+",''))
+        this.usersArray.at(i).get('phoneNumber')?.setValue(this.usersArray.at(i).get('phoneNumber')?.value.number)
+      }
+      console.log("show me phone number in form AFTER",this.usersArray.at(i).value)
+      
       
       this.usersArray.at(i).get('countryOfResidence')?.setValue(this.home.allCountries
         .filter(c=>{return c.countryName == this.usersArray.at(i).get('countryOfResidence')?.value})[0].pseudoCountryCode)
@@ -748,24 +755,24 @@ export class FlightCheckoutService {
    */
   destroyer(){
     // this.subscription.unsubscribe()
-  this.selectedFlight  = undefined
-  this.allOfflineServices  = []
-  this.selectedOfflineServices  = []
-  this.recommendedOfflineService = undefined
-  this.priceWithRecommenedService = 0;
-  this.offlineServicesLoader = false
-  this.loader  = false
-  this.copounCodeLoader  = false
-  this.copounCodeDetails = undefined
-  this.copounCodeError  = ''
-  this.usersForm = new FormGroup({
-    users : new FormArray([])
-  });
-  this.fareDisscount = [0,'',''];
-  this.fareBreackup = undefined
-  this.paymentLink = new Subject();
-  this.paymentLinkFailure = new Subject();
-  this.selectedFlightLang = new Subject();
-  this.selectedFlightError = false
+    this.selectedFlight  = undefined
+    this.allOfflineServices  = []
+    this.selectedOfflineServices  = []
+    this.recommendedOfflineService = undefined
+    this.priceWithRecommenedService = 0;
+    this.offlineServicesLoader = false
+    this.loader  = false
+    this.copounCodeLoader  = false
+    this.copounCodeDetails = undefined
+    this.copounCodeError  = ''
+    this.usersForm = new FormGroup({
+      users : new FormArray([])
+    });
+    this.fareDisscount = [0,'',''];
+    this.fareBreackup = undefined
+    this.paymentLink = new Subject();
+    this.paymentLinkFailure = new Subject();
+    this.selectedFlightLang = new Subject();
+    this.selectedFlightError = false
   }
 }
