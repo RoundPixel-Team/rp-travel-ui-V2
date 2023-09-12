@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Subscription, retry, take } from 'rxjs';
-import { FlightSearchResult, SearchFlightModule, airItineraries, filterFlightInterface, flight, flightResultFilter } from '../interfaces';
+import { FareRules, FlightSearchResult, SearchFlightModule, airItineraries, filterFlightInterface, flight, flightResultFilter } from '../interfaces';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FlightResultApiService } from './flight-result-api.service';
 import { searchFlightModel } from '../../flight-search/interfaces';
@@ -102,7 +102,8 @@ export class FlightResultService {
   durationMin: number = 0;
   durationMax: number = 7000;
   optionsDurathion: Options = this.options
-
+/**Property for fare Rules */
+  fareRules!: FareRules[];
   /**
   *  inital from filter
   * 
@@ -1086,8 +1087,20 @@ export class FlightResultService {
     }
   }
 
+/** A method to get the fare rules data */
+  showFareRules(squencNumber: number, pKey: string) {
 
+    console.log("called")
+    this.loading = true;
+    this.api.fareRules(this.searchID, squencNumber, pKey).subscribe(
+      (result) => {
+        this.loading = false;
+        this.fareRules = result;
+        console.log("fareRules", this.fareRules);
+      }
 
+    );
+  }
 
 
   /**

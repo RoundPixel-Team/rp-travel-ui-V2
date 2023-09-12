@@ -309,3 +309,17 @@ export interface customAirlineFilter {
   name: string;
   selected:boolean;
 }
+ /**
+  * This is the fare Rules models
+  */
+ export interface FareRules {
+  departureCountry: string;
+  arrivalCountry: string;
+  adtRules: fares[];
+  cnnRules: fares[];
+  infRules: fares[];
+}
+export interface fares {
+  fareRule: string;
+  title: string;
+}

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { EnvironmentService } from '../../shared/services/environment.service';
-import { FlightSearchResult, SearchFlightModule } from '../interfaces';
+import { FareRules, FlightSearchResult, SearchFlightModule } from '../interfaces';
 import { catchError, retry, take } from 'rxjs';
 import { searchFlightModel } from '../../flight-search/interfaces';
 
@@ -21,4 +21,10 @@ export class FlightResultApiService {
     return this.http.get<FlightSearchResult>(api).pipe(retry(2), take(1),catchError(err=>{console.log(err);throw err}) );;
   }
 
+  fareRules(sid: string, seq: number, pKey: string) {
+    let api = `${this.env.FareRules}/api/GetFareRules?SId=${sid}&SeqNum=${seq}&PKey=${pKey}`;
+    console.log(api);
+
+    return this.http.get<FareRules[]>(api).pipe(take(1));
+  }
 }
