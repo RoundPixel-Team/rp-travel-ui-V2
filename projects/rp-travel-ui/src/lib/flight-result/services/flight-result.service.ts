@@ -43,7 +43,8 @@ export class FlightResultService {
   loading: boolean = true
   roundT: boolean = false;
   airLR: any = []
-
+/**fare rules loading state */
+fareLoading: boolean = true;
   ResultFound: boolean = false
   /**
   *  Min value price 
@@ -1088,15 +1089,13 @@ export class FlightResultService {
   }
 
 /** A method to get the fare rules data */
-  showFareRules(squencNumber: number, pKey: string) {
+  showFareRules(searchId:string,squencNumber: number, pKey: string) {
 
-    console.log("called")
-    this.loading = true;
-    this.api.fareRules(this.searchID, squencNumber, pKey).subscribe(
+    this.fareLoading=true;
+    this.api.fareRules(searchId, squencNumber, pKey).subscribe(
       (result) => {
-        this.loading = false;
-        this.fareRules = result;
-        console.log("fareRules", this.fareRules);
+        this.fareLoading=false;
+        this.fareRules = result.fares;
       }
 
     );

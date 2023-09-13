@@ -154,7 +154,10 @@ export interface fares {
   fareRule: string;
   title: string;
 }
-
+export interface fareRulesResponse{
+  errorMessage:string;
+  fares:FareRules[];
+}
 export interface itinTotalFare {
     amount : number
     fareAmount? : number
