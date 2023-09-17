@@ -8,6 +8,7 @@ import { airItineraries, searchCriteria } from "../flight-result/interfaces";
 export interface selectedFlight {
     airItineraryDTO:airItineraries
     status: string
+    errorMessage:string
     searchCriteria:searchCriteria
     passportDetailsRequired:boolean
 }

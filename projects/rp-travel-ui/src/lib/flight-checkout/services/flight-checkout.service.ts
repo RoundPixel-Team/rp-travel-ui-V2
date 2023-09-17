@@ -592,15 +592,11 @@ export class FlightCheckoutService {
       else if(this.usersArray.at(i).get('title')!.value == 'Female'){
         this.usersArray.at(i).get('title')!.setValue('Ms')
       }
-      
-      console.log("show me phone number in form BEFORE",this.usersArray.at(i).value)
       if(this.usersArray.at(i).get('phoneNumber')?.value != ''){
-        console.log("when only have phone number",this.usersArray.at(i).get('phoneNumber')?.value)
         this.usersArray.at(i).get('countryCode')?.setValue((<string>this.usersArray.at(i).get('phoneNumber')?.value.dialCode).replace("+",''))
         this.usersArray.at(i).get('phoneNumber')?.setValue(this.usersArray.at(i).get('phoneNumber')?.value.number)
       }
-      console.log("show me phone number in form AFTER",this.usersArray.at(i).value)
-      
+
       
       this.usersArray.at(i).get('countryOfResidence')?.setValue(this.home.allCountries
         .filter(c=>{return c.countryName == this.usersArray.at(i).get('countryOfResidence')?.value})[0].pseudoCountryCode)
@@ -684,11 +680,11 @@ export class FlightCheckoutService {
    */
 
    returnCorrectFare(fare:fare[]):number{
-    if(fare){
+    if(fare){     
      let equivfare = fare.find(v=>v.fareType.toLowerCase() === 'equivfare')?.fareAmount;
      let totalFare = fare.find(v=>v.fareType.toLowerCase() === 'totalfare')?.fareAmount;
      let totalTax  = fare.find(v=>v.fareType.toLowerCase() === 'totaltax')?.fareAmount;
-     if(equivfare && totalFare && totalTax){
+     if(equivfare != undefined && totalFare != undefined && totalTax != undefined){
       return equivfare > 0 ? equivfare : totalFare - totalTax;
      }
      else{
@@ -722,7 +718,6 @@ export class FlightCheckoutService {
           ScFare:infFare?this.returnPassFareScatterd(infFare.flightFaresDTOs,infFare.passengerQuantity,this.returnCorrectFare):[NaN,'KWD',NaN]
         }
       }
-    
   }
 
   /**
