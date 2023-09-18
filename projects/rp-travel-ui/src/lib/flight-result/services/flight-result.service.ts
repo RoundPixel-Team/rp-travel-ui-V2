@@ -206,6 +206,7 @@ fareLoading: boolean = true;
             this.filterAirlines()
             this.fetchLowestFaresForSorting(this.response.airItineraries)
             this.FilterData = result.airItineraries;
+            console.log(" this.FilterData.", this.FilterData);
             this.orgnizedResponce = this.orgnize(this.FilterData);
 
             this.FilterChanges$.unsubscribe();
@@ -341,48 +342,24 @@ fareLoading: boolean = true;
    * grouping data return two array array airItineraries and array have same price
    **/
 
-  orgnize(array: any[]) {
-
-    let ar = array
-    let out: any[] = []
-    ar.forEach(element => {
-
-      // check Nostop in each flight
-      // this.checkStops(element);
-      let price: number = Math.round(element.itinTotalFare.amount);
-      let airLine: string = element.allJourney.flights[0]['flightAirline']['airlineCode'];
-      let lairLine: string = airLine
-
-      let item = [];
-      if (out.length == 0) {
-        item.push(element);
-        out.push(item);
+  orgnize(array: airItineraries[]) {
+    let out :airItineraries[][]=[];
+    let remain:airItineraries[] =array;
+    let i = 0;
+    while (remain.length >0 || !remain) {
+      if (i>50){
+        break
+      }else{
+        out.push(remain.filter((v,i,a)=>v.allJourney.flights[0].flightDTO[0].flightAirline.airlineCode ===a[0].allJourney.flights[0].flightDTO[0].flightAirline.airlineCode && v.itinTotalFare.amount === a[0].itinTotalFare.amount));
+        remain = remain.filter((v,i,a)=>v.allJourney.flights[0].flightDTO[0].flightAirline.airlineCode !=a[0].allJourney.flights[0].flightDTO[0].flightAirline.airlineCode || v.itinTotalFare.amount != a[0].itinTotalFare.amount);
       }
-      else {
-        let found: boolean = false;
-        let i = 0
-        while (i < out.length || i > 60) {
-          let elmentO = out[i];
-          let first = elmentO[0];
-          let price2: number = Math.round(first.itinTotalFare.amount);
-          let lairLine2: string = first.allJourney.flights[0]['flightAirline']['airlineCode'];
-          if (lairLine === lairLine2 && price === price2) {
-            elmentO.push(element);
-            found = true;
-            break
-          }
-          else {
-            i = i + 1
-          }
-        }
-        if (!found) {
-          item.push(element);
-          out.push(item);
-        }
-      }
-
-    });
-    return out
+      i = i +1
+    }
+    
+    console.log(i,out);
+   return out
+  
+  
   }
   /**
    * create an array with the same length of the output
