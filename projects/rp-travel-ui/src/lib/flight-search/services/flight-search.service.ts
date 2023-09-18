@@ -440,24 +440,30 @@ export class FlightSearchService {
    */
   validateMultiCityDates(){
     console.log("Flights Length", this.flightsArray.length);
+    debugger;
+
     if(this.flightsArray.length > 1){
       for(let i=0; i<this.flightsArray.length; i++){
         console.log("DATEEEEE",this.flightsArray.at(i)?.get('departingD')?.value);
         console.log("DATEEEEE 2222",this.flightsArray.at(i+1)?.get('departingD')?.value);
-        if(this.flightsArray.at(i+1)?.get('departingD')?.value !== undefined){
+        if(this.flightsArray.length ==4){
           if(this.flightsArray.at(i)?.get('departingD')?.value < this.flightsArray.at(i-1).get('departingD')?.value){
             this.validMultiDateAlert.enMsg='The First Flight should Have A date Before next Flight';
             this.validMultiDateAlert.arMsg='يجب أن يكون للرحلة الأولى تاريخ قبل الرحلة التالية';
           }
           break;
         }
-        if(this.flightsArray.at(i)?.get('departingD')?.value > this.flightsArray.at(i+1).get('departingD')?.value){
-          this.validMultiDateAlert.enMsg='The First Flight should Have A date Before next Flight';
-          this.validMultiDateAlert.arMsg='يجب أن يكون للرحلة الأولى تاريخ قبل الرحلة التالية';
-        }
         else{
-          this.validMultiDateAlert.enMsg='True';
-          this.validMultiDateAlert.arMsg='True';
+          let x=this.flightsArray.at(i+1)?.get('departingD')?.value ;
+          let y =this.flightsArray.at(i).get('departingD')?.value;
+          if(x.getTime() < y.getTime()){
+            this.validMultiDateAlert.enMsg='The First Flight should Have A date Before next Flight';
+            this.validMultiDateAlert.arMsg='يجب أن يكون للرحلة الأولى تاريخ قبل الرحلة التالية';
+          }
+          else{
+            this.validMultiDateAlert.enMsg='True';
+            this.validMultiDateAlert.arMsg='True';
+          }
         }
       }
     }
