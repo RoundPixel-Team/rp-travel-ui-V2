@@ -43,6 +43,10 @@ export class FlightSearchService {
     arMsg: '',
     enMsg: '',
   };
+  validMultiDateAlert: AlertMsgModel = {
+    arMsg: '',
+    enMsg: '',
+  };
   //#endregion
 
   constructor(private datePipe: DatePipe) {}
@@ -429,6 +433,35 @@ export class FlightSearchService {
   todayDate() {
     let date = new Date();
     return date.toISOString().split('T')[0];
+  }
+    /**
+   * this function is responsible to validate the Multi City searchbox Dates
+   * @retuer string with alert message if it has error else return true
+   */
+  validateMultiCityDates(){
+    console.log("Flights Length", this.flightsArray.length);
+    if(this.flightsArray.length > 1){
+      for(let i=0; i<this.flightsArray.length; i++){
+        console.log("DATEEEEE",this.flightsArray.at(i)?.get('departingD')?.value);
+        console.log("DATEEEEE 2222",this.flightsArray.at(i+1)?.get('departingD')?.value);
+        if(this.flightsArray.at(i+1)?.get('departingD')?.value !== undefined){
+          if(this.flightsArray.at(i)?.get('departingD')?.value < this.flightsArray.at(i-1).get('departingD')?.value){
+            this.validMultiDateAlert.enMsg='The First Flight should Have A date Before next Flight';
+            this.validMultiDateAlert.arMsg='يجب أن يكون للرحلة الأولى تاريخ قبل الرحلة التالية';
+          }
+          break;
+        }
+        if(this.flightsArray.at(i)?.get('departingD')?.value > this.flightsArray.at(i+1).get('departingD')?.value){
+          this.validMultiDateAlert.enMsg='The First Flight should Have A date Before next Flight';
+          this.validMultiDateAlert.arMsg='يجب أن يكون للرحلة الأولى تاريخ قبل الرحلة التالية';
+        }
+        else{
+          this.validMultiDateAlert.enMsg='True';
+          this.validMultiDateAlert.arMsg='True';
+        }
+      }
+    }
+    return this.validMultiDateAlert
   }
   /**
    * this function is responsible to set the value of depart Date after validate it
