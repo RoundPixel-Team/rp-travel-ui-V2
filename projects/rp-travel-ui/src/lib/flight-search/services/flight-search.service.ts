@@ -439,30 +439,35 @@ export class FlightSearchService {
    * @retuer string with alert message if it has error else return true
    */
   validateMultiCityDates(){
-    console.log("Flights Length", this.flightsArray.length);
-    debugger;
-
     if(this.flightsArray.length > 1){
       for(let i=0; i<this.flightsArray.length; i++){
-        console.log("DATEEEEE",this.flightsArray.at(i)?.get('departingD')?.value);
-        console.log("DATEEEEE 2222",this.flightsArray.at(i+1)?.get('departingD')?.value);
-        if(this.flightsArray.length ==4){
+        //if the current date is the last one in array compare it with the previous one 
+        if(i == this.flightsArray.length-1){
           if(this.flightsArray.at(i)?.get('departingD')?.value < this.flightsArray.at(i-1).get('departingD')?.value){
             this.validMultiDateAlert.enMsg='The First Flight should Have A date Before next Flight';
             this.validMultiDateAlert.arMsg='يجب أن يكون للرحلة الأولى تاريخ قبل الرحلة التالية';
+            this.flightsArray.at(i-1)?.get('departingD')?.setValue('');
           }
           break;
         }
         else{
-          let x=this.flightsArray.at(i+1)?.get('departingD')?.value ;
-          let y =this.flightsArray.at(i).get('departingD')?.value;
-          if(x.getTime() < y.getTime()){
-            this.validMultiDateAlert.enMsg='The First Flight should Have A date Before next Flight';
-            this.validMultiDateAlert.arMsg='يجب أن يكون للرحلة الأولى تاريخ قبل الرحلة التالية';
+          let nextDate = this.flightsArray.at(i+1)?.get('departingD')?.value ;
+          let currentDate = this.flightsArray.at(i).get('departingD')?.value;
+          //check if we have a next date with value Or not
+          if(nextDate == undefined || nextDate == ""){
+            break;
           }
           else{
-            this.validMultiDateAlert.enMsg='True';
-            this.validMultiDateAlert.arMsg='True';
+            //compare between current and next Date
+            if(nextDate.getTime() < currentDate.getTime()){
+              this.validMultiDateAlert.enMsg='The First Flight should Have A date Before next Flight';
+              this.validMultiDateAlert.arMsg='يجب أن يكون للرحلة الأولى تاريخ قبل الرحلة التالية';
+              this.flightsArray.at(i+1)?.get('departingD')?.setValue('');
+            }
+            else{
+              this.validMultiDateAlert.enMsg='True';
+              this.validMultiDateAlert.arMsg='True';
+            }
           }
         }
       }
