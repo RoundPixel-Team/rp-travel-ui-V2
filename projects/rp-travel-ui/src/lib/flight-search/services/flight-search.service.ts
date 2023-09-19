@@ -446,7 +446,6 @@ export class FlightSearchService {
           if(this.flightsArray.at(i)?.get('departingD')?.value < this.flightsArray.at(i-1).get('departingD')?.value){
             this.validMultiDateAlert.enMsg='The First Flight should Have A date Before next Flight';
             this.validMultiDateAlert.arMsg='يجب أن يكون للرحلة الأولى تاريخ قبل الرحلة التالية';
-            this.flightsArray.at(i-1)?.get('departingD')?.setValue('');
           }
           break;
         }
