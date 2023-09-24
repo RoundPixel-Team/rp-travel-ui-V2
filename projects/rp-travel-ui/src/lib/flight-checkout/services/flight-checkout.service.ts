@@ -37,7 +37,10 @@ export class FlightCheckoutService {
    * here is the recommened service which is added to the cost/ticket by default
    */
   recommendedOfflineService! : flightOfflineService | undefined
-
+/**
+ * type of booking in checkout
+ */
+bookingType:string='standard'
   /**
    * here is the price with the recopmmened offline service added
    */
@@ -541,6 +544,21 @@ export class FlightCheckoutService {
     return error
   }
 
+saveBookingWithBookingType(){
+  if(this.bookingType == 'standard'){
+    for(let i=0; i<this.allOfflineServices.length; i++){
+
+if (this.allOfflineServices[i].serviceCode==this.selectedOfflineServices[0]){
+if(this.allOfflineServices[i].recommended){
+  this.selectedOfflineServices = this.selectedOfflineServices.filter((s)=>{return s != this.allOfflineServices[i].serviceCode})
+
+}else{
+  this.selectedOfflineServices=this.selectedOfflineServices
+}
+}
+}
+    }
+  }
 
   /**
    * 
@@ -551,8 +569,8 @@ export class FlightCheckoutService {
    */
   saveBooking(currentCurrency:string){
     this.loader = true
-    this.subscription.add(
 
+    this.subscription.add(
 
       this.api.saveBooking(
       this.selectedFlight?.searchCriteria.searchId!,
