@@ -206,7 +206,6 @@ fareLoading: boolean = true;
             this.filterAirlines()
             this.fetchLowestFaresForSorting(this.response.airItineraries)
             this.FilterData = result.airItineraries;
-            console.log(" this.FilterData.", this.FilterData);
             this.orgnizedResponce = this.orgnize(this.FilterData);
 
             this.FilterChanges$.unsubscribe();
@@ -356,7 +355,6 @@ fareLoading: boolean = true;
       i = i +1
     }
     
-    console.log(i,out);
    return out
   
   

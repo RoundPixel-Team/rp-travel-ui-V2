@@ -140,7 +140,7 @@ bookingType:string='standard'
           this.loader = false
           if(res.status == 'Valid'){
             this.selectedFlightLang.next(res.searchCriteria.language)
-            this.priceWithRecommenedService = res.airItineraryDTO.itinTotalFare.amount
+            this.priceWithRecommenedService += res.airItineraryDTO.itinTotalFare.amount
             // initilize users forms
             this.buildUsersForm(
               res.searchCriteria.adultNum,
@@ -180,6 +180,7 @@ bookingType:string='standard'
     this.subscription.add(
       this.api.offlineServices(searchId,pos).subscribe((res)=>{
         this.allOfflineServices = [...res.map((s)=>{
+          
           if(s.recommended){
             this.recommendedOfflineService = s
             this.priceWithRecommenedService += s.servicePrice
@@ -544,21 +545,7 @@ bookingType:string='standard'
     return error
   }
 
-saveBookingWithBookingType(){
-  if(this.bookingType == 'standard'){
-    for(let i=0; i<this.allOfflineServices.length; i++){
 
-if (this.allOfflineServices[i].serviceCode==this.selectedOfflineServices[0]){
-if(this.allOfflineServices[i].recommended){
-  this.selectedOfflineServices = this.selectedOfflineServices.filter((s)=>{return s != this.allOfflineServices[i].serviceCode})
-
-}else{
-  this.selectedOfflineServices=this.selectedOfflineServices
-}
-}
-}
-    }
-  }
 
   /**
    * 
@@ -569,9 +556,7 @@ if(this.allOfflineServices[i].recommended){
    */
   saveBooking(currentCurrency:string){
     this.loader = true
-
     this.subscription.add(
-
       this.api.saveBooking(
       this.selectedFlight?.searchCriteria.searchId!,
       this.selectedFlight?.airItineraryDTO.sequenceNum!,
@@ -584,7 +569,6 @@ if(this.allOfflineServices[i].recommended){
       )
 
     .subscribe((res)=>{
-      console.log("shoe me payment link")
       this.paymentLink.next(res)
       this.loader = false;
     },(err)=>{
