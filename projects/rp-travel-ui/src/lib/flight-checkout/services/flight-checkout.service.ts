@@ -217,45 +217,87 @@ bookingType:string='standard'
 
       // build adults forms WITH paspport details
       for(var i = 0 ; i<adults ; i++){
-        this.usersArray.push(
-          new FormGroup({
-            title: new FormControl("", [Validators.required]),
-            firstName: new FormControl("", [
-              Validators.required,
-              Validators.pattern("^[a-zA-Z]+"),
-              Validators.minLength(3),
-            ]),
-            middleName: new FormControl("", [
-              Validators.pattern("^[a-zA-Z]+"),
-              Validators.minLength(3),
-            ]),
-            lastName: new FormControl("", [
-              Validators.required,
-              Validators.pattern("^[a-zA-Z]+"),
-              Validators.minLength(3),
-            ]),
-            email: new FormControl("", [
-              Validators.required,
-              Validators.email,
-              Validators.minLength(9),
-            ]),
-            phoneNumber: new FormControl("", [
-              Validators.required,
-              Validators.maxLength(16),
-            ]),
-            countryCode: new FormControl(""),
-            nationality: new FormControl("", [
-              Validators.required
-            ]),
-            dateOfBirth: new FormControl("", [Validators.required]),
-            PassengerType: new FormControl("ADT"),
-            countryOfResidence: new FormControl("", [Validators.required]),
-            PassportNumber: new FormControl("", [Validators.required]),
-            PassportExpiry: new FormControl("", [Validators.required]),
-            IssuedCountry: new FormControl("", [Validators.required]),
-            position: new FormControl(this.usersArray.length + 1)
-          })
-        )
+        if(i==0){
+          this.usersArray.push(
+            new FormGroup({
+              title: new FormControl("", [Validators.required]),
+              firstName: new FormControl("", [
+                Validators.required,
+                Validators.pattern("^[a-zA-Z]+"),
+                Validators.minLength(3),
+              ]),
+              middleName: new FormControl("", [
+                Validators.pattern("^[a-zA-Z]+"),
+                Validators.minLength(3),
+              ]),
+              lastName: new FormControl("", [
+                Validators.required,
+                Validators.pattern("^[a-zA-Z]+"),
+                Validators.minLength(3),
+              ]),
+              email: new FormControl("", [
+                Validators.required,
+                Validators.email,
+                Validators.minLength(9),
+              ]),
+              phoneNumber: new FormControl("", [
+                Validators.required,
+                Validators.maxLength(16),
+              ]),
+              countryCode: new FormControl(""),
+              nationality: new FormControl("", [
+                Validators.required
+              ]),
+              dateOfBirth: new FormControl("", [Validators.required]),
+              PassengerType: new FormControl("ADT"),
+              countryOfResidence: new FormControl("", [Validators.required]),
+              PassportNumber: new FormControl("", [Validators.required]),
+              PassportExpiry: new FormControl("", [Validators.required]),
+              IssuedCountry: new FormControl("", [Validators.required]),
+              position: new FormControl(this.usersArray.length + 1)
+            })
+          )
+        }
+        else{
+          this.usersArray.push(
+            new FormGroup({
+              title: new FormControl("", [Validators.required]),
+              firstName: new FormControl("", [
+                Validators.required,
+                Validators.pattern("^[a-zA-Z]+"),
+                Validators.minLength(3),
+              ]),
+              middleName: new FormControl("", [
+                Validators.pattern("^[a-zA-Z]+"),
+                Validators.minLength(3),
+              ]),
+              lastName: new FormControl("", [
+                Validators.required,
+                Validators.pattern("^[a-zA-Z]+"),
+                Validators.minLength(3),
+              ]),
+              email: new FormControl("", [
+                Validators.email,
+                Validators.minLength(9),
+              ]),
+              phoneNumber: new FormControl("", [
+                Validators.maxLength(16),
+              ]),
+              countryCode: new FormControl(""),
+              nationality: new FormControl("", [
+                Validators.required
+              ]),
+              dateOfBirth: new FormControl("", [Validators.required]),
+              PassengerType: new FormControl("ADT"),
+              countryOfResidence: new FormControl("", [Validators.required]),
+              PassportNumber: new FormControl("", [Validators.required]),
+              PassportExpiry: new FormControl("", [Validators.required]),
+              IssuedCountry: new FormControl("", [Validators.required]),
+              position: new FormControl(this.usersArray.length + 1)
+            })
+          )
+        }
+        
       }
 
       // build childs forms WITH paspport details
