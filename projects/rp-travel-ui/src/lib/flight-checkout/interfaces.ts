@@ -21,18 +21,26 @@ export interface flightOfflineService {
     servicePrice: number,
     serviceCode: string,
     serviceName: string,
-    serviceDescription: string,
     pslacement: string,
     pos:string [],
     offlineServiceImageUrl: string,
     oflineServiceIconUrl: string,
     offlineServiceTerms: string,
     serviceNameAr: string,
-    serviceDescriptionAr: string,
     offlineServiceTermsAr: string,
     recommended: boolean,
     perPassenger: boolean,
     added?: boolean;
+
+    serviceDescription: string,
+    serviceDescriptionAr: string,
+    serviceType:string // e.g. package / yes/no / contactDetails / normal
+    parentService : string // if type == package
+    parentServiceAr : string 
+    acceptText:string // if type == yes/no
+    acceptTextAr:string 
+    declineText:string // if type == yes/no
+    declineTextAr:string 
 }
 
 
