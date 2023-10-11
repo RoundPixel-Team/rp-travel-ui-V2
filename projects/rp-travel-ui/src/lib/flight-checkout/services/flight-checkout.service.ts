@@ -102,12 +102,18 @@ bookingType:string='standard'
 
   paymentLink = new Subject();
   paymentLinkFailure = new Subject();
+
   /**
    * variable to hold the value of the selected flight language
    */
   selectedFlightLang = new Subject();
-  /**errors varriables */
 
+  /**
+   * variable to hold the value of the offline services response
+   */
+  offlineServicesResponse = new Subject<flightOfflineService[]>();
+
+  /**errors varriables */
   selectedFlightError : boolean = false
 
   /**
@@ -180,7 +186,7 @@ bookingType:string='standard'
     this.subscription.add(
       this.api.offlineServices(searchId,pos).subscribe((res)=>{
         this.allOfflineServices = [...res.map((s)=>{
-          
+        this.offlineServicesResponse.next(res)
           if(s.recommended){
             this.recommendedOfflineService = s
             this.priceWithRecommenedService += s.servicePrice
@@ -812,6 +818,7 @@ bookingType:string='standard'
     this.paymentLink = new Subject();
     this.paymentLinkFailure = new Subject();
     this.selectedFlightLang = new Subject();
+    this.offlineServicesResponse = new Subject();
     this.selectedFlightError = false
   }
 }
