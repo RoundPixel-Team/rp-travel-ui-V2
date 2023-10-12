@@ -9,6 +9,107 @@ import { HomePageService } from '../../home-page/services/home-page.service';
 type fareCalc = (fare:fare[])=>number;
 type calcEqfare =(flightFaresDTO: passengerFareBreakDownDTOs[],type:string,farecalc:fareCalc)=>number;
 
+const staticOfflineServices : flightOfflineService[] = [
+  {
+    currency:'KWD',
+    offlineServiceImageUrl:'',
+    offlineServiceTerms:'',
+    offlineServiceTermsAr:'',
+    oflineServiceIconUrl:'',
+    perPassenger:true,
+    pos:['KW'],
+    recommended:false,
+    serviceCode:'s1',
+    serviceDescription:'hello service 1',
+    serviceDescriptionAr:'hello service 1',
+    serviceName:'PACKAGE SERVICE 1',
+    serviceNameAr:'PACKAGE SERVICE 1',
+    servicePrice:50,
+    parentService:'parent1',
+    parentServiceAr:'parent1',
+    serviceType:'package',
+    pslacement:'',
+  },
+  {
+    currency:'KWD',
+    offlineServiceImageUrl:'',
+    offlineServiceTerms:'',
+    offlineServiceTermsAr:'',
+    oflineServiceIconUrl:'',
+    perPassenger:true,
+    pos:['KW'],
+    recommended:false,
+    serviceCode:'s2',
+    serviceDescription:'hello service 2',
+    serviceDescriptionAr:'hello service 2',
+    serviceName:'PACKAGE SERVICE 2',
+    serviceNameAr:'PACKAGE SERVICE 2',
+    servicePrice:50,
+    parentService:'parent1',
+    parentServiceAr:'parent1',
+    serviceType:'package',
+    pslacement:'',
+  },
+  {
+    currency:'KWD',
+    offlineServiceImageUrl:'',
+    offlineServiceTerms:'',
+    offlineServiceTermsAr:'',
+    oflineServiceIconUrl:'',
+    perPassenger:true,
+    pos:['KW'],
+    recommended:false,
+    serviceCode:'s3',
+    serviceDescription:'hello service 3',
+    serviceDescriptionAr:'hello service 3',
+    serviceName:'YES/NO SERVICE 3',
+    serviceNameAr:'YES/NO SERVICE 3',
+    servicePrice:50,
+    acceptText:'I ACCEPT THE SERVICE',
+    acceptTextAr:'I ACCEPT THE SERVICE',
+    declineText:"I DECLINE THE SERVICE",
+    declineTextAr:"I DECLINE THE SERVICE",
+    serviceType:'yes/no',
+    pslacement:'',
+  },
+  {
+    currency:'KWD',
+    offlineServiceImageUrl:'',
+    offlineServiceTerms:'',
+    offlineServiceTermsAr:'',
+    oflineServiceIconUrl:'',
+    perPassenger:true,
+    pos:['KW'],
+    recommended:false,
+    serviceCode:'s4',
+    serviceDescription:'hello service 4',
+    serviceDescriptionAr:'hello service 4',
+    serviceName:'CONTACT DETAILS SERVICE 4',
+    serviceNameAr:'CONTACT DETAILS SERVICE 4',
+    servicePrice:50,
+    serviceType:'contactDetails',
+    pslacement:'',
+  },
+  {
+    currency:'KWD',
+    offlineServiceImageUrl:'',
+    offlineServiceTerms:'',
+    offlineServiceTermsAr:'',
+    oflineServiceIconUrl:'',
+    perPassenger:true,
+    pos:['KW'],
+    recommended:false,
+    serviceCode:'s5',
+    serviceDescription:'hello service 5',
+    serviceDescriptionAr:'hello service 5',
+    serviceName:'NORMAL SERVICE 5',
+    serviceNameAr:'NORMAL SERVICE 5',
+    servicePrice:50,
+    serviceType:'normal',
+    pslacement:'',
+  },
+]
+
 @Injectable({
   providedIn: 'root'
 })
@@ -181,7 +282,7 @@ bookingType:string='standard'
    * this is for fetching the flight offline services data and update offline service state (offlineServices:flightOfflineServices[])
    * also update offlineServicesLoader state
    */
-  getAllOfflineServices(searchId:string,pos:string){
+  getAllOfflineServices(searchId:string,pos:string,multiTypes:boolean){
     this.offlineServicesLoader = true
     this.subscription.add(
       this.api.offlineServices(searchId,pos).subscribe((res)=>{
@@ -197,6 +298,9 @@ bookingType:string='standard'
           }
           
         })]
+        if(multiTypes){
+          this.allOfflineServices = this.organizeOfflineServices(staticOfflineServices)
+        }
         this.offlineServicesLoader = false
       },(err)=>{
         console.log('get selected flight offline services error ->',err)
@@ -204,6 +308,38 @@ bookingType:string='standard'
       })
     )
   }
+
+  /**
+   * 
+   * @param data [all offline services data]
+   * @returns offline services organized and grouped with the new logic
+   */
+  organizeOfflineServices(data:flightOfflineService[]):flightOfflineService[]{
+    let packageServices:flightOfflineService[] = data.filter((s)=>{return s.serviceType == 'package'})
+    for(var i = 0 ; i<packageServices.length ; i++){
+      let packageSubServices = packageServices.filter((s)=>{return s.parentService == packageServices[i].parentService && s.serviceCode != packageServices[i].serviceCode})
+        packageServices[i].subServices = packageSubServices
+    }
+
+    let allPackageServiceParents:string [] = []
+    if(packageServices.length>0){
+      for(var i = 0 ; i<packageServices.length; i++){
+        allPackageServiceParents.push(packageServices[i].parentService || '')
+      }
+    }
+    allPackageServiceParents = [...new Set([...allPackageServiceParents])]
+    
+    if(allPackageServiceParents.length > 0){
+      for(var i =0;i<allPackageServiceParents.length; i++){
+        let firstParentMatch : flightOfflineService = packageServices.filter((s)=>{return s.parentService == allPackageServiceParents[i]})[0]
+        packageServices = [...packageServices.filter((s)=>{return s.parentService != allPackageServiceParents[i]})]
+        packageServices = [...packageServices,firstParentMatch]
+      }
+    }
+
+    return [...data.filter((s)=>{return s.serviceType != 'package'})].concat(packageServices)
+  }
+  
 
 
   /**
