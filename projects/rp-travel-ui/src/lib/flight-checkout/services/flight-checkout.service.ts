@@ -118,7 +118,7 @@ export class FlightCheckoutService {
   home = inject(HomePageService)
   subscription : Subscription = new Subscription()
 
-
+  serviceFees: number= 0;
   /**
    * here is the loaded selected data 
    */
@@ -641,6 +641,7 @@ bookingType:string='standard'
     if(this.selectedFlight != undefined){
       this.selectedFlight.airItineraryDTO.itinTotalFare.amount += service.servicePrice
       this.priceWithRecommenedService += service.servicePrice
+      this.serviceFees = service.servicePrice;
     }
     this.allOfflineServices[serviceIndex].added = true
   }
@@ -657,6 +658,7 @@ bookingType:string='standard'
     if(this.selectedFlight != undefined){
       this.selectedFlight.airItineraryDTO.itinTotalFare.amount -= service.servicePrice
       this.priceWithRecommenedService -= service.servicePrice
+      this.serviceFees = 0;
     }
     this.allOfflineServices[serviceIndex].added = false
   }
