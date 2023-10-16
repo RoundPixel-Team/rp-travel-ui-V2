@@ -450,10 +450,12 @@ export class FlightSearchService {
           break;
         }
         else{
-          let nextDate = this.flightsArray.at(i+1)?.get('departingD')?.value ;
+          let nextDate = new Date( this.flightsArray.at(i+1)?.get('departingD')?.value) ;
+
           let currentDate = this.flightsArray.at(i).get('departingD')?.value;
           //check if we have a next date with value Or not
-          if(nextDate == undefined || nextDate == ""){
+
+          if(nextDate == undefined || nextDate == null){
             break;
           }
           else{
@@ -520,17 +522,16 @@ export class FlightSearchService {
     this.retDateAlert.enMsg = '';
     this.retDateAlert.arMsg = '';
     if (retDate) {
-      let date = new Date(retDate).toISOString().split('T')[0]; //making date as 2023-08-01 format to check the condition
       let depDate = (<FormArray>this.searchFlight?.get('Flights'))
-        .at(0)
-        ?.get('departingD')?.value;
+      .at(0)
+      ?.get('departingD')?.value;
       //check if date is previous than today
-      if (date <= this.todayDate()) {
+      if (retDate <= this.todayDate()) {
         this.retDateAlert.enMsg = 'You Should select a date after this day';
         this.retDateAlert.arMsg = 'يجب عليك تحديد تاريخ بعد هذا اليوم';
       }
       //check of date is is previous than depart date
-      else if (date < depDate) {
+      else if (retDate < depDate) {
         this.retDateAlert.enMsg =
           'You Should Select a date After your Depart Date';
         this.retDateAlert.arMsg =
@@ -538,7 +539,7 @@ export class FlightSearchService {
       }
       //if all validation is true then go to else condition
       else {
-        this.searchFlight.controls['returnDate'].setValue(date);
+        this.searchFlight.controls['returnDate'].setValue(retDate);
       }
     } else {
       this.retDateAlert.enMsg = 'You Should Select a return Date';
