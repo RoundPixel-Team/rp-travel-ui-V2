@@ -121,6 +121,14 @@ selectedCurrency : currencyModel = {
   }
 
   /**
+   * set the default selected currency model according to point of sale
+   * @param currencyModel
+   */
+  setSelectedCurrency(currency:currencyModel){
+    this.selectedCurrency = currency
+  }
+
+  /**
  * 
  * @param currentLang 
  * this is for fetching all airports (allAirports: airPorts[]) based on current language
