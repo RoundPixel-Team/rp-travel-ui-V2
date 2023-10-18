@@ -299,7 +299,7 @@ bookingType:string='standard'
           
         })]
         if(multiTypes){
-          this.allOfflineServices = this.organizeOfflineServices(staticOfflineServices)
+          this.allOfflineServices = this.organizeOfflineServices(this.allOfflineServices)
         }
         this.offlineServicesLoader = false
       },(err)=>{
