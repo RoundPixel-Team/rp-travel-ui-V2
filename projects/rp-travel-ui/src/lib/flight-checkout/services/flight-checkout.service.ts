@@ -135,6 +135,11 @@ export class FlightCheckoutService {
   selectedOfflineServices : string[] = []
 
   /**
+   * here is all loaded offline services orgnized and grouped by type 
+   */
+  organizedOfllineServices : flightOfflineService[] = []
+
+  /**
    * here is the recommened service which is added to the cost/ticket by default
    */
   recommendedOfflineService! : flightOfflineService | undefined
@@ -291,15 +296,15 @@ bookingType:string='standard'
           if(s.recommended){
             this.recommendedOfflineService = s
             this.priceWithRecommenedService += s.servicePrice
-            return {...s,added:true}
+            return {...s,added:true,interaction:false}
           }
           else{
-            return {...s,added:false}
+            return {...s,added:false,interaction:false}
           }
           
         })]
         if(multiTypes){
-          this.allOfflineServices = this.organizeOfflineServices(this.allOfflineServices)
+          this.organizedOfllineServices = this.organizeOfflineServices(this.allOfflineServices)
         }
         this.offlineServicesLoader = false
       },(err)=>{
@@ -641,9 +646,10 @@ bookingType:string='standard'
     if(this.selectedFlight != undefined){
       this.selectedFlight.airItineraryDTO.itinTotalFare.amount += service.servicePrice
       this.priceWithRecommenedService += service.servicePrice
-      this.serviceFees = service.servicePrice;
+      this.serviceFees += service.servicePrice;
     }
     this.allOfflineServices[serviceIndex].added = true
+    this.allOfflineServices[serviceIndex].interaction = true
   }
 
   /**
@@ -658,9 +664,10 @@ bookingType:string='standard'
     if(this.selectedFlight != undefined){
       this.selectedFlight.airItineraryDTO.itinTotalFare.amount -= service.servicePrice
       this.priceWithRecommenedService -= service.servicePrice
-      this.serviceFees = 0;
+      this.serviceFees -= service.servicePrice;
     }
     this.allOfflineServices[serviceIndex].added = false
+    this.allOfflineServices[serviceIndex].interaction = true
   }
 
 

@@ -43,6 +43,7 @@ export interface flightOfflineService {
     declineTextAr?:string 
 
     subServices?:flightOfflineService[]
+    interaction?:boolean
 }
 
 
