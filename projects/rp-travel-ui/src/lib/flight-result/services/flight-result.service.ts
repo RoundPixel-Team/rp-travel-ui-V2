@@ -956,6 +956,7 @@ fareLoading: boolean = true;
         });
       }
     }
+    this.code = sorted[0].itinTotalFare.currencyCode
     this.customFilteredAirlineSlice = this.customFilteredAirline.slice(this.customFilteredAirlineStart,this.customFilteredAirlineEnd)
     this.customFilteredAirlineSliceMobile = this.customFilteredAirline.slice(this.customFilteredAirlineStartMobile,this.customFilteredAirlineEndMobile)
 
