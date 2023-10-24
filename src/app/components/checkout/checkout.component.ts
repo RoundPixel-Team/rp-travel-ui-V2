@@ -22,7 +22,7 @@ export class CheckoutComponent implements OnInit {
     this.subscription.add(
       this.route.queryParams.subscribe((params)=>{
         this.flight.getSelectedFlightData(params["sid"],+params["sequenceNum"],params["providerKey"]?params["providerKey"]:params["pkey"])
-        this.flight.getAllOfflineServices(params["sid"],'KW')
+        this.flight.getAllOfflineServices(params["sid"],'KW',true)
         // this.flight.fetchLastPassengerData()
       })
     )
