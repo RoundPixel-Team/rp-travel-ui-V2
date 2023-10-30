@@ -9,106 +9,106 @@ import { HomePageService } from '../../home-page/services/home-page.service';
 type fareCalc = (fare:fare[])=>number;
 type calcEqfare =(flightFaresDTO: passengerFareBreakDownDTOs[],type:string,farecalc:fareCalc)=>number;
 
-const staticOfflineServices : flightOfflineService[] = [
-  {
-    currency:'KWD',
-    offlineServiceImageUrl:'',
-    offlineServiceTerms:'',
-    offlineServiceTermsAr:'',
-    oflineServiceIconUrl:'',
-    perPassenger:true,
-    pos:['KW'],
-    recommended:false,
-    serviceCode:'s1',
-    serviceDescription:'hello service 1',
-    serviceDescriptionAr:'hello service 1',
-    serviceName:'PACKAGE SERVICE 1',
-    serviceNameAr:'PACKAGE SERVICE 1',
-    servicePrice:50,
-    parentService:'parent1',
-    parentServiceAr:'parent1',
-    serviceType:'package',
-    pslacement:'',
-  },
-  {
-    currency:'KWD',
-    offlineServiceImageUrl:'',
-    offlineServiceTerms:'',
-    offlineServiceTermsAr:'',
-    oflineServiceIconUrl:'',
-    perPassenger:true,
-    pos:['KW'],
-    recommended:false,
-    serviceCode:'s2',
-    serviceDescription:'hello service 2',
-    serviceDescriptionAr:'hello service 2',
-    serviceName:'PACKAGE SERVICE 2',
-    serviceNameAr:'PACKAGE SERVICE 2',
-    servicePrice:50,
-    parentService:'parent1',
-    parentServiceAr:'parent1',
-    serviceType:'package',
-    pslacement:'',
-  },
-  {
-    currency:'KWD',
-    offlineServiceImageUrl:'',
-    offlineServiceTerms:'',
-    offlineServiceTermsAr:'',
-    oflineServiceIconUrl:'',
-    perPassenger:true,
-    pos:['KW'],
-    recommended:false,
-    serviceCode:'s3',
-    serviceDescription:'hello service 3',
-    serviceDescriptionAr:'hello service 3',
-    serviceName:'YES/NO SERVICE 3',
-    serviceNameAr:'YES/NO SERVICE 3',
-    servicePrice:50,
-    acceptText:'I ACCEPT THE SERVICE',
-    acceptTextAr:'I ACCEPT THE SERVICE',
-    declineText:"I DECLINE THE SERVICE",
-    declineTextAr:"I DECLINE THE SERVICE",
-    serviceType:'yes/no',
-    pslacement:'',
-  },
-  {
-    currency:'KWD',
-    offlineServiceImageUrl:'',
-    offlineServiceTerms:'',
-    offlineServiceTermsAr:'',
-    oflineServiceIconUrl:'',
-    perPassenger:true,
-    pos:['KW'],
-    recommended:false,
-    serviceCode:'s4',
-    serviceDescription:'hello service 4',
-    serviceDescriptionAr:'hello service 4',
-    serviceName:'CONTACT DETAILS SERVICE 4',
-    serviceNameAr:'CONTACT DETAILS SERVICE 4',
-    servicePrice:50,
-    serviceType:'contactDetails',
-    pslacement:'',
-  },
-  {
-    currency:'KWD',
-    offlineServiceImageUrl:'',
-    offlineServiceTerms:'',
-    offlineServiceTermsAr:'',
-    oflineServiceIconUrl:'',
-    perPassenger:true,
-    pos:['KW'],
-    recommended:false,
-    serviceCode:'s5',
-    serviceDescription:'hello service 5',
-    serviceDescriptionAr:'hello service 5',
-    serviceName:'NORMAL SERVICE 5',
-    serviceNameAr:'NORMAL SERVICE 5',
-    servicePrice:50,
-    serviceType:'normal',
-    pslacement:'',
-  },
-]
+// const staticOfflineServices : flightOfflineService[] = [
+//   {
+//     currency:'KWD',
+//     offlineServiceImageUrl:'',
+//     offlineServiceTerms:'',
+//     offlineServiceTermsAr:'',
+//     oflineServiceIconUrl:'',
+//     perPassenger:true,
+//     pos:['KW'],
+//     recommended:false,
+//     serviceCode:'s1',
+//     serviceDescription:'hello service 1',
+//     serviceDescriptionAr:'hello service 1',
+//     serviceName:'PACKAGE SERVICE 1',
+//     serviceNameAr:'PACKAGE SERVICE 1',
+//     servicePrice:50,
+//     parentService:'parent1',
+//     parentServiceAr:'parent1',
+//     serviceType:'package',
+//     pslacement:'',
+//   },
+//   {
+//     currency:'KWD',
+//     offlineServiceImageUrl:'',
+//     offlineServiceTerms:'',
+//     offlineServiceTermsAr:'',
+//     oflineServiceIconUrl:'',
+//     perPassenger:true,
+//     pos:['KW'],
+//     recommended:false,
+//     serviceCode:'s2',
+//     serviceDescription:'hello service 2',
+//     serviceDescriptionAr:'hello service 2',
+//     serviceName:'PACKAGE SERVICE 2',
+//     serviceNameAr:'PACKAGE SERVICE 2',
+//     servicePrice:50,
+//     parentService:'parent1',
+//     parentServiceAr:'parent1',
+//     serviceType:'package',
+//     pslacement:'',
+//   },
+//   {
+//     currency:'KWD',
+//     offlineServiceImageUrl:'',
+//     offlineServiceTerms:'',
+//     offlineServiceTermsAr:'',
+//     oflineServiceIconUrl:'',
+//     perPassenger:true,
+//     pos:['KW'],
+//     recommended:false,
+//     serviceCode:'s3',
+//     serviceDescription:'hello service 3',
+//     serviceDescriptionAr:'hello service 3',
+//     serviceName:'YES/NO SERVICE 3',
+//     serviceNameAr:'YES/NO SERVICE 3',
+//     servicePrice:50,
+//     acceptText:'I ACCEPT THE SERVICE',
+//     acceptTextAr:'I ACCEPT THE SERVICE',
+//     declineText:"I DECLINE THE SERVICE",
+//     declineTextAr:"I DECLINE THE SERVICE",
+//     serviceType:'yes/no',
+//     pslacement:'',
+//   },
+//   {
+//     currency:'KWD',
+//     offlineServiceImageUrl:'',
+//     offlineServiceTerms:'',
+//     offlineServiceTermsAr:'',
+//     oflineServiceIconUrl:'',
+//     perPassenger:true,
+//     pos:['KW'],
+//     recommended:false,
+//     serviceCode:'s4',
+//     serviceDescription:'hello service 4',
+//     serviceDescriptionAr:'hello service 4',
+//     serviceName:'CONTACT DETAILS SERVICE 4',
+//     serviceNameAr:'CONTACT DETAILS SERVICE 4',
+//     servicePrice:50,
+//     serviceType:'contactDetails',
+//     pslacement:'',
+//   },
+//   {
+//     currency:'KWD',
+//     offlineServiceImageUrl:'',
+//     offlineServiceTerms:'',
+//     offlineServiceTermsAr:'',
+//     oflineServiceIconUrl:'',
+//     perPassenger:true,
+//     pos:['KW'],
+//     recommended:false,
+//     serviceCode:'s5',
+//     serviceDescription:'hello service 5',
+//     serviceDescriptionAr:'hello service 5',
+//     serviceName:'NORMAL SERVICE 5',
+//     serviceNameAr:'NORMAL SERVICE 5',
+//     servicePrice:50,
+//     serviceType:'normal',
+//     pslacement:'',
+//   },
+// ]
 
 @Injectable({
   providedIn: 'root'
@@ -117,6 +117,10 @@ export class FlightCheckoutService {
   api = inject(FlightCheckoutApiService)
   home = inject(HomePageService)
   subscription : Subscription = new Subscription()
+
+  yesOrNoVaild:boolean = false;
+  packageVaild:boolean = false ;
+  addbuttonVaild:boolean = false ;
 
   serviceFees: number= 0;
   /**
@@ -253,6 +257,7 @@ bookingType:string='standard'
           if(res.status == 'Valid'){
             this.selectedFlightLang.next(res.searchCriteria.language)
             this.priceWithRecommenedService += res.airItineraryDTO.itinTotalFare.amount
+            
             // initilize users forms
             this.buildUsersForm(
               res.searchCriteria.adultNum,
@@ -295,7 +300,6 @@ bookingType:string='standard'
         this.offlineServicesResponse.next(res)
           if(s.recommended){
             this.recommendedOfflineService = s
-            this.priceWithRecommenedService += s.servicePrice
             return {...s,added:true,interaction:false}
           }
           else{
@@ -647,6 +651,20 @@ bookingType:string='standard'
       this.selectedFlight.airItineraryDTO.itinTotalFare.amount += service.servicePrice
       this.priceWithRecommenedService += service.servicePrice
       this.serviceFees += service.servicePrice;
+      //appear validation message based on boolean value
+      switch(service.serviceType) {
+        case 'addbutton':  
+          this.addbuttonVaild = true;
+          break;
+    
+        case 'yes/no':
+          this.yesOrNoVaild = true;
+          break;
+        case 'package':
+          this.packageVaild = true;
+          break;
+      }
+    
     }
     this.allOfflineServices[serviceIndex].added = true
     this.allOfflineServices[serviceIndex].interaction = true
@@ -664,7 +682,28 @@ bookingType:string='standard'
     if(this.selectedFlight != undefined){
       this.selectedFlight.airItineraryDTO.itinTotalFare.amount -= service.servicePrice
       this.priceWithRecommenedService -= service.servicePrice
-      this.serviceFees -= service.servicePrice;
+      if(this.priceWithRecommenedService == 0){
+        this.priceWithRecommenedService = 0;
+      }
+      else{
+        this.priceWithRecommenedService -= service.servicePrice;
+      }
+      if(this.serviceFees == 0){
+        this.serviceFees = 0;
+      }
+      else{
+        this.serviceFees -= service.servicePrice;
+      }
+      //appear validation message based on boolean value
+      switch(service.serviceType) {
+        case 'addbutton':  
+          this.addbuttonVaild = false;
+          break;
+
+        case 'package':
+          this.packageVaild = false;
+          break;
+      }
     }
     this.allOfflineServices[serviceIndex].added = false
     this.allOfflineServices[serviceIndex].interaction = true
