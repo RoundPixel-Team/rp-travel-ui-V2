@@ -40,7 +40,7 @@ export interface flightOfflineService {
     acceptText?:string // if type == yes/no
     acceptTextAr?:string 
     declineText?:string // if type == yes/no
-    declineTextAr?:string 
+    declineTextAR?:string 
 
     subServices?:flightOfflineService[]
     interaction?:boolean
