@@ -18,6 +18,11 @@ export class FlightCheckoutService {
   home = inject(HomePageService)
   subscription : Subscription = new Subscription()
   serviceFees: number= 0;
+
+  yesOrNoVaild:boolean = false;
+  packageVaild:boolean = false ;
+  addbuttonVaild:boolean = false ;
+  
   /**
    * here is the loaded selected data 
    */
@@ -546,6 +551,19 @@ bookingType:string='standard'
       this.selectedFlight.airItineraryDTO.itinTotalFare.amount += service.servicePrice
       this.priceWithRecommenedService += service.servicePrice
       this.serviceFees += service.servicePrice;    
+         //appear validation message based on boolean value
+         switch(service.serviceType) {
+          case 'addbutton':  
+            this.addbuttonVaild = true;
+            break;
+      
+          case 'yes/no':
+            this.yesOrNoVaild = true;
+            break;
+          case 'package':
+            this.packageVaild = true;
+            break;
+        }
     }
     this.allOfflineServices[serviceIndex].added = true
     this.allOfflineServices[serviceIndex].interaction = true
@@ -575,6 +593,19 @@ bookingType:string='standard'
       else{
         this.serviceFees -= service.servicePrice;
       }
+         //appear validation message based on boolean value
+         switch(service.serviceType) {
+          case 'addbutton':  
+            this.addbuttonVaild = true;
+            break;
+      
+          case 'yes/no':
+            this.yesOrNoVaild = true;
+            break;
+          case 'package':
+            this.packageVaild = true;
+            break;
+        }
     }
     this.allOfflineServices[serviceIndex].added = false
     this.allOfflineServices[serviceIndex].interaction = true
