@@ -906,7 +906,9 @@ fareLoading: boolean = true;
   };
   }
 
-
+updateCurrencyCode(code: string){
+  this.code = code;
+}
   DayOrNight(h:number,m:number):string{
     let hourOfday = h > 24?h%24:h;
    return hourOfday+(m/100) > 12?'PM':"AM"
@@ -956,7 +958,7 @@ fareLoading: boolean = true;
         });
       }
     }
-    this.code = sorted[0].itinTotalFare.currencyCode
+    // this.code = sorted[0].itinTotalFare.currencyCode
     this.customFilteredAirlineSlice = this.customFilteredAirline.slice(this.customFilteredAirlineStart,this.customFilteredAirlineEnd)
     this.customFilteredAirlineSliceMobile = this.customFilteredAirline.slice(this.customFilteredAirlineStartMobile,this.customFilteredAirlineEndMobile)
 
