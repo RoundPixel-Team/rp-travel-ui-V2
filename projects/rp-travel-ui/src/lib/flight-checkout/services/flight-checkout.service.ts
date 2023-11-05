@@ -200,7 +200,9 @@ bookingType:string='standard'
         this.offlineServicesResponse.next(res)
           if(s.recommended){
             this.recommendedOfflineService = s
-            return {...s,added:true,interaction:false}
+            this.priceWithRecommenedService += this.recommendedOfflineService.servicePrice
+            this.selectedOfflineServices.push(this.recommendedOfflineService.serviceCode)
+            return {...s,added:true,interaction:true}
           }
           else{
             return {...s,added:false,interaction:false}
@@ -578,14 +580,17 @@ bookingType:string='standard'
   removeOfflineService(service : flightOfflineService){
     let serviceIndex = this.allOfflineServices.findIndex((s)=>{return s.serviceCode == service.serviceCode})
     this.selectedOfflineServices = this.selectedOfflineServices.filter((s)=>{return s != service.serviceCode})
-    if(this.selectedFlight != undefined){
-      this.selectedFlight.airItineraryDTO.itinTotalFare.amount -= service.servicePrice
+    if(this.selectedFlight != undefined){ 
+      //if interacted before 
+      if(this.yesOrNoVaild){
+        this.selectedFlight.airItineraryDTO.itinTotalFare.amount -= service.servicePrice
       this.priceWithRecommenedService -= service.servicePrice
       if(this.priceWithRecommenedService == 0){
         this.priceWithRecommenedService = 0;
       }
       else{
         this.priceWithRecommenedService -= service.servicePrice;
+      }
       }
       if(this.serviceFees == 0){
         this.serviceFees = 0;
