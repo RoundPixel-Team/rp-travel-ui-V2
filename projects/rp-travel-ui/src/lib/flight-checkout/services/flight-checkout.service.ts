@@ -582,7 +582,7 @@ bookingType:string='standard'
     this.selectedOfflineServices = this.selectedOfflineServices.filter((s)=>{return s != service.serviceCode})
     if(this.selectedFlight != undefined){ 
       //if interacted before 
-      if(this.yesOrNoVaild){
+      if(this.yesOrNoVaild || this.packageVaild || this.addbuttonVaild){
         this.selectedFlight.airItineraryDTO.itinTotalFare.amount -= service.servicePrice
       this.priceWithRecommenedService -= service.servicePrice
       if(this.priceWithRecommenedService == 0){
