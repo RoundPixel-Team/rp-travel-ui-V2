@@ -52,7 +52,7 @@ export class FlightCheckoutService {
  */
 bookingType:string='standard'
   /**
-   * here is the price with the recopmmened offline service added
+   * here is the price with the recommened offline service added
    */
   priceWithRecommenedService: number = 0;
 
@@ -584,7 +584,7 @@ bookingType:string='standard'
       //if interacted before 
       if(this.yesOrNoVaild || this.packageVaild || this.addbuttonVaild){
         this.selectedFlight.airItineraryDTO.itinTotalFare.amount -= service.servicePrice
-      this.priceWithRecommenedService -= service.servicePrice
+      //this.priceWithRecommenedService -= service.servicePrice
       if(this.priceWithRecommenedService == 0){
         this.priceWithRecommenedService = 0;
       }
