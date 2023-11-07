@@ -582,21 +582,13 @@ bookingType:string='standard'
     this.selectedOfflineServices = this.selectedOfflineServices.filter((s)=>{return s != service.serviceCode})
     if(this.selectedFlight != undefined){ 
       //if interacted before 
-      if(this.yesOrNoVaild || this.packageVaild || this.addbuttonVaild){
-        this.selectedFlight.airItineraryDTO.itinTotalFare.amount -= service.servicePrice
-      //this.priceWithRecommenedService -= service.servicePrice
-      if(this.priceWithRecommenedService == 0){
-        this.priceWithRecommenedService = 0;
-      }
-      else{
-        this.priceWithRecommenedService -= service.servicePrice;
-      }
-      }
-      if(this.serviceFees == 0){
-        this.serviceFees = 0;
-      }
-      else{
-        this.serviceFees -= service.servicePrice;
+          if(this.serviceFees == 0){
+            this.serviceFees = 0;
+          }
+          else{
+            this.serviceFees -= service.servicePrice;
+            this.priceWithRecommenedService -= service.servicePrice;
+            this.selectedFlight.airItineraryDTO.itinTotalFare.amount -= service.servicePrice
       }
          //appear validation message based on boolean value
          switch(service.serviceType) {
