@@ -155,7 +155,6 @@ bookingType:string='standard'
           // updating the loading state
           this.loader = false
           if(res.status == 'Valid'){
-            this.selectedFlightLang.next(res.searchCriteria.language)
             this.priceWithRecommenedService += res.airItineraryDTO.itinTotalFare.amount
             
             // initilize users forms
@@ -169,6 +168,8 @@ bookingType:string='standard'
               // assign values to fare breakup and fare disscount
               this.calculateFareBreakupDisscount()
               this.calculatePassengersFareBreakupValue()
+              
+              this.selectedFlightLang.next(res.searchCriteria.language)
           }
           
           else{
@@ -685,7 +686,7 @@ bookingType:string='standard'
    * it updates the behaviour subject (paymentLink) with the link
    * it also updates the behaviour subject (paymentLinkFailure) with the error
    */
-  saveBooking(currentCurrency:string){
+  saveBooking(currentCurrency:string,type:string){
     this.loader = true
     this.subscription.add(
       this.api.saveBooking(
@@ -694,7 +695,7 @@ bookingType:string='standard'
       this.generateSaveBookingBodyParam(currentCurrency),
       this.selectedFlight?.airItineraryDTO.pKey!.toString()!,
       this.selectedFlight?.searchCriteria.language!,
-      this.selectedOfflineServices,
+      type=='premium'?this.selectedOfflineServices:this.selectedOfflineServices.filter((s)=>{return s != this.recommendedOfflineService?.serviceCode}),
       this.home.pointOfSale.ip || "00.00.000.000",
       this.home.pointOfSale.country || 'kw'
       )
@@ -878,6 +879,14 @@ bookingType:string='standard'
   //-----------------------> End of Building Fare breakup Functionalities
 
 
+  updatePackageServiceInteractionValidation(val:boolean){
+    this.packageVaild = val
+  }
+
+  updateYesOrNoServiceInteractionValidation(val:boolean){
+    this.yesOrNoVaild = val
+  }
+
   /**
    * this function is responsible to destory any opened subscription on this service
    */
@@ -903,5 +912,11 @@ bookingType:string='standard'
     this.selectedFlightLang = new Subject();
     this.offlineServicesResponse = new Subject();
     this.selectedFlightError = false
+
+    this.yesOrNoVaild = false;
+    this.packageVaild = false ;
+    this.addbuttonVaild = false ;
+    this.serviceFees = 0;
+    this.organizedOfllineServices = []
   }
 }
