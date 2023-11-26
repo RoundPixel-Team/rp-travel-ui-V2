@@ -14,7 +14,39 @@ export class ConfirmationApiService {
   public env = inject(EnvironmentService)
 
   constructor() { }
-
+  /**
+   * 
+   * @param url 
+   * @returns  the payment result status 
+   */
+  getPaymentResult(url: string) {
+    let api = `${this.env.prepay}/api/paymentresult?${url}`;
+    return this.http.get<any>(api).pipe(
+      take(1),
+      map(
+        (result) => { return result; }
+      )
+    )
+  }
+  /**
+   * 
+   * @param HGNu 
+   * @param searchid 
+   * @param tok 
+   * @param url 
+   * @returns status after successful payment
+   */
+  PostProcessing(HGNum: string, searchid: string, tok: string, url: string) {
+   
+    let api = `${url}&tok=${tok}`;
+    
+    return this.http.get<any>(api).pipe(
+      take(1),
+      map((result) => {
+        return result;
+      })
+    );
+  }
 
   /**
    * 

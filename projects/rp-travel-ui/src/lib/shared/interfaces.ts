@@ -5,12 +5,11 @@ export interface enviromentModel{
     FareRules    : string
     asm          : string
     Apihotels    : string
-    hotelprepay  : string
+    prepay  : string
     users        : string
     admin        : string
     getDPayment  : string
     bookHotels   : string
-    hotelPrepay  : string
     backOffice   : string
     FlightTop    : string
     offers:{

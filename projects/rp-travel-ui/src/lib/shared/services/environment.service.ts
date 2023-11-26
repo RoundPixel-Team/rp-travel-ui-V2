@@ -12,12 +12,11 @@ export class EnvironmentService {
     FareRules =   'https://flightprov.rhlaty.com'
     asm =         'https://backofficeapi.rhlaty.com'
     Apihotels =   'https://hotels.rhlatycom'
-    hotelprepay = 'https://prepayapi.rhlaty.com'
     users =       'https://usersapi.rhlaty.com'
     admin =       'https://adminapi.rhlaty.com/'
     getDPayment = 'https://adminapi.rhlaty.com/'
     bookHotels =  'https://hotels.rhlaty.com'
-    hotelPrepay = 'https://prepayapi.rhlaty.com'
+    prepay = 'https://prepayapi.rhlaty.com'
     backOffice =  'https://backofficeapi.rhlaty.com'
     FlightTop =   'https://flightsearch.rhlaty.com'
     offers= {
@@ -47,8 +46,7 @@ export class EnvironmentService {
     this.backOffice = env.backOffice
     this.bookHotels = env.bookHotels
     this.getDPayment = env.getDPayment
-    this.hotelPrepay = env.hotelPrepay
-    this.hotelprepay = env.hotelprepay
+    this.prepay = env.prepay
     this.offers.BookOffer = env.offers.BookOffer
     this.offers.RetriveItineraryDetails = env.offers.RetriveItineraryDetails
     this.offers.getAll = env.offers.getAll
