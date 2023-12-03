@@ -242,12 +242,14 @@ fareLoading: boolean = true;
             });
 
             this.findDepartingnMinMax(this.response.airItineraries);
+            this.filterForm.get("dpartingSlider")?.setValue( this.findDepartingnMinMax(this.response.airItineraries));
+            this.filterForm.get("dpartingSlider")?.updateValueAndValidity();
             this.filterForm.get("durationSlider")?.setValue(this.findDurationMinMax(this.response.airItineraries));
             this.filterForm.get("durationSlider")?.updateValueAndValidity();
 
             // this.findDepartingnMinMax(this.response.airItineraries)
-            this.findArrivingMinMax(this.response.airItineraries)
-            // this.minAnMax(this.response.airItineraries);
+            this.filterForm.get("arrivingSlider")?.setValue(this.findArrivingMinMax(this.response.airItineraries));
+            this.filterForm.get("arrivingSlider")?.updateValueAndValidity();            // this.minAnMax(this.response.airItineraries);
             this.filterForm.get('priceSlider')?.setValue(this.minAnMax(this.response.airItineraries));
             this.stopsvalues(),
               this.airlinesA = this.response.airlines;
@@ -283,6 +285,7 @@ fareLoading: boolean = true;
  * 
  **/
   updateFilter() {
+  
     this.subscription.add(
       this.filterForm.valueChanges.subscribe((val) => {
         if (this.formINIT) {
@@ -306,6 +309,7 @@ fareLoading: boolean = true;
             this.filteringbyBookingSites(this.filterForm.get('bookingSite')?.get('bookingSites')?.value!)
 
           );
+        
           this.oneForAll(filter, this.FilterData, this.roundT);
         }
         else {
@@ -579,7 +583,7 @@ fareLoading: boolean = true;
 *  filter by ArrivalTime
 **/
   filterFlighWithArrivalTime(flight: airItineraries, filter: filterFlightInterface): boolean {
-    return this.convertToMin(flight.allJourney.flights[0].flightDTO[0].arrivalDate) >= filter.arrivingMin! && this.convertToMin(flight.allJourney.flights[0].flightDTO[0].arrivalDate) <= filter.arrivingMax!;
+    return this.convertToMin(flight.allJourney.flights[0].flightDTO[flight.allJourney.flights[0].flightDTO.length - 1].arrivalDate) >= filter.arrivingMin! && this.convertToMin(flight.allJourney.flights[0].flightDTO[flight.allJourney.flights[0].flightDTO.length - 1].arrivalDate) <= filter.arrivingMax!;
 
   }
   /**
