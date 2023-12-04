@@ -163,7 +163,7 @@ bookingType:string='standard'
               res.searchCriteria.childNum,
               res.searchCriteria.infantNum,
               res.passportDetailsRequired)
-              this.fetchLastPassengerData()
+              // this.fetchLastPassengerData()
 
               // assign values to fare breakup and fare disscount
               this.calculateFareBreakupDisscount()

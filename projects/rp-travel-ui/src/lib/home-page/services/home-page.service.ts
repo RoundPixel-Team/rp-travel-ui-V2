@@ -105,7 +105,7 @@ selectedCurrency : currencyModel = {
  * this is for fetching all currencies and update my all currencies state (allCurrency:currencyModel[])
  * also updates loader state (loader:boolean)
  */
-  getCurrency(baseCurrency:string){
+  getCurrency(baseCurrency:string){ 
     this.loader = true
     this.subscription.add(
       this.api.currencyApi(baseCurrency).subscribe((res:currencyModel[])=>{
@@ -178,9 +178,9 @@ getPointOfSale(){
   this.subscription.add(
       this.api.pointOfSale().subscribe((res)=>{
         if(res){
-                  this.pointOfSale = res
-                  this.loader = false
-                }
+            this.pointOfSale = res
+            this.loader = false
+        }
       },(err:any)=>{
         console.log('get all pointofsales error ->',err)
         this.loader = false
@@ -198,11 +198,8 @@ getAllOffers(pos:string){
   this.subscription.add(
     this.api.GetAllOffers(pos).subscribe((res)=>{
       if(res){
-       
         this.allOffers=res.offers;
         this.loader = false;
-        console.log(res,'show offers');
-       
       }
     },(err:any)=>{
       console.log('get all offers error ->',err)
@@ -217,20 +214,16 @@ getAllOffers(pos:string){
  * and also updates the loader state.
  */
 getOfferById(id:number | string){
-  this.loader= true;
+  this.loader = true;
   this.subscription.add(
     this.api.getOfferBYId(id).subscribe((res)=>{
-      console.log('get ID',id);
       if (res){
         this.selectedOffer=res;
-        this.loader= false;
-        console.log("Offer",res);
-       
+        this.loader = false;
       }
-        
       },(err:any)=>{
         console.log('get offer by ID err==>',err);
-        this.loader= false;
+        this.loader = false;
     })
   )
 }
@@ -242,10 +235,9 @@ getOfferById(id:number | string){
  *  depending on the offer code.
  */
 extractOfferData(id:number | string){
-  
     this.offerImages =this.selectedOffer.offerImage? [this.selectedOffer.offerImage.url] : []
-    let startDate=new Date(this.selectedOffer.startDate);
-    let endDate=new Date(this.selectedOffer.endDate);
+    let startDate =   new Date(this.selectedOffer.startDate);
+    let endDate   =   new Date(this.selectedOffer.endDate);
     let differenceInTime=startDate.getTime()-endDate.getTime();
     this.numberOfNights=differenceInTime / (1000 * 3600 * 24);
     this.selectedOffer.offerServices.map(offerService=>{
@@ -257,14 +249,8 @@ extractOfferData(id:number | string){
           },(err:any)=>{
             console.log('offline itinerary err==>',err);
             })
-
-        
-
-        
     )}
     })
-    
- 
 }
 /**
  * 
@@ -275,29 +261,29 @@ extractOfferData(id:number | string){
  *  parameters and with the body of the request in type of (BookedOffer)
  */
 bookOffer(source:string,langCode:string,phonecountrycode:string){
-let offerId=this.route.snapshot.paramMap.get("id");
-if(this.offerCheckOutForm.valid){
-let Body: BookedOffer = {
-  Email: this.offerCheckOutForm.value["Email"]!,
-  FullName: this.offerCheckOutForm.value["FullName"]!,
-  Nationality: this.offerCheckOutForm.value["Nationality"]!,
-  PhoneNumber: this.offerCheckOutForm.value["PhoneNumber"]!,
-  PhoneCountryCode: phonecountrycode,
-  SelectedOfferCode:Number(offerId),
-};
-this.subscription.add(
-  this.api.BookOffers(source,langCode!,Body,offerId!).subscribe((res:BookedOffer)=>{
-    if (res){
-      this.submittedForm=res;
-    }
-  },(err:any)=>{
-    console.log('Book offer err==>',err);
-    })
-)
+  let offerId=this.route.snapshot.paramMap.get("id");
+  if(this.offerCheckOutForm.valid){
+  let Body: BookedOffer = {
+    Email: this.offerCheckOutForm.value["Email"]!,
+    FullName: this.offerCheckOutForm.value["FullName"]!,
+    Nationality: this.offerCheckOutForm.value["Nationality"]!,
+    PhoneNumber: this.offerCheckOutForm.value["PhoneNumber"]!,
+    PhoneCountryCode: phonecountrycode,
+    SelectedOfferCode:Number(offerId),
+  };
+  this.subscription.add(
+    this.api.BookOffers(source,langCode!,Body,offerId!).subscribe((res:BookedOffer)=>{
+      if (res){
+        this.submittedForm=res;
+      }
+    },(err:any)=>{
+      console.log('Book offer err==>',err);
+      })
+  )
 
-}else{
-  return;
-}
+  }else{
+    return;
+  }
 
 }
   /**

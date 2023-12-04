@@ -4,9 +4,7 @@ import { Subscription, retry, take } from 'rxjs';
 import { FareRules, FlightSearchResult, SearchFlightModule, airItineraries, filterFlightInterface, flight, flightResultFilter } from '../interfaces';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FlightResultApiService } from './flight-result-api.service';
-import { searchFlightModel } from '../../flight-search/interfaces';
-import { Options } from '@angular-slider/ngx-slider';
-import { DatePipe } from '@angular/common';
+// import { Options } from '@angular-slider/ngx-slider';
 import { customAirlineFilter } from '../interfaces'
 
 @Injectable({
@@ -61,13 +59,13 @@ fareLoading: boolean = true;
  *  optins init and return data as string 
  * 
  */
-  options: Options = {
-    floor: 0,
-    ceil: 5000,
-    translate: (value: number): string => {
-      return Math.round(value).toString();
-    },
-  };
+  // options: Options = {
+  //   floor: 0,
+  //   ceil: 5000,
+  //   translate: (value: number): string => {
+  //     return Math.round(value).toString();
+  //   },
+  // };
   /**
  * inital rate currecy code kwd
  * 
@@ -92,17 +90,17 @@ fareLoading: boolean = true;
  */
   departingMin: number = 0;
   departingMax: number = 7000
-  optionsdeparting: Options = this.options;
+  // optionsdeparting: Options = this.options;
 
   arrivingMin: number = 0;
   arrivingMax: number = 7000
-  optionsArriving: Options = this.options;
+  // optionsArriving: Options = this.options;
   minValue: number = 0
   maxValue: number = 5000
 
   durationMin: number = 0;
   durationMax: number = 7000;
-  optionsDurathion: Options = this.options
+  // optionsDurathion: Options = this.options
 /**Property for fare Rules */
   fareRules!: FareRules[];
   /**
@@ -143,7 +141,7 @@ fareLoading: boolean = true;
 
   formINIT:boolean =false;
 
-  priceOptions! : Options
+  // priceOptions! : Options
   subscription: Subscription = new Subscription()
 
   moreT: boolean[] = [];
@@ -262,7 +260,7 @@ fareLoading: boolean = true;
             this.bookingSites.forEach(element => {
               (<FormArray>this.filterForm.get('bookingSite')?.get('bookingSites')).push(new FormControl(false));
             })
-            this.setSliderOptions();
+            // this.setSliderOptions();
             this.filterForm.updateValueAndValidity();
             this.formINIT = true;
             this.updateFilter()
@@ -335,7 +333,6 @@ fareLoading: boolean = true;
       this.filterFlighWithReturnTime(v, filter, this.roundT) &&
       this.completeTripOnSameAirline(v, filter) &&
       this.filterFlightWithAirlineFunction(v, filter,this.roundT)
-
 
     ))
 
@@ -450,13 +447,13 @@ fareLoading: boolean = true;
     let minValue = sortedRes[0].itinTotalFare.amount;
     let maxValue1 = sortedRes[sortedRes.length - 1].itinTotalFare.amount;
 
-    this.options = {
-      floor: minValue,
-      ceil: Math.round(maxValue1 + 10),
-      translate: (value: number): string => {
-        return Math.round(value).toString();
-      },
-    };
+    // this.options = {
+    //   floor: minValue,
+    //   ceil: Math.round(maxValue1 + 10),
+    //   translate: (value: number): string => {
+    //     return Math.round(value).toString();
+    //   },
+    // };
     this.priceMinValue = minValue;
     this.priceMaxValue = Math.round(maxValue1 + 10);
     this.maxValue = Math.round(maxValue1 + 10);
@@ -472,16 +469,16 @@ fareLoading: boolean = true;
     let max = sorted[0]['totalDuration'];
     this.durationMax = max + 100;
     this.durationMin = min;
-    this.optionsDurathion = {
-      floor: min,
-      ceil: max + 100,
-      noSwitching: true,
-      translate: (value: number): string => {
-        let h = value / 60 | 0;
-        let m = value % 60 | 0;
-        return h + "h" + ":" + m + "m";
-      }
-    }
+    // this.optionsDurathion = {
+    //   floor: min,
+    //   ceil: max + 100,
+    //   noSwitching: true,
+    //   translate: (value: number): string => {
+    //     let h = value / 60 | 0;
+    //     let m = value % 60 | 0;
+    //     return h + "h" + ":" + m + "m";
+    //   }
+    // }
     return [min, max + 100];
   }
   /**
@@ -502,17 +499,17 @@ fareLoading: boolean = true;
 
     this.departingMin = min;
     this.departingMax = max;
-    this.optionsdeparting = {
-      floor: min,
-      ceil: max,
-      noSwitching: false,
-      translate: (value: number): string => {
-        let h = value / 60 | 0;
-        let m = value % 60 | 0;
-        return h + "h" + ":" + m + "m";
-        // return this.datePipe.transform(value * 1000, 'HH:mm a')
-      }
-    };
+    // this.optionsdeparting = {
+    //   floor: min,
+    //   ceil: max,
+    //   noSwitching: false,
+    //   translate: (value: number): string => {
+    //     let h = value / 60 | 0;
+    //     let m = value % 60 | 0;
+    //     return h + "h" + ":" + m + "m";
+    //     // return this.datePipe.transform(value * 1000, 'HH:mm a')
+    //   }
+    // };
     return [min, max];
   }
 
@@ -535,16 +532,16 @@ fareLoading: boolean = true;
 
     this.arrivingMin = min;
     this.arrivingMax = max;
-    this.optionsArriving = {
-      floor: min,
-      ceil: max,
-      noSwitching: true,
-      translate: (value: number): string => {
-        let h = value / 60 | 0;
-        let m = value % 60 | 0;
-        return h + "h" + ":" + m + "m";
-      }
-    };
+    // this.optionsArriving = {
+    //   floor: min,
+    //   ceil: max,
+    //   noSwitching: true,
+    //   translate: (value: number): string => {
+    //     let h = value / 60 | 0;
+    //     let m = value % 60 | 0;
+    //     return h + "h" + ":" + m + "m";
+    //   }
+    // };
     return [min, max];
   }
 
@@ -864,51 +861,51 @@ fareLoading: boolean = true;
    * after finding the min and max values for all filtiration critirias .. update the sliders with these ,,
    * minimum and maximum values
    */
-  setSliderOptions(){
-    this.optionsDurathion={
-      floor: this.durationMin,
-      ceil: this.durationMax,
-      noSwitching: true,
-      translate: (value: number): string => {
-        let h = value / 60 | 0;
-        let m = value % 60 | 0;
-        return h + "h" + ":" + m + "m";
-      }
-    }
+  // setSliderOptions(){
+  //   this.optionsDurathion={
+  //     floor: this.durationMin,
+  //     ceil: this.durationMax,
+  //     noSwitching: true,
+  //     translate: (value: number): string => {
+  //       let h = value / 60 | 0;
+  //       let m = value % 60 | 0;
+  //       return h + "h" + ":" + m + "m";
+  //     }
+  //   }
 
-  this.optionsdeparting = {
-    floor: this.departingMin,
-    ceil: this.departingMax,
-    noSwitching: false,
-    translate: (value: number): string => {
-      let h = value / 60 | 0;
-      let m = value % 60 | 0;
+  // this.optionsdeparting = {
+  //   floor: this.departingMin,
+  //   ceil: this.departingMax,
+  //   noSwitching: false,
+  //   translate: (value: number): string => {
+  //     let h = value / 60 | 0;
+  //     let m = value % 60 | 0;
       
-      return `${this.hoursFormater(h)}:${this.mFormater(m)} ${this.DayOrNight(h,m)}`;
-    }
-  };
+  //     return `${this.hoursFormater(h)}:${this.mFormater(m)} ${this.DayOrNight(h,m)}`;
+  //   }
+  // };
 
-    this.optionsArriving = {
-      floor: this.arrivingMin,
-      ceil: this.arrivingMax,
-      noSwitching: true,
-      translate: (value: number): string => {
-        let h = value / 60 | 0;
-        let m = value % 60 | 0;
-        return `${this.hoursFormater(h)}:${this.mFormater(m)} ${this.DayOrNight(h,m)}`;
-      }
-    };
+  //   this.optionsArriving = {
+  //     floor: this.arrivingMin,
+  //     ceil: this.arrivingMax,
+  //     noSwitching: true,
+  //     translate: (value: number): string => {
+  //       let h = value / 60 | 0;
+  //       let m = value % 60 | 0;
+  //       return `${this.hoursFormater(h)}:${this.mFormater(m)} ${this.DayOrNight(h,m)}`;
+  //     }
+  //   };
 
-  this.options = {
-    floor: this.priceMinValue,
-    ceil: Math.round(this.priceMaxValue + 1),
-    minLimit:Math.round(this.priceMinValue),
-    maxLimit:Math.round(this.priceMaxValue+1),
-    translate: (value: number): string => {
-      return this.code + Math.round(value*this.rate);
-    }
-  };
-  }
+  // this.options = {
+  //   floor: this.priceMinValue,
+  //   ceil: Math.round(this.priceMaxValue + 1),
+  //   minLimit:Math.round(this.priceMinValue),
+  //   maxLimit:Math.round(this.priceMaxValue+1),
+  //   translate: (value: number): string => {
+  //     return this.code + Math.round(value*this.rate);
+  //   }
+  // };
+  // }
 
 updateCurrencyCode(code: string){
   this.code = code;
@@ -1102,13 +1099,13 @@ updateCurrencyCode(code: string){
     this.priceMinValue = 0;
     this.priceMaxValue = 5000;
     this.FilterChanges$ = new Subscription();
-    this.options = {
-      floor: 0,
-      ceil: 5000,
-      translate: (value: number): string => {
-        return Math.round(value).toString();
-      },
-    };
+    // this.options = {
+    //   floor: 0,
+    //   ceil: 5000,
+    //   translate: (value: number): string => {
+    //     return Math.round(value).toString();
+    //   },
+    // };
     this.rate = 1;
     this.code = "KWD"
     this.airlinesA = [];
@@ -1117,17 +1114,17 @@ updateCurrencyCode(code: string){
     this.bookingSitesForm = []
     this.departingMin = 0;
     this.departingMax = 7000
-    this.optionsdeparting = this.options;
+    // this.optionsdeparting = this.options;
 
     this.arrivingMin = 0;
     this.arrivingMax = 7000
-    this.optionsArriving = this.options;
+    // this.optionsArriving = this.options;
     this.minValue = 0
     this.maxValue = 5000
 
     this.durationMin = 0;
     this.durationMax = 7000;
-    this.optionsDurathion = this.options
+    // this.optionsDurathion = this.options
     this.filterForm = new FormGroup({
       airline: new FormGroup({
         airlines: new FormArray([]),
@@ -1162,7 +1159,7 @@ updateCurrencyCode(code: string){
 
     this.formINIT =false;
 
-    this.priceOptions = this.options
+    // this.priceOptions = this.options
     this.subscription = new Subscription()
 
     this.moreT = [];
