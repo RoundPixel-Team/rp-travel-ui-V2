@@ -43,30 +43,20 @@ export class FlightResultService {
   airLR: any = []
 /**fare rules loading state */
 fareLoading: boolean = true;
-  ResultFound: boolean = false
+  ResultFound: boolean = false;
+
   /**
-  *  Min value price 
-  * 
-  */
+   * price minimum and maximum values for filter price slider
+   */
   priceMinValue: number = 0;
-  /**
-  *  Max value price 
-  * 
-  */
   priceMaxValue: number = 5000;
+  priceCurrentValue:number = 5000
+
   FilterChanges$: Subscription = new Subscription();
   /**
  *  optins init and return data as string 
- * 
- */
-  // options: Options = {
-  //   floor: 0,
-  //   ceil: 5000,
-  //   translate: (value: number): string => {
-  //     return Math.round(value).toString();
-  //   },
-  // };
-  /**
+
+  
  * inital rate currecy code kwd
  * 
  */
@@ -84,23 +74,30 @@ fareLoading: boolean = true;
  * 
  */
   bookingSitesForm: boolean[] = []
+  
   /**
- *  inital slider for filter return feh date min and max 
- * 
- */
+   * departing minimum and maximum values for filter departure time slider
+   */
   departingMin: number = 0;
   departingMax: number = 7000
-  // optionsdeparting: Options = this.options;
+  departingCurrentValue:number = 7000
 
+  /**
+   * arriving minimum and maximum values for filter arriving time slider
+   */
   arrivingMin: number = 0;
   arrivingMax: number = 7000
-  // optionsArriving: Options = this.options;
-  minValue: number = 0
-  maxValue: number = 5000
+  arrivingCurrentVal : number = 7000
 
+
+  /**
+   * duration minimum and maximum values for filter flight duration slider
+   */
   durationMin: number = 0;
   durationMax: number = 7000;
-  // optionsDurathion: Options = this.options
+  durationCurrentValue: number = 7000
+
+
 /**Property for fare Rules */
   fareRules!: FareRules[];
   /**
@@ -434,6 +431,7 @@ fareLoading: boolean = true;
 
   /**
   * Filter Values airItineraries[] by Price And Update Filtiration Slider
+  * this is for fetching minimum & maximum value of prices according to the current response
   **/
   minAnMax(data: airItineraries[]) {
 
@@ -447,17 +445,11 @@ fareLoading: boolean = true;
     let minValue = sortedRes[0].itinTotalFare.amount;
     let maxValue1 = sortedRes[sortedRes.length - 1].itinTotalFare.amount;
 
-    // this.options = {
-    //   floor: minValue,
-    //   ceil: Math.round(maxValue1 + 10),
-    //   translate: (value: number): string => {
-    //     return Math.round(value).toString();
-    //   },
-    // };
-    this.priceMinValue = minValue;
+    this.priceMinValue = Math.round(minValue - 10);
     this.priceMaxValue = Math.round(maxValue1 + 10);
-    this.maxValue = Math.round(maxValue1 + 10);
-    return [minValue, this.maxValue]
+    this.priceCurrentValue = Math.round(maxValue1 + 10);
+
+    return [this.priceMinValue, this.priceMaxValue]
   }
 
   /**
@@ -468,18 +460,10 @@ fareLoading: boolean = true;
     let min = sorted[sorted.length - 1]['totalDuration'];
     let max = sorted[0]['totalDuration'];
     this.durationMax = max + 100;
-    this.durationMin = min;
-    // this.optionsDurathion = {
-    //   floor: min,
-    //   ceil: max + 100,
-    //   noSwitching: true,
-    //   translate: (value: number): string => {
-    //     let h = value / 60 | 0;
-    //     let m = value % 60 | 0;
-    //     return h + "h" + ":" + m + "m";
-    //   }
-    // }
-    return [min, max + 100];
+    this.durationMin = min - 10;
+    this.durationCurrentValue = max
+
+    return [this.durationMin, this.durationMax];
   }
   /**
    *  Find Min And Max Values Of Flight Departing Dates  And Update Filtiration Slider
@@ -499,17 +483,8 @@ fareLoading: boolean = true;
 
     this.departingMin = min;
     this.departingMax = max;
-    // this.optionsdeparting = {
-    //   floor: min,
-    //   ceil: max,
-    //   noSwitching: false,
-    //   translate: (value: number): string => {
-    //     let h = value / 60 | 0;
-    //     let m = value % 60 | 0;
-    //     return h + "h" + ":" + m + "m";
-    //     // return this.datePipe.transform(value * 1000, 'HH:mm a')
-    //   }
-    // };
+    this.departingCurrentValue = max
+
     return [min, max];
   }
 
@@ -532,16 +507,8 @@ fareLoading: boolean = true;
 
     this.arrivingMin = min;
     this.arrivingMax = max;
-    // this.optionsArriving = {
-    //   floor: min,
-    //   ceil: max,
-    //   noSwitching: true,
-    //   translate: (value: number): string => {
-    //     let h = value / 60 | 0;
-    //     let m = value % 60 | 0;
-    //     return h + "h" + ":" + m + "m";
-    //   }
-    // };
+    this.arrivingCurrentVal = max
+
     return [min, max];
   }
 
@@ -857,55 +824,6 @@ fareLoading: boolean = true;
   }
 
 
-  /**
-   * after finding the min and max values for all filtiration critirias .. update the sliders with these ,,
-   * minimum and maximum values
-   */
-  // setSliderOptions(){
-  //   this.optionsDurathion={
-  //     floor: this.durationMin,
-  //     ceil: this.durationMax,
-  //     noSwitching: true,
-  //     translate: (value: number): string => {
-  //       let h = value / 60 | 0;
-  //       let m = value % 60 | 0;
-  //       return h + "h" + ":" + m + "m";
-  //     }
-  //   }
-
-  // this.optionsdeparting = {
-  //   floor: this.departingMin,
-  //   ceil: this.departingMax,
-  //   noSwitching: false,
-  //   translate: (value: number): string => {
-  //     let h = value / 60 | 0;
-  //     let m = value % 60 | 0;
-      
-  //     return `${this.hoursFormater(h)}:${this.mFormater(m)} ${this.DayOrNight(h,m)}`;
-  //   }
-  // };
-
-  //   this.optionsArriving = {
-  //     floor: this.arrivingMin,
-  //     ceil: this.arrivingMax,
-  //     noSwitching: true,
-  //     translate: (value: number): string => {
-  //       let h = value / 60 | 0;
-  //       let m = value % 60 | 0;
-  //       return `${this.hoursFormater(h)}:${this.mFormater(m)} ${this.DayOrNight(h,m)}`;
-  //     }
-  //   };
-
-  // this.options = {
-  //   floor: this.priceMinValue,
-  //   ceil: Math.round(this.priceMaxValue + 1),
-  //   minLimit:Math.round(this.priceMinValue),
-  //   maxLimit:Math.round(this.priceMaxValue+1),
-  //   translate: (value: number): string => {
-  //     return this.code + Math.round(value*this.rate);
-  //   }
-  // };
-  // }
 
 updateCurrencyCode(code: string){
   this.code = code;
@@ -1096,35 +1014,31 @@ updateCurrencyCode(code: string){
     this.airLR = []
 
     this.ResultFound = false
-    this.priceMinValue = 0;
-    this.priceMaxValue = 5000;
     this.FilterChanges$ = new Subscription();
-    // this.options = {
-    //   floor: 0,
-    //   ceil: 5000,
-    //   translate: (value: number): string => {
-    //     return Math.round(value).toString();
-    //   },
-    // };
     this.rate = 1;
     this.code = "KWD"
     this.airlinesA = [];
     this.airlinesForm = [];
     this.bookingSites = ['KhaleejGate', 'other'];
     this.bookingSitesForm = []
+
+    this.priceMinValue = 0;
+    this.priceMaxValue = 5000;
+    this.priceCurrentValue = 5000
+
     this.departingMin = 0;
     this.departingMax = 7000
-    // this.optionsdeparting = this.options;
+    this.departingCurrentValue = 7000
 
     this.arrivingMin = 0;
     this.arrivingMax = 7000
-    // this.optionsArriving = this.options;
-    this.minValue = 0
-    this.maxValue = 5000
+    this.arrivingCurrentVal = 7000
+
 
     this.durationMin = 0;
     this.durationMax = 7000;
-    // this.optionsDurathion = this.options
+    this.durationCurrentValue = 7000
+
     this.filterForm = new FormGroup({
       airline: new FormGroup({
         airlines: new FormArray([]),
