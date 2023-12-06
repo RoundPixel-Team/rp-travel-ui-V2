@@ -29,17 +29,13 @@ export class ConfirmationApiService {
     )
   }
   /**
-   * 
-   * @param HGNu 
-   * @param searchid 
+   *
    * @param tok 
    * @param url 
    * @returns status after successful payment
    */
-  PostProcessing(HGNum: string, searchid: string, tok: string, url: string) {
-   
+  PostProcessing(tok: string, url: string) {
     let api = `${url}&tok=${tok}`;
-    
     return this.http.get<any>(api).pipe(
       take(1),
       map((result) => {
