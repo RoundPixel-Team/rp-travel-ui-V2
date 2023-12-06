@@ -10,7 +10,7 @@ export class CouncodePipe implements PipeTransform {
       return [];
     }
     else {
-      if(args.length< 3){
+      if(args.length< 1){
         return [];
        }
       let result: countries[] = []
