@@ -146,7 +146,7 @@ fareLoading: boolean = true;
 *  array return data type airItineraries[] after organize
 * 
 */
-  orgnizedResponce: airItineraries[][] = [];
+  orgnizedResponce: airItineraries[] = [];
 
  
   /**
@@ -201,7 +201,7 @@ fareLoading: boolean = true;
             this.filterAirlines()
             this.fetchLowestFaresForSorting(this.response.airItineraries)
             this.FilterData = result.airItineraries;
-            this.orgnizedResponce = this.orgnize(this.FilterData);
+            this.orgnizedResponce = result.airItineraries;
 
             this.FilterChanges$.unsubscribe();
             this.filterForm = new FormGroup({
@@ -318,7 +318,7 @@ fareLoading: boolean = true;
 
   // new filteration method
   oneForAll(filter: filterFlightInterface, fligtsArray: airItineraries[], round: boolean) {
-    this.orgnizedResponce = this.orgnize(fligtsArray.filter(v =>
+    this.orgnizedResponce = fligtsArray.filter(v =>
 
       this.filterFlighWithPrice(v, filter) &&
       this.filterFlighWithDepartionTime(v, filter) &&
@@ -331,7 +331,12 @@ fareLoading: boolean = true;
       this.completeTripOnSameAirline(v, filter) &&
       this.filterFlightWithAirlineFunction(v, filter,this.roundT)
 
+<<<<<<< Updated upstream
     ))
+=======
+
+    )
+>>>>>>> Stashed changes
 
   }
 
@@ -384,28 +389,28 @@ fareLoading: boolean = true;
     if (this.response != undefined) {
       if (type == 1) {
         this.orgnizedResponce = 
-          [...this.orgnizedResponce].sort((a, b) => { return a[0].itinTotalFare.amount - b[0].itinTotalFare.amount })
+          [...this.orgnizedResponce].sort((a, b) => { return a.itinTotalFare.amount - b.itinTotalFare.amount })
         
       }
       if (type == 2) {
-        this.orgnizedResponce = [...this.orgnizedResponce].sort((a, b) => { return a[0].totalDuration - b[0].totalDuration })
+        this.orgnizedResponce = [...this.orgnizedResponce].sort((a, b) => { return a.totalDuration - b.totalDuration })
       }
       if (type == 3) {
-        this.orgnizedResponce = [...this.orgnizedResponce].sort((a, b) => { return <any>new Date(a[0].deptDate) - <any>new Date(b[0].deptDate) })
+        this.orgnizedResponce = [...this.orgnizedResponce].sort((a, b) => { return <any>new Date(a.deptDate) - <any>new Date(b.deptDate) })
       }
       if (type == 4) {
-        this.orgnizedResponce = [...this.orgnizedResponce].sort((a, b) => { return <any>new Date(b[0].deptDate) - <any>new Date(a[0].deptDate) })
+        this.orgnizedResponce = [...this.orgnizedResponce].sort((a, b) => { return <any>new Date(b.deptDate) - <any>new Date(a.deptDate) })
       }
       if (type == 5) {
-        this.orgnizedResponce = [...this.orgnizedResponce].sort((a, b) => { return <any>new Date(a[0].allJourney.flights[1].flightDTO[0].departureDate) - <any>new Date(b[0].allJourney.flights[1].flightDTO[0].departureDate) })
+        this.orgnizedResponce = [...this.orgnizedResponce].sort((a, b) => { return <any>new Date(a.allJourney.flights[1].flightDTO[0].departureDate) - <any>new Date(b.allJourney.flights[1].flightDTO[0].departureDate) })
       }
 
       if (type == 6) {
-        this.orgnizedResponce = [...this.orgnizedResponce].sort((a, b) => { return <any>new Date(b[0].allJourney.flights[1].flightDTO[0].departureDate) - <any>new Date(a[0].allJourney.flights[1].flightDTO[0].departureDate) })
+        this.orgnizedResponce = [...this.orgnizedResponce].sort((a, b) => { return <any>new Date(b.allJourney.flights[1].flightDTO[0].departureDate) - <any>new Date(a.allJourney.flights[1].flightDTO[0].departureDate) })
       }
 
       if (type == 7) {
-        this.orgnizedResponce = [...this.orgnizedResponce].sort((a, b) => { return a[0].experiance - b[0].experiance })
+        this.orgnizedResponce = [...this.orgnizedResponce].sort((a, b) => { return a.experiance - b.experiance })
       }
 
 
