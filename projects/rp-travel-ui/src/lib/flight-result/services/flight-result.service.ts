@@ -244,8 +244,9 @@ fareLoading: boolean = true;
 
             // this.findDepartingnMinMax(this.response.airItineraries)
             this.filterForm.get("arrivingSlider")?.setValue(this.findArrivingMinMax(this.response.airItineraries));
-            this.filterForm.get("arrivingSlider")?.updateValueAndValidity();            // this.minAnMax(this.response.airItineraries);
+            this.filterForm.get("arrivingSlider")?.updateValueAndValidity();
             this.filterForm.get('priceSlider')?.setValue(this.minAnMax(this.response.airItineraries));
+            this.filterForm.get("priceSlider")?.updateValueAndValidity();
             this.stopsvalues(),
               this.airlinesA = this.response.airlines;
             this.airlinesForm = []
@@ -331,12 +332,8 @@ fareLoading: boolean = true;
       this.completeTripOnSameAirline(v, filter) &&
       this.filterFlightWithAirlineFunction(v, filter,this.roundT)
 
-<<<<<<< Updated upstream
-    ))
-=======
 
     )
->>>>>>> Stashed changes
 
   }
 
@@ -450,7 +447,7 @@ fareLoading: boolean = true;
     let minValue = sortedRes[0].itinTotalFare.amount;
     let maxValue1 = sortedRes[sortedRes.length - 1].itinTotalFare.amount;
 
-    this.priceMinValue = Math.round(minValue - 10);
+    this.priceMinValue = Math.round(minValue);
     this.priceMaxValue = Math.round(maxValue1 + 10);
     this.priceCurrentValue = Math.round(maxValue1 + 10);
 

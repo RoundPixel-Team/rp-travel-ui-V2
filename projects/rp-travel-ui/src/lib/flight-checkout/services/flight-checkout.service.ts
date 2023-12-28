@@ -727,13 +727,12 @@ bookingType:string='standard'
         this.usersArray.at(i).get('title')!.setValue('Ms')
       }
       if(this.usersArray.at(i).get('phoneNumber')?.value != ''){
-        this.usersArray.at(i).get('countryCode')?.setValue((<string>this.usersArray.at(i).get('phoneNumber')?.value.dialCode).replace("+",''))
-        this.usersArray.at(i).get('phoneNumber')?.setValue(this.usersArray.at(i).get('phoneNumber')?.value.number)
+        this.usersArray.at(i).get('countryCode')?.setValue((<string>this.usersArray.at(i).get('countryCode')?.value).replace("+",''))
       }
 
       
       this.usersArray.at(i).get('countryOfResidence')?.setValue(this.home.allCountries
-        .filter(c=>{return c.countryName == this.usersArray.at(i).get('countryOfResidence')?.value})[0].pseudoCountryCode)
+        .filter(c=>{return c.countryName == this.usersArray.at(i).get('IssuedCountry')?.value})[0].pseudoCountryCode)
         this.usersArray.at(i).get('IssuedCountry')?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value)
         this.usersArray.at(i).get('nationality')?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value)
     }
