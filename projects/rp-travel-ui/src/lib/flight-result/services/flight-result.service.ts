@@ -38,7 +38,7 @@ export class FlightResultService {
   /**
   * loading state ..
   */
-  loading: boolean = true
+  loading: boolean = false
   roundT: boolean = false;
   airLR: any = []
 /**fare rules loading state */
@@ -1011,7 +1011,7 @@ updateCurrencyCode(code: string){
     this.normalError = ''
     this.FlightType = 'RoundTrip'
     this.normalErrorStatus = false
-    this.loading = true
+    this.loading = false
     this.roundT = false;
     this.airLR = []
 
