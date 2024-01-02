@@ -3,7 +3,6 @@ import { Observable, catchError, map, mergeMap, retry, take } from 'rxjs';
 import { BookedOffer, Itinerary, OfferDTO, airPorts, countries, currencyModel, pointOfSaleModel } from '../interfaces';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EnvironmentService } from '../../shared/services/environment.service';
-import { Serializer } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root'

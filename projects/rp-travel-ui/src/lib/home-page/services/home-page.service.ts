@@ -13,7 +13,7 @@ export class HomePageService {
 
   api = inject(HomePageApiService)
   route=inject(ActivatedRoute)
-  subscription : Subscription = new Subscription()
+  subscription : Subscription = new Subscription() 
 
   /**
    * here is all available currencies

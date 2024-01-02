@@ -19,6 +19,9 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "paths": {
+      "rp-hotels-ui": [
+        "dist/rp-hotels-ui"
+      ],
       "rp-travel-ui": ["dist/rp-travel-ui"]
     },
     "target": "es2020",
