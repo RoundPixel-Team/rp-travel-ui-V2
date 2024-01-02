@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { enviromentModel } from './interfaces';
+import { enviromentModel } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
