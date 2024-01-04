@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { airPorts } from '../../home-page/interfaces';
+import { airPorts } from 'rp-travel-ui';
+
 //this pipe take an argument as the input and return a filterd array wich include the search input
 @Pipe({
   name: 'filterCity'

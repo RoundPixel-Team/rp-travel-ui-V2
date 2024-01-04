@@ -7,7 +7,7 @@ import { HomePageService } from 'rp-travel-ui';
   styleUrls: ['./home-page.component.scss']
 })
 export class HomePageComponent implements OnInit {
-
+  
   public homePageService = inject(HomePageService)
 
   constructor() { }

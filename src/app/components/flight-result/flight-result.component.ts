@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { FlightResultService } from 'projects/rp-travel-ui/src/lib/flight-result/services/flight-result.service';
+import { HotelResultsService } from 'rp-hotels-ui';
 import { filter } from 'rxjs';
 
 @Component({
@@ -12,12 +13,16 @@ import { filter } from 'rxjs';
 export class FlightResultComponent implements OnInit {
   FlightResultService = inject(FlightResultService)
   route = inject(ActivatedRoute)
+  hotelResults = inject(HotelResultsService)
 
 
   filterFormm: FormGroup  = this.FlightResultService.filterForm
   constructor() { }
 
   ngOnInit(): void {
+
+    this.hotelResults.getHotelDataFromUrl();
+
     console.log('new lang', location.pathname)
     let url = location.href
     

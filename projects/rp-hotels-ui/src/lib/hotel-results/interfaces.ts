@@ -1,3 +1,5 @@
+import { guests } from "../hotel-search/interfaces"
+
 export interface hotelResults{
     CheckIn: string
     CheckOut: string
@@ -46,7 +48,6 @@ export interface amenties{
     HotelCode:string
 }
 
-
 export interface hotelsFilterForm{
     hotelName: string
     mapOn: boolean,
@@ -62,3 +63,17 @@ export interface hotelRateFilter{
     4:boolean
     5:boolean
 }
+
+
+export interface GetHotelModule { 
+    CityName:string
+    DateFrom:string
+    DateTo:string
+    Currency:string
+    Nat:string
+    POS:string
+    Source:string
+    sID:string
+    Lang:string
+    SearchRooms:guests[]
+ }

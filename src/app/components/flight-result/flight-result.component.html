@@ -47,3 +47,10 @@
 
         </div>
 </form>
+
+
+<div class="spinner" *ngIf="hotelResults.hotelResultsLoader"></div>
+<div class="Data" *ngIf="!hotelResults.hotelResultsLoader">
+  {{hotelResults.hotelDataResponse?.Locations}}
+</div>
+
