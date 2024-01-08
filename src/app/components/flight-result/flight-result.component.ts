@@ -15,16 +15,23 @@ export class FlightResultComponent implements OnInit {
   route = inject(ActivatedRoute)
   hotelResults = inject(HotelResultsService)
 
-
+  starRating:Array<string>=['','','','',''];
   filterFormm: FormGroup  = this.FlightResultService.filterForm
+
   constructor() { }
 
   ngOnInit(): void {
 
+    console.log("Hotel Ratess Array",this.hotelResults.hotelRatesArray.value)
     this.hotelResults.getHotelDataFromUrl();
-
     console.log('new lang', location.pathname)
-    let url = location.href
+    
+    setTimeout(() => {
+      console.log("Before Filtered Data", this.hotelResults.filteredHotels)
+      this.hotelResults.priceSorting('Low');
+      console.log("After Filtered Data", this.hotelResults.filteredHotels)
+    }, 3000);
+
     
     this.route.params.subscribe(
       (params: Params) => {
@@ -49,23 +56,20 @@ export class FlightResultComponent implements OnInit {
         this.FlightResultService.getDataFromUrl(lang, currency, pointOfReservation, flightType, flightsInfo, serachId, passengers, Cclass, showDirect,4,2)
         console.log("ggfggf", this.FlightResultService.getDataFromUrl(lang, currency, pointOfReservation, flightType, flightsInfo, serachId, passengers, Cclass, showDirect,4,2))
 
-      });
-      console.log("sortData" ,this.FlightResultService.FilterData)
-      console.log("Arrival", this.FlightResultService.arrivingMin, this.FlightResultService.arrivingMax);
-      console.log("airlinesA", this.FlightResultService.airlinesA)
-      console.log("airlinesA", this.FlightResultService.bookingSites)
-     
+      });     
       }
 
      
-   
-    
-  sort(val: number) {
-    if (this.FlightResultService.response != undefined) {
-       this.FlightResultService.sortMyResult(val) 
-       console.log("sortData" ,this.FlightResultService.FilterData)
-
+      
+      sort(val: number) {
+        if (this.FlightResultService.response != undefined) {
+          this.FlightResultService.sortMyResult(val) 
+          console.log("sortData" ,this.FlightResultService.FilterData)
+          
+        }
+        
       }
-
-  }
+      starsRating(rate:number){
+        this.hotelResults.formValueChanged();
+      }
 }

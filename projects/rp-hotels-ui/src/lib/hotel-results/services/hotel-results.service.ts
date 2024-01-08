@@ -4,6 +4,7 @@ import { HotelResultsApiService } from './hotel-results-api.service';
 import { Router } from '@angular/router';
 import { GetHotelModule, hotel, hotelResults } from '../interfaces';
 import { guests } from '../../hotel-search/interfaces';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 
 @Injectable({
@@ -14,11 +15,27 @@ export class HotelResultsService {
   api = inject(HotelResultsApiService)
   router = inject(Router)
   hotelDataResponse?:hotelResults;
-  sortedHotels: hotel[] = [];
+  filteredHotels: hotel[] = [];
+  locationsArr: Array<string> = [];
   hotelResultsLoader:boolean=true;
   subscription : Subscription = new Subscription()
+  filterForm : FormGroup= new FormGroup({
+    hotelName: new FormControl(''),
+    hotelRates: new FormArray([]),
+    hotelPrice: new FormControl(),
+    hotelLocation: new FormControl([])
+  });
 
-  constructor() { }
+  constructor() { 
+    //initialize hotel rate array with rates
+    for(let i=0; i<5; i++){
+      this.addRating(i+1);
+    }
+  }
+
+  ngOnInit(){
+
+  }
 
   /**
    * this function is responsible to call API to get the Hotel Data
@@ -48,12 +65,12 @@ export class HotelResultsService {
         if(res){
           this.hotelResultsLoader = false;
           this.hotelDataResponse = res;
-          this.sortedHotels = res.HotelResult
+          this.filteredHotels = res.HotelResult;
+          this.locationsArr = res.Locations;
         }
       })
     )
   }
-
   /**
    * this function is responsible to generate search rooms Array
    * @param guestInfo get this string from URL after splitting it
@@ -87,21 +104,21 @@ export class HotelResultsService {
     switch (sortType) {
       case "Low":
         {
-          this.sortedHotels = this.sortedHotels.sort((low, high) => low.TotalSellPrice - high.TotalSellPrice);
+          this.filteredHotels = this.filteredHotels.sort((low, high) => low.TotalSellPrice - high.TotalSellPrice);
           break;
         }
 
       case "High":
         {
-         this.sortedHotels = this.sortedHotels.sort((low, high) => high.TotalSellPrice - low.TotalSellPrice);
+         this.filteredHotels = this.filteredHotels.sort((low, high) => high.TotalSellPrice - low.TotalSellPrice);
           break;
         }
       default:{
-        this.sortedHotels = this.sortedHotels.sort((low, high) => low.TotalSellPrice - high.TotalSellPrice);
+        this.filteredHotels = this.filteredHotels.sort((low, high) => high.TotalSellPrice - low.TotalSellPrice);
         break;
       } 
     }
-    return this.sortedHotels ;
+    return this.filteredHotels ;
   }
   /**
    * this function is responsible to sort the hotels data based on Star Rating
@@ -111,21 +128,48 @@ export class HotelResultsService {
     switch (sortType) {
       case "Low":
         {
-          this.sortedHotels = this.sortedHotels.sort((low, high) => low.hotelRate - high.hotelRate);
+          this.filteredHotels = this.filteredHotels.sort((low, high) => low.hotelRate - high.hotelRate);
           break;
         }
 
       case "High":
         {
-         this.sortedHotels = this.sortedHotels.sort((low, high) => high.hotelRate - low.hotelRate);
+         this.filteredHotels = this.filteredHotels.sort((low, high) => high.hotelRate - low.hotelRate);
           break;
         }
       default:{
-        this.sortedHotels = this.sortedHotels.sort((low, high) => low.hotelRate - high.hotelRate);
+        this.filteredHotels = this.filteredHotels.sort((low, high) => high.hotelRate - low.hotelRate);
         break;
       } 
     }
-    return this.sortedHotels ;
+    return this.filteredHotels ;
+  }
+  filter(){ 
+    // this.filterdhotels = this.hotels.HotelResult.filter(v => this.filterfunc(v));
+    let filterr= this.filteredHotels.filter((res)=>{
+      this.filterValue(res)
+    })
+    this.filteredHotels.filter((res)=>{})
+    
+  }
+  formValueChanged(){
+    this.filterForm.valueChanges.subscribe((res)=>{
+      console.log('Hotel Filter Form Value', res)
+    })
+  }
+  filterValue(value:any){
+    // (this.hotelRatesArray.indexOf(value.hotelStars) != -1 || this.starsArray.length == 0)
+  }
+  addRating(rate:number){
+    (<FormArray>this.filterForm.get('hotelRates')).push(
+      new FormGroup ({
+        rate: new FormControl(true),
+      })
+    )
+  }
+
+  public get hotelRatesArray(): FormArray{
+    return this.filterForm.get('hotelRates') as FormArray;
   }
 
   /**
