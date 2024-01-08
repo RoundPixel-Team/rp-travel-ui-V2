@@ -15,7 +15,7 @@ export class HotelRoomsApiService {
   constructor() { }
   
   getHotelsRoomsApi(sid: string,hotelid:string,Pid: string){
-    let url =  this.env.Apihotels + "api/GetPackages?sid=" +sid +"&hotel=" +hotelid +"&Pid=" + Pid
+    let url =  this.env.Apihotels + "/api/GetPackages?sid=" +sid +"&hotel=" +hotelid +"&Pid=" + Pid
     return this.http.get<hotelRoomsResponse>(url).pipe(take(1));
   }
   GetRoomCancelPolicy(sid: string, hotelcode: any, roomindex: any,packageKey:string, PId: any) {

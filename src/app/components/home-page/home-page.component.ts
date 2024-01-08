@@ -1,4 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { HotelRoomsService } from 'projects/rp-hotels-ui/src/lib/hotel-rooms/services/hotel-rooms.service';
 import { HomePageService } from 'rp-travel-ui';
 
 @Component({
@@ -9,6 +10,7 @@ import { HomePageService } from 'rp-travel-ui';
 export class HomePageComponent implements OnInit {
 
   public homePageService = inject(HomePageService)
+  public hotelRoom = inject(HotelRoomsService)
 
   constructor() { }
 
@@ -20,7 +22,8 @@ export class HomePageComponent implements OnInit {
     this.homePageService.getAllOffers('KW');
     this.homePageService.getOfferById(72);
     
-
+    this.hotelRoom.getRooms('2024B0I1S614H20B00I30S50H10I10','1000','7');
   }
+
 
 }

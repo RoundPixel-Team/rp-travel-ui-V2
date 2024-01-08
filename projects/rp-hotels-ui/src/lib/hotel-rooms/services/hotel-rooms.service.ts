@@ -8,7 +8,7 @@ import { hotelRoomsResponse, roomCancelPolicy } from '../interfaces';
 })
 export class HotelRoomsService {
 roomsLoader:boolean = false;
-roomsData!:hotelRoomsResponse[];
+roomsData!:hotelRoomsResponse;
 cancelPolicy!:roomCancelPolicy[];
   api = inject(HotelRoomsApiService)
 
@@ -19,16 +19,36 @@ getRooms(sid: string,hotelid:string,Pid: string){
   this.roomsLoader=true;
   this.api.getHotelsRoomsApi(sid,hotelid,Pid).subscribe((data) =>{
     this.roomsLoader=false;
-    // this.roomsData=data;
+    this.roomsData=data;
+    console.log(this.roomsData,'test Data');
+    const groupedRooms = this.groupRooms(this.roomsData);
+    console.log(groupedRooms,'test grouping');
   }
   
     )
 }
-getCancelPolicy(sid: string, hotelcode: any, roomindex: any,packageKey:string, PId: any){
+groupRooms(Roomsdata:hotelRoomsResponse){
+  const allRooms=Roomsdata.Packages.flatMap(pkg=>pkg.Rooms);
+  const groupedRooms = allRooms.reduce((acc:any, room) => {
+    const roomType = room.RoomType;
+    if (!acc[roomType]) {
+      acc[roomType] = [];
+    }
+    acc[roomType].push(room);
+    return acc;
+  }, {});
+
+  return groupedRooms;
+}
+
+
+ getCancelPolicy(sid: string, hotelcode: any, roomindex: any,packageKey:string, PId: any){
 this.api.GetRoomCancelPolicy(sid, hotelcode, roomindex,packageKey, PId).subscribe((data)=>{
   this.cancelPolicy=data;
+  
 });
 }
+
   /**
    * this function is responsible to destory any opened subscription on this service
    */

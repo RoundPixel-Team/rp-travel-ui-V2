@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { airPorts } from '../../home-page/interfaces';
+import { airPorts } from 'rp-travel-ui';
 
 @Pipe({
   name: 'codToCity'

@@ -14,7 +14,7 @@ export class EnvironmentService {
     BookingFlow = 'https://flightflow.rhlaty.com'
     FareRules =   'https://flightprov.rhlaty.com'
     asm =         'https://backofficeapi.rhlaty.com'
-    Apihotels =   'https://hotels.rhlatycom'
+    Apihotels =   'https://hotelsapi.ticketboarding.com'
     users =       'https://usersapi.rhlaty.com'
     admin =       'https://adminapi.rhlaty.com/'
     getDPayment = 'https://adminapi.rhlaty.com/'
