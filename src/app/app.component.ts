@@ -23,7 +23,7 @@ export class AppComponent implements OnInit{
       BookingFlow:   'https://flightflow.khaleejgate.com',
       FareRules:     'https://flightprov.khaleejgate.com',
       asm:           'https://backofficeapi.khaleejgate.com',
-      Apihotels:     "https://hotels.khaleejgatecom",
+      Apihotels:     "https://Hotelsapi.ticketboarding.com",
       hotelprepay:   'https://prepayapi.khaleejgate.com',
       users:         'https://usersapi.khaleejgate.com',
       admin:         'https://adminapi.khaleejgate.com/',
@@ -64,6 +64,8 @@ export class AppComponent implements OnInit{
   goToSearchbox(){
     this.router.navigate(['/searchbox']);
   }
-
+  goToSearchboxHotel(){
+    this.router.navigate(['/searchboxhotel']);
+  }
 
 }

@@ -14,14 +14,15 @@ export class EnvironmentService {
     BookingFlow = 'https://flightflow.rhlaty.com'
     FareRules =   'https://flightprov.rhlaty.com'
     asm =         'https://backofficeapi.rhlaty.com'
-    Apihotels =   'https://hotels.rhlatycom'
+    Apihotels =   'https://Hotelsapi.ticketboarding.com'
     users =       'https://usersapi.rhlaty.com'
     admin =       'https://adminapi.rhlaty.com/'
     getDPayment = 'https://adminapi.rhlaty.com/'
-    bookHotels =  'https://hotels.rhlaty.com'
+    bookHotels =  'https://Hotelsapi.ticketboarding.com'
     prepay = 'https://prepayapi.rhlaty.com'
     backOffice =  'https://backofficeapi.rhlaty.com'
     FlightTop =   'https://flightsearch.rhlaty.com'
+   
     offers= {
       //Ticket boarding offers endpoints
       getAll: 'http://178.63.214.221:7893/api/GetAllOffersAPI?POS=',

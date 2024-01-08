@@ -10,6 +10,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SearchboxComponent } from './components/searchbox/searchbox.component';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { FlightResultComponent } from './components/flight-result/flight-result.component';
+import { SearchBoxHotelComponent } from './components/search-box-hotel/search-box-hotel.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { FlightResultComponent } from './components/flight-result/flight-result.
     HomePageComponent,
     CheckoutComponent,
     SearchboxComponent,
-    FlightResultComponent
+    FlightResultComponent,
+    SearchBoxHotelComponent
   ],
   imports: [
     BrowserModule,

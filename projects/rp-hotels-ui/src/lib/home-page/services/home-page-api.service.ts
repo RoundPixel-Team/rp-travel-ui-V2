@@ -3,6 +3,7 @@ import { Observable, catchError, map, mergeMap, retry, take } from 'rxjs';
 import { countries, currencyModel, pointOfSaleModel } from '../interfaces';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EnvironmentService } from '../../shared/services/environment.service';
+import { HotelsCitiesModule } from 'rp-travel-ui';
 
 @Injectable({
   providedIn: 'root'
@@ -58,4 +59,16 @@ export class HomePageApiService {
     return this.http.get<countries[]>(api).pipe( retry(2),take(1),catchError(err=>{console.log(err);throw err})
     );
   }
+   /**
+     * 
+     * @param key 
+     * @returns all cities depends on the key
+     */
+   getHotelsCities(key: string) {
+
+    let api = `${this.env.Apihotels}/api/City?city=${key}`;
+    console.log(api);
+    return this.http.get<HotelsCitiesModule[]>(api).pipe(take(1))
+  }
+  
 }
