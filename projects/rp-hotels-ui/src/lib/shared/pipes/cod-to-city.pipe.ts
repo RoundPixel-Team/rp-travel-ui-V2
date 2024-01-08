@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { airPorts } from 'rp-travel-ui';
+import { airPorts } from 'dist/rp-travel-ui/public-api';
+// import { airPorts } from 'rp-travel-ui';
 // import { airPorts } from '../../home-page/interfaces';
 
 @Pipe({

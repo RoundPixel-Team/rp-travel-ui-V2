@@ -283,7 +283,7 @@ export class HotelSearchService {
    */
   getSearchresultLink(lang: string, currency: string, pointOfSale: string) {
     let location: HotelsCitiesModule = this.HotelSearchFormGroup.get("location")?.value;
-    let locationId: string = location.CityId;
+    let locationId: string = location.City;
     let citywithcountry = location.CityWithCountry;
     let nation = this.HotelSearchFormGroup.get("nation")?.value;
     let checkIn = this.datePipe.transform(this.HotelSearchFormGroup.get("checkIn")?.value, 'MMMM dd, y');
