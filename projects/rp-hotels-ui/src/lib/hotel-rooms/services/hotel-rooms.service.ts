@@ -9,7 +9,7 @@ import { hotelRoomsResponse, roomCancelPolicy } from '../interfaces';
 export class HotelRoomsService {
 roomsLoader:boolean = false;
 cancelLoader:boolean = false;
-roomsData!:hotelRoomsResponse;
+roomsData:hotelRoomsResponse=undefined!;
 cancelPolicy!:roomCancelPolicy[];
   api = inject(HotelRoomsApiService)
 
@@ -29,7 +29,9 @@ getRooms(sid: string,hotelid:string,Pid: string){
       if(data){
         this.roomsLoader=false;
       this.roomsData=data;
+      console.log(this.roomsData,'test Data');
       const groupedRooms = this.groupRooms(this.roomsData);
+      console.log(groupedRooms,'test grouping');
       }
       
     },(err:any)=>{
@@ -76,6 +78,7 @@ groupRooms(Roomsdata:hotelRoomsResponse){
         this.cancelPolicy=data;
         this.cancelLoader = false;
 
+        console.log(this.cancelPolicy,'test cancel policy');
 
       }
     },(err:any)=>{
