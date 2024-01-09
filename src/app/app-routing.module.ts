@@ -6,7 +6,7 @@ import { FlightResultComponent } from './components/flight-result/flight-result.
 import { SearchboxComponent } from './components/searchbox/searchbox.component';
 import { SearchBoxHotelComponent } from './components/search-box-hotel/search-box-hotel.component';
 const routes: Routes = [
-  {path:'checkout',component:CheckoutComponent},
+  {path:'checkout/:pId/:sId/:hotelId/:rooms/:package',component:CheckoutComponent},
   {path:'home',component:HomePageComponent},
   {path:'flightResult/:language/:currency/:SearchPoint/:flightType/:flightInfo/:searchId/:passengers/:Cclass/:directOnly',component:FlightResultComponent},
   {path:'searchbox',component:SearchboxComponent},

@@ -11,7 +11,7 @@ import { HotelSearchService } from 'projects/rp-hotels-ui/src/lib/hotel-search/s
 })
 export class SearchBoxHotelComponent implements OnInit {
   CitiesData:any;
-  public SearchHotelService = inject(HomePageApiService)
+  public HomeService = inject(HomePageApiService)
   public searchBox = inject(HotelSearchService);
 
     constructor() {
@@ -19,7 +19,7 @@ export class SearchBoxHotelComponent implements OnInit {
      applyFilter(event: Event) {
       const filterValue = (event.target as HTMLInputElement).value;
       let filter = filterValue.trim().toLowerCase();
-      this.SearchHotelService.getHotelsCities(filter).subscribe((x)=>{
+      this.HomeService.getHotelsCities(filter).subscribe((x)=>{
         this.CitiesData= x;
         console.log("citiesData",this.CitiesData)
       })
@@ -27,16 +27,16 @@ export class SearchBoxHotelComponent implements OnInit {
   ngOnInit(): void {
     let form = JSON.parse(localStorage.getItem('form') as string)
     this.searchBox.initSearchForm(form);
-    this.SearchHotelService.getHotelsCities('').subscribe((x)=>{
-      console.log("citiesData", x,this.searchBox.HotelSearchFormGroup.value)   });
+    this.HomeService.getHotelsCities('').subscribe((x)=>{
+     
+      });
 
     
    
   
   }
   onSubmit(){
-    console.log("gg",  this.searchBox.HotelSearchFormGroup.get("location")?.value,  this.searchBox.HotelSearchFormGroup.value
-    )
+  
   }
    
   

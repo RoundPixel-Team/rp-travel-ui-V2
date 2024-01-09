@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { EnvironmentService } from '../../shared/services/environment.service';
 import { hotelRoomsResponse } from '../../hotel-rooms/interfaces';
 import { catchError, mergeMap, retry, take } from 'rxjs';
-import { hotelSaveBooking, selectedPackageAvailibilty } from '../interfaces';
+import { Cobon, hotelSaveBooking, selectedPackageAvailibilty } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -50,7 +50,20 @@ export class HotelCheckoutApiService {
     return this.http.get<selectedPackageAvailibilty>(APi);
   }
 
- 
+  /**
+   * 
+   * @param promo 
+   * @param Sid 
+   * @param packageKey 
+   * @param providerId 
+   * @returns disscount amount if the copoun code is active and valid
+   */
+  activateCobon(promo: string, Sid: string, packageKey: any, providerId: string) {
+    //check the validity of cobon and return
+    let api = `${this.env.Apihotels}/api/GetPromotionDetails?PromoCode=${promo}&SearchId=${Sid}&Packey=${packageKey}&PKey=${providerId}  `;
+    return this.http.get<Cobon>(api).pipe(take(1));
+  }
+
  /**
    * 
    * @param sid 

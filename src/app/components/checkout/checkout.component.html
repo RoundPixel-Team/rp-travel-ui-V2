@@ -1,6 +1,6 @@
 <p>checkout works!</p>
 
-<div *ngIf="flight.usersArray.length > 0">
+<!-- <div *ngIf="flight.usersArray.length > 0">
     <form [formGroup]="flight.usersForm">
         <ng-container formArrayName="users">
             <ng-container *ngFor="let user of flight.usersArray.controls;let i = index">
@@ -58,9 +58,27 @@
             </ng-container>
           </ng-container>
     </ng-container>
-</ng-container>
+</ng-container> -->
 
 <!-- <button (click)="flight.saveBooking('KWD')">Save Booking</button> -->
-<button (click)="changeCurrency()">Change Currency</button>
-
-      
+<!-- <button (click)="changeCurrency()">Change Currency</button> -->
+<ng-container *ngIf="this.HotelCheckout.HotelResult[0]">
+      <p>{{this.HotelCheckout.HotelResult[0].RoomType}}</p>
+      <form [formGroup]="this.HotelCheckout.HotelForm">
+        <ng-container formArrayName="Travellers">
+            <ng-container *ngFor="let guest of this.HotelCheckout.Travellers.controls ;let i = index;">
+                <ng-container [formGroupName]="i">
+                  <input type="text" formControlName="salutation">
+                  <input type="text" formControlName="firstName">
+                  <input type="text" formControlName="lastName">
+                  <input type="text" formControlName="phonenum">
+                  
+                  <button class="btn" (click)="onSubmit()">OnSubmit</button>
+  
+                </ng-container>
+            </ng-container>
+        </ng-container>
+      </form>
+    </ng-container>
+    <input type="text" >
+   

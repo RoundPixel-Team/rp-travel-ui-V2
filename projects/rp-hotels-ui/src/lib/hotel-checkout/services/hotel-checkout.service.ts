@@ -3,8 +3,8 @@ import { Subject, Subscription } from 'rxjs';
 import { HotelCheckoutApiService } from './hotel-checkout-api.service';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { hotelRoomsResponse, room } from '../../hotel-rooms/interfaces';
-import { hotelSaveBooking, selectedPackageAvailibilty } from '../interfaces';
+import { hotelRoomsResponse, packages, room } from '../../hotel-rooms/interfaces';
+import { Cobon, hotelSaveBooking, selectedPackageAvailibilty } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +15,7 @@ export class HotelCheckoutService {
   HotelForm!: FormGroup;
   subscription: Subscription = new Subscription()
   HotelResult: room[] = [];
+  RequiredHotel!: hotelRoomsResponse;
   SearchId: string = ''
   HotelCode: string = ''
   ProviderId: string = ''
@@ -22,6 +23,9 @@ export class HotelCheckoutService {
   roomLength: number = 0;
   totalSellPrice: number = 0
   totalCostPrice: number = 0
+  copounCodeLoader:boolean=false;
+  copounCodeDetails!: Cobon;
+  copounCodeError:string=''
   Currency: string = 'KWD'
   ip: string = '00.00.00.00';
   iplocation: string = 'Egypt';
@@ -31,6 +35,7 @@ export class HotelCheckoutService {
   paymentLink = new Subject();
   paymentLinkFailure = new Subject();
   loader: boolean = false;
+  HotelPackage:packages[]=[]
   constructor() { }
   /**
    * 
@@ -76,15 +81,16 @@ export class HotelCheckoutService {
        *load Data Hotel Selected
        * 
        */
-  loadDataCard() {
+  loadDataCard(providerId:string, searchId:string, HotelCode:string, packageKey:string) {
     this.subscription.add(
-      this.api.GetHotelRooms(this.ProviderId, this.SearchId, this.HotelCode).subscribe((res) => {
+      this.api.GetHotelRooms(providerId,searchId,HotelCode).subscribe((res) => {
         if (res == undefined) {
           return
         }
         else {
+          this.RequiredHotel = res
           let HotelPackage = res.Packages
-          this.HotelResult = HotelPackage.filter(v => v.PackageKey === this.route.snapshot.paramMap.get('package'))[0].Rooms
+          this.HotelResult = HotelPackage.filter(v => v.PackageKey === packageKey)[0].Rooms
           this.roomLength = this.HotelResult.length;
 
         }
@@ -138,6 +144,39 @@ export class HotelCheckoutService {
       }
     }
   }
+
+ /**
+   * 
+   * @param copounCode 
+   * @param searchId 
+   * @param packageKey 
+   * @param providerId
+   * check if the entered copoun code is valid and apply the disscount amount on the hotel Room price
+   * it updates the state of [copounCodeLoader : boolean]
+   * it also updates the state of [copounCodeDetails:Copon]
+   */
+
+ applyCopounCode(copounCode:string,searchId:string,packageKey:any,providerId:string){
+  
+  this.subscription.add(
+    this.api.activateCobon(copounCode,searchId,packageKey,providerId).subscribe((res)=>{
+      if(res){
+        // apply disscount on the selected hotel price amount
+        if(this.HotelResult){
+          this.copounCodeDetails = res
+          this.HotelResult[0].TotalSellPrice -= res.promotionDetails.discountAmount
+        }
+        this.copounCodeLoader = false
+      }
+    },(err)=>{
+      console.log("apply copoun code ERROR",err)
+      this.copounCodeError = err
+      this.copounCodeLoader = false
+    })
+  )
+}
+
+
   /**
   * prepare the whole object to send to API 
   * make the default values

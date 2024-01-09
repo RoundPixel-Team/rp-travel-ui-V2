@@ -10,8 +10,16 @@ import { roomCancelPolicy } from "../hotel-rooms/interfaces";
     Difference: number,
     Currency: string
  }
-
-
+ export interface Cobon {
+   promotionDetails: promotionDetails
+   status: string
+}
+export interface promotionDetails {
+   promoCode: string,
+   discountAmount: number,
+   discountCode: any,
+   newFare: number
+}
  export interface hotelSaveBooking{
     sid     :        string
     cityName:        string

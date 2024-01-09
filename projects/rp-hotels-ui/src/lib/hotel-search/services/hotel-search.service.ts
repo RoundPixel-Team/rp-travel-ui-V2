@@ -309,7 +309,7 @@ export class HotelSearchService {
 
   }
   onSubmit(lang: string, currency: string, pointOfSale: string) {
-    if (this.HotelSearchFormGroup.valid) {
+    if (this.HotelSearchFormGroup.valid ) {
 
       this.getSearchresultLink(lang, currency, pointOfSale)
 
