@@ -51,13 +51,13 @@
 
 <!-- Hotel Filter Form-->
 <div *ngIf="!hotelResults.hotelResultsLoader">
-  <form [formGroup]="hotelResults.filterForm">
+  <form [formGroup]="hotelResults.filterForm" (click)="hotelResults.hotelsFilter()">
       <ng-container formArrayName="hotelRates">
         <ng-container *ngFor="let item of hotelResults.hotelRatesArray['controls'] ; let i= index;">
           <ng-container [formGroupName]="i">
             <div>
               <p>{{i+1}}</p>
-              <input formControlName="rate" type="checkbox" class="form-check-input" id="exampleCheck{{i}}" (click)="starsRating(i+1)">
+              <input formControlName="rate"  type="checkbox" class="form-check-input" id="exampleCheck{{i}}" (click)="hotelResults.selectHotelRates(i)">
               <label class="form-check-label" for="exampleCheck{{i}}">Check me out</label>
             </div>
           </ng-container>

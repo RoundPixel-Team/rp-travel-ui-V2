@@ -14,28 +14,30 @@ export class HotelResultsService {
 
   api = inject(HotelResultsApiService)
   router = inject(Router)
+
   hotelDataResponse?:hotelResults;
   filteredHotels: hotel[] = [];
-  locationsArr: Array<string> = [];
+  locationsArrSelected: Array<string> = [];
+  ratesArrSelected: Array<number> = [];
   hotelResultsLoader:boolean=true;
+  maxPrice:number= 100000;
   subscription : Subscription = new Subscription()
   filterForm : FormGroup= new FormGroup({
-    hotelName: new FormControl(''),
+    hotelName: new FormControl('Grand City Hotel'),
     hotelRates: new FormArray([]),
-    hotelPrice: new FormControl(),
-    hotelLocation: new FormControl([])
+    hotelPrice: new FormControl(93.4707),
+    hotelLocations: new FormArray([])
   });
 
   constructor() { 
     //initialize hotel rate array with rates
     for(let i=0; i<5; i++){
-      this.addRating(i+1);
+      this.addRating();
+      this.ratesArrSelected.push(i+1)
     }
   }
 
-  ngOnInit(){
-
-  }
+  ngOnInit(){}
 
   /**
    * this function is responsible to call API to get the Hotel Data
@@ -66,7 +68,12 @@ export class HotelResultsService {
           this.hotelResultsLoader = false;
           this.hotelDataResponse = res;
           this.filteredHotels = res.HotelResult;
-          this.locationsArr = res.Locations;
+          this.locationsArrSelected= res.Locations
+          //initialize hotel locations form array value with true values (selected)
+          res?.Locations.map(()=>{
+            this.addLocations()
+          })
+          this.hotelsFilter();
         }
       })
     )
@@ -144,34 +151,78 @@ export class HotelResultsService {
     }
     return this.filteredHotels ;
   }
-  filter(){ 
-    // this.filterdhotels = this.hotels.HotelResult.filter(v => this.filterfunc(v));
-    let filterr= this.filteredHotels.filter((res)=>{
-      this.filterValue(res)
-    })
-    this.filteredHotels.filter((res)=>{})
-    
-  }
-  formValueChanged(){
+  hotelsFilter(){ 
     this.filterForm.valueChanges.subscribe((res)=>{
-      console.log('Hotel Filter Form Value', res)
+      if(this.hotelDataResponse?.HotelResult){
+        this.filteredHotels = this.hotelDataResponse?.HotelResult.filter(hotel => this.filterHotelData(hotel))
+      }
+      console.log("UPDATED DATA", this.filteredHotels)
     })
   }
-  filterValue(value:any){
-    // (this.hotelRatesArray.indexOf(value.hotelStars) != -1 || this.starsArray.length == 0)
+  /**
+   * filter Hotel Object based on Hotel Name, Hotel Star rate, Hotel Price and hotel Locations 
+   * @param hotel 
+   * @returns 
+   */
+  filterHotelData(hotel:hotel){
+    let hotelPrice = this.filterForm.get('hotelPrice')?.value;
+    return hotel.hotelName.toLowerCase().indexOf((<string>this.filterForm.get('hotelName')?.value).toLowerCase()) != -1 && (hotel.costPrice >= hotelPrice && hotel.costPrice <= this.maxPrice) 
+           && this.locationsArrSelected.includes(hotel.City) && this.ratesArrSelected.includes( hotel.hotelStars) 
   }
-  addRating(rate:number){
+    /**
+   * call it on the hotel rate filter input to fill the hotel Rates Array (selected Values)
+   * */
+  selectHotelRates(index:number){
+    // Toggle checked
+    if(!this.hotelRatesArray.at(index)?.get('rate')?.value){
+      this.ratesArrSelected.push(index+1);
+    }
+    else{
+      let rateIndex= this.ratesArrSelected.indexOf(index+1)
+      this.ratesArrSelected.splice(rateIndex,1);
+    }
+  }
+  /**
+   * initialize hotel rates form array with true value to make it selected
+   */
+  addRating(){
     (<FormArray>this.filterForm.get('hotelRates')).push(
       new FormGroup ({
         rate: new FormControl(true),
       })
     )
   }
-
+  /**
+   * initialize hotel Locations form array with true value to make it selected
+   */
+  addLocations(){
+    (<FormArray>this.filterForm.get('hotelLocations')).push(
+      new FormGroup ({
+        location: new FormControl(true),
+      })
+    )
+  }
+  /**
+   * call it on the locations filter input to fill the Locations Array (selected Values)
+   * @param index  index of the current selected or deselected location
+   * @param value  current selected or deselected location
+   */
+  selectLocations(index:number, value:string){
+    if(this.hotelLocationsArray.at(index)?.get('location')?.value){
+      this.locationsArrSelected.push(value);
+    }
+    else{
+      let index= this.locationsArrSelected.indexOf(value)
+      this.locationsArrSelected.splice(index,1);
+    }
+    console.log("selected locations", this.locationsArrSelected)
+  }
   public get hotelRatesArray(): FormArray{
     return this.filterForm.get('hotelRates') as FormArray;
   }
-
+  public get hotelLocationsArray(): FormArray{
+    return this.filterForm.get('hotelLocations') as FormArray;
+  }
   /**
    * this function is responsible to destory any opened subscription on this service
    */

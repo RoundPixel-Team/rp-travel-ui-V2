@@ -22,15 +22,12 @@ export class FlightResultComponent implements OnInit {
 
   ngOnInit(): void {
 
-    console.log("Hotel Ratess Array",this.hotelResults.hotelRatesArray.value)
     this.hotelResults.getHotelDataFromUrl();
     console.log('new lang', location.pathname)
     
-    setTimeout(() => {
-      console.log("Before Filtered Data", this.hotelResults.filteredHotels)
-      this.hotelResults.priceSorting('Low');
-      console.log("After Filtered Data", this.hotelResults.filteredHotels)
-    }, 3000);
+    // setTimeout(() => {
+    //   console.log("Updated Filtered Data", this.hotelResults.filteredHotels)
+    // }, 3000);
 
     
     this.route.params.subscribe(
@@ -70,6 +67,6 @@ export class FlightResultComponent implements OnInit {
         
       }
       starsRating(rate:number){
-        this.hotelResults.formValueChanged();
+        // this.hotelResults.formValueChanged();
       }
 }
