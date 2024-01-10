@@ -47,27 +47,27 @@ export class HotelSearchService {
   constructor(private datePipe: DatePipe, private router: Router,) {
 
   }
-    /**
-     * 
-     *geter value control location 
-     * 
-     */
+  /**
+   * 
+   *geter value control location 
+   * 
+   */
   public get citySearchKey(): FormControl {
     return this.HotelSearchForm?.get('location') as FormControl
   }
-    /**
-     * 
-     *geter value control guestInfo 
-     * 
-     */
+  /**
+   * 
+   *geter value control guestInfo 
+   * 
+   */
   public get GuestData(): FormArray {
     return this.HotelSearchForm.get('guestInfo') as FormArray;
   }
   /**
-      * 
-      *inital HotelSearchForm Form  
-      * 
-      */
+   * 
+   *inital HotelSearchForm Form  
+   * 
+   */
   initSearchForm(form: hotelSearchForm) {
     // set data in storage in form
     if (form) {
@@ -103,11 +103,11 @@ export class HotelSearchService {
         }
       }));
   }
-      /**
-      * 
-      * this function set data from starge in form 
-      * 
-      */
+  /**
+  * 
+  * this function set data from starge in form 
+  * 
+  */
   SetDataFromStorage(FormStorage: hotelSearchForm) {
     this.HotelSearchForm = new FormGroup({
       location: new FormControl(FormStorage['location'], [Validators.required, Validators.minLength(3)]),
@@ -127,11 +127,11 @@ export class HotelSearchService {
 
       }));
   }
-    /**
-     * 
-     *get Cities based Key (country code ) 
-     * 
-     */
+  /**
+   * 
+   *get Cities based Key (country code ) 
+   * 
+   */
   getCities() {
     this.subscription.add(
       this.citySearchKey.valueChanges.pipe(skip(2)).subscribe(
@@ -144,10 +144,10 @@ export class HotelSearchService {
     )
   }
   /**
-     * 
-     *get Nationality based on lang 
-     * 
-     */
+  * 
+  *get Nationality based on lang 
+  * 
+  */
   getNationality(lang: string) {
     this.subscription.add(
       this.HomePageService.getCountries(lang).subscribe((nati) => {
@@ -213,11 +213,11 @@ export class HotelSearchService {
     }
 
   }
-      /**
-       * 
-       * validation on guest Number con't be more than  9
-       * 
-       */
+  /**
+   * 
+   * validation on guest Number con't be more than  9
+   * 
+   */
 
   guestNumberValidation(adult: number, child: number) {
     let numberGuest = adult + child
@@ -227,23 +227,23 @@ export class HotelSearchService {
     }
 
   }
-   /**
-       * 
-       * validation on checkIn & checkout Date
-       * 
-       */
-ValidationDate(){
-  this.subscription.add(
-  this.HotelSearchForm.get('checkOut')?.valueChanges.subscribe(
-   (val)=>{
-     if(val <  this.HotelSearchForm.get('checkIn')?.value){
-      this.DateMessageError.enMsg ="Please Enter checkoutDate after CheckInDate"
-      this.DateMessageError.arMsg="يجب ان يكون وقت الوصول اكبر من وقت الذهاب"
-     }
-   }
-   
-  ))
-}
+  /**
+      * 
+      * validation on checkIn & checkout Date
+      * 
+      */
+  ValidationDate() {
+    this.subscription.add(
+      this.HotelSearchForm.get('checkOut')?.valueChanges.subscribe(
+        (val) => {
+          if (val < this.HotelSearchForm.get('checkIn')?.value) {
+            this.DateMessageError.enMsg = "Please Enter checkoutDate after CheckInDate"
+            this.DateMessageError.arMsg = "يجب ان يكون وقت الوصول اكبر من وقت الذهاب"
+          }
+        }
+
+      ))
+  }
   /**
      * 
      * search id value 
@@ -279,7 +279,7 @@ ValidationDate(){
     let guesttxt = '';
 
     for (let i = 0; i < guestInfo.length; i++) {
-        guesttxt += "R" + i + "A" + guestInfo.at(i).get('adultN') + "C" + guestInfo.at(i).get('childN')
+      guesttxt += "R" + i + "A" + guestInfo.at(i).get('adultN') + "C" + guestInfo.at(i).get('childN')
       let guestValue = guestInfo.at(i).get('childGroup')?.value
       for (let j = 0; j < guestValue.length; j++) {
 
@@ -287,7 +287,7 @@ ValidationDate(){
 
       }
     }
-  return guesttxt;
+    return guesttxt;
   }
   /**
    * this function is responsible to return link to use it to navigate to search results with all data of search box

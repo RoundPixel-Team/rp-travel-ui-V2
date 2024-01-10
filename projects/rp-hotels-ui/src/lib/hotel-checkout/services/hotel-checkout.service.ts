@@ -247,6 +247,14 @@ export class HotelCheckoutService {
    * this function is responsible to destory any opened subscription on this service
    */
   destroyer() {
-    this.subscription.unsubscribe()
+    this.subscription.unsubscribe();
+    this.HotelForm = new FormGroup({});
+    this.HotelResult=[];
+    this.HotelPackage=[];
+    this.searchId='';
+    this.hotelCode='';
+    this.providerId='';
+    this.packageKey='';
+
   }
 }
