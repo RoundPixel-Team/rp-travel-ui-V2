@@ -20,11 +20,11 @@ public route =inject(ActivatedRoute)
   constructor() { }
 
   ngOnInit(): void {
-  this.HotelCheckout.SearchId=this.route.snapshot.params['sId'];
-  this.HotelCheckout.ProviderId=this.route.snapshot.params['pId'];
-  this.HotelCheckout.HotelCode=this.route.snapshot.params['hotelId'];
-  this.HotelCheckout.PackageKey=this.route.snapshot.params['package'];
-    this.HotelCheckout.loadDataCard(this.HotelCheckout.ProviderId,this.HotelCheckout.SearchId,this.HotelCheckout.HotelCode,this.HotelCheckout.PackageKey);
+  this.HotelCheckout.searchId=this.route.snapshot.params['sId'];
+  this.HotelCheckout.providerId=this.route.snapshot.params['pId'];
+  this.HotelCheckout.hotelCode=this.route.snapshot.params['hotelId'];
+  this.HotelCheckout.packageKey=this.route.snapshot.params['package'];
+    this.HotelCheckout.loadDataCard(this.HotelCheckout.providerId,this.HotelCheckout.searchId,this.HotelCheckout.hotelCode,this.HotelCheckout.packageKey);
 this.HotelCheckout.initalCkeckoutForm()
 this.HotelCheckout.FormRooms()
     // this.subscription.add(

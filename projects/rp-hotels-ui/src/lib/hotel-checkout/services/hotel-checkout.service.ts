@@ -12,20 +12,20 @@ import { Cobon, hotelSaveBooking, selectedPackageAvailibilty } from '../interfac
 export class HotelCheckoutService {
   route = inject(ActivatedRoute)
   api = inject(HotelCheckoutApiService)
-  HotelForm!: FormGroup;
+  HotelForm: FormGroup = new FormGroup({});
   subscription: Subscription = new Subscription()
   HotelResult: room[] = [];
   RequiredHotel!: hotelRoomsResponse;
-  SearchId: string = ''
-  HotelCode: string = ''
-  ProviderId: string = ''
-  PackageKey: string = ''
+  searchId: string = ''
+  hotelCode: string = ''
+  providerId: string = ''
+  packageKey: string = ''
   roomLength: number = 0;
   totalSellPrice: number = 0
   totalCostPrice: number = 0
-  copounCodeLoader:boolean=false;
+  copounCodeLoader: boolean = false;
   copounCodeDetails!: Cobon;
-  copounCodeError:string=''
+  copounCodeError: string = ''
   Currency: string = 'KWD'
   ip: string = '00.00.00.00';
   iplocation: string = 'Egypt';
@@ -35,20 +35,9 @@ export class HotelCheckoutService {
   paymentLink = new Subject();
   paymentLinkFailure = new Subject();
   loader: boolean = false;
-  HotelPackage:packages[]=[]
+  HotelPackage: packages[] = []
   constructor() { }
-  /**
-   * 
-   *get data from Route 
-   * 
-   */
-  getDataFromUrl() {
-    this.SearchId = this.route.snapshot.params['sId']
-    this.HotelCode = this.route.snapshot.params['hotelId']
-    this.ProviderId = this.route.snapshot.params['pId']
-    this.PackageKey = this.route.snapshot.params['package']
 
-  }
   /**
     * 
     *inital form check out & set searchId, HotelId, ProviderId in control 
@@ -56,11 +45,11 @@ export class HotelCheckoutService {
     */
   initalCkeckoutForm() {
     this.HotelForm = new FormGroup({
-      sid: new FormControl(this.SearchId),
+      sid: new FormControl(this.searchId),
       cityName: new FormControl(Validators.required),
-      hotelID: new FormControl(this.HotelCode),
+      hotelID: new FormControl(this.hotelCode),
       providerHotelID: new FormControl(Validators.required),
-      pid: new FormControl(this.ProviderId),
+      pid: new FormControl(this.providerId),
       roomQty: new FormControl(Validators.required),
       paxQty: new FormControl(0),
       src: new FormControl('Direct'),
@@ -81,9 +70,9 @@ export class HotelCheckoutService {
        *load Data Hotel Selected
        * 
        */
-  loadDataCard(providerId:string, searchId:string, HotelCode:string, packageKey:string) {
+  loadDataCard(providerId: string, searchId: string, HotelCode: string, packageKey: string) {
     this.subscription.add(
-      this.api.GetHotelRooms(providerId,searchId,HotelCode).subscribe((res) => {
+      this.api.GetHotelRooms(providerId, searchId, HotelCode).subscribe((res) => {
         if (res == undefined) {
           return
         }
@@ -104,7 +93,6 @@ export class HotelCheckoutService {
       */
   FormRooms() {
     for (var i = 0; i < this.roomLength; i++) {
-      debugger
       if (this.HotelResult[i].Adult != 0 && !this.firstAdultFound) {
         this.firstAdultFound = true;
         (<FormArray>this.HotelForm.get('Travellers')).push(new FormGroup({
@@ -145,36 +133,36 @@ export class HotelCheckoutService {
     }
   }
 
- /**
-   * 
-   * @param copounCode 
-   * @param searchId 
-   * @param packageKey 
-   * @param providerId
-   * check if the entered copoun code is valid and apply the disscount amount on the hotel Room price
-   * it updates the state of [copounCodeLoader : boolean]
-   * it also updates the state of [copounCodeDetails:Copon]
-   */
+  /**
+    * 
+    * @param copounCode 
+    * @param searchId 
+    * @param packageKey 
+    * @param providerId
+    * check if the entered copoun code is valid and apply the disscount amount on the hotel Room price
+    * it updates the state of [copounCodeLoader : boolean]
+    * it also updates the state of [copounCodeDetails:Copon]
+    */
 
- applyCopounCode(copounCode:string,searchId:string,packageKey:any,providerId:string){
-  
-  this.subscription.add(
-    this.api.activateCobon(copounCode,searchId,packageKey,providerId).subscribe((res)=>{
-      if(res){
-        // apply disscount on the selected hotel price amount
-        if(this.HotelResult){
-          this.copounCodeDetails = res
-          this.HotelResult[0].TotalSellPrice -= res.promotionDetails.discountAmount
+  applyCopounCode(copounCode: string, searchId: string, packageKey: any, providerId: string) {
+
+    this.subscription.add(
+      this.api.activateCobon(copounCode, searchId, packageKey, providerId).subscribe((res) => {
+        if (res) {
+          // apply disscount on the selected hotel price amount
+          if (this.HotelResult) {
+            this.copounCodeDetails = res
+            this.HotelResult[0].TotalSellPrice -= res.promotionDetails.discountAmount
+          }
+          this.copounCodeLoader = false
         }
+      }, (err) => {
+        console.log("apply copoun code ERROR", err)
+        this.copounCodeError = err
         this.copounCodeLoader = false
-      }
-    },(err)=>{
-      console.log("apply copoun code ERROR",err)
-      this.copounCodeError = err
-      this.copounCodeLoader = false
-    })
-  )
-}
+      })
+    )
+  }
 
 
   /**
@@ -199,7 +187,7 @@ export class HotelCheckoutService {
       this.HotelForm.get('totalCost')?.setValue(this.totalCostPrice);
       this.HotelForm.get('currency')?.setValue(this.Currency);
       let phoneNumberObject: any = { ...(<FormArray>this.HotelForm.get('Travellers')).at(0).get('phonenum')?.value };
-      // debugger
+
       let phone: string = phoneNumberObject.number;
       let dialCode: string = phoneNumberObject.dialCode;
       for (var i = 0; i < (<FormArray>this.HotelForm.get('Travellers')).length; i++) {
@@ -233,19 +221,15 @@ export class HotelCheckoutService {
     if (this.HotelForm.valid) {
       let bookObject: hotelSaveBooking = { ...this.HotelForm.value }
       this.subscription.add(
-        this.api.saveBooking(bookObject, this.SearchId, this.ip, this.iplocation, this.lang).subscribe
+        this.api.saveBooking(bookObject, this.searchId, this.ip, this.iplocation, this.lang).subscribe
           ((res) => {
             this.paymentLink.next(res)
             this.loader = false;
           }, (err) => {
-            console.log("SAVE BOOKING ERROR", err)
             this.paymentLinkFailure.next(err)
             this.loader = false
           })
       )
-
-
-
     }
   }
   /**
@@ -255,7 +239,7 @@ export class HotelCheckoutService {
      */
   getHotelAvalibility() {
     this.subscription.add(
-      this.api.hotelCheckAvailability(this.SearchId, this.HotelCode, this.PackageKey, this.ProviderId).subscribe((v) => {
+      this.api.hotelCheckAvailability(this.searchId, this.hotelCode, this.packageKey, this.providerId).subscribe((v) => {
         this.terms = v
       }))
   }

@@ -22,7 +22,7 @@ export class HotelCheckoutApiService {
    */
   GetHotelRooms(Pid: string, sid: string, hotelID: string) {
     // RETURN hOTELS ROOM
-    let apiHotel = `${this.env.Apihotels}/`; // salama1472019446 /37094/4
+    let apiHotel = `${this.env.Apihotels}/`
     console.log(apiHotel, "myapi");
     return this.http
       .get<hotelRoomsResponse>(
