@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, catchError } from 'rxjs';
 import { HotelResultsApiService } from './hotel-results-api.service';
 import { Router } from '@angular/router';
 import { GetHotelModule, hotel, hotelResults } from '../interfaces';
@@ -20,7 +20,8 @@ export class HotelResultsService {
   locationsArrSelected: Array<string> = [];
   ratesArrSelected: Array<number> = [];
   hotelResultsLoader:boolean=true;
-  maxPrice:number= 100000;
+  maxPrice:number=0;
+  minPrice:number=0;
   subscription : Subscription = new Subscription()
   filterForm : FormGroup= new FormGroup({
     hotelName: new FormControl('Grand City Hotel'),
@@ -74,6 +75,9 @@ export class HotelResultsService {
             this.addLocations()
           })
           this.hotelsFilter();
+          this.priceSorting(1);
+          this.maxPrice = this.filteredHotels[0].costPrice;
+          this.minPrice = this.filteredHotels[this.filteredHotels.length -1].costPrice;
         }
       })
     )
@@ -84,19 +88,20 @@ export class HotelResultsService {
    */
   generateSearchRooms(guestInfo:string){
     let SearchRooms: guests[] = [];
-    let roomsInfo = guestInfo.split("R");
+    let roomsInfo = guestInfo.split("R"); //array of rooms data R1A1C0
     roomsInfo.splice(0, 1);
+    //loop on rooms Info to get numbers of children and fill array of ages based on child number to send ages to backend
     for (let i = 0; i < roomsInfo.length; i++) {
-      let chNum: number = 0;
+      let childNum: number = 0;
       let age: number[] = [];
-      chNum = Number(roomsInfo[i].slice(4, 5));
-      if (chNum === 0) {
+      childNum = Number(roomsInfo[i].slice(4, 5)); 
+      if (childNum === 0) { //If child Number 0 then send empty array
         age = [];
       }
-      else if (chNum === 1) {
+      else if (childNum === 1) { //If Child Nuber 1 then send age is 7 
         age = [7];
       }
-      else if (chNum === 2) {
+      else if (childNum === 2) { //If Child Nuber 1 then send ages are 7 and 6 
         age = [7,6];
       }
       SearchRooms[i] = { adultN: Number(roomsInfo[i].slice(2, 3)), childN: age };
@@ -104,22 +109,37 @@ export class HotelResultsService {
     return SearchRooms;
   }
   /**
-   * this function is responsible to sort the hotels data based on Price
-   * @param sortType = 'high' || 'low' 
+   * this function is responsible to sort the hotels data based on Price and Star Rating
+   * @param sortIndex based on index of looping on Sort Boxes
+   * 0 ==> sort from lowest Price To Highest
+   * 1 ==> sort from Highest Price To lowest
+   * 2 ==> sort from lowest Star Rate To Highest
+   * 3 ==> sort from Highest Star Rate To lowest
    */
-  priceSorting(sortType:string){
-    switch (sortType) {
-      case "Low":
+  priceSorting(sortIndex:number){
+    switch (sortIndex) {
+      case 0:
         {
           this.filteredHotels = this.filteredHotels.sort((low, high) => low.TotalSellPrice - high.TotalSellPrice);
           break;
         }
 
-      case "High":
+      case 1:
         {
          this.filteredHotels = this.filteredHotels.sort((low, high) => high.TotalSellPrice - low.TotalSellPrice);
           break;
         }
+        case 2:
+          {
+            this.filteredHotels = this.filteredHotels.sort((low, high) => low.hotelStars - high.hotelStars);
+            break;
+          }
+  
+        case 3:
+          {
+           this.filteredHotels = this.filteredHotels.sort((low, high) => high.hotelStars - low.hotelStars);
+            break;
+          }
       default:{
         this.filteredHotels = this.filteredHotels.sort((low, high) => high.TotalSellPrice - low.TotalSellPrice);
         break;
@@ -127,36 +147,12 @@ export class HotelResultsService {
     }
     return this.filteredHotels ;
   }
-  /**
-   * this function is responsible to sort the hotels data based on Star Rating
-   * @param sortType = 'high' || 'low' 
-   */
-  rateSorting(sortType:string){
-    switch (sortType) {
-      case "Low":
-        {
-          this.filteredHotels = this.filteredHotels.sort((low, high) => low.hotelRate - high.hotelRate);
-          break;
-        }
 
-      case "High":
-        {
-         this.filteredHotels = this.filteredHotels.sort((low, high) => high.hotelRate - low.hotelRate);
-          break;
-        }
-      default:{
-        this.filteredHotels = this.filteredHotels.sort((low, high) => high.hotelRate - low.hotelRate);
-        break;
-      } 
-    }
-    return this.filteredHotels ;
-  }
   hotelsFilter(){ 
     this.filterForm.valueChanges.subscribe((res)=>{
       if(this.hotelDataResponse?.HotelResult){
         this.filteredHotels = this.hotelDataResponse?.HotelResult.filter(hotel => this.filterHotelData(hotel))
       }
-      console.log("UPDATED DATA", this.filteredHotels)
     })
   }
   /**
@@ -166,7 +162,7 @@ export class HotelResultsService {
    */
   filterHotelData(hotel:hotel){
     let hotelPrice = this.filterForm.get('hotelPrice')?.value;
-    return hotel.hotelName.toLowerCase().indexOf((<string>this.filterForm.get('hotelName')?.value).toLowerCase()) != -1 && (hotel.costPrice >= hotelPrice && hotel.costPrice <= this.maxPrice) 
+    return hotel.hotelName.includes(this.filterForm.get('hotelName')?.value) && (hotel.costPrice >= hotelPrice && hotel.costPrice <= this.maxPrice) 
            && this.locationsArrSelected.includes(hotel.City) && this.ratesArrSelected.includes( hotel.hotelStars) 
   }
     /**
@@ -227,6 +223,12 @@ export class HotelResultsService {
    * this function is responsible to destory any opened subscription on this service
    */
   destroyer(){
-    this.subscription.unsubscribe()
+    this.subscription.unsubscribe();
+    this.filteredHotels= [];
+    this.locationsArrSelected= [];
+    this.ratesArrSelected = [];
+    this.hotelResultsLoader=true;
+    this.maxPrice = 0;
+    this.minPrice = 0;
   }
 }
