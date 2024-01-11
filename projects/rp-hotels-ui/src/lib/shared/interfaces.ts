@@ -26,3 +26,13 @@ export interface AlertMsgModel{
   arMsg:string | null | undefined
   enMsg:string | null | undefined
 }
+
+export interface airPorts {
+  airportCode:string,
+  airportName:string,
+  cityName:string,
+  cityCode:string,
+  countryCode:string,
+  countryName:string,
+  regionName:string
+}
