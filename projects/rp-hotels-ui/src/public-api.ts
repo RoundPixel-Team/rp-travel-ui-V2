@@ -30,7 +30,10 @@ export * from './lib/hotel-results/services/hotel-results-api.service'
 export * from './lib/hotel-results/services/hotel-results.service'
 export * from './lib/hotel-results/interfaces'
 
-
+//hotels rooms
+export * from './lib/hotel-rooms/services/hotel-rooms-api.service'
+export * from './lib/hotel-rooms/services/hotel-rooms.service'
+export * from './lib/hotel-rooms/interfaces'
 // hotel Search
 export * from './lib/hotel-search/services/hotel-search.service'
 export * from './lib/hotel-search/interfaces'
@@ -42,10 +45,8 @@ export * from './lib/hotel-confirmation/services/hotel-confirmation-api.service'
 export * from './lib/hotel-confirmation/interfces'
 
 // pipes
-export * from './lib/shared/pipes/cod-to-city.pipe'
 export * from './lib/shared/pipes/councode.pipe'
 export * from './lib/shared/pipes/duration-to-hour-min.pipe'
-export * from './lib/shared/pipes/filter-city.pipe'
 export * from './lib/shared/pipes/highlighter.pipe'
 export * from './lib/shared/pipes/hotelecites.pipe'
 export * from './lib/shared/pipes/hour-minute.pipe'
