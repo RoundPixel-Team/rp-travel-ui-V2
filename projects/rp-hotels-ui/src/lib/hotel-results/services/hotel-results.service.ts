@@ -75,7 +75,7 @@ export class HotelResultsService {
             this.addLocations()
           })
           this.hotelsFilter();
-          this.priceSorting(1);
+          this.sorting(1);
           this.maxPrice = this.filteredHotels[0].costPrice;
           this.minPrice = this.filteredHotels[this.filteredHotels.length -1].costPrice;
         }
@@ -116,7 +116,7 @@ export class HotelResultsService {
    * 2 ==> sort from lowest Star Rate To Highest
    * 3 ==> sort from Highest Star Rate To lowest
    */
-  priceSorting(sortIndex:number){
+  sorting(sortIndex:number){
     switch (sortIndex) {
       case 0:
         {
