@@ -11,6 +11,7 @@ roomsLoader:boolean = false;
 cancelLoader:boolean = false;
 roomsData:hotelRoomsResponse=undefined!;
 cancelPolicy!:roomCancelPolicy[];
+groupedRooms!:{};
   api = inject(HotelRoomsApiService)
 
   subscription : Subscription = new Subscription()
@@ -30,8 +31,8 @@ getRooms(sid: string,hotelid:string,Pid: string){
         this.roomsLoader=false;
       this.roomsData=data;
       console.log(this.roomsData,'test Data');
-      const groupedRooms = this.groupRooms(this.roomsData);
-      console.log(groupedRooms,'test grouping');
+       this.groupedRooms = this.groupRooms(this.roomsData);
+      console.log(this.groupedRooms,'test grouping');
       }
       
     },(err:any)=>{
@@ -48,7 +49,7 @@ getRooms(sid: string,hotelid:string,Pid: string){
  */
 groupRooms(Roomsdata:hotelRoomsResponse){
   const allRooms=Roomsdata.Packages.flatMap(pkg=>pkg.Rooms);
-  const groupedRooms = allRooms.reduce((acc:any, room) => {
+   this.groupedRooms = allRooms.reduce((acc:any, room) => {
     const roomType = room.RoomType;
     if (!acc[roomType]) {
       acc[roomType] = [];
@@ -57,7 +58,7 @@ groupRooms(Roomsdata:hotelRoomsResponse){
     return acc;
   }, {});
 
-  return groupedRooms;
+  return this.groupedRooms;
 }
 
 /**
