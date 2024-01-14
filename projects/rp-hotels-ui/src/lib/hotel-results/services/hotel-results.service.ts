@@ -22,6 +22,7 @@ export class HotelResultsService {
   hotelResultsLoader:boolean=true;
   maxPrice:number=0;
   minPrice:number=0;
+  nightsNumber:any=0;
   subscription : Subscription = new Subscription()
   filterForm : FormGroup= new FormGroup({
     hotelName: new FormControl('Grand City Hotel'),
@@ -46,7 +47,7 @@ export class HotelResultsService {
    */
   getHotelDataFromUrl(){
     // let hotelUrl = this.router.url.split('/');
-    let hotelUrl = ('hotels.hogozati.com/hotelResult/en/KWD/EG/2024B0I4S938H00B30I60S50H60I80/3202/CAIRO,EGYPT/Kuwait/February%2001,%202024/February%2022,%202024/1/R0A2C0').split('/');
+    let hotelUrl = ('hotels.hogozati.com/hotelResult/en/KWD/EG/2024B0I0S571H90B30I60S50H90I60/3202/Cairo,Egypt/Kuwait/February%2021,%202024/March%2004,%202024/1/R0A2C0').split('/');
 
     let guestInfo = hotelUrl[12];
     let searchRooms = this.generateSearchRooms(guestInfo); //get child numbers from URL to send an array of thier Ages
@@ -70,6 +71,12 @@ export class HotelResultsService {
           this.hotelDataResponse = res;
           this.filteredHotels = res.HotelResult;
           this.locationsArrSelected= res.Locations
+          //GET START AND END DATE TO CALCULATE ROOM NIGHTS NUMBER 
+          let startDate:Date  =new Date(hotelUrl[9].replace(new RegExp('%20','g'),' '));
+          let endDate: Date  = new Date(hotelUrl[10].replace(new RegExp('%20','g'),' '));
+
+          this.nightsNumber = this.calculateDiff(startDate,endDate);
+
           //initialize hotel locations form array value with true values (selected)
           res?.Locations.map(()=>{
             this.addLocations()
@@ -82,6 +89,15 @@ export class HotelResultsService {
       })
     )
   }
+  /**
+   * this function is responsible to calculate Nights Number from Dates 
+   * @param startDate get value from URL
+   * @param endDate get value from URL
+   * @returns Nights Number
+   */
+  calculateDiff(startDate:Date,endDate:Date){
+    return Math.floor((Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()) - Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()) ) /(1000 * 60 * 60 * 24));
+}
   /**
    * this function is responsible to generate search rooms Array
    * @param guestInfo get this string from URL after splitting it
