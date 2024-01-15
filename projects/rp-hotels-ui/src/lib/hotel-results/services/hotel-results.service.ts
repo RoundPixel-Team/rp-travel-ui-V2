@@ -73,8 +73,8 @@ export class HotelResultsService {
           this.hotelResultsLoader = false;
           this.hotelDataResponse = res;
           this.filteredHotels = res.HotelResult;
-          this.hotelLocationsArr= res.Locations
-          this.locationsArrSelected= res.Locations
+          this.hotelLocationsArr= [...res.Locations]
+          this.locationsArrSelected= [...res.Locations]
           //GET START AND END DATE TO CALCULATE ROOM NIGHTS NUMBER 
           let startDate:Date  =new Date(hotelUrl[9].replace(new RegExp('%20','g'),' '));
           let endDate: Date  = new Date(hotelUrl[10].replace(new RegExp('%20','g'),' '));
@@ -224,17 +224,12 @@ export class HotelResultsService {
    * @param value  current selected or deselected location
    */
   selectLocations(index:number, value:string){
-    console.log("Index: ",index," ", " Value: ",value);
-    console.log("INTIAL LOCATIONS Array", this.locationsArrSelected)
-    if(!this.hotelLocationsArray.at(index)?.get('location')?.value){
+    if(this.hotelLocationsArray.at(index)?.get('location')?.value == false){
       this.locationsArrSelected.push(value);
-      console.log("selected locations added", this.locationsArrSelected)
     }
     else{
       let locationIndex= this.locationsArrSelected.indexOf(value)
-      console.log("Location Index", locationIndex)
       this.locationsArrSelected.splice(locationIndex,1);
-      console.log("selected locations remove", this.locationsArrSelected)
     }
   }
   public get hotelRatesArray(): FormArray{
