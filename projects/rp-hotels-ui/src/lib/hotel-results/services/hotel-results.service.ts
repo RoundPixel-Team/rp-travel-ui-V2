@@ -16,6 +16,7 @@ export class HotelResultsService {
   router = inject(Router)
 
   hotelDataResponse?:hotelResults;
+  hotelLocations:Array<string>=[];
   filteredHotels: hotel[] = [];
   locationsArrSelected: Array<string> = [];
   ratesArrSelected: Array<number> = [];
@@ -72,6 +73,7 @@ export class HotelResultsService {
           this.hotelResultsLoader = false;
           this.hotelDataResponse = res;
           this.filteredHotels = res.HotelResult;
+          this.hotelLocations= res.Locations
           this.locationsArrSelected= res.Locations
           //GET START AND END DATE TO CALCULATE ROOM NIGHTS NUMBER 
           let startDate:Date  =new Date(hotelUrl[9].replace(new RegExp('%20','g'),' '));
@@ -222,12 +224,12 @@ export class HotelResultsService {
    * @param value  current selected or deselected location
    */
   selectLocations(index:number, value:string){
-    if(this.hotelLocationsArray.at(index)?.get('location')?.value){
+    if(!this.hotelLocationsArray.at(index)?.get('location')?.value){
       this.locationsArrSelected.push(value);
     }
     else{
-      let index= this.locationsArrSelected.indexOf(value)
-      this.locationsArrSelected.splice(index,1);
+      let locationIndex= this.locationsArrSelected.indexOf(value)
+      this.locationsArrSelected.splice(locationIndex,1);
     }
     console.log("selected locations", this.locationsArrSelected)
   }
@@ -245,6 +247,7 @@ export class HotelResultsService {
     this.filteredHotels= [];
     this.locationsArrSelected= [];
     this.ratesArrSelected = [];
+    this.hotelLocations = [];
     this.hotelResultsLoader=true;
     this.maxPrice = 0;
     this.minPrice = 0;
