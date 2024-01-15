@@ -20,6 +20,7 @@ export class HotelResultsService {
   locationsArrSelected: Array<string> = [];
   ratesArrSelected: Array<number> = [];
   hotelResultsLoader:boolean=true;
+  searchID:string='';
   maxPrice:number=0;
   minPrice:number=0;
   nightsNumber:any=0;
@@ -46,9 +47,10 @@ export class HotelResultsService {
    * you should call it first in the search Results componet
    */
   getHotelDataFromUrl(){
-    // let hotelUrl = this.router.url.split('/');
-    let hotelUrl = ('hotels.hogozati.com/hotelResult/en/KWD/EG/2024B0I0S571H90B30I60S50H90I60/3202/Cairo,Egypt/Kuwait/February%2021,%202024/March%2004,%202024/1/R0A2C0').split('/');
-
+    let hotelUrl = this.router.url.split('/');
+    // let hotelUrl = ('hotels.hogozati.com/hotelResult/en/KWD/EG/2024B0I0S571H90B30I60S50H90I60/3202/Cairo,Egypt/Kuwait/February%2021,%202024/March%2004,%202024/1/R0A2C0').split('/');
+    
+    this.searchID = hotelUrl[5]; //used to send with navigation to Rooms
     let guestInfo = hotelUrl[12];
     let searchRooms = this.generateSearchRooms(guestInfo); //get child numbers from URL to send an array of thier Ages
     let hotelSearchObj: GetHotelModule = {
