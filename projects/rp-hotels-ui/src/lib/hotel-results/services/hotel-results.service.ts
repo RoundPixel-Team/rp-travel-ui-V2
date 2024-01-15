@@ -26,9 +26,9 @@ export class HotelResultsService {
   nightsNumber:any=0;
   subscription : Subscription = new Subscription()
   filterForm : FormGroup= new FormGroup({
-    hotelName: new FormControl('Grand City Hotel'),
+    hotelName: new FormControl(''),
     hotelRates: new FormArray([]),
-    hotelPrice: new FormControl(93.4707),
+    hotelPrice: new FormControl(),
     hotelLocations: new FormArray([])
   });
 
@@ -248,5 +248,6 @@ export class HotelResultsService {
     this.hotelResultsLoader=true;
     this.maxPrice = 0;
     this.minPrice = 0;
+    this.nightsNumber=0;
   }
 }
