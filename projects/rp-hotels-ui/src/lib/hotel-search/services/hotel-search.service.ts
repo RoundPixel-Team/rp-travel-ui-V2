@@ -8,7 +8,7 @@ import { HotelsCitiesModule } from 'rp-travel-ui';
 import { CountriescodeModule, HomePageApiService, SearchHoteltModule, hotelSearchForm } from 'projects/rp-hotels-ui/src/public-api';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { AlertMsgModel } from '../interfaces';
+import { AlertMsgModels } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -17,21 +17,26 @@ export class HotelSearchService {
   public http = inject(HttpClient)
   public env = inject(EnvironmentService)
   public HomePageService = inject(HomePageApiService)
+  searchApi: SearchHoteltModule | undefined
   allGuest: number = 0;
   roomNumber: number = 1;
+  adultNum: number = 1
+  childNum: number = 0
   today!: Date;
   formday!: Date;
+  stringGuest:string=''
   citiesNames: string[] = [];
+  selectAllcities: any
   LocalStorage!: hotelSearchForm;
-  DateMessageError: AlertMsgModel = {
+  DateMessageError: AlertMsgModels = {
     arMsg: '',
     enMsg: '',
   };
-  RoomMessageError: AlertMsgModel = {
+  RoomMessageError: AlertMsgModels = {
     arMsg: '',
     enMsg: '',
   };
-  guestMessageError: AlertMsgModel = {
+  guestMessageError: AlertMsgModels = {
     arMsg: '',
     enMsg: '',
   };
@@ -42,9 +47,17 @@ export class HotelSearchService {
      * inital form Search Hotel
      * 
      */
-  HotelSearchForm: FormGroup = new FormGroup({});
+  HotelSearchForm: FormGroup = new FormGroup({
+    location: new FormControl("", [Validators.required, Validators.minLength(3)]),
+    nation: new FormControl(""),
+    checkIn: new FormControl(this.formday, Validators.required),
+    checkOut: new FormControl(this.today, Validators.required),
+    roomN: new FormControl(1, [Validators.required, Validators.min(1)]),
 
-  constructor(private datePipe: DatePipe, private router: Router,) {
+    guestInfo: new FormArray([],[Validators.required]),
+  });
+
+  constructor(private router: Router ) {
 
   }
   /**
@@ -81,7 +94,7 @@ export class HotelSearchService {
         checkIn: new FormControl(this.formday, Validators.required),
         checkOut: new FormControl(this.today, Validators.required),
         roomN: new FormControl(1, [Validators.required, Validators.min(1)]),
-        guestInfo: new FormArray([], [Validators.required]),
+        guestInfo: new FormArray([],  [Validators.required]),
 
       });
 
@@ -93,15 +106,8 @@ export class HotelSearchService {
 
         }));
     }
-    this.subscription.add(this.HotelSearchForm.get("roomN")?.valueChanges.subscribe(
-      (val) => {
-        if (val != null) {
-          this.roomNumber = val;
-        }
-        else {
-          this.roomNumber = 1;
-        }
-      }));
+   
+    
   }
   /**
   * 
@@ -115,7 +121,7 @@ export class HotelSearchService {
       checkIn: new FormControl(FormStorage['checkIn'], Validators.required),
       checkOut: new FormControl(FormStorage['checkOut'], Validators.required),
       roomN: new FormControl(FormStorage['roomN'], [Validators.required, Validators.min(1)]),
-      guestInfo: new FormArray([], [Validators.required]),
+      guestInfo: new FormArray([],  [Validators.required]),
 
     });
 
@@ -132,17 +138,18 @@ export class HotelSearchService {
    *get Cities based Key (country code ) 
    * 
    */
-  getCities() {
+  getCitiesById() {
     this.subscription.add(
       this.citySearchKey.valueChanges.pipe(skip(2)).subscribe(
         (v: string) => {
           if (v.length === 3) {
-            this.HomePageService.getHotelsCities(v)
+            this.selectAllcities = this.HomePageService.getHotelsCities(v)
           }
         }
       )
     )
   }
+ 
   /**
   * 
   *get Nationality based on lang 
@@ -176,11 +183,11 @@ export class HotelSearchService {
   * 
   */
   addRoom() {
+   
     let numRoom = this.HotelSearchForm.get('roomN')?.value;
     if (numRoom > 5) {
       this.RoomMessageError.enMsg = "Maximun Rooms Shouldn't be more than 5"
       this.RoomMessageError.arMsg = "لا يجب حجز اكثر من 5 غرف"
-
     }
     else {
       this.HotelSearchForm.get('roomN')?.setValue(numRoom + 1);
@@ -219,13 +226,21 @@ export class HotelSearchService {
    * 
    */
 
-  guestNumberValidation(adult: number, child: number) {
-    let numberGuest = adult + child
-    if (numberGuest > 9) {
+  guestNumberValidation(search: FormArray) {
+    // let numberGuest = this.adultNum + this.childNum
+
+    let adults = 0;
+    let childs = 0;
+    for (let i = 0; i < search.length; i++) {
+      adults +=Number(this.GuestData.controls[i].get('adultN')?.value)
+      childs +=Number(this.GuestData.controls[i].get('childN')?.value)
+ 
+    }
+    this.allGuest = adults + childs;
+    if (adults + childs > 9) {
       this.guestMessageError.enMsg = "Maximun Number guest Shouldn't be more than 9"
       this.guestMessageError.arMsg = "لا يجب يزيد عدد الحجزين عن 9 افراد"
     }
-
   }
   /**
       * 
@@ -275,7 +290,6 @@ export class HotelSearchService {
        * 
        */
   formatGuestInfo(guestInfo: FormArray) {
-
     let guesttxt = '';
 
     for (let i = 0; i < guestInfo.length; i++) {
@@ -294,18 +308,21 @@ export class HotelSearchService {
    */
 
   onSubmit(lang: string, currency: string, pointOfSale: string) {
+    if(this.HotelSearchForm.get("nation")?.value === ''){
+      this.HotelSearchForm.get("nation")?.setValue('Kuwait')
+    }
     if (this.HotelSearchForm.valid) {
 
       let location: HotelsCitiesModule = this.HotelSearchForm.get("location")?.value;
       let locationId: string = location.City;
       let citywithcountry = location.CityWithCountry;
       let nation = this.HotelSearchForm.get("nation")?.value;
-      let checkIn = this.datePipe.transform(this.HotelSearchForm.get("checkIn")?.value, 'MMMM dd, y');
-      let checkOut = this.datePipe.transform(this.HotelSearchForm.get("checkOut")?.value, 'MMMM dd, y');
+      let checkIn = this.HotelSearchForm.get("checkIn")?.value;
+      let checkOut = this.HotelSearchForm.get("checkOut")?.value;
       let roomNumber = this.HotelSearchForm.get("roomN")?.value;
       let guestInfo = this.HotelSearchForm.get("guestInfo")?.value;
-      let stringGuest = this.formatGuestInfo(guestInfo);
-      let searchApi: SearchHoteltModule = {
+      this.stringGuest = this.formatGuestInfo(guestInfo);
+      this.searchApi= {
         lan: lang,
         Currency: currency,
         POS: pointOfSale,
@@ -318,6 +335,7 @@ export class HotelSearchService {
         guestInfo: guestInfo,
         CityName: locationId
       }
+     
     }
   }
 

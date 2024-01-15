@@ -44,7 +44,7 @@ export interface errorAlert {
 /**
  * used to save error messages with two language (arabic, english)
  */
-export interface AlertMsgModel{
+export interface AlertMsgModels{
     arMsg:string | null | undefined
     enMsg:string | null | undefined
   }
