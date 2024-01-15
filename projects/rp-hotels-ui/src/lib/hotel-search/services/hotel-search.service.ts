@@ -5,11 +5,11 @@ import { HttpClient } from '@angular/common/http';
 
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { CountriescodeModule, HomePageApiService, SearchHoteltModule, hotelSearchForm } from 'projects/rp-hotels-ui/src/public-api';
-import { DatePipe } from '@angular/common';
+import { CountriescodeModule , SearchHoteltModule, hotelSearchForm } from '../interfaces';
 import { Router } from '@angular/router';
 import { AlertMsgModels } from '../interfaces';
-import { hotelCities } from 'dist/rp-hotels-ui/lib/home-page/interfaces';
+import {hotelCities,} from '../../home-page/interfaces'
+import { HomePageApiService } from '../../home-page/services/home-page-api.service';
 
 @Injectable({
   providedIn: 'root'

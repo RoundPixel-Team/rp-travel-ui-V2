@@ -1,5 +1,6 @@
 import { hotelCities } from "../home-page/interfaces"
 
+
 export interface hotelSearchForm {
     location: hotelCities
     nation: string,
@@ -47,3 +48,4 @@ export interface AlertMsgModels{
     arMsg:string | null | undefined
     enMsg:string | null | undefined
   }
+
