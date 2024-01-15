@@ -48,8 +48,8 @@ export class AppComponent implements OnInit{
 
   goToCheckout(){
     this.router.navigate(
-      ['/checkout'], 
-      { queryParams: {'sid': '2023B7I2S247H70B10I90S10H90I30', 'sequenceNum': 7, 'providerKey': 52 } })
+      ['/checkout/7/2024B0I2S699H50B90I90S20H30I00/635/1/2ef7682a-51f0-4e14-bed4-38f7cbf14d38'], 
+     )
   }
   goToFlightResult(){
     // this._router.navigate(['SecondComponent', {p1: this.property1, p2: property2 }]);
@@ -63,6 +63,8 @@ export class AppComponent implements OnInit{
   goToSearchbox(){
     this.router.navigate(['/searchbox']);
   }
-
+  goToSearchboxHotel(){
+    this.router.navigate(['/searchboxhotel']);
+  }
 
 }

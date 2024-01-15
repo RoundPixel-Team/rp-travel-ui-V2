@@ -1,0 +1,12 @@
+<form [formGroup]="searchBox.HotelSearchFormGroup">
+    <label>location: </label>
+    <input type="text" formControlName="location" (keyup)="applyFilter($event)"/>
+   <ng-container *ngFor="let Data of this.CitiesData">
+   <p>{{Data.CityWithCountry}}</p>
+   </ng-container>
+    <label>national: </label>
+
+    <input type="text" formControlName="nation" />
+    <button class="btn" (click)="onSubmit()"> onSubmit</button>
+   
+  </form>
