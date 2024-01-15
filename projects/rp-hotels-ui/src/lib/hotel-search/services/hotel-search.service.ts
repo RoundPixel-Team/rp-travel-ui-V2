@@ -4,11 +4,12 @@ import { EnvironmentService } from '../../shared/services/environment.service';
 import { HttpClient } from '@angular/common/http';
 
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { HotelsCitiesModule } from 'rp-travel-ui';
+
 import { CountriescodeModule, HomePageApiService, SearchHoteltModule, hotelSearchForm } from 'projects/rp-hotels-ui/src/public-api';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { AlertMsgModels } from '../interfaces';
+import { hotelCities } from 'dist/rp-hotels-ui/lib/home-page/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -278,7 +279,7 @@ export class HotelSearchService {
        * 
        */
 
-  extractcites(hotelcities: HotelsCitiesModule[]) {
+  extractcites(hotelcities: hotelCities[]) {
     hotelcities.forEach((city) => {
       let cityt = city.City.toLowerCase();
       this.citiesNames.push(cityt);
@@ -313,7 +314,7 @@ export class HotelSearchService {
     }
     if (this.HotelSearchForm.valid) {
 
-      let location: HotelsCitiesModule = this.HotelSearchForm.get("location")?.value;
+      let location: hotelCities = this.HotelSearchForm.get("location")?.value;
       let locationId: string = location.City;
       let citywithcountry = location.CityWithCountry;
       let nation = this.HotelSearchForm.get("nation")?.value;
