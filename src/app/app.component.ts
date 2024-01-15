@@ -24,7 +24,7 @@ export class AppComponent implements OnInit{
       FareRules:     'https://flightprov.khaleejgate.com',
       asm:           'https://backofficeapi.khaleejgate.com',
       Apihotels:     "https://hotels.khaleejgatecom",
-      prepay:   'https://prepayapi.khaleejgate.com',
+      prepay:        'https://prepayapi.khaleejgate.com',
       users:         'https://usersapi.khaleejgate.com',
       admin:         'https://adminapi.khaleejgate.com/',
       getDPayment:   'https://adminapi.khaleejgate.com/',

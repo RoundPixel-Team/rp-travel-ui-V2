@@ -9,7 +9,7 @@ export class EnvironmentService {
   constructor() { }
 
   
-  offlineSeats=    "http://178.63.214.221:7026" //ticket boarding ofline seats
+  offlineSeats=   'http://178.63.214.221:7026' //ticket boarding ofline seats
     searchflow =  'https://flightsearch.rhlaty.com'
     BookingFlow = 'https://flightflow.rhlaty.com'
     FareRules =   'https://flightprov.rhlaty.com'
@@ -19,7 +19,7 @@ export class EnvironmentService {
     admin =       'https://adminapi.rhlaty.com/'
     getDPayment = 'https://adminapi.rhlaty.com/'
     bookHotels =  'https://hotels.rhlaty.com'
-    prepay = 'https://prepayapi.rhlaty.com'
+    prepay =      'https://prepayapi.rhlaty.com'
     backOffice =  'https://backofficeapi.rhlaty.com'
     FlightTop =   'https://flightsearch.rhlaty.com'
     offers= {

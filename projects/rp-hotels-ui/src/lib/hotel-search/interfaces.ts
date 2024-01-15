@@ -11,8 +11,7 @@ export interface hotelSearchForm{
 
 export interface guests{
     adultN: number,
-    childN: number,
-    childGroup: any[]
+    childN: number[],
 }
 
 

@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Params } from '@angular/router';
 import { FlightResultService } from 'projects/rp-travel-ui/src/lib/flight-result/services/flight-result.service';
+import { HotelResultsService } from 'rp-hotels-ui';
 import { filter } from 'rxjs';
 
 @Component({
@@ -12,14 +13,22 @@ import { filter } from 'rxjs';
 export class FlightResultComponent implements OnInit {
   FlightResultService = inject(FlightResultService)
   route = inject(ActivatedRoute)
+  hotelResults = inject(HotelResultsService)
 
-
+  starRating:Array<string>=['','','','',''];
   filterFormm: FormGroup  = this.FlightResultService.filterForm
+
   constructor() { }
 
   ngOnInit(): void {
+
+    this.hotelResults.getHotelDataFromUrl();
     console.log('new lang', location.pathname)
-    let url = location.href
+    
+    // setTimeout(() => {
+    //   console.log("Updated Filtered Data", this.hotelResults.filteredHotels)
+    // }, 3000);
+
     
     this.route.params.subscribe(
       (params: Params) => {
@@ -44,23 +53,20 @@ export class FlightResultComponent implements OnInit {
         this.FlightResultService.getDataFromUrl(lang, currency, pointOfReservation, flightType, flightsInfo, serachId, passengers, Cclass, showDirect,4,2)
         console.log("ggfggf", this.FlightResultService.getDataFromUrl(lang, currency, pointOfReservation, flightType, flightsInfo, serachId, passengers, Cclass, showDirect,4,2))
 
-      });
-      console.log("sortData" ,this.FlightResultService.FilterData)
-      console.log("Arrival", this.FlightResultService.arrivingMin, this.FlightResultService.arrivingMax);
-      console.log("airlinesA", this.FlightResultService.airlinesA)
-      console.log("airlinesA", this.FlightResultService.bookingSites)
-     
+      });     
       }
 
      
-   
-    
-  sort(val: number) {
-    if (this.FlightResultService.response != undefined) {
-       this.FlightResultService.sortMyResult(val) 
-       console.log("sortData" ,this.FlightResultService.FilterData)
-
+      
+      sort(val: number) {
+        if (this.FlightResultService.response != undefined) {
+          this.FlightResultService.sortMyResult(val) 
+          console.log("sortData" ,this.FlightResultService.FilterData)
+          
+        }
+        
       }
-
-  }
+      starsRating(rate:number){
+        // this.hotelResults.formValueChanged();
+      }
 }
