@@ -64,7 +64,7 @@ export interface countries {
  * get all Cities Model according to backend response
  */
 export interface hotelCities {
-     CityId: number,
+    CityId:string,
      City: string,
      Country: string,
      CityWithCountry: string,
@@ -179,7 +179,7 @@ export interface CurrencyModule {
 }
 
 export interface HotelsCitiesModule {
-    CityId: number,
+    CityId: string,
     City: string,
     Country: string,
     CityWithCountry: string,

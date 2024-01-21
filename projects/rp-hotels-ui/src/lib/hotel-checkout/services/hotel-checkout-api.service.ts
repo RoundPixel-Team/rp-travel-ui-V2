@@ -49,7 +49,21 @@ export class HotelCheckoutApiService {
     let APi = `${this.env.Apihotels}/api/CheckPackageAvailability?searchId=${searchId}&hotelCode=${hotelCode}&packageKey=${packageKey}&providerId=${providerId}`;
     return this.http.get<selectedPackageAvailibilty>(APi);
   }
+  /**
+   * 
+   * @param searchId 
+   * @param hotelCode 
+   * @param packageKey 
+   * @param roomIndex 
+   * @param providerId 
+   * @returns this function return room availability and cancel policy
+   */
 
+  roomCancelation(searchId: string, hotelCode: any, roomIndex: any,packageKey:string, providerId: any) {
+    // return room cancelation roles
+    let api = `${this.env.Apihotels}/api/getcancelpolicy?sid=${searchId}&hotelcode=${hotelCode}&roomindex=${roomIndex}&packageKey=${packageKey}&PId=${providerId}`;
+    return this.http.get<any[]>(api).pipe(take(2));
+  }
   /**
    * 
    * @param promo 

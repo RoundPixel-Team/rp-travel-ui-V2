@@ -1,4 +1,4 @@
-<form [formGroup]="searchBox.HotelSearchFormGroup">
+<form [formGroup]="searchBox.HotelSearchForm">
     <label>location: </label>
     <input type="text" formControlName="location" (keyup)="applyFilter($event)"/>
    <ng-container *ngFor="let Data of this.CitiesData">

@@ -26,7 +26,9 @@ public route =inject(ActivatedRoute)
   this.HotelCheckout.packageKey=this.route.snapshot.params['package'];
     this.HotelCheckout.loadDataCard(this.HotelCheckout.providerId,this.HotelCheckout.searchId,this.HotelCheckout.hotelCode,this.HotelCheckout.packageKey);
 this.HotelCheckout.initalCkeckoutForm()
-this.HotelCheckout.FormRooms()
+this.HotelCheckout.getHotelAvalibility()
+
+
     // this.subscription.add(
     //   this.route.queryParams.subscribe((params)=>{
     //     this.flight.getSelectedFlightData(params["sid"],+params["sequenceNum"],params["providerKey"]?params["providerKey"]:params["pkey"])
