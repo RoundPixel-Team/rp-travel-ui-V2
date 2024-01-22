@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { EnvironmentService } from '../../shared/services/environment.service';
 import { hotelRoomsResponse } from '../interfaces';
-import { take } from 'rxjs';
+import { Observable, take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class HotelRoomsApiService {
    * @returns A method to retrieve the hotel rooms response from the server and it takes the search ID, Hotel ID and the Provider ID as parameters.
    */
   
-  getHotelsRoomsApi(sid: string,hotelid:string,Pid: string){
+  getHotelsRoomsApi(sid: string,hotelid:string,Pid: string):Observable<hotelRoomsResponse>{
     let url =  this.env.Apihotels + "/api/GetPackages?sid=" +sid +"&hotel=" +hotelid +"&Pid=" + Pid
     return this.http.get<hotelRoomsResponse>(url).pipe(take(1));
   }

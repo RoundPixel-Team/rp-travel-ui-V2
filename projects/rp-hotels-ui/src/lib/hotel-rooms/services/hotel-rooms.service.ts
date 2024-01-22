@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription, catchError, map, of, take } from 'rxjs';
 import { HotelRoomsApiService } from './hotel-rooms-api.service';
 import { hotelRoomsResponse, roomCancelPolicy } from '../interfaces';
 
@@ -23,25 +23,26 @@ groupedRooms!:{};
  * @param pid 
  * this method is responsible for fetching the rooms data in a specified hotel (the selected hotel) and it takes the following parameters : search Id, Hotel Id and provider id
  * */
-getRooms(sid: string,hotelid:string,Pid: string){
-  this.roomsLoader=true;
-  this.subscription.add(
-    this.api.getHotelsRoomsApi(sid,hotelid,Pid).subscribe((data) =>{
-      if(data){
-        this.roomsLoader=false;
-      this.roomsData=data;
-      console.log(this.roomsData,'test Data');
-       this.groupedRooms = this.groupRooms(this.roomsData);
-      console.log(this.groupedRooms,'test grouping');
-      }
-      
-    },(err:any)=>{
-      console.log('get hotel rooms error ->',err)
-      this.roomsLoader = false
-    })
-  )
+getRooms(sid: string, hotelid: string, Pid: string): Observable<any> {
+  this.roomsLoader = true;
 
-}
+  return this.api.getHotelsRoomsApi(sid, hotelid, Pid).pipe(
+    take(1),
+    map((data) => {
+      this.roomsLoader = false;
+      this.roomsData = data;
+      console.log(this.roomsData, 'test Data');
+      this.groupedRooms = this.groupRooms(this.roomsData);
+      console.log(this.groupedRooms, 'test grouping');
+      return data; // Return the data to the subscriber
+    }),
+    catchError((err) => {
+      console.log('get hotel rooms error ->', err);
+      this.roomsLoader = false;
+      // You can handle the error or rethrow it as needed
+      return of(null); // Returning an observable with null data in case of error
+    })
+  )}
 /**
  * 
  * @param Roomsdata 
