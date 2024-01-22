@@ -43,6 +43,17 @@ export class HotelResultsService {
 
   ngOnInit(){}
 
+  changePriceValue(price:number, action:string){
+    switch (action) {
+      case 'max':
+        this.maxPrice = price
+      break;
+      case 'min':
+        this.minPrice = price
+      break;
+    }
+  }
+
   /**
    * this function is responsible to call API to get the Hotel Data
    * you should call it first in the search Results componet
