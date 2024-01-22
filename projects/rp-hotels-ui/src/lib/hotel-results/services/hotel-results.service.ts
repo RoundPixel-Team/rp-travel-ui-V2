@@ -22,7 +22,7 @@ export class HotelResultsService {
   ratesArrSelected: Array<number> = [];
   hotelResultsLoader:boolean=true;
   searchID:string='';
-  maxPrice:number=0;
+  maxPrice:number=100;
   minPrice:number=0;
   nightsNumber:any=0;
   subscription : Subscription = new Subscription()
@@ -81,7 +81,6 @@ export class HotelResultsService {
     this.subscription.add(
       this.api.getHotelsRes(hotelSearchObj).subscribe((res)=>{
         if(res){
-          this.hotelResultsLoader = false;
           this.hotelDataResponse = res;
           this.filteredHotels = res.HotelResult;
           this.hotelLocationsArr= [...res.Locations]
@@ -89,9 +88,9 @@ export class HotelResultsService {
           //GET START AND END DATE TO CALCULATE ROOM NIGHTS NUMBER 
           let startDate:Date  =new Date(hotelUrl[9].replace(new RegExp('%20','g'),' '));
           let endDate: Date  = new Date(hotelUrl[10].replace(new RegExp('%20','g'),' '));
-
+          
           this.nightsNumber = this.calculateDiff(startDate,endDate);
-
+          
           //initialize hotel locations form array value with true values (selected)
           res?.Locations.map(()=>{
             this.addLocations()
@@ -100,9 +99,10 @@ export class HotelResultsService {
           this.sorting(1);
           this.maxPrice = this.filteredHotels[0].costPrice;
           this.minPrice = this.filteredHotels[this.filteredHotels.length -1].costPrice;
+          this.hotelResultsLoader = false;
         }
       })
-    )
+      )
   }
   /**
    * this function is responsible to calculate Nights Number from Dates 
@@ -259,7 +259,7 @@ export class HotelResultsService {
     this.ratesArrSelected = [];
     this.hotelLocationsArr = [];
     this.hotelResultsLoader=true;
-    this.maxPrice = 0;
+    this.maxPrice = 100;
     this.minPrice = 0;
     this.nightsNumber=0;
   }
