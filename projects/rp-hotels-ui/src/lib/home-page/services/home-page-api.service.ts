@@ -65,9 +65,7 @@ export class HomePageApiService {
      * @returns all cities depends on the key
      */
    getHotelsCities(key: string) {
-
     let api = `${this.env.Apihotels}/api/City?city=${key}`;
-    console.log(api);
     return this.http.get<hotelCities[]>(api).pipe(take(1))
   }
   
