@@ -43,16 +43,7 @@ export class HotelResultsService {
 
   ngOnInit(){}
 
-  changePriceValue(price:number, action:string){
-    switch (action) {
-      case 'max':
-        this.maxPrice = price
-      break;
-      case 'min':
-        this.minPrice = price
-      break;
-    }
-  }
+ 
 
   /**
    * this function is responsible to call API to get the Hotel Data
@@ -88,9 +79,9 @@ export class HotelResultsService {
           //GET START AND END DATE TO CALCULATE ROOM NIGHTS NUMBER 
           let startDate:Date  =new Date(hotelUrl[9].replace(new RegExp('%20','g'),' '));
           let endDate: Date  = new Date(hotelUrl[10].replace(new RegExp('%20','g'),' '));
-          
-          this.nightsNumber = this.calculateDiff(startDate,endDate);
-          
+
+          this.nightsNumber = this.calculateHotelNights(startDate,endDate);
+
           //initialize hotel locations form array value with true values (selected)
           res?.Locations.map(()=>{
             this.addLocations()
@@ -110,7 +101,7 @@ export class HotelResultsService {
    * @param endDate get value from URL
    * @returns Nights Number
    */
-  calculateDiff(startDate:Date,endDate:Date){
+  calculateHotelNights(startDate:Date,endDate:Date){
     return Math.floor((Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()) - Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()) ) /(1000 * 60 * 60 * 24));
 }
   /**
@@ -178,7 +169,6 @@ export class HotelResultsService {
     }
     return this.filteredHotels ;
   }
-
   hotelsFilter(){ 
     this.filterForm.valueChanges.subscribe((res)=>{
       if(this.hotelDataResponse?.HotelResult){
@@ -193,21 +183,8 @@ export class HotelResultsService {
    */
   filterHotelData(hotel:hotel){
     let hotelPrice = this.filterForm.get('hotelPrice')?.value;
-    return hotel.hotelName.includes(this.filterForm.get('hotelName')?.value) && (hotel.costPrice >= hotelPrice && hotel.costPrice <= this.maxPrice) 
+    return (hotel.hotelName.toLowerCase()).includes((this.filterForm.get('hotelName')?.value).toLowerCase()) && (hotel.costPrice >= hotelPrice && hotel.costPrice <= this.maxPrice) 
            && this.locationsArrSelected.includes(hotel.City) && this.ratesArrSelected.includes( hotel.hotelStars) 
-  }
-    /**
-   * call it on the hotel rate filter input to fill the hotel Rates Array (selected Values)
-   * */
-  selectHotelRates(index:number){
-    // Toggle checked
-    if(!this.hotelRatesArray.at(index)?.get('rate')?.value){
-      this.ratesArrSelected.push(index+1);
-    }
-    else{
-      let rateIndex= this.ratesArrSelected.indexOf(index+1)
-      this.ratesArrSelected.splice(rateIndex,1);
-    }
   }
   /**
    * initialize hotel rates form array with true value to make it selected
@@ -218,6 +195,19 @@ export class HotelResultsService {
         rate: new FormControl(true),
       })
     )
+  }
+  /**
+ * call it on the hotel rate filter input to fill the hotel Rates Array (selected Values)
+ * */
+  selectHotelRates(index:number){
+    // Toggle checked
+    if(!this.hotelRatesArray.at(index)?.get('rate')?.value){
+      this.ratesArrSelected.push(index+1);
+    }
+    else{
+      let rateIndex= this.ratesArrSelected.indexOf(index+1)
+      this.ratesArrSelected.splice(rateIndex,1);
+    }
   }
   /**
    * initialize hotel Locations form array with true value to make it selected
@@ -248,6 +238,19 @@ export class HotelResultsService {
   }
   public get hotelLocationsArray(): FormArray{
     return this.filterForm.get('hotelLocations') as FormArray;
+  }
+  /**
+   * this function is responsible to change max and min Price
+   */
+  changePriceValue(value:number, type:string){
+    switch (type) {
+      case 'max':
+          this.maxPrice = value;
+        break;
+      case 'min':
+        this.minPrice = value;
+      break;
+    }
   }
   /**
    * this function is responsible to destory any opened subscription on this service
