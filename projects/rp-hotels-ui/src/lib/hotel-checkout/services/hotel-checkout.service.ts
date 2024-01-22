@@ -12,7 +12,22 @@ import { Cobon, hotelSaveBooking, selectedPackageAvailibilty } from '../interfac
 export class HotelCheckoutService {
   route = inject(ActivatedRoute)
   api = inject(HotelCheckoutApiService)
-  HotelForm: FormGroup = new FormGroup({});
+  city: string = '';
+  HotelForm: FormGroup = new FormGroup({
+    sid: new FormControl(''),
+    cityName: new FormControl('', Validators.required),
+    hotelID: new FormControl(''),
+    providerHotelID: new FormControl(Validators.required),
+    pid: new FormControl(''),
+    roomQty: new FormControl(Validators.required),
+    paxQty: new FormControl(0),
+    src: new FormControl('Direct'),
+    mail: new FormControl('', [Validators.required, Validators.email, Validators.minLength(9)]),
+    currency: new FormControl(''),
+    sellPrice: new FormControl(0),
+    totalCost: new FormControl(0),
+    Travellers: new FormArray([])
+  })
   subscription: Subscription = new Subscription()
   HotelResult: room[] = [];
   RequiredHotel!: hotelRoomsResponse;
@@ -20,11 +35,12 @@ export class HotelCheckoutService {
   hotelCode: string = ''
   providerId: string = ''
   packageKey: string = ''
-  roomLength: number = 0;
+  roomLength: number = 1;
   totalSellPrice: number = 0
   totalCostPrice: number = 0
   copounCodeLoader: boolean = false;
   copounCodeDetails!: Cobon;
+
   copounCodeError: string = ''
   Currency: string = 'KWD'
   ip: string = '00.00.00.00';
@@ -35,6 +51,7 @@ export class HotelCheckoutService {
   paymentLink = new Subject();
   paymentLinkFailure = new Subject();
   loader: boolean = false;
+  TotalPrice: number = 0
   HotelPackage: packages[] = []
   constructor() { }
 
@@ -46,7 +63,7 @@ export class HotelCheckoutService {
   initalCkeckoutForm() {
     this.HotelForm = new FormGroup({
       sid: new FormControl(this.searchId),
-      cityName: new FormControl(Validators.required),
+      cityName: new FormControl('', Validators.required),
       hotelID: new FormControl(this.hotelCode),
       providerHotelID: new FormControl(Validators.required),
       pid: new FormControl(this.providerId),
@@ -77,10 +94,14 @@ export class HotelCheckoutService {
           return
         }
         else {
-          this.RequiredHotel = res
-          let HotelPackage = res.Packages
-          this.HotelResult = HotelPackage.filter(v => v.PackageKey === packageKey)[0].Rooms
-          this.roomLength = this.HotelResult.length;
+          if (res) {
+            this.RequiredHotel = res
+            let HotelPackage = res.Packages
+            this.HotelResult = HotelPackage.filter(v => v.PackageKey === packageKey)[0].Rooms
+            this.roomLength = this.HotelResult.length;
+            this.FormRooms()
+            this.CalculateTotalPrice();
+          }
 
         }
 
@@ -93,7 +114,8 @@ export class HotelCheckoutService {
       */
   FormRooms() {
     for (var i = 0; i < this.roomLength; i++) {
-      if (this.HotelResult[i].Adult != 0 && !this.firstAdultFound) {
+
+      if (this.HotelResult[0].Adult != 0 && !this.firstAdultFound) {
         this.firstAdultFound = true;
         (<FormArray>this.HotelForm.get('Travellers')).push(new FormGroup({
           "salutation": new FormControl('', [Validators.required]),
@@ -113,7 +135,7 @@ export class HotelCheckoutService {
 
       }
 
-      else if (this.HotelResult[i].Adult != 0 && this.firstAdultFound) {
+      else if (this.HotelResult[0].Adult != 0 && this.firstAdultFound) {
         (<FormArray>this.HotelForm.get('Travellers')).push(new FormGroup({
           "salutation": new FormControl('', [Validators.required]),
           "firstName": new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z \-\']+'), Validators.minLength(3)]),
@@ -133,6 +155,16 @@ export class HotelCheckoutService {
     }
   }
 
+  CalculateTotalPrice() {
+    let total = 0;
+    for (let data of this.HotelResult) {
+      total += data.TotalSellPrice;
+      this.TotalPrice = total
+
+    }
+    return total;
+
+  }
   /**
     * 
     * @param copounCode 
@@ -157,7 +189,7 @@ export class HotelCheckoutService {
           this.copounCodeLoader = false
         }
       }, (err) => {
-        console.log("apply copoun code ERROR", err)
+
         this.copounCodeError = err
         this.copounCodeLoader = false
       })
@@ -174,6 +206,17 @@ export class HotelCheckoutService {
   prepareData(r: hotelRoomsResponse) {
 
     {
+      if (sessionStorage.getItem('hotelform')) {
+        let searchForm: any = sessionStorage.getItem('hotelform');
+        let obj = JSON.parse(searchForm)
+        // JSON.parse(retrievedObject);
+        this.city = obj.location.CityId;
+
+        if (this.city) {
+
+          this.HotelForm.get('cityName')?.setValue(this.city);
+        }
+      }
       this.HotelForm.get('providerHotelID')?.setValue(r.providerHotelID)
       this.HotelForm.get('roomQty')?.setValue(this.HotelResult.length)
 
@@ -190,18 +233,20 @@ export class HotelCheckoutService {
 
       let phone: string = phoneNumberObject.number;
       let dialCode: string = phoneNumberObject.dialCode;
+   
       for (var i = 0; i < (<FormArray>this.HotelForm.get('Travellers')).length; i++) {
-
+        (<FormArray>this.HotelForm.get('Travellers')).at(i).get('dateOfBirth')
+        ?.setValue('2012-01-12T22:00:00.000Z');
         (<FormArray>this.HotelForm.get('Travellers')).at(i).get('phone')
           ?.setValue(phone);
         (<FormArray>this.HotelForm.get('Travellers')).at(i).get('phoneCode')
           ?.setValue(dialCode);
-        (<FormArray>this.HotelForm.get('Travellers')).at(i).get('roomRef')?.setValue(this.route.snapshot.paramMap.get('package'));
+        (<FormArray>this.HotelForm.get('Travellers')).at(i).get('roomRef')?.setValue(this.packageKey);
         (<FormArray>this.HotelForm.get('Travellers')).at(i).get('roomNo')?.setValue(this.HotelResult[i].RoomIndex);
         if (i > 0) {
           (<FormArray>this.HotelForm.get('Travellers')).at(i).get('dateOfBirth')
             ?.setValue((<FormArray>this.HotelForm.get('Travellers')).at(0).get('dateOfBirth')?.value);
-          (<FormArray>this.HotelForm.get('Travellers')).at(i).get('phonenum')
+            (<FormArray>this.HotelForm.get('Travellers')).at(i).get('phonenum')
             ?.setValue(phone);
         }
 
@@ -218,7 +263,9 @@ export class HotelCheckoutService {
    * here is OnSubmit function which returning the payment link if all params is good
    */
   onSubmit() {
+    console.log("formCheckout", this.HotelForm.value)
     if (this.HotelForm.valid) {
+      debugger
       let bookObject: hotelSaveBooking = { ...this.HotelForm.value }
       this.subscription.add(
         this.api.saveBooking(bookObject, this.searchId, this.ip, this.iplocation, this.lang).subscribe
@@ -249,12 +296,12 @@ export class HotelCheckoutService {
   destroyer() {
     this.subscription.unsubscribe();
     this.HotelForm = new FormGroup({});
-    this.HotelResult=[];
-    this.HotelPackage=[];
-    this.searchId='';
-    this.hotelCode='';
-    this.providerId='';
-    this.packageKey='';
+    this.HotelResult = [];
+    this.HotelPackage = [];
+    this.searchId = '';
+    this.hotelCode = '';
+    this.providerId = '';
+    this.packageKey = '';
 
   }
 }
