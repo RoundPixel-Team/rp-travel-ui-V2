@@ -1,11 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { Subscription, catchError } from 'rxjs';
 import { HotelResultsApiService } from './hotel-results-api.service';
-import { Router } from '@angular/router';
 import { GetHotelModule, hotel, hotelResults } from '../interfaces';
 import { guests } from '../../hotel-search/interfaces';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +11,6 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 export class HotelResultsService {
 
   api = inject(HotelResultsApiService)
-  router = inject(Router)
 
   hotelDataResponse?:hotelResults;
   hotelLocationsArr:Array<string>=[];
@@ -49,25 +46,7 @@ export class HotelResultsService {
    * this function is responsible to call API to get the Hotel Data
    * you should call it first in the search Results componet
    */
-  getHotelDataFromUrl(){
-    let hotelUrl = this.router.url.split('/');
-    // let hotelUrl = ('hotels.hogozati.com/hotelResult/en/KWD/EG/2024B0I0S571H90B30I60S50H90I60/3202/Cairo,Egypt/Kuwait/February%2021,%202024/March%2004,%202024/1/R0A2C0').split('/');
-    
-    this.searchID = hotelUrl[5]; //used to send with navigation to Rooms
-    let guestInfo = hotelUrl[12];
-    let searchRooms = this.generateSearchRooms(guestInfo); //get child numbers from URL to send an array of thier Ages
-    let hotelSearchObj: GetHotelModule = {
-      Lang:hotelUrl[2],
-      Currency:hotelUrl[3],
-      POS:hotelUrl[4],
-      sID:hotelUrl[5],
-      CityName:hotelUrl[6],
-      Nat:hotelUrl[8],
-      DateFrom:hotelUrl[9].replace(new RegExp('%20','g'),' '), //replace all %20 to white space
-      DateTo:hotelUrl[10].replace(new RegExp('%20','g'),' '),
-      Source:'Direct',
-      SearchRooms:searchRooms
-    }
+  getHotelDataFromUrl(hotelSearchObj: GetHotelModule, dateFrom:string, dateTo:string){
     //call het hotel data API
     this.subscription.add(
       this.api.getHotelsRes(hotelSearchObj).subscribe((res)=>{
@@ -77,8 +56,8 @@ export class HotelResultsService {
           this.hotelLocationsArr= [...res.Locations]
           this.locationsArrSelected= [...res.Locations]
           //GET START AND END DATE TO CALCULATE ROOM NIGHTS NUMBER 
-          let startDate:Date  =new Date(hotelUrl[9].replace(new RegExp('%20','g'),' '));
-          let endDate: Date  = new Date(hotelUrl[10].replace(new RegExp('%20','g'),' '));
+          let startDate:Date  =new Date(dateFrom.replace(new RegExp('%20','g'),' '));
+          let endDate: Date  = new Date(dateTo.replace(new RegExp('%20','g'),' '));
 
           this.nightsNumber = this.calculateHotelNights(startDate,endDate);
 
