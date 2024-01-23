@@ -57,6 +57,7 @@ export class HotelResultsService {
           this.filteredHotels = res.HotelResult;
           this.hotelLocationsArr= [...res.Locations]
           this.locationsArrSelected= [...res.Locations]
+          this.hotelLocationsArr.shift(); //will be removed After editing the backend Data
           this.locationsArrSelected.shift(); //will be removed After editing the backend Data
           //GET START AND END DATE TO CALCULATE ROOM NIGHTS NUMBER 
           let startDate:Date  =new Date(dateFrom.replace(new RegExp('%20','g'),' '));
