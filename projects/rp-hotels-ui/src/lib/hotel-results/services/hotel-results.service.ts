@@ -66,7 +66,7 @@ export class HotelResultsService {
           this.nightsNumber = this.calculateHotelNights(startDate,endDate);
 
           //initialize hotel locations form array value with true values (selected)
-          res?.Locations.map(()=>{
+          this.hotelLocationsArr.map(()=>{
             this.addLocations()
           })
           this.hotelsFilter();
