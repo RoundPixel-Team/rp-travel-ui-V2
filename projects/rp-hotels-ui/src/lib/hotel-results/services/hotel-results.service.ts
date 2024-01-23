@@ -51,7 +51,7 @@ export class HotelResultsService {
   getHotelDataFromUrl(hotelSearchObj: GetHotelModule, dateFrom:string, dateTo:string){
     //call het hotel data API
     this.subscription.add(
-      this.api.getHotelsRes(hotelSearchObj).subscribe((res)=>{
+      this.api.getHotelsRes(hotelSearchObj).subscribe((res:hotelResults)=>{
         if(res){
           this.hotelDataResponse = res;
           this.filteredHotels = res.HotelResult;
@@ -159,11 +159,13 @@ export class HotelResultsService {
     return this.filteredHotels ;
   }
   hotelsFilter(){ 
-    this.filterForm.valueChanges.subscribe((res)=>{
-      if(this.hotelDataResponse?.HotelResult){
-        this.filteredHotels = this.hotelDataResponse?.HotelResult.filter(hotel => this.filterHotelData(hotel))
-      }
-    })
+    this.subscription.add(
+      this.filterForm.valueChanges.subscribe((res)=>{
+        if(this.hotelDataResponse?.HotelResult){
+          this.filteredHotels = this.hotelDataResponse?.HotelResult.filter(hotel => this.filterHotelData(hotel))
+        }
+      })
+    )
   }
   /**
    * filter Hotel Object based on Hotel Name, Hotel Star rate, Hotel Price and hotel Locations 
@@ -173,7 +175,7 @@ export class HotelResultsService {
   filterHotelData(hotel:hotel){
     let hotelPrice = this.filterForm.get('hotelPrice')?.value;
     return (hotel.hotelName.toLowerCase()).includes((this.filterForm.get('hotelName')?.value).toLowerCase()) && (hotel.costPrice >= hotelPrice && hotel.costPrice <= this.maxPrice) 
-           && this.locationsArrSelected.includes(hotel.City) && this.ratesArrSelected.includes( hotel.hotelStars) 
+           && this.filterLocations(hotel.Address) && this.ratesArrSelected.includes( hotel.hotelStars) 
   }
   /**
    * initialize hotel rates form array with true value to make it selected
@@ -242,10 +244,26 @@ export class HotelResultsService {
     }
   }
   /**
+   *  filter locations based on selected location items 
+   * @param hotelAddres  hotel addres Name from current object
+   * @returns 
+   */
+
+  filterLocations(hotelAddres:string):boolean{
+    let addressValuesArr: Array<Boolean>= [];
+
+    //loop on Selected locations Array to check if selected is a sub string from Hotel Address
+    this.locationsArrSelected.map((item)=>{
+      hotelAddres.toLowerCase().includes(item.toLowerCase()) && (item == ' ' || item == null)  ? addressValuesArr.push(true) : addressValuesArr.push(false)
+    })
+    return addressValuesArr.includes(true) ? true : false ; //if (addressValuesArr) Array contains one True value then return True else return False 
+  }
+  /**
    * this function is responsible to destory any opened subscription on this service
    */
   destroyer(){
     // this.subscription.unsubscribe();
+    this.subscription = new Subscription();
     this.hotelDataResponse = undefined!;
     this.hotelLocationsArr=[];
     this.filteredHotels = [];
