@@ -31,11 +31,11 @@ export class FlightCheckoutApiService {
    * 
    * @param SID 
    * @param POS 
+   * @param url it is the url of the offline services request
    * @returns a list of offline services provided for a flight reservation using the search ID and the POS
    */
-  offlineServices(SID: string,POS:string) {
-    let api = `https://flightflow.travasky.com/api/GetOfflineServices?SID=${SID}&POS=${POS}`;
-    return this.http.get<flightOfflineService[]>(api).pipe(retry(2),take(1),catchError(err=>{console.log(err);throw err}));
+  offlineServices(url:string) {
+    return this.http.get<flightOfflineService[]>(url).pipe(retry(2),take(1),catchError(err=>{console.log(err);throw err}));
   }
 
 

@@ -193,10 +193,10 @@ bookingType:string='standard'
    * this is for fetching the flight offline services data and update offline service state (offlineServices:flightOfflineServices[])
    * also update offlineServicesLoader state
    */
-  getAllOfflineServices(searchId:string,pos:string,multiTypes:boolean){
+  getAllOfflineServices(url:string,multiTypes:boolean){
     this.offlineServicesLoader = true
     this.subscription.add(
-      this.api.offlineServices(searchId,pos).subscribe((res)=>{
+      this.api.offlineServices(url).subscribe((res)=>{
         this.allOfflineServices = [...res.map((s)=>{
         this.offlineServicesResponse.next(res)
           if(s.recommended){
