@@ -106,14 +106,14 @@ export class HotelSearchService {
    *get Data Fron route to set value in from as inital value
    * 
    */
-  getDataFromUrl(Location: hotelCities, checkIn: Date, checkOut: Date, roomN: number | string, adultN: number | string, childN: number | string) {
+  getDataFromUrl(Location: hotelCities, checkIn: Date, checkOut: Date, roomN: number | string, adult: number | string, child: number | string) {
     let form: any = {
       "location": Location,
       "nation": "Kuwait",
       "checkIn": checkIn,
       "checkOut": checkOut,
       "roomN": roomN,
-      "guestInfo": [{ "adultN": adultN, "childN": childN }]
+      "guestInfo": [{ "adult": adult, "child": child }]
     }
 
     this.SetDataFromStorage(form)
@@ -143,8 +143,8 @@ export class HotelSearchService {
 
       (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
         new FormGroup({
-          adultN: new FormControl(2, [Validators.required, Validators.min(1), Validators.max(5)]),
-          childN: new FormControl(0, [Validators.required, Validators.max(2)]),
+          adult: new FormControl(2, [Validators.required, Validators.min(1), Validators.max(5)]),
+          child: new FormControl(0, [Validators.required, Validators.max(2)]),
           childGroup: new FormArray([])
 
         }));
@@ -173,8 +173,8 @@ export class HotelSearchService {
 
     (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
       new FormGroup({
-        adultN: new FormControl(2, [Validators.required, Validators.min(1), Validators.max(5)]),
-        childN: new FormControl(0, [Validators.required, Validators.max(2)]),
+        adult: new FormControl(2, [Validators.required, Validators.min(1), Validators.max(5)]),
+        child: new FormControl(0, [Validators.required, Validators.max(2)]),
         childGroup: new FormArray([])
 
       }));
@@ -237,8 +237,8 @@ export class HotelSearchService {
       this.HotelSearchForm.get('roomN')?.updateValueAndValidity();
       (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
         new FormGroup({
-          adultN: new FormControl(1, [Validators.required, Validators.min(1), Validators.max(5)]),
-          childN: new FormControl(0, [Validators.required, Validators.max(2)]),
+          adult: new FormControl(1, [Validators.required, Validators.min(1), Validators.max(5)]),
+          child: new FormControl(0, [Validators.required, Validators.max(2)]),
           childGroup: new FormArray([])
 
         }));
@@ -275,8 +275,8 @@ export class HotelSearchService {
     let adults = 0;
     let childs = 0;
     for (let i = 0; i < search.length; i++) {
-      adults += Number(this.GuestData.at(i).get('adultN')?.value)
-      childs += Number(this.GuestData.at(i).get('childN')?.value)
+      adults += Number(this.GuestData.at(i).get('adult')?.value)
+      childs += Number(this.GuestData.at(i).get('child')?.value)
 
     }
     this.allGuest = adults + childs;
@@ -342,7 +342,7 @@ export class HotelSearchService {
     let guesttxt = '';
 
     for (let i = 0; i < guestInfo.length; i++) {
-      guesttxt += "R" + i + "A" + this.GuestData.at(i).get('adultN')?.value + "C" + this.GuestData.at(i).get('childN')?.value
+      guesttxt += "R" + i + "A" + this.GuestData.at(i).get('adult')?.value + "C" + this.GuestData.at(i).get('child')?.value
       let guestValue = this.GuestData.at(i).get('childGroup')?.value
       for (let j = 0; j < guestValue.length; j++) {
 

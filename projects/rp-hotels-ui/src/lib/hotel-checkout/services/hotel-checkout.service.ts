@@ -154,7 +154,11 @@ export class HotelCheckoutService {
       }
     }
   }
-
+/**
+      * 
+      *Calculate TotalPrice For ALL Rooms
+      * 
+      */
   CalculateTotalPrice() {
     let total = 0;
     for (let data of this.HotelResult) {
@@ -209,8 +213,7 @@ export class HotelCheckoutService {
       if (sessionStorage.getItem('hotelform')) {
         let searchForm: any = sessionStorage.getItem('hotelform');
         let obj = JSON.parse(searchForm)
-        // JSON.parse(retrievedObject);
-        this.city = obj.location.CityId;
+        this.city = obj.CityId;
 
         if (this.city) {
 
@@ -263,7 +266,6 @@ export class HotelCheckoutService {
    * here is OnSubmit function which returning the payment link if all params is good
    */
   onSubmit() {
-    console.log("formCheckout", this.HotelForm.value)
     if (this.HotelForm.valid) {
       debugger
       let bookObject: hotelSaveBooking = { ...this.HotelForm.value }
