@@ -255,7 +255,7 @@ export class HotelResultsService {
 
     //loop on Selected locations Array to check if selected is a sub string from Hotel Address
     this.locationsArrSelected.map((item)=>{
-      hotelAddres.toLowerCase().includes(item.toLowerCase()) && (item == ' ' || item == null)  ? addressValuesArr.push(true) : addressValuesArr.push(false)
+      hotelAddres.toLowerCase().includes(item.toLowerCase()) ? addressValuesArr.push(true) : addressValuesArr.push(false)
     })
     return addressValuesArr.includes(true) ? true : false ; //if (addressValuesArr) Array contains one True value then return True else return False 
   }
