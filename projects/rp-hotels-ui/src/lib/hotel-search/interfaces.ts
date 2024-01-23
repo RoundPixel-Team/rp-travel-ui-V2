@@ -32,8 +32,8 @@ export interface SearchHoteltModule {
 
  }
 export interface guests {
-    adultN: number,
-    childN: number[],
+    adult: number,
+    child: number[],
 }
 
 
