@@ -31,7 +31,6 @@ export class FlightCheckoutApiService {
    * 
    * @param SID 
    * @param POS 
-   * @param url it is the url of the offline services request
    * @returns a list of offline services provided for a flight reservation using the search ID and the POS
    */
   offlineServices(url:string) {
