@@ -33,8 +33,9 @@ export class FlightCheckoutApiService {
    * @param POS 
    * @returns a list of offline services provided for a flight reservation using the search ID and the POS
    */
-  offlineServices(url:string) {
-    return this.http.get<flightOfflineService[]>(url).pipe(retry(2),take(1),catchError(err=>{console.log(err);throw err}));
+  offlineServices(SID: string,POS:string) {
+    let api = `${this.env.BookingFlow}/api/GetOfflineServices?SID=${SID}&POS=${POS}`;
+    return this.http.get<flightOfflineService[]>(api).pipe(retry(2),take(1),catchError(err=>{console.log(err);throw err}));
   }
 
 
