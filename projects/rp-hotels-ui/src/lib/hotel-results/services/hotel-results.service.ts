@@ -115,7 +115,7 @@ export class HotelResultsService {
       else if (childNum === 2) { //If Child Nuber 1 then send ages are 7 and 6 
         age = [7,6];
       }
-      SearchRooms[i] = { adultN: Number(roomsInfo[i].slice(2, 3)), childN: age };
+      SearchRooms[i] = { adult: Number(roomsInfo[i].slice(2, 3)), child: age };
     }
     return SearchRooms;
   }
