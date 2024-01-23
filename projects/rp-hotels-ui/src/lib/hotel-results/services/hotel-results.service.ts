@@ -21,6 +21,8 @@ export class HotelResultsService {
   searchID:string='';
   maxPrice:number=100;
   minPrice:number=0;
+  minPriceValueForSlider:number = 0
+  maxPriceValueForSlider:number = 100
   nightsNumber:any=0;
   subscription : Subscription = new Subscription()
   filterForm : FormGroup= new FormGroup({
@@ -67,10 +69,18 @@ export class HotelResultsService {
           })
           this.hotelsFilter();
           this.sorting(1);
+
+          //set price slider configurations
           this.maxPrice = this.filteredHotels[0].costPrice;
           this.minPrice = this.filteredHotels[this.filteredHotels.length -1].costPrice;
+          this.minPriceValueForSlider = this.filteredHotels[this.filteredHotels.length -1].costPrice;
+          this.maxPriceValueForSlider = this.filteredHotels[0].costPrice;
+
           this.hotelResultsLoader = false;
         }
+      },err=>{
+        console.log("result response error",err)
+        this.hotelResultsLoader = false
       })
       )
   }
@@ -235,14 +245,22 @@ export class HotelResultsService {
    * this function is responsible to destory any opened subscription on this service
    */
   destroyer(){
-    this.subscription.unsubscribe();
-    this.filteredHotels= [];
-    this.locationsArrSelected= [];
+    // this.subscription.unsubscribe();
+    this.hotelDataResponse = undefined!;
+    this.hotelLocationsArr=[];
+    this.filteredHotels = [];
+    this.locationsArrSelected = [];
     this.ratesArrSelected = [];
-    this.hotelLocationsArr = [];
     this.hotelResultsLoader=true;
-    this.maxPrice = 100;
-    this.minPrice = 0;
+    this.searchID='';
+    this.maxPrice=100;
+    this.minPrice=0;
     this.nightsNumber=0;
+    this.filterForm = new FormGroup({
+    hotelName: new FormControl(''),
+    hotelRates: new FormArray([]),
+    hotelPrice: new FormControl(),
+    hotelLocations: new FormArray([])
+  });
   }
 }
