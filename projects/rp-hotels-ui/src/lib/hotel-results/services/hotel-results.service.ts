@@ -75,8 +75,8 @@ export class HotelResultsService {
           //set price slider configurations
           this.maxPrice = this.filteredHotels[0].costPrice;
           this.minPrice = this.filteredHotels[this.filteredHotels.length -1].costPrice;
-          this.minPriceValueForSlider = this.filteredHotels[this.filteredHotels.length -1].costPrice;
-          this.maxPriceValueForSlider = this.filteredHotels[0].costPrice;
+          this.minPriceValueForSlider = this.filteredHotels[this.filteredHotels.length -1].costPrice - 10;
+          this.maxPriceValueForSlider = this.filteredHotels[0].costPrice + 100;
 
           this.hotelResultsLoader = false;
         }
@@ -175,8 +175,7 @@ export class HotelResultsService {
    * @returns 
    */
   filterHotelData(hotel:hotel){
-    let hotelPrice = this.filterForm.get('hotelPrice')?.value;
-    return (hotel.hotelName.toLowerCase()).includes((this.filterForm.get('hotelName')?.value).toLowerCase()) && (hotel.costPrice >= hotelPrice && hotel.costPrice <= this.maxPrice) 
+    return (hotel.hotelName.toLowerCase()).includes((this.filterForm.get('hotelName')?.value).toLowerCase()) && ((hotel.costPrice >= this.filterForm.get('hotelPrice')?.value && hotel.costPrice <= this.maxPrice)|| hotel.costPrice <= this.filterForm.get('hotelPrice')?.value && hotel.costPrice >= this.minPrice) 
            && this.filterLocations(hotel.Address) && this.ratesArrSelected.includes( hotel.hotelStars) 
   }
   /**
@@ -236,6 +235,7 @@ export class HotelResultsService {
    * this function is responsible to change max and min Price
    */
   changePriceValue(value:number, type:string){
+    this.filterForm.get('hotelPrice')?.setValue(value);
     switch (type) {
       case 'max':
           this.maxPrice = value;
