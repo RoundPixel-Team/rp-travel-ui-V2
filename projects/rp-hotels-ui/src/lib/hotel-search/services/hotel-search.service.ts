@@ -153,6 +153,15 @@ export class HotelSearchService {
     this.GuestData.valueChanges.subscribe(data => {
       this.guestNumberValidation()
     });
+    this.subscription.add(this.HotelSearchForm.get("roomN")?.valueChanges.subscribe(
+      (val) => {
+        if (val != null) {
+          this.roomNumber = val;
+        }
+        else {
+          this.roomNumber = 1;
+        }
+      }));
 
   }
   /**
@@ -226,7 +235,7 @@ export class HotelSearchService {
   * 
   */
   addRoom() {
-
+   
     let numRoom = this.HotelSearchForm.get('roomN')?.value;
     if (numRoom > 5) {
       this.RoomMessageError.enMsg = "Maximun Rooms Shouldn't be more than 5"
@@ -243,7 +252,6 @@ export class HotelSearchService {
 
         }));
       (<FormArray>this.HotelSearchForm.get("guestInfo")).updateValueAndValidity();
-      this.roomNumber = this.roomNumber + 1;
     }
 
   }
@@ -254,12 +262,11 @@ export class HotelSearchService {
      * 
      */
   removeRoom() {
-    let numRoom = this.HotelSearchForm.get('roomN')?.value;
+    let numRoom = this.roomNumber;
     if (numRoom > 1) {
       this.HotelSearchForm.get('roomN')?.setValue(numRoom - 1);
       this.HotelSearchForm.get('roomN')?.updateValueAndValidity();
       (<FormArray>this.HotelSearchForm.get("guestInfo")).removeAt(numRoom - 1);
-      this.roomNumber = this.roomNumber - 1;
     }
 
   }
