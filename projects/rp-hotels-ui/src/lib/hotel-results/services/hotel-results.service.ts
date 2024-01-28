@@ -28,7 +28,8 @@ export class HotelResultsService {
   filterForm : FormGroup= new FormGroup({
     hotelName: new FormControl(''),
     hotelRates: new FormArray([]),
-    hotelPrice: new FormControl(),
+    hotelPriceMax: new FormControl(),
+    hotelPriceMin: new FormControl(),
     hotelLocations: new FormArray([])
   });
 
@@ -77,6 +78,7 @@ export class HotelResultsService {
           this.minPrice = this.filteredHotels[this.filteredHotels.length -1].costPrice;
           this.minPriceValueForSlider = this.filteredHotels[this.filteredHotels.length -1].costPrice - 10;
           this.maxPriceValueForSlider = this.filteredHotels[0].costPrice + 100;
+          this.setFormPriceValue();
 
           this.hotelResultsLoader = false;
         }
@@ -175,7 +177,7 @@ export class HotelResultsService {
    * @returns 
    */
   filterHotelData(hotel:hotel){
-    return (hotel.hotelName.toLowerCase()).includes((this.filterForm.get('hotelName')?.value).toLowerCase()) && ((hotel.costPrice >= this.filterForm.get('hotelPrice')?.value && hotel.costPrice <= this.maxPrice)|| hotel.costPrice <= this.filterForm.get('hotelPrice')?.value && hotel.costPrice >= this.minPrice) 
+    return (hotel.hotelName.toLowerCase()).includes((this.filterForm.get('hotelName')?.value).toLowerCase()) && ((hotel.costPrice >= this.filterForm.get('hotelPriceMin')?.value) && (hotel.costPrice <= this.filterForm.get('hotelPriceMax')?.value)) 
            && this.filterLocations(hotel.Address) && this.ratesArrSelected.includes( hotel.hotelStars) 
   }
   /**
@@ -232,18 +234,11 @@ export class HotelResultsService {
     return this.filterForm.get('hotelLocations') as FormArray;
   }
   /**
-   * this function is responsible to change max and min Price
+   * this function is responsible to set max and min Price for initial price Form
    */
-  changePriceValue(value:number, type:string){
-    this.filterForm.get('hotelPrice')?.setValue(value);
-    switch (type) {
-      case 'max':
-          this.maxPrice = value;
-        break;
-      case 'min':
-        this.minPrice = value;
-      break;
-    }
+  setFormPriceValue(){
+    this.filterForm.get('hotelPriceMax')?.setValue(this.maxPriceValueForSlider);
+    this.filterForm.get('hotelPriceMin')?.setValue(this.minPriceValueForSlider);
   }
   /**
    *  filter locations based on selected location items 
