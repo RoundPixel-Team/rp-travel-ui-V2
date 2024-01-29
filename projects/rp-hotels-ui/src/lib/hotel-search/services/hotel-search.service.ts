@@ -150,7 +150,19 @@ export class HotelSearchService {
         }));
     }
 
-    this.GuestData.valueChanges.subscribe(data => {
+    this.HotelSearchForm.get('guestInfo')?.valueChanges.subscribe(data => {
+      debugger
+      let adults = 0;
+      let childs = 0;
+    
+      for (let i = 0; i < data.length; i++) {
+       
+        adults += Number(this.GuestData.at(i).get('adult')?.value)
+        childs += Number(this.GuestData.at(i).get('child')?.value)
+        
+
+      }
+      this.allGuest = adults + childs;
       this.guestNumberValidation()
     });
     this.subscription.add(this.HotelSearchForm.get("roomN")?.valueChanges.subscribe(
@@ -162,7 +174,7 @@ export class HotelSearchService {
           this.roomNumber = 1;
         }
       }));
-
+   
   }
   /**
   * 
@@ -179,7 +191,39 @@ export class HotelSearchService {
       guestInfo: new FormArray([]),
 
     });
+    if(sessionStorage.getItem('hotelform')){
+      
+      let lastSearchForm = JSON.parse(sessionStorage.getItem('hotelform')||'');
+      this.HotelSearchForm.get('roomN')?.setValue(lastSearchForm.roomN)
+      this.roomNumber=lastSearchForm.roomN
+      let adults = 0
+      let childs = 0
+      for(var i=0 ; i < lastSearchForm.guestInfo.length; i++){
+        adults = adults + Number(lastSearchForm.guestInfo[i].adult);
+        childs = childs + Number(lastSearchForm.guestInfo[i].child); 
+        (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
+          new FormGroup({
+            adult: new FormControl(Number(lastSearchForm.guestInfo[i].adult), [Validators.required, Validators.min(1), Validators.max(5)]),
+            child: new FormControl(Number(lastSearchForm.guestInfo[i].child), [Validators.required, Validators.max(2)]),
+            childGroup: new FormArray([])
+    
+          }));
+      }
+   
+      this.allGuest = Number(adults) + Number(childs);
 
+      this.HotelSearchForm.patchValue({
+         location: lastSearchForm.location,
+         nation: lastSearchForm.nation,
+         checkIn: lastSearchForm.checkIn,
+   
+         checkOut:lastSearchForm.checkOut,
+         roomN:lastSearchForm.roomN , 
+        
+      })
+    
+    }
+else{
     (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
       new FormGroup({
         adult: new FormControl(2, [Validators.required, Validators.min(1), Validators.max(5)]),
@@ -187,6 +231,7 @@ export class HotelSearchService {
         childGroup: new FormArray([])
 
       }));
+    }
   }
   /**
    * 
@@ -235,9 +280,8 @@ export class HotelSearchService {
   * 
   */
   addRoom() {
-   
     let numRoom = this.HotelSearchForm.get('roomN')?.value;
-    if (numRoom > 5) {
+    if (numRoom >= 5) {
       this.RoomMessageError.enMsg = "Maximun Rooms Shouldn't be more than 5"
       this.RoomMessageError.arMsg = "لا يجب حجز اكثر من 5 غرف"
     }
