@@ -74,10 +74,11 @@ export class HotelResultsService {
           this.sorting(1);
 
           //set price slider configurations
-          this.maxPrice = this.filteredHotels[0].costPrice;
-          this.minPrice = this.filteredHotels[this.filteredHotels.length -1].costPrice;
-          this.minPriceValueForSlider = this.filteredHotels[this.filteredHotels.length -1].costPrice;
-          this.maxPriceValueForSlider = this.filteredHotels[0].costPrice;
+          this.maxPrice = [...this.filteredHotels][0].costPrice;
+          this.maxPriceValueForSlider = [...this.filteredHotels][0].costPrice + 100;
+          this.minPrice = [...this.filteredHotels][this.filteredHotels.length -1].costPrice;
+          this.minPriceValueForSlider = [...this.filteredHotels][this.filteredHotels.length -1].costPrice;
+
           this.setFormPriceValue(); //set filter form values for price
 
           this.hotelResultsLoader = false;
