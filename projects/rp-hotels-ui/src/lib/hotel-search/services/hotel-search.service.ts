@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { CountriescodeModule, SearchHoteltModule, hotelSearchForm } from '../interfaces';
+import { CountriescodeModule, SearchHoteltModule, guests, hotelSearchForm } from '../interfaces';
 import { Router } from '@angular/router';
 import { AlertMsgModels } from '../interfaces';
 import { hotelCities, } from '../../home-page/interfaces'
@@ -57,7 +57,6 @@ export class HotelSearchService {
     checkIn: new FormControl(this.formday, Validators.required),
     checkOut: new FormControl(this.today, Validators.required),
     roomN: new FormControl(1, [Validators.required, Validators.min(1)]),
-
     guestInfo: new FormArray([]),
   });
 
@@ -106,16 +105,15 @@ export class HotelSearchService {
    *get Data Fron route to set value in from as inital value
    * 
    */
-  getDataFromUrl(Location: hotelCities, checkIn: Date, checkOut: Date, roomN: number | string, adult: number | string, child: number | string) {
+  getDataFromUrl(Location: hotelCities, checkIn: Date, checkOut: Date, roomN: number | string, guestInfo:guests[]) {
     let form: any = {
-      "location": Location,
-      "nation": "Kuwait",
-      "checkIn": checkIn,
-      "checkOut": checkOut,
-      "roomN": roomN,
-      "guestInfo": [{ "adult": adult, "child": child }]
+      location: Location,
+      nation: "Kuwait",
+      checkIn: checkIn,
+      checkOut: checkOut,
+      roomN: roomN,
+      guestInfo: guestInfo
     }
-
     this.SetDataFromStorage(form)
 
   }
@@ -125,7 +123,7 @@ export class HotelSearchService {
    * 
    */
   initSearchForm(form: hotelSearchForm) {
-    // set data in storage in form
+    // set data in storage in for
     if (form) {
       this.SetDataFromStorage(form)
     }
@@ -138,20 +136,15 @@ export class HotelSearchService {
         checkOut: new FormControl(this.today, Validators.required),
         roomN: new FormControl(1, [Validators.required, Validators.min(1)]),
         guestInfo: new FormArray([]),
-
       });
 
       (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
         new FormGroup({
           adult: new FormControl(2, [Validators.required, Validators.min(1), Validators.max(5)]),
           child: new FormControl(0, [Validators.required, Validators.max(2)]),
-          childGroup: new FormArray([])
-
         }));
     }
-
-   
-      this.guestNumberValidation()
+    this.guestNumberValidation()
     
     this.subscription.add(this.HotelSearchForm.get("roomN")?.valueChanges.subscribe(
       (val) => {
@@ -177,16 +170,17 @@ export class HotelSearchService {
       checkOut: new FormControl(FormStorage.checkOut, Validators.required),
       roomN: new FormControl(FormStorage.roomN, [Validators.required, Validators.min(1)]),
       guestInfo: new FormArray([]),
-
     });
 
-    (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
-      new FormGroup({
-        adult: new FormControl(2, [Validators.required, Validators.min(1), Validators.max(5)]),
-        child: new FormControl(0, [Validators.required, Validators.max(2)]),
-        childGroup: new FormArray([])
+    for(let i=0; i< FormStorage.guestInfo.length; i++){
+      (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
+        new FormGroup({
+          adult: new FormControl(FormStorage.guestInfo[i].adult, [Validators.required, Validators.min(1), Validators.max(5)]),
+          child: new FormControl(FormStorage.guestInfo[i].child, [Validators.required, Validators.max(2)]),
+          // childGroup: new FormArray([])
+        }));
+      }
 
-      }));
   }
   /**
    * 
@@ -227,7 +221,21 @@ export class HotelSearchService {
     return
 
   }
-
+/**
+ * this function is responsible to reset all Rooms & Guests Number
+ */
+  clearAllRooms(){
+    if(this.HotelSearchForm.get("roomN")?.value > 1){
+      (<FormArray>this.HotelSearchForm.get("guestInfo")).clear();
+      (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
+       new FormGroup({
+         adult: new FormControl(2, [Validators.required, Validators.min(1), Validators.max(5)]),
+         child: new FormControl(0, [Validators.required, Validators.max(2)]),
+        }));
+      this.HotelSearchForm.get("roomN")?.setValue(1);
+      this.allGuest = 2;
+    }
+  }
 
   /**
   * 
@@ -235,25 +243,24 @@ export class HotelSearchService {
   * 
   */
   addRoom() {
-   
     let numRoom = this.HotelSearchForm.get('roomN')?.value;
-    if (numRoom > 5) {
+
+    if(numRoom > 5) {
       this.RoomMessageError.enMsg = "Maximun Rooms Shouldn't be more than 5"
       this.RoomMessageError.arMsg = "لا يجب حجز اكثر من 5 غرف"
     }
     else {
-      this.HotelSearchForm.get('roomN')?.setValue(numRoom + 1);
+      this.HotelSearchForm.get('roomN')?.setValue(Number(numRoom)+1);
       this.HotelSearchForm.get('roomN')?.updateValueAndValidity();
       (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
         new FormGroup({
           adult: new FormControl(1, [Validators.required, Validators.min(1), Validators.max(5)]),
           child: new FormControl(0, [Validators.required, Validators.max(2)]),
-          childGroup: new FormArray([])
-
         }));
       (<FormArray>this.HotelSearchForm.get("guestInfo")).updateValueAndValidity();
-    }
 
+      this.guestNumberValidation();
+    }
   }
 
   /**
@@ -262,11 +269,12 @@ export class HotelSearchService {
      * 
      */
   removeRoom() {
-    let numRoom = this.roomNumber;
+    let numRoom = this.HotelSearchForm.get("roomN")?.value;
     if (numRoom > 1) {
-      this.HotelSearchForm.get('roomN')?.setValue(numRoom - 1);
+      this.HotelSearchForm.get('roomN')?.setValue(Number(numRoom)-1);
       this.HotelSearchForm.get('roomN')?.updateValueAndValidity();
-      (<FormArray>this.HotelSearchForm.get("guestInfo")).removeAt(numRoom - 1);
+      (<FormArray>this.HotelSearchForm.get("guestInfo")).removeAt(Number(numRoom)-1);
+      this.guestNumberValidation();
     }
 
   }
@@ -275,10 +283,8 @@ export class HotelSearchService {
    * validation on guest Number con't be more than  9
    * 
    */
-
-
   guestNumberValidation() {
-    let search = this.GuestData.value
+    let search = this.HotelSearchForm.get("guestInfo")?.value
     let adults = 0;
     let childs = 0;
     for (let i = 0; i < search.length; i++) {
@@ -287,7 +293,6 @@ export class HotelSearchService {
 
     }
     this.allGuest = adults + childs;
-  
 
     if (adults + childs > 9) {
       this.guestMessageError.enMsg = "Maximun Number guest Shouldn't be more than 9"
@@ -298,10 +303,10 @@ export class HotelSearchService {
 
 
   /**
-      * 
-      * validation on checkIn & checkout Date
-      * 
-      */
+  * 
+  * validation on checkIn & checkout Date
+  * 
+  */
   ValidationDate() {
     this.subscription.add(
       this.HotelSearchForm.get('checkOut')?.valueChanges.subscribe(
@@ -328,10 +333,10 @@ export class HotelSearchService {
   }
 
   /**
-       * 
-       * push cities Data To citiesNames to show data   
-       * 
-       */
+   * 
+   * push cities Data To citiesNames to show data   
+   * 
+   */
 
   extractcites(hotelcities: hotelCities[]) {
     hotelcities.forEach((city) => {
@@ -340,22 +345,20 @@ export class HotelSearchService {
     });
   }
   /**
-       * 
-       * format guestInfo To used in Routing 
-       * 
-       */
+  * 
+  * format guestInfo To used in Routing 
+  * 
+  */
   formatGuestInfo(guestInfo: any) {
     this.GuestData.setValue(guestInfo)
     let guesttxt = '';
 
     for (let i = 0; i < guestInfo.length; i++) {
       guesttxt += "R" + i + "A" + this.GuestData.at(i).get('adult')?.value + "C" + this.GuestData.at(i).get('child')?.value
-      let guestValue = this.GuestData.at(i).get('childGroup')?.value
-      for (let j = 0; j < guestValue.length; j++) {
-
-        guesttxt += "G" + 7;
-
-      }
+      // let guestValue = this.GuestData.at(i).get('childGroup')?.value
+      // for (let j = 0; j < guestValue.length; j++) {
+      //   guesttxt += "G" + 7;
+      // }
     }
     return guesttxt;
   }
@@ -368,7 +371,6 @@ export class HotelSearchService {
       this.HotelSearchForm.get("nation")?.setValue('Kuwait')
     }
     if (this.HotelSearchForm.valid) {
-
       let location: hotelCities = this.HotelSearchForm.get("location")?.value;
       let locationId: string = location.CityId;
       let citywithcountry = location.CityWithCountry;
@@ -376,7 +378,7 @@ export class HotelSearchService {
       let checkIn = this.HotelSearchForm.get("checkIn")?.value;
       let checkOut = this.HotelSearchForm.get("checkOut")?.value;
       let roomNumber = this.HotelSearchForm.get("roomN")?.value;
-      let guestInfo = this.HotelSearchForm.get("guestInfo")?.value;
+      let guestInfo = this.GuestData.value;
       this.stringGuest = this.formatGuestInfo(guestInfo);
       this.searchApi = {
         lan: lang,
