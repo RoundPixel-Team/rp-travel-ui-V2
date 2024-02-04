@@ -271,6 +271,11 @@ fareLoading: boolean = true;
           }
 
 
+        },err=>{
+          this.normalError = "No result found. <br> please search again"
+            this.normalErrorStatus = true;
+            this.loading = false;
+            this.ResultFound = false;
         }
       ));
     }
