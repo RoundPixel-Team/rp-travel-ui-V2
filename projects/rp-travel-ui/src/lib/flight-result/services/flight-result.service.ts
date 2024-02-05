@@ -208,7 +208,6 @@ fareLoading: boolean = true;
             this.fetchLowestFaresForSorting(this.response.airItineraries)
 
             this.FilterData =  this.addExperiance(result.airItineraries); //add new optional value to airItineraries object
-            console.log("this.orgnizedResponce", this.orgnizedResponce);
             this.orgnizedResponce = this.orgnize(this.FilterData);
 
             
@@ -1114,21 +1113,9 @@ updateCurrencyCode(code: string){
       (v)=>{
          let flightObj:airItineraries = {
              ...v,
-             sequenceNum: v.sequenceNum,
-             pKey:v.pKey,
-             isRefundable: v.isRefundable,
              stopsTime:this.addStopTime(v.allJourney.flights),
              overNight:this.calcOverNight(v),
              experiance:this.calcExperiance(v),
-              itinTotalFare: v.itinTotalFare,
-             totalDuration: v.totalDuration,
-              deptDate: v.deptDate,
-              arrivalDate: v.arrivalDate,
-             cabinClass: v.cabinClass,
-             flightType: v.flightType,
-             allJourney: v.allJourney,
-           baggageInformation: v.baggageInformation,
-           searchCriteria:v.searchCriteria
          }
           return flightObj
       }
