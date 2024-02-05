@@ -203,10 +203,15 @@ fareLoading: boolean = true;
             this.loading = false;
             this.ResultFound = true;
             this.response = result;
+            
             this.filterAirlines()
             this.fetchLowestFaresForSorting(this.response.airItineraries)
-            this.FilterData = result.airItineraries;
+
+            this.FilterData =  this.addExperiance(result.airItineraries); //add new optional value to airItineraries object
+            console.log("this.orgnizedResponce", this.orgnizedResponce);
             this.orgnizedResponce = this.orgnize(this.FilterData);
+
+            
 
             this.FilterChanges$.unsubscribe();
             this.filterForm = new FormGroup({
@@ -676,7 +681,6 @@ fareLoading: boolean = true;
       stopFlage = true
     }
 
-
     return stopFlage
   }
 
@@ -1070,7 +1074,7 @@ updateCurrencyCode(code: string){
     }
   }
 
-/** A method to get the fare rules data */
+  /** A method to get the fare rules data */
   showFareRules(searchId:string,squencNumber: number, pKey: string) {
 
     this.fareLoading=true;
@@ -1082,7 +1086,72 @@ updateCurrencyCode(code: string){
 
     );
   }
+  /**
+   * calculate value to overnight
+   * @param airItineraries 
+   * @returns 
+   */
+  calcOverNight (airItinerarie:airItineraries):number{
+    let arrivalDate:Date = new Date(airItinerarie.arrivalDate);
+    let departualDate:Date = new Date(airItinerarie.deptDate);
+    return arrivalDate.getDay() === departualDate.getDay()?0:arrivalDate.getHours()
+  }
 
+  /**
+   * evaluate flight experiance based on total stop time ,price ,over night 
+   * as the value increase the over all experiance decrease
+   * @param airItineraries
+   * @returns 
+   */
+  calcExperiance(flightObj:airItineraries) :number {
+  return flightObj.itinTotalFare.amount + this.addStopTime(flightObj.allJourney.flights) + this.calcOverNight(flightObj);  //Flight Price + Flight Total Stops + Flight over night number
+  }
+  /**
+  * 
+  */
+  addExperiance(airItinerariesArr:airItineraries[]){
+    let finalArr =  airItinerariesArr.map(
+      (v)=>{
+         let flightObj:airItineraries = {
+             ...v,
+             sequenceNum: v.sequenceNum,
+             pKey:v.pKey,
+             isRefundable: v.isRefundable,
+             stopsTime:this.addStopTime(v.allJourney.flights),
+             overNight:this.calcOverNight(v),
+             experiance:this.calcExperiance(v),
+              itinTotalFare: v.itinTotalFare,
+             totalDuration: v.totalDuration,
+              deptDate: v.deptDate,
+              arrivalDate: v.arrivalDate,
+             cabinClass: v.cabinClass,
+             flightType: v.flightType,
+             allJourney: v.allJourney,
+           baggageInformation: v.baggageInformation,
+           searchCriteria:v.searchCriteria
+         }
+          return flightObj
+      }
+  )
+   return finalArr
+
+  }
+  /**
+   * calculate the total stop time in hours
+   * @param flights 
+   * @returns 
+   */
+  addStopTime (flights:flight[]) :number{
+    let TtransitTime :number = 0
+    flights.forEach(flight => {
+      let transitTime = flight.flightDTO.map(f=>f.transitTime.split(':').map(t=>parseInt(t))).reduce((ac,v)=>{
+            return [ac[0]+v[0],ac[1]+v[1],ac[2]+v[2]]}).reduce((ac,v,I)=>{
+            return ac + Math.floor(v/60**I)
+        })
+        TtransitTime += transitTime
+    });
+    return TtransitTime;
+  }
 
   /**
    * this function is responsible to destory any opened subscription on this service
