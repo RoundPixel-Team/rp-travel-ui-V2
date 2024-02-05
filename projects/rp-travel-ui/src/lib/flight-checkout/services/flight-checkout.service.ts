@@ -174,6 +174,7 @@ bookingType:string='standard'
           
           else{
             this.selectedFlightError = true
+            this.loader = false
             console.log("now error happens")
           }
 
