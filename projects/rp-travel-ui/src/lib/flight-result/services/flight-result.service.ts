@@ -64,6 +64,7 @@ fareLoading: boolean = true;
   options: Options = {
     floor: 0,
     ceil: 5000,
+    hideLimitLabels:true,
     translate: (value: number): string => {
       return Math.round(value).toString();
     },
@@ -443,7 +444,6 @@ fareLoading: boolean = true;
   * Filter Values airItineraries[] by Price And Update Filtiration Slider
   **/
   minAnMax(data: airItineraries[]) {
-
     let arr: airItineraries[] = [...data];
     let sortedRes = [
       ...arr.sort((a, b) => {
@@ -457,6 +457,7 @@ fareLoading: boolean = true;
     this.options = {
       floor: minValue,
       ceil: Math.round(maxValue1 + 10),
+      hideLimitLabels:true,
       translate: (value: number): string => {
         return Math.round(value).toString();
       },
@@ -479,6 +480,7 @@ fareLoading: boolean = true;
     this.optionsDurathion = {
       floor: min,
       ceil: max + 100,
+      hideLimitLabels:true,
       noSwitching: true,
       translate: (value: number): string => {
         let h = value / 60 | 0;
@@ -509,6 +511,7 @@ fareLoading: boolean = true;
     this.optionsdeparting = {
       floor: min,
       ceil: max,
+      hideLimitLabels:true,
       noSwitching: false,
       translate: (value: number): string => {
         let h = value / 60 | 0;
@@ -542,6 +545,7 @@ fareLoading: boolean = true;
     this.optionsArriving = {
       floor: min,
       ceil: max,
+      hideLimitLabels:true,
       noSwitching: true,
       translate: (value: number): string => {
         let h = value / 60 | 0;
@@ -871,6 +875,7 @@ fareLoading: boolean = true;
     this.optionsDurathion={
       floor: this.durationMin,
       ceil: this.durationMax,
+      hideLimitLabels:true,
       noSwitching: true,
       translate: (value: number): string => {
         let h = value / 60 | 0;
@@ -882,6 +887,7 @@ fareLoading: boolean = true;
   this.optionsdeparting = {
     floor: this.departingMin,
     ceil: this.departingMax,
+    hideLimitLabels:true,
     noSwitching: false,
     translate: (value: number): string => {
       let h = value / 60 | 0;
@@ -894,6 +900,7 @@ fareLoading: boolean = true;
     this.optionsArriving = {
       floor: this.arrivingMin,
       ceil: this.arrivingMax,
+      hideLimitLabels:true,
       noSwitching: true,
       translate: (value: number): string => {
         let h = value / 60 | 0;
@@ -905,6 +912,7 @@ fareLoading: boolean = true;
   this.options = {
     floor: this.priceMinValue,
     ceil: Math.round(this.priceMaxValue + 1),
+    hideLimitLabels:true,
     minLimit:Math.round(this.priceMinValue),
     maxLimit:Math.round(this.priceMaxValue+1),
     translate: (value: number): string => {
