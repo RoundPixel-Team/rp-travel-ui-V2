@@ -11,7 +11,7 @@ export class FilterCityPipe implements PipeTransform {
       return [];
     }
     else {
-      if(args.length< 3){
+      if(args.length< 1){
         return [];
        }
       let result: airPorts[] = []
