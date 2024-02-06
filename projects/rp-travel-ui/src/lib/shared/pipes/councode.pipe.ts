@@ -7,7 +7,7 @@ import { countries } from '../../home-page/interfaces';
 export class CouncodePipe implements PipeTransform {
   transform(value: countries[], args: string): countries[] {
     if (!value || !args) {
-      return [];
+      return value;
     }
     else {
       if(args.length< 1){
