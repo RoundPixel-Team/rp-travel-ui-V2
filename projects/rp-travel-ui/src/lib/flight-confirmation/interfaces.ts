@@ -17,6 +17,9 @@ export interface confirmationModel {
     additionalServices: (any)[] ;
     airItineraries: AirItinerariesEntity[] ;
     passengersDetails: (PassengersDetailsEntity)[] ;
+    paymentTrackID?:string
+    paymentMethod?:string
+    paymentRef?:string
   }
   export interface AirItinerariesEntity {
     referralLink: any;
