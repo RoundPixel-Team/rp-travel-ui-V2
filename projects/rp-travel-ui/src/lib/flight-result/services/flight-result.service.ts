@@ -158,6 +158,9 @@ fareLoading: boolean = true;
   /**
    * lowest fares for sorting containers
    */
+  cheapestFlight!:airItineraries;
+  shortestFlight!:airItineraries;
+  bestExperienceFlight!:airItineraries;
   cheapeastLowestFare:number = 0
   shortestLowestFare:number = 0
   bestExperienceLowestFare:number = 0
@@ -428,9 +431,12 @@ fareLoading: boolean = true;
    * @param data (all the itineraries)
    */
   fetchLowestFaresForSorting(data:airItineraries[]){
+    this.cheapestFlight=[...data].sort((a, b) => { return a.itinTotalFare.amount - b.itinTotalFare.amount })[0]
     this.cheapeastLowestFare = [...data].sort((a, b) => { return a.itinTotalFare.amount - b.itinTotalFare.amount })[0].itinTotalFare.amount
     this.bestExperienceLowestFare = [...data].sort((a, b) => { return a.experiance - b.experiance })[0].itinTotalFare.amount
+    this.bestExperienceFlight=[...data].sort((a, b) => { return a.experiance - b.experiance })[0]
     this.shortestLowestFare = [...data].sort((a, b) => { return a.totalDuration - b.totalDuration })[0].itinTotalFare.amount
+    this.shortestFlight= [...data].sort((a, b) => { return a.totalDuration - b.totalDuration })[0]
   }
 
 
