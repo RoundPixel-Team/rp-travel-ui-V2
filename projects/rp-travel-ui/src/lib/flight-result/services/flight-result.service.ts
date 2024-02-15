@@ -1,12 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { Subscription, retry, take } from 'rxjs';
+import { Subscription} from 'rxjs';
 import { FareRules, FlightSearchResult, SearchFlightModule, airItineraries, filterFlightInterface, flight, flightResultFilter } from '../interfaces';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FlightResultApiService } from './flight-result-api.service';
-import { searchFlightModel } from '../../flight-search/interfaces';
-import { Options } from '@angular-slider/ngx-slider';
-import { DatePipe } from '@angular/common';
 import { customAirlineFilter } from '../interfaces'
 
 @Injectable({
@@ -46,29 +43,15 @@ export class FlightResultService {
 /**fare rules loading state */
 fareLoading: boolean = true;
   ResultFound: boolean = false
-  /**
-  *  Min value price 
-  * 
-  */
-  priceMinValue: number = 0;
-  /**
-  *  Max value price 
-  * 
-  */
-  priceMaxValue: number = 5000;
+
+  //Price Filter Values
+  priceMinValue:number=0;
+  priceMaxValue:number=100;
+  minPriceValueForSlider:number = 0;
+  maxPriceValueForSlider:number = 100;
+
   FilterChanges$: Subscription = new Subscription();
-  /**
- *  optins init and return data as string 
- * 
- */
-  options: Options = {
-    floor: 0,
-    ceil: 5000,
-    hideLimitLabels:true,
-    translate: (value: number): string => {
-      return Math.round(value).toString();
-    },
-  };
+
   /**
  * inital rate currecy code kwd
  * 
@@ -92,18 +75,21 @@ fareLoading: boolean = true;
  * 
  */
   departingMin: number = 0;
-  departingMax: number = 7000
-  optionsdeparting: Options = this.options;
+  departingMax: number = 7000;
+  minDepartingValueForSlider:number = 0;
+  maxDepartingValueForSlider:number = 7000;
 
   arrivingMin: number = 0;
   arrivingMax: number = 7000
-  optionsArriving: Options = this.options;
-  minValue: number = 0
-  maxValue: number = 5000
+  minArrivingValueForSlider:number = 0;
+  maxArrivingValueForSlider:number = 7000;
+
 
   durationMin: number = 0;
   durationMax: number = 7000;
-  optionsDurathion: Options = this.options
+  minDurationValueForSlider:number = 0;
+  maxDurationValueForSlider:number = 7000;
+
 /**Property for fare Rules */
   fareRules!: FareRules[];
   /**
@@ -125,10 +111,15 @@ fareLoading: boolean = true;
     }),
     sameAirline: new FormControl(false),
 
-    priceSlider: new FormControl([0, 0]),
-    durationSlider: new FormControl([0, 0]),
-    dpartingSlider: new FormControl([0, 0]),
-    arrivingSlider: new FormControl([0, 0]),
+    minpriceSlider: new FormControl(0),
+    maxpriceSlider: new FormControl(0),
+
+    mindurationSlider: new FormControl(0),
+    maxdurationSlider: new FormControl(0),
+    mindepartingSlider: new FormControl(0),
+    maxdepartingSlider: new FormControl(0),
+    minarrivingSlider: new FormControl(0),
+    maxarrivingSlider: new FormControl(0),
 
     returnSlider: new FormControl([30, 7000]),
     experience: new FormGroup({
@@ -144,7 +135,6 @@ fareLoading: boolean = true;
 
   formINIT:boolean =false;
 
-  priceOptions! : Options
   subscription: Subscription = new Subscription()
 
   moreT: boolean[] = [];
@@ -208,15 +198,19 @@ fareLoading: boolean = true;
             this.ResultFound = true;
             this.response = result;
             
+            this.minAnMax(this.response.airItineraries); //get Min And Max price
+            this.findDepartingnMinMax(this.response.airItineraries); //get Min And Max Depart Date
+            this.findArrivingMinMax(this.response.airItineraries); //get Min And Max Arrival Date
+            this.findDurationMinMax(this.response.airItineraries); //get Min And Max Duration Stops
+
             this.filterAirlines()
             this.fetchLowestFaresForSorting(this.response.airItineraries)
 
             this.FilterData =  this.addExperiance(result.airItineraries); //add new optional value to airItineraries object
             this.orgnizedResponce = this.orgnize(this.FilterData);
 
-            
-
             this.FilterChanges$.unsubscribe();
+
             this.filterForm = new FormGroup({
               airline: new FormGroup({
                 airlines: new FormArray([])
@@ -232,10 +226,14 @@ fareLoading: boolean = true;
                 twoAndm: new FormControl(false)
               }),
               sameAirline: new FormControl(false),
-              priceSlider: new FormControl([0, 0]),
-              durationSlider: new FormControl([0, 7000]),
-              dpartingSlider: new FormControl([0, 20000]),
-              arrivingSlider: new FormControl([0, 20000]),
+              minpriceSlider: new FormControl(0),
+              maxpriceSlider: new FormControl(0),
+              mindurationSlider: new FormControl(0),
+              maxdurationSlider: new FormControl(7000),
+              mindepartingSlider: new FormControl(0),
+              maxdepartingSlider: new FormControl(20000),
+              minarrivingSlider: new FormControl(0),
+              maxarrivingSlider: new FormControl(20000),
               returnSlider: new FormControl([0, 7000]),
 
               experience: new FormGroup({
@@ -249,16 +247,20 @@ fareLoading: boolean = true;
               })
             });
 
-            this.findDepartingnMinMax(this.response.airItineraries);
-            this.filterForm.get("dpartingSlider")?.setValue( this.findDepartingnMinMax(this.response.airItineraries));
+            this.filterForm.get("mindepartingSlider")?.setValue( this.minDepartingValueForSlider);
+            this.filterForm.get("maxdepartingSlider")?.setValue( this.maxDepartingValueForSlider);
             this.filterForm.get("dpartingSlider")?.updateValueAndValidity();
-            this.filterForm.get("durationSlider")?.setValue(this.findDurationMinMax(this.response.airItineraries));
+
+            this.filterForm.get("mindurationSlider")?.setValue(this.minDurationValueForSlider);
+            this.filterForm.get("maxdurationSlider")?.setValue(this.maxDurationValueForSlider);
             this.filterForm.get("durationSlider")?.updateValueAndValidity();
 
-            // this.findDepartingnMinMax(this.response.airItineraries)
-            this.filterForm.get("arrivingSlider")?.setValue(this.findArrivingMinMax(this.response.airItineraries));
-            this.filterForm.get("arrivingSlider")?.updateValueAndValidity();            // this.minAnMax(this.response.airItineraries);
-            this.filterForm.get('priceSlider')?.setValue(this.minAnMax(this.response.airItineraries));
+            this.filterForm.get("minarrivingSlider")?.setValue(this.minArrivingValueForSlider);
+            this.filterForm.get("maxarrivingSlider")?.setValue(this.maxArrivingValueForSlider);
+            this.filterForm.get("arrivingSlider")?.updateValueAndValidity();  
+
+            this.filterForm.get('minpriceSlider')?.setValue(this.minPriceValueForSlider);
+            this.filterForm.get('maxpriceSlider')?.setValue(this.maxPriceValueForSlider);
             this.stopsvalues(),
               this.airlinesA = this.response.airlines;
             this.airlinesForm = []
@@ -270,7 +272,6 @@ fareLoading: boolean = true;
             this.bookingSites.forEach(element => {
               (<FormArray>this.filterForm.get('bookingSite')?.get('bookingSites')).push(new FormControl(false));
             })
-            this.setSliderOptions();
             this.filterForm.updateValueAndValidity();
             this.formINIT = true;
             this.updateFilter()
@@ -281,8 +282,6 @@ fareLoading: boolean = true;
             this.loading = false;
             this.ResultFound = false;
           }
-
-
         }
       ));
     }
@@ -293,14 +292,13 @@ fareLoading: boolean = true;
  * 
  **/
   updateFilter() {
-  
     this.subscription.add(
       this.filterForm.valueChanges.subscribe((val) => {
         if (this.formINIT) {
           let filter: flightResultFilter = new flightResultFilter(
             this.filterForm.get("sameAirline")?.value!,
-            this.filterForm.get("priceSlider")?.value![0],
-            this.filterForm?.get("priceSlider")?.value![1],
+            this.filterForm.get("minpriceSlider")?.value!,
+            this.filterForm?.get("maxpriceSlider")?.value!,
             this.filterForm.get("durationSlider")?.value![0],
             this.filterForm.get("durationSlider")?.value![1],
             this.filterForm.get("dpartingSlider")?.value![0],
@@ -326,25 +324,19 @@ fareLoading: boolean = true;
     );
   }
 
-  // filter func
-
-
-  // new filteration method
+ 
   oneForAll(filter: filterFlightInterface, fligtsArray: airItineraries[], round: boolean) {
-    this.orgnizedResponce = this.orgnize(fligtsArray.filter(v =>
-
-      this.filterFlighWithPrice(v, filter) &&
-      this.filterFlighWithDepartionTime(v, filter) &&
-      this.filterFlighWithArrivalTime(v, filter) &&
+      this.orgnizedResponce = this.orgnize(fligtsArray.filter(v =>
+      this.filterFlighWithPrice(v) &&
+      this.filterFlighWithDepartionTime(v) &&
+      this.filterFlighWithArrivalTime(v) &&
+      this.filterFlighWithDuration(v) &&
       this.FlexTicketcheck(v, filter) &&
       this.filterFlightWithNumberofStopsFunction(v, filter) &&
-      this.filterFlighWithDuration(v, filter) &&
       this.filterWithExperience(v, filter) &&
       this.filterFlighWithReturnTime(v, filter, this.roundT) &&
       this.completeTripOnSameAirline(v, filter) &&
       this.filterFlightWithAirlineFunction(v, filter,this.roundT)
-
-
     ))
 
   }
@@ -380,7 +372,6 @@ fareLoading: boolean = true;
     for (let index = 0; index < arryalengty; index++) {
       let truth: boolean = true;
       out.push(truth);
-
     }
     return this.moreT = out;
   }
@@ -439,13 +430,6 @@ fareLoading: boolean = true;
     this.shortestFlight= [...data].sort((a, b) => { return a.totalDuration - b.totalDuration })[0]
   }
 
-
-
-  /**
-   * get min , max value slider from back data 
-   **/
-
-
   /**
   * Filter Values airItineraries[] by Price And Update Filtiration Slider
   **/
@@ -457,21 +441,13 @@ fareLoading: boolean = true;
       }),
     ];
 
-    let minValue = sortedRes[0].itinTotalFare.amount;
-    let maxValue1 = sortedRes[sortedRes.length - 1].itinTotalFare.amount;
+    let minValue : number = sortedRes[0].itinTotalFare.amount;
+    let maxValue : number = sortedRes[sortedRes.length - 1].itinTotalFare.amount;
 
-    this.options = {
-      floor: minValue,
-      ceil: Math.round(maxValue1 + 10),
-      hideLimitLabels:true,
-      translate: (value: number): string => {
-        return Math.round(value).toString();
-      },
-    };
     this.priceMinValue = minValue;
-    this.priceMaxValue = Math.round(maxValue1 + 10);
-    this.maxValue = Math.round(maxValue1 + 10);
-    return [minValue, this.maxValue]
+    this.priceMaxValue = Math.round(maxValue + 10);
+    this.minPriceValueForSlider = minValue
+    this.maxPriceValueForSlider = maxValue
   }
 
   /**
@@ -483,18 +459,8 @@ fareLoading: boolean = true;
     let max = sorted[0]['totalDuration'];
     this.durationMax = max + 100;
     this.durationMin = min;
-    this.optionsDurathion = {
-      floor: min,
-      ceil: max + 100,
-      hideLimitLabels:true,
-      noSwitching: true,
-      translate: (value: number): string => {
-        let h = value / 60 | 0;
-        let m = value % 60 | 0;
-        return h + "h" + ":" + m + "m";
-      }
-    }
-    return [min, max + 100];
+    this.minDurationValueForSlider = min;
+    this.maxDurationValueForSlider = max +100;
   }
   /**
    *  Find Min And Max Values Of Flight Departing Dates  And Update Filtiration Slider
@@ -514,19 +480,9 @@ fareLoading: boolean = true;
 
     this.departingMin = min;
     this.departingMax = max;
-    this.optionsdeparting = {
-      floor: min,
-      ceil: max,
-      hideLimitLabels:true,
-      noSwitching: false,
-      translate: (value: number): string => {
-        let h = value / 60 | 0;
-        let m = value % 60 | 0;
-        return h + "h" + ":" + m + "m";
-        // return this.datePipe.transform(value * 1000, 'HH:mm a')
-      }
-    };
-    return [min, max];
+    this.minDepartingValueForSlider = min;
+    this.maxDepartingValueForSlider = max;
+
   }
 
   /**
@@ -548,25 +504,11 @@ fareLoading: boolean = true;
 
     this.arrivingMin = min;
     this.arrivingMax = max;
-    this.optionsArriving = {
-      floor: min,
-      ceil: max,
-      hideLimitLabels:true,
-      noSwitching: true,
-      translate: (value: number): string => {
-        let h = value / 60 | 0;
-        let m = value % 60 | 0;
-        return h + "h" + ":" + m + "m";
-      }
-    };
-    return [min, max];
+
+    this.minArrivingValueForSlider = min;
+    this.maxArrivingValueForSlider = max;
+
   }
-
-
-
-  /**
-   * Functions filter to filter data 
-   **/
 
   /**
  *  take date string return number
@@ -583,28 +525,28 @@ fareLoading: boolean = true;
   /**
  *  filter by price value
  **/
-  filterFlighWithPrice(flight: airItineraries, filter: filterFlightInterface): boolean {
-    return flight.itinTotalFare.amount >= filter.priceMin! && flight.itinTotalFare.amount < filter.priceMax!;
+  filterFlighWithPrice(flight: airItineraries): boolean {
+    return flight.itinTotalFare.amount >= this.filterForm.get('minpriceSlider')?.value! && flight.itinTotalFare.amount < this.filterForm.get('maxpriceSlider')?.value!;
   }
   /**
 *  filter by DepartingTime
 **/
-  filterFlighWithDepartionTime(flight: airItineraries, filter: filterFlightInterface): boolean {
-    return this.convertToMin(flight.allJourney.flights[0].flightDTO[0].departureDate) >= filter.depatingMin! && this.convertToMin(flight.allJourney.flights[0].flightDTO[0].departureDate) <= filter.departingMax!;
+  filterFlighWithDepartionTime(flight: airItineraries): boolean {
+    return this.convertToMin(flight.allJourney.flights[0].flightDTO[0].departureDate) >= this.filterForm.get('mindepartingSlider')?.value! && this.convertToMin(flight.allJourney.flights[0].flightDTO[0].departureDate) <= this.filterForm.get('maxdepartingSlider')?.value!;
 
   }
   /**
 *  filter by ArrivalTime
 **/
-  filterFlighWithArrivalTime(flight: airItineraries, filter: filterFlightInterface): boolean {
-    return this.convertToMin(flight.allJourney.flights[0].flightDTO[flight.allJourney.flights[0].flightDTO.length - 1].arrivalDate) >= filter.arrivingMin! && this.convertToMin(flight.allJourney.flights[0].flightDTO[flight.allJourney.flights[0].flightDTO.length - 1].arrivalDate) <= filter.arrivingMax!;
+  filterFlighWithArrivalTime(flight: airItineraries): boolean {
+    return this.convertToMin(flight.allJourney.flights[0].flightDTO[flight.allJourney.flights[0].flightDTO.length - 1].arrivalDate) >= this.filterForm.get('minarrivingSlider')?.value! && this.convertToMin(flight.allJourney.flights[0].flightDTO[flight.allJourney.flights[0].flightDTO.length - 1].arrivalDate) <= this.filterForm.get('maxarrivingSlider')?.value!;
 
   }
   /**
  *  filter by Duration flight
  **/
-  filterFlighWithDuration(flight: airItineraries, filter: filterFlightInterface): boolean {
-    return flight.totalDuration >= filter.durationMin! && flight.totalDuration < filter.durationMax!;
+  filterFlighWithDuration(flight: airItineraries): boolean {
+    return flight.totalDuration >= this.filterForm.get('mindurationSlider')?.value! && flight.totalDuration < this.filterForm.get('maxdurationSlider')?.value!;
   }
   /**
 *  filter by stops value
@@ -877,55 +819,7 @@ fareLoading: boolean = true;
    * after finding the min and max values for all filtiration critirias .. update the sliders with these ,,
    * minimum and maximum values
    */
-  setSliderOptions(){
-    this.optionsDurathion={
-      floor: this.durationMin,
-      ceil: this.durationMax,
-      hideLimitLabels:true,
-      noSwitching: true,
-      translate: (value: number): string => {
-        let h = value / 60 | 0;
-        let m = value % 60 | 0;
-        return h + "h" + ":" + m + "m";
-      }
-    }
 
-  this.optionsdeparting = {
-    floor: this.departingMin,
-    ceil: this.departingMax,
-    hideLimitLabels:true,
-    noSwitching: false,
-    translate: (value: number): string => {
-      let h = value / 60 | 0;
-      let m = value % 60 | 0;
-      
-      return `${this.hoursFormater(h)}:${this.mFormater(m)} ${this.DayOrNight(h,m)}`;
-    }
-  };
-
-    this.optionsArriving = {
-      floor: this.arrivingMin,
-      ceil: this.arrivingMax,
-      hideLimitLabels:true,
-      noSwitching: true,
-      translate: (value: number): string => {
-        let h = value / 60 | 0;
-        let m = value % 60 | 0;
-        return `${this.hoursFormater(h)}:${this.mFormater(m)} ${this.DayOrNight(h,m)}`;
-      }
-    };
-
-  this.options = {
-    floor: this.priceMinValue,
-    ceil: Math.round(this.priceMaxValue + 1),
-    hideLimitLabels:true,
-    minLimit:Math.round(this.priceMinValue),
-    maxLimit:Math.round(this.priceMaxValue+1),
-    translate: (value: number): string => {
-      return this.code + Math.round(value*this.rate);
-    }
-  };
-  }
 
 updateCurrencyCode(code: string){
   this.code = code;
@@ -1172,13 +1066,7 @@ updateCurrencyCode(code: string){
     this.priceMinValue = 0;
     this.priceMaxValue = 5000;
     this.FilterChanges$ = new Subscription();
-    this.options = {
-      floor: 0,
-      ceil: 5000,
-      translate: (value: number): string => {
-        return Math.round(value).toString();
-      },
-    };
+
     this.rate = 1;
     this.code = "KWD"
     this.airlinesA = [];
@@ -1187,17 +1075,14 @@ updateCurrencyCode(code: string){
     this.bookingSitesForm = []
     this.departingMin = 0;
     this.departingMax = 7000
-    this.optionsdeparting = this.options;
 
     this.arrivingMin = 0;
     this.arrivingMax = 7000
-    this.optionsArriving = this.options;
-    this.minValue = 0
-    this.maxValue = 5000
+
 
     this.durationMin = 0;
     this.durationMax = 7000;
-    this.optionsDurathion = this.options
+
     this.filterForm = new FormGroup({
       airline: new FormGroup({
         airlines: new FormArray([]),
@@ -1213,10 +1098,15 @@ updateCurrencyCode(code: string){
       }),
       sameAirline: new FormControl(false),
 
-      priceSlider: new FormControl([0, 0]),
-      durationSlider: new FormControl([0, 0]),
-      dpartingSlider: new FormControl([0, 0]),
-      arrivingSlider: new FormControl([0, 0]),
+      minpriceSlider: new FormControl(0),
+      maxpriceSlider: new FormControl(0),
+
+      mindurationSlider: new FormControl(0),
+      maxdurationSlider: new FormControl(0),
+      mindepartingSlider: new FormControl(0),
+      maxdepartingSlider: new FormControl(0),
+      minarrivingSlider: new FormControl(0),
+      maxarrivingSlider: new FormControl(0),
 
       returnSlider: new FormControl([30, 7000]),
       experience: new FormGroup({
@@ -1231,8 +1121,6 @@ updateCurrencyCode(code: string){
     });
 
     this.formINIT =false;
-
-    this.priceOptions = this.options
     this.subscription = new Subscription()
 
     this.moreT = [];

@@ -107,7 +107,7 @@ export class flightResultFilter{
     public durationMax?:number,
     public depatingMin?:number,
     public departingMax?:number,
-    public  arrivingMin?:number,
+    public arrivingMin?:number,
     public arrivingMax?:number,
     public returnMin?:number,
     public returnMax?:number,
