@@ -249,20 +249,19 @@ fareLoading: boolean = true;
 
             this.filterForm.get("mindepartingSlider")?.setValue( this.minDepartingValueForSlider);
             this.filterForm.get("maxdepartingSlider")?.setValue( this.maxDepartingValueForSlider);
-            this.filterForm.get("dpartingSlider")?.updateValueAndValidity();
 
             this.filterForm.get("mindurationSlider")?.setValue(this.minDurationValueForSlider);
             this.filterForm.get("maxdurationSlider")?.setValue(this.maxDurationValueForSlider);
-            this.filterForm.get("durationSlider")?.updateValueAndValidity();
 
             this.filterForm.get("minarrivingSlider")?.setValue(this.minArrivingValueForSlider);
             this.filterForm.get("maxarrivingSlider")?.setValue(this.maxArrivingValueForSlider);
-            this.filterForm.get("arrivingSlider")?.updateValueAndValidity();  
-
+            
             this.filterForm.get('minpriceSlider')?.setValue(this.minPriceValueForSlider);
             this.filterForm.get('maxpriceSlider')?.setValue(this.maxPriceValueForSlider);
+            this.filterForm.updateValueAndValidity();  
+
             this.stopsvalues(),
-              this.airlinesA = this.response.airlines;
+            this.airlinesA = this.response.airlines;
             this.airlinesForm = []
             this.airlinesA.forEach(element => {
               (<FormArray>this.filterForm.get('airline')?.get('airlines')).push(new FormControl(false));
@@ -299,12 +298,12 @@ fareLoading: boolean = true;
             this.filterForm.get("sameAirline")?.value!,
             this.filterForm.get("minpriceSlider")?.value!,
             this.filterForm?.get("maxpriceSlider")?.value!,
-            this.filterForm.get("durationSlider")?.value![0],
-            this.filterForm.get("durationSlider")?.value![1],
-            this.filterForm.get("dpartingSlider")?.value![0],
-            this.filterForm.get("dpartingSlider")?.value![1],
-            this.filterForm.get("arrivingSlider")?.value![0],
-            this.filterForm.get("arrivingSlider")?.value![1],
+            this.filterForm.get("mindurationSlider")?.value!,
+            this.filterForm.get("maxdurationSlider")?.value!,
+            this.filterForm.get("mindepartingSlider")?.value!,
+            this.filterForm.get("maxdepartingSlider")?.value!,
+            this.filterForm.get("minarrivingSlider")?.value!,
+            this.filterForm.get("maxarrivingSlider")?.value!,
             this.filterForm.get("returnSlider")?.value![0],
             this.filterForm.get("returnSlider")?.value![1],
             this.stopsvalues(),
