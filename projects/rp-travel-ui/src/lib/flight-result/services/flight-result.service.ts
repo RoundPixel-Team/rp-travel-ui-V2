@@ -94,8 +94,8 @@ fareLoading: boolean = true;
    * duration minimum and maximum values for filter flight duration slider
    */
   durationMin: number = 0;
-  durationMax: number = 7000;
-  durationCurrentValue: number = 7000
+  durationMax!: number;
+  durationCurrentValue!: number
 
 
 /**Property for fare Rules */
@@ -466,10 +466,9 @@ fareLoading: boolean = true;
     let sorted = [...array].sort((a, b) => b.totalDuration - a.totalDuration);
     let min = sorted[sorted.length - 1]['totalDuration'];
     let max = sorted[0]['totalDuration'];
-    this.durationMax = max + 100;
-    this.durationMin = min - 10;
+    this.durationMax = max;
+    this.durationMin = min;
     this.durationCurrentValue = max
-
     return [this.durationMin, this.durationMax];
   }
   /**
@@ -561,7 +560,7 @@ fareLoading: boolean = true;
  *  filter by Duration flight
  **/
   filterFlighWithDuration(flight: airItineraries, filter: filterFlightInterface): boolean {
-    return flight.totalDuration >= filter.durationMin! && flight.totalDuration < filter.durationMax!;
+    return flight.totalDuration >= filter.durationMin! && flight.totalDuration <= filter.durationMax!;
   }
   /**
 *  filter by stops value
