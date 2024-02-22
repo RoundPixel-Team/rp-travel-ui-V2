@@ -292,10 +292,8 @@ export class FlightSearchService {
       this.flightAlert.arMsg = 'يجب ألا يزيد الحد الأقصى لعدد الرحلات عن 4';
       return this.flightAlert;
     } else {
-      if (len > 1) {
-        this.lastFlight = (<FormArray>this.searchFlight.get('Flights')).value[
-          len - 1
-        ]['landing'];
+      if (len >= 1) {
+        this.lastFlight = (<FormArray>this.searchFlight.get('Flights')).value[len - 1]['landing'];
       }
       (<FormArray>this.searchFlight.get('Flights')).push(
         new FormGroup({
