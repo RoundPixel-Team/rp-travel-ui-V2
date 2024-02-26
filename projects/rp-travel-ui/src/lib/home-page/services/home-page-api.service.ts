@@ -45,7 +45,7 @@ export class HomePageApiService {
   pointOfSale(): Observable<pointOfSaleModel> {
     let api = "https://api.ipify.org/?format=json";
     return this.http.get<any>(api).pipe(
-      retry(2),
+      retry(3),
       take(1),
       mergeMap((result) =>{
         console.log("show me first response",result)
@@ -55,7 +55,7 @@ export class HomePageApiService {
       }
         
       ),
-      catchError(err=>{console.log(err);throw err})
+      catchError(err=>{console.log("fetching point of sale failure from server",err);throw err})
     );
   }
 

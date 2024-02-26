@@ -697,8 +697,8 @@ bookingType:string='standard'
       this.selectedFlight?.airItineraryDTO.pKey!.toString()!,
       this.selectedFlight?.searchCriteria.language!,
       type=='premium'?this.selectedOfflineServices:this.selectedOfflineServices.filter((s)=>{return s != this.recommendedOfflineService?.serviceCode}),
-      this.home.pointOfSale.ip || "00.00.000.000",
-      this.home.pointOfSale.country || 'kw'
+      this.home.pointOfSale?this.home.pointOfSale.ip  || "00.00.000.000": "00.00.000.000",
+      this.home.pointOfSale? this.home.pointOfSale.country || 'kw' : 'kw'
       )
 
     .subscribe((res)=>{
