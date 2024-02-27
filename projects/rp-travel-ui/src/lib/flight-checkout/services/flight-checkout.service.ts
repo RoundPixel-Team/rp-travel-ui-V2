@@ -158,11 +158,13 @@ bookingType:string='standard'
             this.priceWithRecommenedService += res.airItineraryDTO.itinTotalFare.amount
             
             // initilize users forms
-            this.buildUsersForm(
-              res.searchCriteria.adultNum,
-              res.searchCriteria.childNum,
-              res.searchCriteria.infantNum,
-              res.passportDetailsRequired)
+            if(this.usersArray.length == 0){
+              this.buildUsersForm(
+                res.searchCriteria.adultNum,
+                res.searchCriteria.childNum,
+                res.searchCriteria.infantNum,
+                res.passportDetailsRequired)
+            }
               // this.fetchLastPassengerData()
 
               // assign values to fare breakup and fare disscount
