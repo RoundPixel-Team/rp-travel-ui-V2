@@ -201,7 +201,7 @@ fareLoading: boolean = true;
             this.filterAirlines()
             this.fetchLowestFaresForSorting(this.response.airItineraries)
             this.FilterData = result.airItineraries;
-            this.orgnizedResponce = result.airItineraries;
+            this.orgnizedResponce = this.addingMoreFlights(result.airItineraries);
 
             this.FilterChanges$.unsubscribe();
             this.filterForm = new FormGroup({
@@ -280,6 +280,31 @@ fareLoading: boolean = true;
       ));
     }
 
+  }
+
+/**
+ * 
+ * @param data 
+ * @returns airItineraries after adding the more flights property to each itinerary
+ */
+  addingMoreFlights(data:airItineraries[]):airItineraries[]{
+    let storedData : airItineraries[] = data
+    let moreFlights : airItineraries[] = []
+
+    data.forEach((element)=>{
+      if(storedData.findIndex((s=>{return s.pKey == element.pKey && s.sequenceNum == element.sequenceNum})) != -1){
+        moreFlights.push(
+          {
+          ...element,
+          moreFlights:storedData.filter(m=>{return m.itinTotalFare.amount == element.itinTotalFare.amount && m.allJourney.flights[0].flightAirline.airlineCode == element.allJourney.flights[0].flightAirline.airlineCode})
+        })
+
+        storedData = storedData.filter(r=>{return r.itinTotalFare.amount != element.itinTotalFare.amount && r.allJourney.flights[0].flightAirline.airlineCode != element.allJourney.flights[0].flightAirline.airlineCode})
+
+
+      }
+    })
+    return data
   }
   /**
  * update filter input
