@@ -30,7 +30,7 @@ export class HotelSearchService {
   valuesBeforeA: string[] = [];
 
   valuesBeforeRAndAfterC: string[] = [];
-  selectAllcities: any
+
   LocalStorage!: hotelSearchForm;
   DateMessageError: AlertMsgModels = {
     arMsg: '',
@@ -182,19 +182,7 @@ export class HotelSearchService {
       }
 
   }
-  /**
-   * 
-   *get Cities based Key (country code ) 
-   * 
-   */
-  getCitiesById(Key: string) {
-    this.subscription.add(
-      this.HomePageService.getHotelsCities(Key).subscribe((res) => {
-        this.selectAllcities = res;
-      }))
 
-
-  }
 
   /**
   * 

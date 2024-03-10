@@ -10,7 +10,8 @@ import { ActivatedRoute } from '@angular/router';
 export class HomePageService {
 
   api = inject(HomePageApiService)
-  route=inject(ActivatedRoute)
+  route=inject(ActivatedRoute);
+  selectAllcities: any;
   subscription : Subscription = new Subscription()
 
   constructor() { }
@@ -116,6 +117,20 @@ getPointOfSale(){
       })
   )
 }
+
+  /**
+   * 
+   *get Cities based Key (country code ) 
+   * 
+   */
+   getCitiesById(Key: string) {
+    this.subscription.add(
+      this.api.getHotelsCities(Key).subscribe((res) => {
+        this.selectAllcities = res;
+      }))
+
+
+  }
 
   /**
    * this function is responsible to destory any opened subscription on this service
