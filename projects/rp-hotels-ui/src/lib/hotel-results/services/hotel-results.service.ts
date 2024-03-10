@@ -70,7 +70,7 @@ export class HotelResultsService {
           this.hotelLocationsArr.map(()=>{
             this.addLocations()
           })
-          this.hotelsFilter();
+          
           this.sorting(1);
 
           //set price slider configurations
@@ -79,8 +79,10 @@ export class HotelResultsService {
           this.minPrice = [...this.filteredHotels][this.filteredHotels.length -1].costPrice;
           this.minPriceValueForSlider = [...this.filteredHotels][this.filteredHotels.length -1].costPrice;
 
-          this.setFormPriceValue(); //set filter form values for price
 
+          
+          this.setFormPriceValue(); //set filter form values for price
+          this.hotelsFilter();
           this.hotelResultsLoader = false;
         }
       },err=>{
@@ -260,7 +262,6 @@ export class HotelResultsService {
    * this function is responsible to destory any opened subscription on this service
    */
   destroyer(){
-    // this.subscription.unsubscribe();
     this.subscription = new Subscription();
     this.hotelDataResponse = undefined!;
     this.hotelLocationsArr=[];
@@ -272,11 +273,15 @@ export class HotelResultsService {
     this.maxPrice=100;
     this.minPrice=0;
     this.nightsNumber=0;
+    this.minPriceValueForSlider = 0
+    this.maxPriceValueForSlider = 100
+
     this.filterForm = new FormGroup({
-    hotelName: new FormControl(''),
-    hotelRates: new FormArray([]),
-    hotelPrice: new FormControl(),
-    hotelLocations: new FormArray([])
-  });
+      hotelName: new FormControl(''),
+      hotelRates: new FormArray([]),
+      hotelPriceMax: new FormControl(),
+      hotelPriceMin: new FormControl(),
+      hotelLocations: new FormArray([])
+    });
   }
 }
