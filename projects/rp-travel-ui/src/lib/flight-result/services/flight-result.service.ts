@@ -200,9 +200,9 @@ fareLoading: boolean = true;
             this.response = result;
             this.filterAirlines()
             this.fetchLowestFaresForSorting(this.response.airItineraries)
-            this.FilterData = result.airItineraries;
+            
             this.orgnizedResponce = this.addingMoreFlights(result.airItineraries);
-
+            this.FilterData = [...this.orgnizedResponce];
             this.FilterChanges$.unsubscribe();
             this.filterForm = new FormGroup({
               airline: new FormGroup({
@@ -300,11 +300,9 @@ fareLoading: boolean = true;
         })
 
         storedData = storedData.filter(r=>{return r.itinTotalFare.amount != element.itinTotalFare.amount && r.allJourney.flights[0].flightAirline.airlineCode != element.allJourney.flights[0].flightAirline.airlineCode})
-
-
       }
     })
-    return data
+    return moreFlights
   }
   /**
  * update filter input
