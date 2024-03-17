@@ -34,16 +34,20 @@ export class HotelResultsService {
   });
 
   constructor() { 
-    //initialize hotel rate array with rates
-    for(let i=0; i<5; i++){
-      this.addRating();
-      this.ratesArrSelected.push(i+1)
-    }
+
   }
 
   ngOnInit(){}
 
- 
+ resetForm(){
+  this.filterForm = new FormGroup({
+    hotelName: new FormControl(''),
+    hotelRates: new FormArray([]),
+    hotelPriceMax: new FormControl(),
+    hotelPriceMin: new FormControl(),
+    hotelLocations: new FormArray([])
+  });
+ }
 
   /**
    * this function is responsible to call API to get the Hotel Data
@@ -55,6 +59,11 @@ export class HotelResultsService {
     this.subscription.add(
       this.api.getHotelsRes(hotelSearchObj).subscribe((res:hotelResults)=>{
         if(res){
+          this.hotelLocationsArr = []
+          this.locationsArrSelected = []
+          this.resetForm();
+          console.log("show me form",this.filterForm.get('hotelLocations'))
+
           this.hotelDataResponse = res;
           this.filteredHotels = res.HotelResult;
           this.hotelLocationsArr= [...res.Locations]
@@ -71,6 +80,12 @@ export class HotelResultsService {
           this.hotelLocationsArr.map(()=>{
             this.addLocations()
           })
+
+          //initialize hotel rate array with rates
+          for(let i=0; i<5; i++){
+            this.addRating();
+            this.ratesArrSelected.push(i+1)
+          }
           
           this.sorting(1);
 
@@ -277,12 +292,6 @@ export class HotelResultsService {
     this.minPriceValueForSlider = 0
     this.maxPriceValueForSlider = 100
 
-    this.filterForm = new FormGroup({
-      hotelName: new FormControl(''),
-      hotelRates: new FormArray([]),
-      hotelPriceMax: new FormControl(),
-      hotelPriceMin: new FormControl(),
-      hotelLocations: new FormArray([])
-    });
+    this.resetForm();
   }
 }
