@@ -172,11 +172,13 @@ export class HotelSearchService {
       guestInfo: new FormArray([]),
     });
 
+
+    console.log("FormStorage.guestInfo", FormStorage.guestInfo)
     for(let i=0; i< FormStorage.guestInfo.length; i++){
       (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
         new FormGroup({
           adult: new FormControl(FormStorage.guestInfo[i].adult, [Validators.required, Validators.min(1), Validators.max(5)]),
-          child: new FormControl(FormStorage.guestInfo[i].child, [Validators.required, Validators.max(2)]),
+          child: new FormControl(FormStorage.guestInfo[i].child.length == 0? 0:FormStorage.guestInfo[i].child, [Validators.required, Validators.max(2)]),
           // childGroup: new FormArray([])
         }));
       }

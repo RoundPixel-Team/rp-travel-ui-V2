@@ -17,7 +17,7 @@ export class HotelResultsService {
   filteredHotels: hotel[] = [];
   locationsArrSelected: Array<string> = [];
   ratesArrSelected: Array<number> = [];
-  hotelResultsLoader:boolean=true;
+  hotelResultsLoader:boolean=false;
   searchID:string='';
   maxPrice:number=100;
   minPrice:number=0;
@@ -50,6 +50,7 @@ export class HotelResultsService {
    * you should call it first in the search Results componet
    */
   getHotelDataFromUrl(hotelSearchObj: GetHotelModule, dateFrom:string, dateTo:string){
+    this.hotelResultsLoader = true;
     //call het hotel data API
     this.subscription.add(
       this.api.getHotelsRes(hotelSearchObj).subscribe((res:hotelResults)=>{
@@ -268,7 +269,7 @@ export class HotelResultsService {
     this.filteredHotels = [];
     this.locationsArrSelected = [];
     this.ratesArrSelected = [];
-    this.hotelResultsLoader=true;
+    this.hotelResultsLoader=false;
     this.searchID='';
     this.maxPrice=100;
     this.minPrice=0;
