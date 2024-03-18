@@ -58,11 +58,10 @@ export class HotelResultsService {
     //call het hotel data API
     this.subscription.add(
       this.api.getHotelsRes(hotelSearchObj).subscribe((res:hotelResults)=>{
-        if(res){
+        if(res && res.HotelResult.length > 0){
           this.hotelLocationsArr = []
           this.locationsArrSelected = []
           this.resetForm();
-          console.log("show me form",this.filterForm.get('hotelLocations'))
 
           this.hotelDataResponse = res;
           this.filteredHotels = res.HotelResult;
