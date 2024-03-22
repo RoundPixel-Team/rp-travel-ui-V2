@@ -178,7 +178,7 @@ export class HotelSearchService {
       (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
         new FormGroup({
           adult: new FormControl(FormStorage.guestInfo[i].adult, [Validators.required, Validators.min(1), Validators.max(5)]),
-          child: new FormControl(FormStorage.guestInfo[i].child.length == 0? 0:FormStorage.guestInfo[i].child, [Validators.required, Validators.max(2)]),
+          child: new FormControl(FormStorage.guestInfo[i].child.length == 0? 0:FormStorage.guestInfo[i].child.length, [Validators.required, Validators.max(2)]),
           // childGroup: new FormArray([])
         }));
       }
@@ -280,7 +280,6 @@ export class HotelSearchService {
     for (let i = 0; i < search.length; i++) {
       adults += Number(this.GuestData.at(i).get('adult')?.value)
       childs += Number(this.GuestData.at(i).get('child')?.value)
-
     }
     this.allGuest = adults + childs;
 
