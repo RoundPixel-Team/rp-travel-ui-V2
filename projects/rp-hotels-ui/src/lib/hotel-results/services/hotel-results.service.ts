@@ -39,7 +39,7 @@ export class HotelResultsService {
 
   ngOnInit(){}
 
- resetForm(){
+ resetHotelForm(){
   this.filterForm = new FormGroup({
     hotelName: new FormControl(''),
     hotelRates: new FormArray([]),
@@ -49,6 +49,9 @@ export class HotelResultsService {
   });
  }
 
+ detectDataChanging(){
+  this.filteredHotels = [...this.filteredHotels];
+ }
   /**
    * this function is responsible to call API to get the Hotel Data
    * you should call it first in the search Results componet
@@ -61,7 +64,7 @@ export class HotelResultsService {
         if(res && res.HotelResult.length > 0){
           this.hotelLocationsArr = []
           this.locationsArrSelected = []
-          this.resetForm();
+          this.resetHotelForm();
 
           this.hotelDataResponse = res;
           this.filteredHotels = res.HotelResult;
@@ -173,12 +176,13 @@ export class HotelResultsService {
            this.filteredHotels = this.filteredHotels.sort((low, high) => high.hotelStars - low.hotelStars);
             break;
           }
-      default:{
-        this.filteredHotels = this.filteredHotels.sort((low, high) => high.TotalSellPrice - low.TotalSellPrice);
-        break;
-      } 
+      default:
+        {
+          this.filteredHotels = this.filteredHotels.sort((low, high) => high.TotalSellPrice - low.TotalSellPrice);
+          break;
+        } 
     }
-    return this.filteredHotels ;
+    return this.filteredHotels;
   }
   hotelsFilter(){ 
     this.subscription.add(
@@ -291,6 +295,6 @@ export class HotelResultsService {
     this.minPriceValueForSlider = 0
     this.maxPriceValueForSlider = 100
 
-    this.resetForm();
+    this.resetHotelForm();
   }
 }
