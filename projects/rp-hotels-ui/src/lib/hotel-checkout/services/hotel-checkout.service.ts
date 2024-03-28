@@ -150,6 +150,8 @@ export class HotelCheckoutService {
           "phone": new FormControl(''),
           "phoneCode": new FormControl(''),
           "roomRef": new FormControl(''),
+          "specialRequest": new FormControl(''),
+
         }));
 
       }
