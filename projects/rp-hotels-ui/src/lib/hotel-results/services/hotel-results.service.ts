@@ -139,7 +139,7 @@ export class HotelResultsService {
             }
         }
 
-        SearchRooms.push({ adult, child:[child]});
+        SearchRooms.push({ adult, child:childrenAges});
     }
 
     return SearchRooms;

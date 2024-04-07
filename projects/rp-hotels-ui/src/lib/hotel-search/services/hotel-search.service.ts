@@ -129,6 +129,8 @@ export class HotelSearchService {
     }
     // if no value in storage
     else {
+      this.allGuest=2
+      this.roomNumber=1
       this.HotelSearchForm = new FormGroup({
         location: new FormControl("", [Validators.required, Validators.minLength(3)]),
         nation: new FormControl(""),
@@ -142,7 +144,7 @@ export class HotelSearchService {
         new FormGroup({
           adult: new FormControl(2, [Validators.required, Validators.min(1), Validators.max(5)]),
           child: new FormControl(0, [Validators.required, Validators.max(2)]),
-          childGroup:new FormArray([])
+          childGroup:new FormControl([])
         }));
         this.addChildAge(0);
     }
@@ -181,16 +183,18 @@ export class HotelSearchService {
         new FormGroup({
           adult: new FormControl(FormStorage.guestInfo[i].adult, [Validators.required, Validators.min(1), Validators.max(5)]),
           child: new FormControl(FormStorage.guestInfo[i].child.length, [Validators.required, Validators.max(2)]),
-          childGroup: new FormArray([])
+          childGroup: new FormControl([])
         }));
-        let childAgeArray:boolean[]=[]
+        let childAgeArray:number[]=[]
         for(let J=0;J< Number(FormStorage.guestInfo[i].child.length);J++){
-          childAgeArray.push(true);
+          childAgeArray.push(Number(FormStorage.guestInfo[i].child[J]));
         }
+
         this.roomChildAgeArray.push({
           roomNo:i,
           childs:childAgeArray
-        })
+        });
+        (<FormArray>this.HotelSearchForm.get("guestInfo")).at(i).get('childGroup')?.setValue(this.roomChildAgeArray[this.roomChildAgeArray.length-1].childs)
       }
 
   }
@@ -233,16 +237,8 @@ export class HotelSearchService {
  * this function is responsible to reset all Rooms & Guests Number
  */
   clearAllRooms(){
-    if(this.HotelSearchForm.get("roomN")?.value > 1){
-      (<FormArray>this.HotelSearchForm.get("guestInfo")).clear();
-      (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
-       new FormGroup({
-         adult: new FormControl(2, [Validators.required, Validators.min(1), Validators.max(5)]),
-         child: new FormControl(0, [Validators.required, Validators.max(2)]),
-        }));
-      this.HotelSearchForm.get("roomN")?.setValue(1);
-      this.allGuest = 2;
-    }
+   this.initSearchForm(undefined!)
+  
   }
 
   /**
@@ -264,7 +260,7 @@ export class HotelSearchService {
         new FormGroup({
           adult: new FormControl(1, [Validators.required, Validators.min(1), Validators.max(5)]),
           child: new FormControl(0, [Validators.required, Validators.max(2)]),
-          childGroup:new FormArray([])
+          childGroup:new FormControl([])
         }));
       (<FormArray>this.HotelSearchForm.get("guestInfo")).updateValueAndValidity();
 
@@ -366,7 +362,7 @@ export class HotelSearchService {
     for (let i = 0; i < guestInfo.length; i++) {
       guesttxt += "R" + i + "A" + guestInfo[i]['adult'] + "C" + guestInfo[i]['child']
       for (let j = 0; j < guestInfo[i]["childGroup"].length; j++) {
-        guesttxt += "G" + guestInfo[i].childGroup[j]["age"];
+        guesttxt += "G" + guestInfo[i].childGroup[j];
       }
     }
     return guesttxt;
@@ -381,6 +377,7 @@ export class HotelSearchService {
       this.HotelSearchForm.get("nation")?.setValue('Kuwait')
     }
     if (this.HotelSearchForm.valid) {
+      console.log('on submit form', this.HotelSearchForm.value)
       let location: hotelCities = this.HotelSearchForm.get("location")?.value;
       let locationId: string = location.CityId;
       let citywithcountry = location.CityWithCountry;

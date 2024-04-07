@@ -37,7 +37,7 @@ export interface guests {
 }
 export interface roomChildAge{
     roomNo:number;
-    childs:boolean[];
+    childs:number[];
   }
 
 export interface errorAlert {
