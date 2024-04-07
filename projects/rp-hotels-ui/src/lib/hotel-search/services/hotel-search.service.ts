@@ -180,11 +180,11 @@ export class HotelSearchService {
       (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
         new FormGroup({
           adult: new FormControl(FormStorage.guestInfo[i].adult, [Validators.required, Validators.min(1), Validators.max(5)]),
-          child: new FormControl(FormStorage.guestInfo[i].child, [Validators.required, Validators.max(2)]),
+          child: new FormControl(FormStorage.guestInfo[i].child.length, [Validators.required, Validators.max(2)]),
           childGroup: new FormArray([])
         }));
         let childAgeArray:boolean[]=[]
-        for(let J=0;J< Number(FormStorage.guestInfo[i].child);J++){
+        for(let J=0;J< Number(FormStorage.guestInfo[i].child.length);J++){
           childAgeArray.push(true);
         }
         this.roomChildAgeArray.push({
