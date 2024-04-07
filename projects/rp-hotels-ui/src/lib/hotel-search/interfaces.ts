@@ -35,7 +35,10 @@ export interface guests {
     adult: number,
     child: number[],
 }
-
+export interface roomChildAge{
+    roomNo:number;
+    childs:boolean[];
+  }
 
 export interface errorAlert {
     errorEN: string

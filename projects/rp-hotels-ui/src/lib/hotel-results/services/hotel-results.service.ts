@@ -122,28 +122,28 @@ export class HotelResultsService {
    * this function is responsible to generate search rooms Array
    * @param guestInfo get this string from URL after splitting it
    */
-  generateSearchRooms(guestInfo:string){
+  generateSearchRooms(guestInfo: string) {
     let SearchRooms: guests[] = [];
-    let roomsInfo = guestInfo.split("R"); //array of rooms data R1A1C0
-    roomsInfo.splice(0, 1);
-    //loop on rooms Info to get numbers of children and fill array of ages based on child number to send ages to backend
-    for (let i = 0; i < roomsInfo.length; i++) {
-      let childNum: number = 0;
-      let age: number[] = [];
-      childNum = Number(roomsInfo[i].slice(4, 5)); 
-      if (childNum === 0) { //If child Number 0 then send empty array
-        age = [];
-      }
-      else if (childNum === 1) { //If Child Nuber 1 then send age is 7 
-        age = [7];
-      }
-      else if (childNum === 2) { //If Child Nuber 1 then send ages are 7 and 6 
-        age = [7,6];
-      }
-      SearchRooms[i] = { adult: Number(roomsInfo[i].slice(2, 3)), child: age };
+    let roomsInfo = guestInfo.split("R");
+
+    for (let i = 1; i < roomsInfo.length; i++) { 
+        let roomData = roomsInfo[i];
+        
+        let adult = Number(roomData.slice(2, 3));
+        let child = Number(roomData.slice(4, 5));
+
+        let childrenAges: number[] = [];
+        if (child > 0) {
+            for (let j = 0; j < child; j++) {
+                childrenAges.push(Number(roomData.slice(6 + j * 2, 7 + j * 2))); 
+            }
+        }
+
+        SearchRooms.push({ adult, child:[child]});
     }
+
     return SearchRooms;
-  }
+}
   /**
    * this function is responsible to sort the hotels data based on Price and Star Rating
    * @param sortIndex based on index of looping on Sort Boxes

@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { CountriescodeModule, SearchHoteltModule, guests, hotelSearchForm } from '../interfaces';
+import { CountriescodeModule, SearchHoteltModule, guests, hotelSearchForm, roomChildAge } from '../interfaces';
 import { Router } from '@angular/router';
 import { AlertMsgModels } from '../interfaces';
 import { hotelCities, } from '../../home-page/interfaces'
@@ -28,8 +28,8 @@ export class HotelSearchService {
   stringGuest: string = ''
   citiesNames: string[] = [];
   valuesBeforeA: string[] = [];
-
   valuesBeforeRAndAfterC: string[] = [];
+  roomChildAgeArray:roomChildAge[]=[];
 
   LocalStorage!: hotelSearchForm;
   DateMessageError: AlertMsgModels = {
@@ -142,7 +142,9 @@ export class HotelSearchService {
         new FormGroup({
           adult: new FormControl(2, [Validators.required, Validators.min(1), Validators.max(5)]),
           child: new FormControl(0, [Validators.required, Validators.max(2)]),
+          childGroup:new FormArray([])
         }));
+        this.addChildAge(0);
     }
     this.guestNumberValidation()
     
@@ -172,19 +174,35 @@ export class HotelSearchService {
       guestInfo: new FormArray([]),
     });
 
-
+    
     console.log("FormStorage.guestInfo", FormStorage.guestInfo)
     for(let i=0; i< FormStorage.guestInfo.length; i++){
       (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
         new FormGroup({
           adult: new FormControl(FormStorage.guestInfo[i].adult, [Validators.required, Validators.min(1), Validators.max(5)]),
-          child: new FormControl(FormStorage.guestInfo[i].child.length == 0? 0:FormStorage.guestInfo[i].child.length, [Validators.required, Validators.max(2)]),
-          // childGroup: new FormArray([])
+          child: new FormControl(FormStorage.guestInfo[i].child, [Validators.required, Validators.max(2)]),
+          childGroup: new FormArray([])
         }));
+        let childAgeArray:boolean[]=[]
+        for(let J=0;J< Number(FormStorage.guestInfo[i].child);J++){
+          childAgeArray.push(true);
+        }
+        this.roomChildAgeArray.push({
+          roomNo:i,
+          childs:childAgeArray
+        })
       }
 
   }
-
+  addChildAge(roomNo:number){
+    this.roomChildAgeArray.push({
+      roomNo: roomNo,
+      childs:[]
+    })
+  }
+  removeChildAge(roomNo:number){
+    this.roomChildAgeArray=[...this.roomChildAgeArray.filter(child => {return child.roomNo!==roomNo})]
+  }
 
   /**
   * 
@@ -246,10 +264,12 @@ export class HotelSearchService {
         new FormGroup({
           adult: new FormControl(1, [Validators.required, Validators.min(1), Validators.max(5)]),
           child: new FormControl(0, [Validators.required, Validators.max(2)]),
+          childGroup:new FormArray([])
         }));
       (<FormArray>this.HotelSearchForm.get("guestInfo")).updateValueAndValidity();
 
       this.guestNumberValidation();
+      this.addChildAge(Number(numRoom));
     }
   }
 
@@ -265,6 +285,7 @@ export class HotelSearchService {
       this.HotelSearchForm.get('roomN')?.updateValueAndValidity();
       (<FormArray>this.HotelSearchForm.get("guestInfo")).removeAt(Number(numRoom)-1);
       this.guestNumberValidation();
+      this.removeChildAge(Number(numRoom));
     }
 
   }
@@ -343,14 +364,14 @@ export class HotelSearchService {
     let guesttxt = '';
 
     for (let i = 0; i < guestInfo.length; i++) {
-      guesttxt += "R" + i + "A" + this.GuestData.at(i).get('adult')?.value + "C" + this.GuestData.at(i).get('child')?.value
-      // let guestValue = this.GuestData.at(i).get('childGroup')?.value
-      // for (let j = 0; j < guestValue.length; j++) {
-      //   guesttxt += "G" + 7;
-      // }
+      guesttxt += "R" + i + "A" + guestInfo[i]['adult'] + "C" + guestInfo[i]['child']
+      for (let j = 0; j < guestInfo[i]["childGroup"].length; j++) {
+        guesttxt += "G" + guestInfo[i].childGroup[j]["age"];
+      }
     }
     return guesttxt;
   }
+ 
   /**
    * this function is responsible to return link to use it to navigate to search results with all data of search box
    */
