@@ -204,11 +204,9 @@ fareLoading: boolean = true;
             this.findDurationMinMax(this.response.airItineraries); //get Min And Max Duration Stops
 
             this.filterAirlines()
-            this.fetchLowestFaresForSorting(this.response.airItineraries)
-
             this.FilterData =  this.addExperiance(result.airItineraries); //add new optional value to airItineraries object
             this.orgnizedResponce = this.orgnize(this.FilterData);
-
+            this.fetchLowestFaresForSorting(this.orgnizedResponce)
             this.FilterChanges$.unsubscribe();
 
             this.filterForm = new FormGroup({
@@ -420,13 +418,13 @@ fareLoading: boolean = true;
    * get the lowest fares for all sorting criterias
    * @param data (all the itineraries)
    */
-  fetchLowestFaresForSorting(data:airItineraries[]){
-    this.cheapestFlight=[...data].sort((a, b) => { return a.itinTotalFare.amount - b.itinTotalFare.amount })[0]
-    this.cheapeastLowestFare = [...data].sort((a, b) => { return a.itinTotalFare.amount - b.itinTotalFare.amount })[0].itinTotalFare.amount
-    this.bestExperienceLowestFare = [...data].sort((a, b) => { return a.experiance - b.experiance })[0].itinTotalFare.amount
-    this.bestExperienceFlight=[...data].sort((a, b) => { return a.experiance - b.experiance })[0]
-    this.shortestLowestFare = [...data].sort((a, b) => { return a.totalDuration - b.totalDuration })[0].itinTotalFare.amount
-    this.shortestFlight= [...data].sort((a, b) => { return a.totalDuration - b.totalDuration })[0]
+  fetchLowestFaresForSorting(data:airItineraries[][]){
+    this.cheapestFlight=[...data].sort((a, b) => { return a[0].itinTotalFare.amount - b[0].itinTotalFare.amount })[0][0]
+    this.cheapeastLowestFare = [...data].sort((a, b) => { return a[0].itinTotalFare.amount - b[0].itinTotalFare.amount })[0][0].itinTotalFare.amount
+    this.bestExperienceLowestFare = [...data].sort((a, b) => { return a[0].experiance - b[0].experiance })[0][0].itinTotalFare.amount
+    this.bestExperienceFlight=[...data].sort((a, b) => { return a[0].experiance - b[0].experiance })[0][0]
+    this.shortestLowestFare = [...data].sort((a, b) => { return a[0].totalDuration - b[0].totalDuration })[0][0].itinTotalFare.amount
+    this.shortestFlight= [...data].sort((a, b) => { return a[0].totalDuration - b[0].totalDuration })[0][0]
   }
 
   /**
