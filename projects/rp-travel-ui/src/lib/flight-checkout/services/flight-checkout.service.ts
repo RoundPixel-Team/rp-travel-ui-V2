@@ -145,7 +145,7 @@ bookingType:string='standard'
    * this is for fetching the selected flight data and update selected flight state (selectedFlight:selectedFlight)
    * also update loader state
    */
-  getSelectedFlightData(searchId:string,sequenceNum:number,providerKey:number){
+  getSelectedFlightData(searchId:string,sequenceNum:number,providerKey:number,usersCombinedNames:boolean){
     this.loader = true
     this.subscription.add(
       this.api.getSelectedFlight(searchId,sequenceNum,providerKey).subscribe((res:selectedFlight)=>{
@@ -162,8 +162,11 @@ bookingType:string='standard'
               res.searchCriteria.adultNum,
               res.searchCriteria.childNum,
               res.searchCriteria.infantNum,
-              res.passportDetailsRequired)
-              this.fetchLastPassengerData()
+              res.passportDetailsRequired,
+              usersCombinedNames)
+
+              this.fetchLastPassengerData(),
+              
 
               // assign values to fare breakup and fare disscount
               this.calculateFareBreakupDisscount()
@@ -265,7 +268,7 @@ bookingType:string='standard'
    * it also build these forms depending on the paspport flag either required or not
    * if is been called automatically once the selected flight state is containg data 
    */
-  buildUsersForm(adults:number,childs:number,infants:number,passportFlag:boolean){
+  buildUsersForm(adults:number,childs:number,infants:number,passportFlag:boolean,userCombinedNames:boolean){
     // build form when passports details are required
     if(passportFlag){
 
@@ -277,7 +280,7 @@ bookingType:string='standard'
               title: new FormControl("", [Validators.required]),
               firstName: new FormControl("", [
                 Validators.required,
-                Validators.pattern("^[a-zA-Z]+"),
+                Validators.pattern(userCombinedNames?"[a-zA-Z ]*":"^[a-zA-Z]+"),
                 Validators.minLength(3),
               ]),
               middleName: new FormControl("", [
@@ -318,7 +321,7 @@ bookingType:string='standard'
               title: new FormControl("", [Validators.required]),
               firstName: new FormControl("", [
                 Validators.required,
-                Validators.pattern("^[a-zA-Z]+"),
+                Validators.pattern(userCombinedNames?"[a-zA-Z ]*":"^[a-zA-Z]+"),
                 Validators.minLength(3),
               ]),
               middleName: new FormControl("", [
@@ -361,7 +364,7 @@ bookingType:string='standard'
               title: new FormControl("", [Validators.required]),
               firstName: new FormControl("", [
                 Validators.required,
-                Validators.pattern("^[a-zA-Z -']+"),
+                Validators.pattern(userCombinedNames?"[a-zA-Z ]*":"^[a-zA-Z]+"),
                 Validators.minLength(3),
               ]),
               middleName: new FormControl("", [
@@ -395,7 +398,7 @@ bookingType:string='standard'
             title: new FormControl("", [Validators.required]),
             firstName: new FormControl("", [
               Validators.required,
-              Validators.pattern("^[a-zA-Z -']+"),
+              Validators.pattern(userCombinedNames?"[a-zA-Z ]*":"^[a-zA-Z]+"),
               Validators.minLength(3),
             ]),
             middleName: new FormControl("", [
@@ -433,7 +436,7 @@ bookingType:string='standard'
             title: new FormControl("", [Validators.required]),
             firstName: new FormControl("", [
               Validators.required,
-              Validators.pattern("^[a-zA-Z]+"),
+              Validators.pattern(userCombinedNames?"[a-zA-Z ]*":"^[a-zA-Z]+"),
               Validators.minLength(3),
             ]),
             middleName: new FormControl("", [
@@ -476,7 +479,7 @@ bookingType:string='standard'
             title: new FormControl("", [Validators.required]),
             firstName: new FormControl("", [
               Validators.required,
-              Validators.pattern("^[a-zA-Z -']+"),
+              Validators.pattern(userCombinedNames?"[a-zA-Z ]*":"^[a-zA-Z]+"),
               Validators.minLength(3),
             ]),
             middleName: new FormControl("", [
@@ -510,7 +513,7 @@ bookingType:string='standard'
           title: new FormControl("", [Validators.required]),
           firstName: new FormControl("", [
             Validators.required,
-            Validators.pattern("^[a-zA-Z -']+"),
+            Validators.pattern(userCombinedNames?"[a-zA-Z ]*":"^[a-zA-Z]+"),
             Validators.minLength(3),
           ]),
           middleName: new FormControl("", [
