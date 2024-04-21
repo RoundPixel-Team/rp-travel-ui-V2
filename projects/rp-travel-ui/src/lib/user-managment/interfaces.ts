@@ -26,22 +26,23 @@ export interface userSignupForm{
  * this model is mapping to the response of the user api (login/signup)
  */
 export interface userModel{
+    Claims: string[],
+    Logins: string[],
+    Roles: string[],
+    ImageURL: string,
+    FirstName: string,
+    LastName: string,
     AccessToken: string,
-    Comment: number,
-    Message: string,
-    applicationUser: {
-    AccessFailedCount: number,
-    AccessToken: string,
-    Email: string,
+    Email: string
     EmailConfirmed: boolean,
-    Id: string,
-    LockoutEnabled: boolean,
-    LockoutEndDateUtc: string,
-    Logins: any[],
+    PasswordHash: string,
+    SecurityStamp: string,
     PhoneNumber: string,
     PhoneNumberConfirmed: boolean,
-    User_Name: string,
-    FirstName :string,
-    LastName :string
-    }
+    TwoFactorEnabled: boolean,
+    LockoutEndDateUtc: any,
+    LockoutEnabled: boolean,
+    AccessFailedCount: number,
+    Id: string,
+    UserName: string
 }

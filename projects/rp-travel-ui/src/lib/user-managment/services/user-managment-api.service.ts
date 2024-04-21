@@ -22,7 +22,7 @@ export class UserManagmentApiService {
    */
   login(body: userLoginForm):Observable<userModel> {
     let api = `${this.env.users}/api/Account/Login`
-    return this.http.post<userModel>(api, body).pipe(retry(3), take(1), catchError(err=>{throw err})
+    return this.http.post<any>(api, body).pipe(retry(3), take(1), catchError(err=>{throw err})
     )
   }
 

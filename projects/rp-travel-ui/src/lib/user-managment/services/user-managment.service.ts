@@ -5,7 +5,6 @@ import { UserManagmentApiService } from './user-managment-api.service';
 import { Router } from '@angular/router';
 import { userModel } from '../interfaces';
 
-const REG_DATA = 'reg_data';
 @Injectable({
   providedIn: 'root',
 })
@@ -18,7 +17,7 @@ export class UserManagmentService {
 
   loading : boolean = false
 
-  currentUser! : userModel ;
+  currentUser! : userModel | undefined;
   userChange : Subject<string> = new Subject
   //#endregion
 
@@ -79,13 +78,17 @@ export class UserManagmentService {
     }
     else {
       this.subscription.add(
-        this.api.login(this.loginForm.value).subscribe((val:userModel)=>{
+        this.api.login(this.loginForm.value).subscribe((val:any)=>{
           console.log("show me login submit",val);
           this.loading = false
-          this.currentUser = val
-          this.userChange.next('logedin')
-          // this.__router.navigate([`/${routerName}`])     //navigate to paramter name page after login
-          // window.location.reload();
+          if(val.Comment){
+            localStorage.setItem('authenticatedUser',JSON.stringify(val.applicationUser))
+            this.currentUser = val.applicationUser
+            this.userChange.next('authenticated')
+          }else{
+            this.userChange.next('invalid user')
+          }
+          
         },
         (err:any)=>{console.log("user login error",err);this.loading = false})
       );
@@ -104,11 +107,15 @@ export class UserManagmentService {
     else{
       this.api.signup(this.registerForm.value).subscribe((val:any)=>{
         console.log("show me register submit",val)
-        localStorage.setItem(REG_DATA,JSON.stringify(this.registerForm.value))
+        
         this.loading = false
-        this.currentUser = val
-        this.userChange.next('signedup')
-        // this.__router.navigate([`/${routerName}`]) //navigate to paramter name page after registerate the account
+        if(val.Comment){
+          localStorage.setItem('authenticatedUser',JSON.stringify(val.applicationUser))
+          this.currentUser = val.applicationUser
+          this.userChange.next('authenticated')
+        }else{
+          this.userChange.next('invalid user')
+        }
       },(error:any)=>{
         console.log("show me signup error",error);
         this.loading = false
