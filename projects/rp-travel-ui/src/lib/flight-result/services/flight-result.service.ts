@@ -367,7 +367,7 @@ fareLoading: boolean = true;
       i = i +1
     }
     
-   return out
+   return out.sort((a,b)=>{return a[0].itinTotalFare.amount - b[0].itinTotalFare.amount})
   
   
   }
