@@ -145,10 +145,10 @@ bookingType:string='standard'
    * this is for fetching the selected flight data and update selected flight state (selectedFlight:selectedFlight)
    * also update loader state
    */
-  getSelectedFlightData(searchId:string,sequenceNum:number,providerKey:number,userCombinedNames:boolean){
+  getSelectedFlightData(searchId:string,sequenceNum:number,providerKey:number,userCombinedNames:boolean,pcc:string){
     this.loader = true
     this.subscription.add(
-      this.api.getSelectedFlight(searchId,sequenceNum,providerKey).subscribe((res:selectedFlight)=>{
+      this.api.getSelectedFlight(searchId,sequenceNum,providerKey,pcc).subscribe((res:selectedFlight)=>{
         if(res){
           // updating the selected flight state
           this.selectedFlight = res
