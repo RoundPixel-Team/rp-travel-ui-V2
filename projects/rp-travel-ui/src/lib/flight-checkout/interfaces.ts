@@ -11,6 +11,7 @@ export interface selectedFlight {
     errorMessage:string
     searchCriteria:searchCriteria
     passportDetailsRequired:boolean
+    pcc:string
 }
 
 /**

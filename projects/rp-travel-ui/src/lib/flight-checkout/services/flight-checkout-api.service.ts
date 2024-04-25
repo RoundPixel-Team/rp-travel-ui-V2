@@ -47,9 +47,9 @@ export class FlightCheckoutApiService {
    * @param pkey 
    * @returns disscount amount if the copoun code is active and valid
    */
-  activateCobon(promo: string, Sid: string, sequenceNum: any, pkey: string) {
+  activateCobon(promo: string, Sid: string, sequenceNum: any, pkey: string,pcc:string) {
     //check the validity of cobon and return
-    let api = `${this.env.BookingFlow}/api/GetPromotionDetails?PromoCode=${promo}&SearchId=${Sid}&SeqNum=${sequenceNum}&PKey=${pkey}  `;
+    let api = `${this.env.BookingFlow}/api/GetPromotionDetails?PromoCode=${promo}&SearchId=${Sid}&SeqNum=${sequenceNum}&PKey=${pkey}&sCode=${pcc}`;
     return this.http.get<Cobon>(api).pipe(take(1));
   }
 
@@ -64,8 +64,8 @@ export class FlightCheckoutApiService {
    * @param selectedServices 
    * @returns this function is resposible to call the save booking then checking flight validations and them generate your payment link
    */
-  saveBooking(searchid: string, sequenceNum: number, body: passengersModel, pkey: string, lang:string,selectedServices:string[],ip:string,ipLocation:string) {
-    let api = `${this.env.BookingFlow}/api/SaveBooking?SearchId=${searchid}&SeqNum=${sequenceNum}&PKey=${pkey}`;
+  saveBooking(searchid: string, sequenceNum: number, body: passengersModel, pkey: string, lang:string,selectedServices:string[],ip:string,ipLocation:string,pcc:string) {
+    let api = `${this.env.BookingFlow}/api/SaveBooking?SearchId=${searchid}&SeqNum=${sequenceNum}&PKey=${pkey}&sCode=${pcc}`;
     return this.http.post<any>(api, body).pipe(take(1),retry(1),
       mergeMap(
         (result) => { 
