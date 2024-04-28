@@ -84,6 +84,11 @@ bookingType:string='standard'
    */
   copounCodeError : string = ''
 
+  /**
+   * indicating which pcc provided the selected itinerary
+   */
+  pcc:string = ''
+
 
   /**
    * this is the main form for the checkout which contains all users array forms
