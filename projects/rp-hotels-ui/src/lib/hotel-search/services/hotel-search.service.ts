@@ -23,8 +23,9 @@ export class HotelSearchService {
   roomNumber: number = 1;
   adultNum: number = 1
   childNum: number = 0
-  today: Date=new Date();
-  formday: Date=new Date();
+  fromDate: Date=new Date();
+  toDate: Date= new Date(); 
+  
   stringGuest: string = ''
   citiesNames: string[] = [];
   valuesBeforeA: string[] = [];
@@ -54,8 +55,8 @@ export class HotelSearchService {
   HotelSearchForm: FormGroup = new FormGroup({
     location: new FormControl("", [Validators.required, Validators.minLength(3)]),
     nation: new FormControl(""),
-    checkIn: new FormControl(this.formday, Validators.required),
-    checkOut: new FormControl(this.today, Validators.required),
+    checkIn: new FormControl(this.fromDate, Validators.required),
+    checkOut: new FormControl(this.toDate, Validators.required),
     roomN: new FormControl(1, [Validators.required, Validators.min(1)]),
     guestInfo: new FormArray([]),
   });
@@ -134,8 +135,8 @@ export class HotelSearchService {
       this.HotelSearchForm = new FormGroup({
         location: new FormControl("", [Validators.required, Validators.minLength(3)]),
         nation: new FormControl(""),
-        checkIn: new FormControl(this.formday, Validators.required),
-        checkOut: new FormControl(this.today, Validators.required),
+        checkIn: new FormControl(this.fromDate, Validators.required),
+        checkOut: new FormControl(this.toDate, Validators.required),
         roomN: new FormControl(1, [Validators.required, Validators.min(1)]),
         guestInfo: new FormArray([]),
       });
@@ -315,15 +316,16 @@ export class HotelSearchService {
   */
   ValidationDate() {
     this.subscription.add(
-      this.HotelSearchForm.get('checkOut')?.valueChanges.subscribe(
+      this.HotelSearchForm.get('checkIn')?.valueChanges.subscribe(
         (val) => {
-          if (val < this.HotelSearchForm.get('checkIn')?.value) {
-            this.DateMessageError.enMsg = "Please Enter checkoutDate after CheckInDate"
-            this.DateMessageError.arMsg = "يجب ان يكون وقت الوصول اكبر من وقت الذهاب"
+          if (val > this.HotelSearchForm.get('checkOut')?.value) {
+            this.DateMessageError.enMsg = "Checkout Date Should be After CheckIn Date"
+            this.DateMessageError.arMsg = "وقت الوصول يجب أن يكون بعد وقت الذهاب" 
           }
         }
-
+        
       ))
+    return this.DateMessageError;
   }
   /**
      * 
@@ -409,5 +411,7 @@ export class HotelSearchService {
    */
   destroyer() {
     this.subscription.unsubscribe()
+    this.DateMessageError.enMsg = '';
+    this.DateMessageError.arMsg = '';
   }
 }
