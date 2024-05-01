@@ -55,8 +55,8 @@ export class HotelSearchService {
   HotelSearchForm: FormGroup = new FormGroup({
     location: new FormControl("", [Validators.required, Validators.minLength(3)]),
     nation: new FormControl(""),
-    checkIn: new FormControl(this.fromDate, Validators.required),
-    checkOut: new FormControl(this.toDate, Validators.required),
+    checkIn: new FormControl(new Date(), Validators.required),
+    checkOut: new FormControl(this.updateCheckoutDate(), Validators.required),
     roomN: new FormControl(1, [Validators.required, Validators.min(1)]),
     guestInfo: new FormArray([]),
   });
@@ -118,6 +118,12 @@ export class HotelSearchService {
     this.SetDataFromStorage(form)
 
   }
+  updateCheckoutDate(){
+    const checkOutDate = new Date();
+    checkOutDate.setDate(checkOutDate.getDate() + 1);
+    this.toDate = checkOutDate;
+    return checkOutDate;
+  }
   /**
    * 
    *inital HotelSearchForm Form  
@@ -135,8 +141,8 @@ export class HotelSearchService {
       this.HotelSearchForm = new FormGroup({
         location: new FormControl("", [Validators.required, Validators.minLength(3)]),
         nation: new FormControl(""),
-        checkIn: new FormControl(this.fromDate, Validators.required),
-        checkOut: new FormControl(this.toDate, Validators.required),
+        checkIn: new FormControl(new Date(), Validators.required),
+        checkOut: new FormControl(this.updateCheckoutDate(), Validators.required),
         roomN: new FormControl(1, [Validators.required, Validators.min(1)]),
         guestInfo: new FormArray([]),
       });
@@ -315,20 +321,15 @@ export class HotelSearchService {
   * 
   */
   ValidationDate() {
-    this.subscription.add(
-      this.HotelSearchForm.get('checkIn')?.valueChanges.subscribe(
-        (val) => {
-          if (val > this.HotelSearchForm.get('checkOut')?.value) {
-            this.DateMessageError.enMsg = "Checkout Date Should be After CheckIn Date"
-            this.DateMessageError.arMsg = "وقت الوصول يجب أن يكون بعد وقت الذهاب" 
-          }
-        }
-        
-      ))
+    if ((this.HotelSearchForm.get('checkIn')?.value > this.HotelSearchForm.get('checkOut')?.value)|| (this.HotelSearchForm.get('checkIn')?.value == this.HotelSearchForm.get('checkOut')?.value) || this.HotelSearchForm.get('checkOut')?.value == '') {
+      this.DateMessageError.enMsg = "Checkout Date Should be After CheckIn Date"
+      this.DateMessageError.arMsg = "وقت الوصول يجب أن يكون بعد وقت الذهاب" 
+    }
+
     return this.DateMessageError;
   }
   /**
-     * 
+     *  
      * search id value 
      * 
      */
@@ -379,7 +380,6 @@ export class HotelSearchService {
       this.HotelSearchForm.get("nation")?.setValue('Kuwait')
     }
     if (this.HotelSearchForm.valid) {
-      console.log('on submit form', this.HotelSearchForm.value)
       let location: hotelCities = this.HotelSearchForm.get("location")?.value;
       let locationId: string = location.CityId;
       let citywithcountry = location.CityWithCountry;
