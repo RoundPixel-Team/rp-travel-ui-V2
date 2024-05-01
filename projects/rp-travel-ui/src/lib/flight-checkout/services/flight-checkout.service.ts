@@ -84,6 +84,11 @@ bookingType:string='standard'
    */
   copounCodeError : string = ''
 
+  /**
+   * indicating which pcc provided the selected itinerary
+   */
+  pcc:string = ''
+
 
   /**
    * this is the main form for the checkout which contains all users array forms
@@ -145,10 +150,10 @@ bookingType:string='standard'
    * this is for fetching the selected flight data and update selected flight state (selectedFlight:selectedFlight)
    * also update loader state
    */
-  getSelectedFlightData(searchId:string,sequenceNum:number,providerKey:number,usersCombinedNames:boolean){
+  getSelectedFlightData(searchId:string,sequenceNum:number,providerKey:number,userCombinedNames:boolean,pcc:string){
     this.loader = true
     this.subscription.add(
-      this.api.getSelectedFlight(searchId,sequenceNum,providerKey).subscribe((res:selectedFlight)=>{
+      this.api.getSelectedFlight(searchId,sequenceNum,providerKey,pcc).subscribe((res:selectedFlight)=>{
         if(res){
           // updating the selected flight state
           this.selectedFlight = res
@@ -163,10 +168,10 @@ bookingType:string='standard'
               res.searchCriteria.childNum,
               res.searchCriteria.infantNum,
               res.passportDetailsRequired,
-              usersCombinedNames)
+              userCombinedNames)
 
-              this.fetchLastPassengerData(),
-              
+
+              this.fetchLastPassengerData()
 
               // assign values to fare breakup and fare disscount
               this.calculateFareBreakupDisscount()
@@ -623,10 +628,10 @@ bookingType:string='standard'
    * it updates the state of [copounCodeLoader : boolean]
    * it also updates the state of [copounCodeDetails:Copon]
    */
-  applyCopounCode(copounCode:string,searchId:string,sequenceNum:number,providerKey:string){
+  applyCopounCode(copounCode:string,searchId:string,sequenceNum:number,providerKey:string,pcc:string){
     this.copounCodeLoader = true
     this.subscription.add(
-      this.api.activateCobon(copounCode,searchId,sequenceNum,providerKey).subscribe((res)=>{
+      this.api.activateCobon(copounCode,searchId,sequenceNum,providerKey,pcc).subscribe((res)=>{
         if(res){
           // apply disscount on the selected flight price amount
           if(this.selectedFlight){
@@ -689,7 +694,7 @@ bookingType:string='standard'
    * it updates the behaviour subject (paymentLink) with the link
    * it also updates the behaviour subject (paymentLinkFailure) with the error
    */
-  saveBooking(currentCurrency:string,type:string){
+  saveBooking(currentCurrency:string,type:string,pcc:string){
     this.loader = true
     this.subscription.add(
       this.api.saveBooking(
@@ -700,7 +705,8 @@ bookingType:string='standard'
       this.selectedFlight?.searchCriteria.language!,
       type=='premium'?this.selectedOfflineServices:this.selectedOfflineServices.filter((s)=>{return s != this.recommendedOfflineService?.serviceCode}),
       this.home.pointOfSale.ip || "00.00.000.000",
-      this.home.pointOfSale.country || 'kw'
+      this.home.pointOfSale.country || 'kw',
+      pcc
       )
 
     .subscribe((res)=>{

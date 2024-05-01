@@ -69,7 +69,8 @@ export interface airItineraries {
     };
     baggageInformation: baggageInformation[];
     searchCriteria?:searchCriteria;
-    passengerFareBreakDownDTOs?:passengerFareBreakDownDTOs[]
+    passengerFareBreakDownDTOs?:passengerFareBreakDownDTOs[];
+    pcc?:string
 }
 
 
