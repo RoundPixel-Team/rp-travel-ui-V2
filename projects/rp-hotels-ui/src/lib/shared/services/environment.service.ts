@@ -14,7 +14,13 @@ export class EnvironmentService {
     BookingFlow = 'https://flightflow.rhlaty.com'
     FareRules =   'https://flightprov.rhlaty.com'
     asm =         'https://backofficeapi.rhlaty.com'
+
+    //for travasky
     Apihotels =   'http://178.63.214.219:5252'
+
+    //for travelli
+    // Apihotels =   'http://154.41.209.72:5253' 
+    
     users =       'https://usersapi.rhlaty.com'
     admin =       'https://adminapi.rhlaty.com/'
     getDPayment = 'https://adminapi.rhlaty.com/'
