@@ -32,6 +32,7 @@ export class HotelResultsService {
   minPriceValueForSlider:number = 0
   maxPriceValueForSlider:number = 100
   nightsNumber:any=0;
+  resultError:boolean=false;
   subscription : Subscription = new Subscription()
   filterForm : FormGroup= new FormGroup({
     hotelName: new FormControl(''),
@@ -73,8 +74,9 @@ export class HotelResultsService {
           this.hotelLocationsArr = []
           this.locationsArrSelected = []
           this.resetHotelForm();
-
           this.hotelDataResponse = res;
+          this.resultError=false;
+
           this.filteredHotels = res.HotelResult
           this.hotelLocationsArr= [...res.Locations.filter((l)=>{return l != ''})]
           this.locationsArrSelected= [...res.Locations.filter((l)=>{return l != ''})]
@@ -114,6 +116,7 @@ export class HotelResultsService {
       },err=>{
         console.log("result response error",err)
         this.hotelResultsLoader = false
+        this.resultError=true;
       })
       )
   }

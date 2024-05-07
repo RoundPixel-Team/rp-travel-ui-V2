@@ -16,10 +16,10 @@ export class EnvironmentService {
     asm =         'https://backofficeapi.rhlaty.com'
 
     //for travasky
-    Apihotels =   'http://178.63.214.219:5252'
+    // Apihotels =   'http://178.63.214.219:5252'
 
     //for travelli
-    // Apihotels =   'http://154.41.209.72:5253' 
+    Apihotels =   'http://154.41.209.72:5253' 
     
     users =       'https://usersapi.rhlaty.com'
     admin =       'https://adminapi.rhlaty.com/'

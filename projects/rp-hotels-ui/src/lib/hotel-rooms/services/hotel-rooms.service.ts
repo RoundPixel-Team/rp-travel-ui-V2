@@ -11,6 +11,7 @@ roomsLoader:boolean = false;
 cancelLoader:boolean = false;
 roomsData:hotelRoomsResponse=undefined!;
 cancelPolicy!:roomCancelPolicy[];
+error:boolean = false;
 groupedRooms!:{};
   api = inject(HotelRoomsApiService)
 
@@ -30,6 +31,7 @@ getRooms(sid: string, hotelid: string, Pid: string): Observable<any> {
     take(1),
     map((data) => {
       this.roomsLoader = false;
+      this.error=false;
       this.roomsData = data;
       this.groupedRooms = this.groupRooms(this.roomsData);
       return data; 
@@ -37,7 +39,7 @@ getRooms(sid: string, hotelid: string, Pid: string): Observable<any> {
     catchError((err) => {
       console.log('get hotel rooms error ->', err);
       this.roomsLoader = false;
-     
+     this.error=true;
       return of(null); 
     })
   )}
@@ -95,5 +97,11 @@ groupRooms(Roomsdata:hotelRoomsResponse){
    */
   destroyer(){
     this.subscription.unsubscribe()
+    this.roomsLoader = false;
+    this.cancelLoader = false;
+    this.roomsData=undefined!;
+    this.cancelPolicy=[];
+    this.error = false;
+    this.groupedRooms={};
   }
 }
