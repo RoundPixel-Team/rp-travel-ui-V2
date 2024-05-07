@@ -14,8 +14,15 @@ export class HotelResultsService {
 
   hotelDataResponse?:hotelResults;
   hotelLocationsArr:Array<string>=[];
+  /**
+   * the main varriable to make binding for the hotels results cards
+   */
   filteredHotels: hotel[] = [];
+  /**
+   * this varrivale to make binding for hotels results cards [IN CASE OF USING LOAD MORE OPTION]
+   */
   splicedFiltiredHotels:hotel[] = []
+
   locationsArrSelected: Array<string> = [];
   ratesArrSelected: Array<number> = [];
   hotelResultsLoader:boolean=false;
@@ -1073,6 +1080,10 @@ export class HotelResultsService {
   }
 
 
+
+/**
+ * this function is used in case of using load more option to increase the loaded results +5 
+ */
   loadMoreData(){
     if((this.splicedFiltiredHotels.length + 5 ) < this.filteredHotels.length){
       this.splicedFiltiredHotels = [...this.filteredHotels.slice(0,this.splicedFiltiredHotels.length + 5)]
