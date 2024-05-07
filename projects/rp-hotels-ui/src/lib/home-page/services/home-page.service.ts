@@ -14,6 +14,8 @@ export class HomePageService {
   selectAllcities: any;
   subscription : Subscription = new Subscription()
 
+  cityLoader : boolean  = false
+
   constructor() { }
 
 
@@ -124,9 +126,13 @@ getPointOfSale(){
    * 
    */
    getCitiesById(Key: string) {
+    this.cityLoader = true
     this.subscription.add(
       this.api.getHotelsCities(Key).subscribe((res) => {
+        this.cityLoader = false
         this.selectAllcities = res;
+      },err=>{
+        this.cityLoader = false
       }))
 
 
