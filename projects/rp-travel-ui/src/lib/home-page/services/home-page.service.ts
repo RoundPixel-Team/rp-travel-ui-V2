@@ -186,6 +186,7 @@ getPointOfSale(pos:pointOfSaleModel){
         }
       },(err:any)=>{
         console.log('get all pointofsales error ->',err)
+        this.pointOfSale = pos
         this.loader = false
       })
   )
