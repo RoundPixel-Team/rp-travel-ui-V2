@@ -21,8 +21,8 @@ export class FlightCheckoutApiService {
    * @param providerKey 
    * @returns all information about the selected flight according to its searchId , sequence number and provider key
    */
-  getSelectedFlight(searchid: string,sequenceNum: number,providerKey: number) {
-    let api = `${this.env.searchflow}/api/GetSelectedFlight?searchid=${searchid}&SequenceNum=${sequenceNum}&PKey=${providerKey}`;
+  getSelectedFlight(searchid: string,sequenceNum: number,providerKey: number,pcc:string) {
+    let api = `${this.env.searchflow}/api/GetSelectedFlight?searchid=${searchid}&SequenceNum=${sequenceNum}&PKey=${providerKey}&sCode=${pcc}`;
     return this.http.get<selectedFlight>(api).pipe(retry(3),take(1),catchError(err=>{throw err}));
   }
 
@@ -47,9 +47,9 @@ export class FlightCheckoutApiService {
    * @param pkey 
    * @returns disscount amount if the copoun code is active and valid
    */
-  activateCobon(promo: string, Sid: string, sequenceNum: any, pkey: string) {
+  activateCobon(promo: string, Sid: string, sequenceNum: any, pkey: string,pcc:string) {
     //check the validity of cobon and return
-    let api = `${this.env.BookingFlow}/api/GetPromotionDetails?PromoCode=${promo}&SearchId=${Sid}&SeqNum=${sequenceNum}&PKey=${pkey}  `;
+    let api = `${this.env.BookingFlow}/api/GetPromotionDetails?PromoCode=${promo}&SearchId=${Sid}&SeqNum=${sequenceNum}&PKey=${pkey}&sCode=${pcc}`;
     return this.http.get<Cobon>(api).pipe(take(1));
   }
 
@@ -64,8 +64,8 @@ export class FlightCheckoutApiService {
    * @param selectedServices 
    * @returns this function is resposible to call the save booking then checking flight validations and them generate your payment link
    */
-  saveBooking(searchid: string, sequenceNum: number, body: passengersModel, pkey: string, lang:string,selectedServices:string[],ip:string,ipLocation:string) {
-    let api = `${this.env.BookingFlow}/api/SaveBooking?SearchId=${searchid}&SeqNum=${sequenceNum}&PKey=${pkey}`;
+  saveBooking(searchid: string, sequenceNum: number, body: passengersModel, pkey: string, lang:string,selectedServices:string[],ip:string,ipLocation:string,pcc:string) {
+    let api = `${this.env.BookingFlow}/api/SaveBooking?SearchId=${searchid}&SeqNum=${sequenceNum}&PKey=${pkey}&sCode=${pcc}`;
     return this.http.post<any>(api, body).pipe(take(1),retry(1),
       mergeMap(
         (result) => { 

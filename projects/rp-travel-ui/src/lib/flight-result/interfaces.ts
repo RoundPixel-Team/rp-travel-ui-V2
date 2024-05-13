@@ -70,7 +70,8 @@ export interface airItineraries {
     baggageInformation: baggageInformation[];
     searchCriteria?:searchCriteria;
     passengerFareBreakDownDTOs?:passengerFareBreakDownDTOs[],
-    moreFlights?:airItineraries[]
+    moreFlights?:airItineraries[],
+    pcc:string
 }
 
 
