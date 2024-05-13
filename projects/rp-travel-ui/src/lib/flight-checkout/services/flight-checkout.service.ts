@@ -126,6 +126,12 @@ bookingType:string='standard'
   /**errors varriables */
   selectedFlightError : boolean = false
 
+
+  /**
+   * this is for selecting pcc value for the selected flight
+   */
+  pcc:string = ''
+
   /**
    * this is a getter to return the users array forms (users) from the main form (usersForm)
    */
