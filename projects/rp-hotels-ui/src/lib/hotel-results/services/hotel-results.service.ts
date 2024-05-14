@@ -231,7 +231,8 @@ export class HotelResultsService {
    */
   filterHotelData(hotel:hotel){
     return (hotel.hotelName.toLowerCase()).includes((this.filterForm.get('hotelName')?.value).toLowerCase()) && ((hotel.costPrice >= this.filterForm.get('hotelPriceMin')?.value) && (hotel.costPrice <= this.filterForm.get('hotelPriceMax')?.value)) 
-           && this.filterLocations(hotel.Address) && this.ratesArrSelected.includes( hotel.hotelStars) 
+          && this.ratesArrSelected.includes( hotel.hotelStars) 
+          // && this.filterLocations(hotel.Address)
   }
   /**
    * initialize hotel rates form array with true value to make it selected
