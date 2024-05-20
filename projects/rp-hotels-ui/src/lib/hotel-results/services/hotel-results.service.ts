@@ -230,8 +230,9 @@ export class HotelResultsService {
    * @returns 
    */
   filterHotelData(hotel:hotel){
+
     return (hotel.hotelName.toLowerCase()).includes((this.filterForm.get('hotelName')?.value).toLowerCase()) && ((hotel.costPrice >= this.filterForm.get('hotelPriceMin')?.value) && (hotel.costPrice <= this.filterForm.get('hotelPriceMax')?.value)) 
-          && this.ratesArrSelected.includes( hotel.hotelStars) 
+          &&this.ratesArrSelected.length !=0? this.ratesArrSelected.includes(hotel.hotelStars): true 
           // && this.filterLocations(hotel.Address)
   }
   /**
