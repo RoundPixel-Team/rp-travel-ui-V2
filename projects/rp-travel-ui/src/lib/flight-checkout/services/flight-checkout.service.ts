@@ -295,6 +295,7 @@ bookingType:string='standard'
               email: new FormControl("", [
                 Validators.required,
                 Validators.email,
+                Validators.pattern("^[a-zA-Z1-9]+@+[a-zA-Z1-9]+.+[a-zA-Z]"),
                 Validators.minLength(9),
               ]),
               phoneNumber: new FormControl("", [
