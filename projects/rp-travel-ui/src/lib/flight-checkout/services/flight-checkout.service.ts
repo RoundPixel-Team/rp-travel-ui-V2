@@ -300,6 +300,7 @@ bookingType:string='standard'
               email: new FormControl("", [
                 Validators.required,
                 Validators.email,
+                Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$"),
                 Validators.minLength(9),
               ]),
               phoneNumber: new FormControl("", [
@@ -340,6 +341,7 @@ bookingType:string='standard'
               ]),
               email: new FormControl("", [
                 Validators.email,
+                Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$"),
                 Validators.minLength(9),
               ]),
               phoneNumber: new FormControl("", [
@@ -456,6 +458,7 @@ bookingType:string='standard'
             email: new FormControl("", [
               Validators.required,
               Validators.email,
+              Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$"),
               Validators.minLength(9),
             ]),
             phoneNumber: new FormControl("", [
