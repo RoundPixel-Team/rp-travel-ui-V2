@@ -187,8 +187,7 @@ fareLoading: boolean = true;
     this.airlinesA =[];
     this.airLR=[];
     this.formINIT = false;
-    console.log("airlinesA",this.airlinesA )
-    debugger
+
     if (this.flightSearch.searchFlight.get("flightType")?.value == 'RoundTrip') {
       this.roundT = true;
     }
@@ -333,9 +332,6 @@ fareLoading: boolean = true;
 
  
   oneForAll(filter: filterFlightInterface, fligtsArray: airItineraries[], round: boolean) {
-    console.log("this.roundT",this.roundT)
-    console.log("filter",filter)
-
     this.orgnizedResponce = this.orgnize(fligtsArray.filter(v =>
       this.filterFlighWithPrice(v) &&
       this.filterFlighWithDepartionTime(v) &&
