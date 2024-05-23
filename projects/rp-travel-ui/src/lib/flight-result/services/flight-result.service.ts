@@ -5,6 +5,7 @@ import { FareRules, FlightSearchResult, SearchFlightModule, airItineraries, filt
 import { ActivatedRoute, Router } from '@angular/router';
 import { FlightResultApiService } from './flight-result-api.service';
 import { customAirlineFilter } from '../interfaces'
+import { FlightSearchService } from '../../flight-search/services/flight-search.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ import { customAirlineFilter } from '../interfaces'
 export class FlightResultService {
 
   api = inject(FlightResultApiService)
+  flightSearch = inject(FlightSearchService)
   router = inject(Router)
   route = inject(ActivatedRoute)
   filter?: flightResultFilter;
@@ -181,10 +183,15 @@ fareLoading: boolean = true;
     this.response = undefined
     this.customFilteredAirlineEnd = endCustomAirlineFilter
     this.customFilteredAirlineEndMobile = endCustomAirlineFilterMobile
-    this.FlightType = flightType;
     this.searchID = serachId
-    if (this.FlightType == 'RoundTrip') {
-      this.roundT = true
+    this.airlinesA =[];
+    this.airLR=[];
+    this.formINIT = false;
+    if (this.flightSearch.searchFlight.get("flightType")?.value == 'RoundTrip') {
+      this.roundT = true;
+    }
+    else{
+      this.roundT = false;
     }
     let searchApi: SearchFlightModule = new SearchFlightModule(lang, currency, pointOfReservation, flightType, flightsInfo, passengers, Cclass, serachId, showDirect, 'all');
     if (SearchFlightModule) {
