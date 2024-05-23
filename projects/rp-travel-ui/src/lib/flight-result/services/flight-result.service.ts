@@ -184,7 +184,11 @@ fareLoading: boolean = true;
     this.customFilteredAirlineEnd = endCustomAirlineFilter
     this.customFilteredAirlineEndMobile = endCustomAirlineFilterMobile
     this.searchID = serachId
-    console.log("Flight TYPE BEFORE CONDITION",this.flightSearch.searchFlight.get("flightType")?.value )
+    this.airlinesA =[];
+    this.airLR=[];
+    this.formINIT = false;
+    console.log("airlinesA",this.airlinesA )
+    debugger
     if (this.flightSearch.searchFlight.get("flightType")?.value == 'RoundTrip') {
       this.roundT = true;
     }
@@ -208,9 +212,8 @@ fareLoading: boolean = true;
             this.findArrivingMinMax(this.response.airItineraries); //get Min And Max Arrival Date
             this.findDurationMinMax(this.response.airItineraries); //get Min And Max Duration Stops
 
-            this.airlinesA =[];
-            this.airLR=[];
-            this.filterAirlines()
+            
+            // this.filterAirlines()
             this.FilterData =  this.addExperiance(result.airItineraries); //add new optional value to airItineraries object
             this.orgnizedResponce = this.orgnize(this.FilterData);
             this.fetchLowestFaresForSorting(this.orgnizedResponce)
@@ -250,8 +253,7 @@ fareLoading: boolean = true;
                 nonRefund: new FormControl(false)
               })
             });
-            console.log("Filter Form ", this.filterForm.value);
-            debugger;
+
             this.filterForm.get("mindepartingSlider")?.setValue( this.minDepartingValueForSlider);
             this.filterForm.get("maxdepartingSlider")?.setValue( this.maxDepartingValueForSlider);
 
@@ -267,7 +269,7 @@ fareLoading: boolean = true;
 
             this.stopsvalues(),
             this.airlinesA = this.response.airlines;
-            this.airlinesForm = []
+            
             this.airlinesA.forEach(element => {
               (<FormArray>this.filterForm.get('airline')?.get('airlines')).push(new FormControl(false));
             });
@@ -277,8 +279,7 @@ fareLoading: boolean = true;
               (<FormArray>this.filterForm.get('bookingSite')?.get('bookingSites')).push(new FormControl(false));
             })
             this.filterForm.updateValueAndValidity();
-            console.log("filter Formmmm", this.filterForm.value);
-            debugger;
+           
             this.formINIT = true;
             this.updateFilter()
           }
@@ -321,9 +322,6 @@ fareLoading: boolean = true;
             this.filteringbyBookingSites(this.filterForm.get('bookingSite')?.get('bookingSites')?.value!)
 
           );
-
-          console.log("same airline", this.filterForm.get("sameAirline")?.value!)
-          console.log("airline", this.filterForm.get('airline')?.get('airlines')?.value)
         
           this.oneForAll(filter, this.FilterData, this.roundT);
         }
@@ -660,14 +658,11 @@ fareLoading: boolean = true;
       if (element) {
         airL.push(this.airlinesA[index]);
       }
-
     };
-    console.log("airL", airL);
-    debugger;
+
     if (airL.length == 0) {
       let out = airL;
       this.airLR = out
-      console.log("airlR", this.airLR);
       
       return out
     }
@@ -679,8 +674,6 @@ fareLoading: boolean = true;
     if(roundT){
       return filter.airlines!.indexOf(flight.allJourney.flights[0]['flightAirline']['airlineName']) != -1 || filter.airlines!.indexOf(flight.allJourney.flights[1]['flightAirline']['airlineName']) != -1  || filter.airlines?.length == 0
     }else{
-      console.log("******", filter.airlines!.indexOf(flight.allJourney.flights[0]['flightAirline']['airlineName']) != -1 || filter.airlines?.length == 0);
-      
       return filter.airlines!.indexOf(flight.allJourney.flights[0]['flightAirline']['airlineName']) != -1 || filter.airlines?.length == 0
     }
     

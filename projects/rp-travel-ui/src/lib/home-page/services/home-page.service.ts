@@ -178,8 +178,8 @@ getPointOfSale(){
   this.subscription.add(
       this.api.pointOfSale().subscribe((res)=>{
         if(res){
-                  this.pointOfSale = res
-                  this.loader = false
+                this.pointOfSale = res
+                this.loader = false
                 }
       },(err:any)=>{
         console.log('get all pointofsales error ->',err)
