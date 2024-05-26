@@ -356,7 +356,7 @@ fareLoading: boolean = true;
       this.filterFlightWithNumberofStopsFunction(v, filter) &&
       this.filterFlighWithDuration(v, filter) &&
       this.filterWithExperience(v, filter) &&
-      this.filterFlighWithReturnTime(v, filter, this.roundT) &&
+      round?this.filterFlighWithReturnTime(v, filter, this.roundT):true &&
       this.completeTripOnSameAirline(v, filter) &&
       this.filterFlightWithAirlineFunction(v, filter,this.roundT)
 
