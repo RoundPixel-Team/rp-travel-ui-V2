@@ -11,7 +11,7 @@ export class EnvironmentService {
   
   offlineSeats=   'http://178.63.214.221:7026' //ticket boarding ofline seats
     searchflow =  'https://flightsearch.rhlaty.com'
-    BookingFlow = 'https://flightflow.rhlaty.com'
+    BookingFlow = 'https://flightflow.ticketboarding.com'
     FareRules =   'https://flightprov.rhlaty.com'
     asm =         'https://backofficeapi.rhlaty.com'
 
@@ -19,13 +19,13 @@ export class EnvironmentService {
     // Apihotels =   'http://178.63.214.219:5252'
 
     //for travelli
-    Apihotels =   'http://154.41.209.72:5253' 
+    Apihotels =   'https://hotelsapi.ticketboarding.com' 
     
     users =       'https://usersapi.rhlaty.com'
     admin =       'https://adminapi.rhlaty.com/'
     getDPayment = 'https://adminapi.rhlaty.com/'
     bookHotels =  'https://hotels.rhlaty.com'
-    prepay =      'https://prepayapi.rhlaty.com'
+    prepay =      'https://prepayapi.ticketboarding.com/'
     backOffice =  'https://backofficeapi.rhlaty.com'
     FlightTop =   'https://flightsearch.rhlaty.com'
    

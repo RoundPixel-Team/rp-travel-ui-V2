@@ -13,6 +13,44 @@ export class HotelConfirmationService {
   loading : boolean = false
   confirmationData! :hotelBookingModel  
   error:any
+   hotelBookingModel:hotelBookingModel={
+    status:"string",
+    bookingNum: "string",
+    ProviderConfirmation:"Confirmed",
+    mail: "string",
+    pdf: "any",
+    hotel: {
+        hotelCode: "string",
+        hotelName: "string",
+        hotelThumb: "string",
+        Location: "string",
+        hotelStars: 6,
+        TotalSellPrice: 4,
+        sellCurrency: "string",
+        City: "string",
+        Country: "string",
+        Paxes: 8,
+        Rooms: 6,
+        CheckIn:String(new Date()),
+        CheckOut: String(new Date())
+    },
+    travellers:[{
+        Title: "string",
+        FirstName: "string",
+        LastName: "string"
+   }] ,
+    rooms: [{
+        RoomCode: "string",
+        Paxs: 5,
+        Adult: 5,
+        Child: 5,
+        RoomType:"string",
+        RoomMeal:"string",
+        IsRefundable: true,
+        Image: "string"
+    }]
+
+}
   constructor() { }
 
 /**

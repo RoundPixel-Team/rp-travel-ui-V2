@@ -90,11 +90,11 @@ export class HotelCheckoutApiService {
 
 
   saveBooking(data: hotelSaveBooking,sid:string,ip:string,iplocation:string,lang:string) {
-    let api = `${this.env.Apihotels}/`;
+    let api = `${this.env.Apihotels}/api/HotelBooking`;
     return this.http.post<any>(api, data).pipe(take(1),retry(1),
       mergeMap(
         (result) => { 
-          let api = `${this.env.Apihotels}/api/PaymentView?bookingnum=${result.HGNu}&sid=${sid}&ip=${ip}&Pos=${iplocation}&lang=${lang}&NotificationTok=""`;
+          let api = `${this.env.Apihotels}/api/PaymentView?bookingnum=${result.bookingNum}&sid=${sid}&ip=${ip}&Pos=${iplocation}&lang=${lang}&NotificationTok=""`;
           return this.http.get<any>(api).pipe(retry(1),take(1),
           )
          }

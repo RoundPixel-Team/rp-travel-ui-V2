@@ -60,10 +60,10 @@ export class HotelCheckoutService {
     *inital form check out & set searchId, HotelId, ProviderId in control 
     * 
     */
-  initalCkeckoutForm() {
+  initalCkeckoutForm(cityId:number) {
     this.HotelForm = new FormGroup({
       sid: new FormControl(this.searchId),
-      cityName: new FormControl('', Validators.required),
+      cityName: new FormControl(Number(cityId), Validators.required),
       hotelID: new FormControl(this.hotelCode),
       providerHotelID: new FormControl(Validators.required),
       pid: new FormControl(this.providerId),
@@ -130,7 +130,6 @@ export class HotelCheckoutService {
           "phone": new FormControl(''),
           "phoneCode": new FormControl(''),
           "roomRef": new FormControl(''),
-          "specialRequest": new FormControl(''),
 
         }));
 
@@ -150,7 +149,6 @@ export class HotelCheckoutService {
           "phone": new FormControl(''),
           "phoneCode": new FormControl(''),
           "roomRef": new FormControl(''),
-          "specialRequest": new FormControl(''),
 
         }));
 
@@ -282,6 +280,8 @@ export class HotelCheckoutService {
             this.loader = false
           })
       )
+    }else{
+      console.log("hotel form failure",this.HotelForm);
     }
   }
   /**

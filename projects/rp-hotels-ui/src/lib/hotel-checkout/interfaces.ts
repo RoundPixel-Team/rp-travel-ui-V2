@@ -22,7 +22,7 @@ export interface promotionDetails {
 }
  export interface hotelSaveBooking{
     sid     :        string
-    cityName:        string
+    cityName:        number
     hotelID :        string
     providerHotelID: string
     pid:             string
