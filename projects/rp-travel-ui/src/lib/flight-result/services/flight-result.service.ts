@@ -179,11 +179,13 @@ fareLoading: boolean = true;
     this.loading = true
     this.orgnizedResponce = []
     this.FilterData = []
+    this.roundT = false
     this.response = undefined
     this.customFilteredAirlineEnd = endCustomAirlineFilter
     this.customFilteredAirlineEndMobile = endCustomAirlineFilterMobile
     this.FlightType = flightType;
     this.searchID = serachId
+    
     if (this.FlightType == 'RoundTrip') {
       this.roundT = true
     }
@@ -194,9 +196,11 @@ fareLoading: boolean = true;
       this.subscription.add(this.api.searchFlight(myapi).subscribe(
         (result) => {
           this.formINIT =false;
+
           if (result.status == 'Valid') {
             this.loading = false;
             this.ResultFound = true;
+            this.normalErrorStatus = false
             this.response = result;
             this.filterAirlines()
             this.fetchLowestFaresForSorting(this.response.airItineraries)
@@ -261,6 +265,7 @@ fareLoading: boolean = true;
             // this.setSliderOptions();
             this.filterForm.updateValueAndValidity();
             this.formINIT = true;
+            console.log("formINIT",this.formINIT)
             this.updateFilter()
           }
           else {
@@ -352,15 +357,13 @@ fareLoading: boolean = true;
       this.filterFlighWithPrice(v, filter) &&
       this.filterFlighWithDepartionTime(v, filter) &&
       this.filterFlighWithArrivalTime(v, filter) &&
-      this.FlexTicketcheck(v, filter) &&
+      // this.FlexTicketcheck(v, filter) &&
       this.filterFlightWithNumberofStopsFunction(v, filter) &&
       this.filterFlighWithDuration(v, filter) &&
-      this.filterWithExperience(v, filter) &&
-      round?this.filterFlighWithReturnTime(v, filter, this.roundT):true &&
-      this.completeTripOnSameAirline(v, filter) &&
+      // this.filterWithExperience(v, filter) &&
+      // round?this.filterFlighWithReturnTime(v, filter, this.roundT):true &&
+      // this.completeTripOnSameAirline(v, filter) &&
       this.filterFlightWithAirlineFunction(v, filter,this.roundT)
-
-
     )
 
   }
