@@ -438,14 +438,16 @@ export class FlightSearchService {
    */
   validateMultiCityDates(){
     if(this.flightsArray.length > 1){
+      let nextDate = this.flightsArray.at(0).get('departingD')?.value;
       for(let i=0; i<this.flightsArray.length; i++){
-        let currentDate = this.flightsArray.at(i).get('departingD')?.value;
+        let currentDate = new Date (this.flightsArray.at(i).get('departingD')?.value);
         //condition on the last flight
         if(i != this.flightsArray.length-1){
-          var nextDate = this.flightsArray.at(i+1).get('departingD')?.value;
+          nextDate = new Date(this.flightsArray.at(i+1).get('departingD')?.value);
         }
-        if(i == 0 && nextDate!=''){
-          if(nextDate < currentDate){
+        
+        if(i == 0 && nextDate != ''){
+          if(nextDate.getTime() < currentDate.getTime()){
             this.validMultiDateAlert.enMsg='The First Flight should Have A date Before next Flight';
             this.validMultiDateAlert.arMsg='يجب أن يكون للرحلة الأولى تاريخ قبل الرحلة التالية';
             this.flightsArray.at(i+1)?.get('departingD')?.setValue('');
@@ -458,17 +460,20 @@ export class FlightSearchService {
           }
         }
         //if the current date is the last one in array compare it with the previous one 
-        else if(nextDate!='' || currentDate!=''){
-          let prevDate = new Date( this.flightsArray.at(i-1)?.get('departingD')?.value) ;
+        else if( currentDate){
+          let prevDate = new Date (this.flightsArray.at(i-1)?.get('departingD')?.value) ;
+          
           //compare between current and next Date
           if(prevDate.getTime() > currentDate.getTime()){
             this.validMultiDateAlert.enMsg='The First Flight should Have A date Before next Flight';
             this.validMultiDateAlert.arMsg='يجب أن يكون للرحلة الأولى تاريخ قبل الرحلة التالية';
             this.flightsArray.at(i)?.get('departingD')?.setValue('');
+            break;
           }
           else{
             this.validMultiDateAlert.enMsg='True';
             this.validMultiDateAlert.arMsg='True';
+            continue;
           }
         }
         else{
