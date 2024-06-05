@@ -19,13 +19,13 @@ export class EnvironmentService {
     // Apihotels =   'http://178.63.214.219:5252'
 
     //for travelli
-    Apihotels =   'https://hotelsapi.ticketboarding.com' 
+    Apihotels =   'https://hotelsapi.travellii.com' 
     
     users =       'https://usersapi.rhlaty.com'
     admin =       'https://adminapi.rhlaty.com/'
     getDPayment = 'https://adminapi.rhlaty.com/'
     bookHotels =  'https://hotels.rhlaty.com'
-    prepay =      'https://prepayapi.ticketboarding.com/'
+    prepay =      'https://prepayapi.travellii.com/'
     backOffice =  'https://backofficeapi.rhlaty.com'
     FlightTop =   'https://flightsearch.rhlaty.com'
    
