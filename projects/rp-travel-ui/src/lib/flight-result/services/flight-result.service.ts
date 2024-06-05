@@ -177,6 +177,7 @@ fareLoading: boolean = true;
  * from Api  searchFlight
  **/
   getDataFromUrl(lang: string, currency: string, pointOfReservation: string, flightType: string, flightsInfo: string, serachId: string, passengers: string, Cclass: string, showDirect: boolean,endCustomAirlineFilter:number,endCustomAirlineFilterMobile:number) {
+    this.FlightType = flightType;
     this.loading = true
     this.orgnizedResponce = []
     this.FilterData = []
