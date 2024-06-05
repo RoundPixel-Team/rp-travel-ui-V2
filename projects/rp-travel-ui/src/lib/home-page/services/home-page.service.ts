@@ -173,20 +173,34 @@ selectedCurrency : currencyModel = {
  * this is for fetching and updating Point of Sale (pointOfSale:pointOfSaleModel) 
  *and also updates loader state
  */
-getPointOfSale(pos:pointOfSaleModel){
+// getPointOfSale(pos:pointOfSaleModel){
+//   this.loader = true
+//   this.subscription.add(
+//       this.api.pointOfSale().subscribe((res)=>{
+//         if(res){
+//           this.pointOfSale = res
+//           this.loader = false
+//         }
+//         else{
+//           this.pointOfSale=pos;
+//         }
+//       },(err:any)=>{
+//         console.log('get all pointofsales error ->',err)
+//         this.pointOfSale = pos
+//         this.loader = false
+//       })
+//   )
+// }
+getPointOfSale(){
   this.loader = true
   this.subscription.add(
       this.api.pointOfSale().subscribe((res)=>{
         if(res){
-          this.pointOfSale = res
-          this.loader = false
-        }
-        else{
-          this.pointOfSale=pos;
-        }
+                  this.pointOfSale = res
+                  this.loader = false
+                }
       },(err:any)=>{
         console.log('get all pointofsales error ->',err)
-        this.pointOfSale = pos
         this.loader = false
       })
   )
