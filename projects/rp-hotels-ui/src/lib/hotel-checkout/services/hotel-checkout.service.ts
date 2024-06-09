@@ -268,7 +268,7 @@ export class HotelCheckoutService {
    */
   onSubmit() {
     if (this.HotelForm.valid) {
-      debugger
+      this.loader = true
       let bookObject: hotelSaveBooking = { ...this.HotelForm.value }
       this.subscription.add(
         this.api.saveBooking(bookObject, this.searchId, this.ip, this.iplocation, this.lang).subscribe
