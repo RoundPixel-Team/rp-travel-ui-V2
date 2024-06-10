@@ -88,6 +88,7 @@ export class HotelCheckoutService {
        * 
        */
   loadDataCard(providerId: string, searchId: string, HotelCode: string, packageKey: string) {
+    this.loader = true
     this.subscription.add(
       this.api.GetHotelRooms(providerId, searchId, HotelCode).subscribe((res) => {
         if (res == undefined) {
@@ -97,6 +98,7 @@ export class HotelCheckoutService {
         }
         else {
           if (res) {
+            this.loader = false
             this.RequiredHotel = res
             let HotelPackage = res.Packages
             this.HotelResult = HotelPackage.filter(v => v.PackageKey === packageKey)[0].Rooms
