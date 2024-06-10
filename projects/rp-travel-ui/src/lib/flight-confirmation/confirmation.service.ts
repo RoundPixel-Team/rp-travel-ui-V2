@@ -55,11 +55,11 @@ export class ConfirmationService {
     let commission =total_booking_value *.02;
     let status ='confirmed';
     if(localStorage.getItem('click_id')){
-      var url = `https://secure.wego.com/analytics/v2/conversions?conversion_id=c-wego-khaleejgate.com&click_id=${localStorage.getItem('click_id')}&comm_currency_code=${comm_currency_code}&bv_currency_code=${bv_currency_code}&transaction_id=${transaction_id}&commission=${commission}&total_booking_value=${total_booking_value}&status=${status}`;
+      var url = `https://srv.wego.com/analytics/v2/conversions?conversion_id=c-wego-rahaal.co&click_id=${localStorage.getItem('click_id')}&comm_currency_code=${comm_currency_code}&bv_currency_code=${bv_currency_code}&transaction_id=${transaction_id}&commission=${commission}&total_booking_value=${total_booking_value}&status=${status}`;
     }
     else {
       console.log("CLICK ID NOT FOUND");
-      var url = `https://secure.wego.com/analytics/v2/conversions?conversion_id=c-wego-triphands.com&click_id=${'no_click_id'}&comm_currency_code=${comm_currency_code}&bv_currency_code=${bv_currency_code}&transaction_id=${transaction_id}&commission=${commission}&total_booking_value=${total_booking_value}&status=${status}`;
+      var url = `https://srv.wego.com/analytics/v2/conversions?conversion_id=c-wego-rahaal.co&click_id=${'no_click_id'}&comm_currency_code=${comm_currency_code}&bv_currency_code=${bv_currency_code}&transaction_id=${transaction_id}&commission=${commission}&total_booking_value=${total_booking_value}&status=${status}`;
     }
     
     this.wgoDeebUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
