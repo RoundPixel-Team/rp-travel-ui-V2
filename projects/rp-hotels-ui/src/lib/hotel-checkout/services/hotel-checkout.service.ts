@@ -91,6 +91,8 @@ export class HotelCheckoutService {
     this.subscription.add(
       this.api.GetHotelRooms(providerId, searchId, HotelCode).subscribe((res) => {
         if (res == undefined) {
+          this.paymentLinkFailure.next(res);
+          this.loader=false;
           return
         }
         else {
@@ -105,7 +107,10 @@ export class HotelCheckoutService {
 
         }
 
-      }))
+      },((err)=>{
+        this.paymentLinkFailure.next(err);
+        this.loader=false;
+      })))
   }
   /**
       * 
