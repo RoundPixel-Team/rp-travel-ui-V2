@@ -208,6 +208,8 @@ export class HotelResultsService {
           this.filteredHotels = this.hotelDataResponse?.HotelResult.filter(hotel => this.filterHotelData(hotel))
           this.splicedFiltiredHotels = [...this.filteredHotels.slice(0,5)]
         }
+      },(error)=>{
+        console.log("VALUE CHANGES DOESN'T WORK", error)
       })
     )
   }
