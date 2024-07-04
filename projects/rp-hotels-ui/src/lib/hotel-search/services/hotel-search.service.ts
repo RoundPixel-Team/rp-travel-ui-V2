@@ -212,7 +212,7 @@ export class HotelSearchService {
     })
   }
   removeChildAge(roomNo:number){
-    this.roomChildAgeArray=[...this.roomChildAgeArray.filter(child => {return child.roomNo!==roomNo})]
+    this.roomChildAgeArray.pop()
   }
 
   /**
