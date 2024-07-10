@@ -308,7 +308,7 @@ export class HotelSearchService {
     this.allGuest = adults + childs;
 
     if (adults + childs > 9) {
-      this.guestMessageError.enMsg = "Maximun Number guest Shouldn't be more than 9"
+      this.guestMessageError.enMsg = "Maximum number of guests should not be more than 9!"
       this.guestMessageError.arMsg = "لا يجب أن يزيد عدد الحاجزين عن 9 افراد"
     }
     return this.allGuest
