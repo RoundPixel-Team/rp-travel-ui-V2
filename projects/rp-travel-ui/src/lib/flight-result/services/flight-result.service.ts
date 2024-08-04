@@ -92,6 +92,9 @@ fareLoading: boolean = true;
   minDurationValueForSlider:number = 0;
   maxDurationValueForSlider:number = 7000;
 
+  refundedItineries:number = 0
+  nonRefundedItieneries:number = 0
+
 /**Property for fare Rules */
   fareRules!: FareRules[];
   /**
@@ -278,6 +281,8 @@ fareLoading: boolean = true;
             })
             this.filterForm.updateValueAndValidity();
             this.formINIT = true;
+            this.refundedItineries = result.airItineraries.filter((res)=>{return res.isRefundable}).length
+            this.nonRefundedItieneries = result.airItineraries.filter((res)=>{return !res.isRefundable}).length
             this.updateFilter()
           }
           else {
