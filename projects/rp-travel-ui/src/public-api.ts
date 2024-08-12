@@ -56,3 +56,5 @@ export * from './lib/shared/pipes/hotelecites.pipe'
 export * from './lib/shared/pipes/hour-minute.pipe'
 export * from './lib/shared/pipes/limit-to.pipe'
 export * from './lib/shared/pipes/exchange.pipe'
+export * from './lib/shared/pipes/filter-airport.pipe'
+
