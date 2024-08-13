@@ -17,27 +17,28 @@ export class FilterAirportPipe implements PipeTransform {
        }
        let airportsMap = new Map();
        let airportsArr: airPorts[] = [];
-       let lastAirportsArr: airPorts[] = [];
        let cityName: string="";
-       let lastCityName:string="";
      
        for(let i=0; i< value.length; i++){
-         if(value[i].cityName.toLowerCase().includes(args.toLowerCase()) || value[i].cityCode.toLowerCase().includes(args.toLowerCase())){
-           cityName = value[i].cityName;
-           airportsArr.push(value[i]);
-           if(lastCityName == cityName){
-             lastAirportsArr.push(value[i]);
-             airportsMap.set(cityName,[...lastAirportsArr]);
-           }
-           else{
-             airportsMap.set(cityName,[...airportsArr]);
-             lastAirportsArr=[];
-             lastAirportsArr.push(value[i]);
-             lastCityName = value[i].cityName;
-           }
-         }
-         airportsArr=[];
-       }
+        if(value[i].cityName.toLowerCase().includes(args) || value[i].cityCode.toLowerCase().includes(args)){
+          cityName = value[i].cityName;
+          if(airportsMap.has(cityName)){  // If city name exist before then update the new value of this key (City Name)
+            airportsArr = airportsMap.get(cityName);  // get old value of this key (City Name)
+            airportsArr.push(value[i]);  // add the new object of the same key (City Name)
+            airportsMap.set(cityName, [...airportsArr]); //update the value of this key
+          }
+          else{
+            airportsArr.push(value[i]); 
+            airportsMap.set(cityName, [...airportsArr]);
+          }
+          airportsArr = [];
+          cityName = '';
+        }
+        else{
+          continue;
+        }
+      }
+      
       return [...airportsMap];
     }
   }

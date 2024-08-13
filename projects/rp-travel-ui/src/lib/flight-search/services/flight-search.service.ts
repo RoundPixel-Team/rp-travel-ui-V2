@@ -605,7 +605,7 @@ export class FlightSearchService {
    * this function is responsible to split the airport code from Depart Or Land input
    * @params spiltIndex with index hav the airport code (0 or 1)
    * @params splitPattern pattern used to split the airport string and get separate code alone
-   * @params airport whicj selected from depart or land airports Input
+   * @params airport which selected from depart or land airports Input
    * @retuen airport code
    */
   getAirportCode(spiltIndex: number, splitPattern: string, airport: string) {
@@ -615,19 +615,19 @@ export class FlightSearchService {
   /**
    * match Flights form array values with FlightInfoModule
    */
-  getFlightInfo(spiltIndex: number, splitPattern: string) {
+  getFlightInfo(splitPattern: string) {
     let flightout: searchBoxFlights[] = [];
     //if flight type is round trip return array of two flights with depart city, land city and depart date
     if (this.searchFlight.get('flightType')?.value == 'RoundTrip') {
       const roundElement1 = (<FormArray>this.searchFlight.get('Flights'))
         .controls[0]; //first flight of RoundTrip
       var depart = this.getAirportCode(
-        spiltIndex,
+        (roundElement1.value['departing']).split(splitPattern).length-1, 
         splitPattern,
         roundElement1.value['departing']
       );
       var landing = this.getAirportCode(
-        spiltIndex,
+        (roundElement1.value['landing']).split(splitPattern).length-1,
         splitPattern,
         roundElement1.value['landing']
       );
@@ -664,12 +664,12 @@ export class FlightSearchService {
       ];
       let flight: searchBoxFlights = {
         departing: this.getAirportCode(
-          spiltIndex,
+          (element.value['departing']).split(splitPattern).length-1,
           splitPattern,
           element.value['departing']
         ),
         landing: this.getAirportCode(
-          spiltIndex,
+          (element.value['landing']).split(splitPattern).length-1,
           splitPattern,
           element.value['landing']
         ),
@@ -722,10 +722,9 @@ export class FlightSearchService {
     lang: string,
     currency: string,
     pointOfSale: string,
-    spiltIndex: number,
     splitPattern: string
   ) {
-    let flightList = this.getFlightInfo(spiltIndex, splitPattern);
+    let flightList = this.getFlightInfo(splitPattern);
     let searchApi: searchFlightModel = {
       lan: lang,
       currency: currency,
@@ -769,7 +768,7 @@ export class FlightSearchService {
 
       //If All Validations and conditions are true then save the form at local storage and go to search Results
       if (!adult.enMsg &&!child.enMsg &&!infant.enMsg &&!depDate.enMsg && !retDate?.enMsg) {
-        return this.getSearchresultLink(lang,currency,pointOfSale,spiltIndex,splitPattern);
+        return this.getSearchresultLink(lang,currency,pointOfSale,splitPattern);
       } else {
         return { adult, child, infant, retDate, depDate };
       }
