@@ -742,7 +742,7 @@ export class FlightSearchService {
     this.resultLink = searchApi;
     return `${searchApi.lan}/${searchApi.currency}/${searchApi.pointOfReservation}/${searchApi.flightType}/${searchApi.flightsInfo}/${searchApi.serachId}/${searchApi.passengers}/${searchApi.Cclass}/${searchApi.showDirect}`;
   }
-  onSubmit(lang: string,currency: string,pointOfSale: string,spiltIndex: number,splitPattern: string) {
+  onSubmit(lang: string,currency: string,pointOfSale: string,splitPattern: string) {
     if (!this.searchFlight.value) {
       this.searchFlight.markAllAsTouched(); //used this function to make a red border around invalid inputs
       return '';
