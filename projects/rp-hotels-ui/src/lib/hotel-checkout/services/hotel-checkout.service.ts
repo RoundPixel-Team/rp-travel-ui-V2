@@ -273,7 +273,7 @@ export class HotelCheckoutService {
    * 
    * here is OnSubmit function which returning the payment link if all params is good
    */
-  onSubmit(iplocation:string =this.iplocation) {
+  onSubmit(iplocation:string) {
     if (this.HotelForm.valid) {
       this.loader = true
       let bookObject: hotelSaveBooking = { ...this.HotelForm.value }
