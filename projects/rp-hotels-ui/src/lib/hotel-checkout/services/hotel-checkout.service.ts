@@ -273,12 +273,12 @@ export class HotelCheckoutService {
    * 
    * here is OnSubmit function which returning the payment link if all params is good
    */
-  onSubmit() {
+  onSubmit(iplocation:string =this.iplocation) {
     if (this.HotelForm.valid) {
       this.loader = true
       let bookObject: hotelSaveBooking = { ...this.HotelForm.value }
       this.subscription.add(
-        this.api.saveBooking(bookObject, this.searchId, this.ip, this.iplocation, this.lang).subscribe
+        this.api.saveBooking(bookObject, this.searchId, this.ip, iplocation, this.lang).subscribe
           ((res) => {
             this.paymentLink.next(res)
             this.loader = false;
