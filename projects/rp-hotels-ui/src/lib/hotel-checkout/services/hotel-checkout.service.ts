@@ -215,7 +215,7 @@ export class HotelCheckoutService {
   * handle the missing values which is founded in the first adult form only
   * adding the totalSellPrice & the TotalCostPrice
   */
-  prepareData(r: hotelRoomsResponse) {
+  prepareData(r: hotelRoomsResponse,currency:string) {
 
     {
       if (sessionStorage.getItem('hotelform')) {
@@ -224,7 +224,6 @@ export class HotelCheckoutService {
         this.city = obj.CityId;
 
         if (this.city) {
-
           this.HotelForm.get('cityName')?.setValue(this.city);
         }
       }
@@ -239,7 +238,7 @@ export class HotelCheckoutService {
 
       this.HotelForm.get('sellPrice')?.setValue(parseFloat((Math.round(this.totalSellPrice * 100) / 100).toFixed(2)));
       this.HotelForm.get('totalCost')?.setValue(this.totalCostPrice);
-      this.HotelForm.get('currency')?.setValue(this.Currency);
+      this.HotelForm.get('currency')?.setValue(currency);
       let phoneNumberObject: any = { ...(<FormArray>this.HotelForm.get('Travellers')).at(0).get('phonenum')?.value };
 
       let phone: string = phoneNumberObject.number;

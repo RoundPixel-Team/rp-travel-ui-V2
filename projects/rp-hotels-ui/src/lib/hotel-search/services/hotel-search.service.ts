@@ -375,9 +375,9 @@ export class HotelSearchService {
    * this function is responsible to return link to use it to navigate to search results with all data of search box
    */
 
-  onSubmit(lang: string, currency: string, pointOfSale: string) {
+  onSubmit(lang: string, currency: string, pointOfSale: string, nation:string) {
     if (this.HotelSearchForm.get("nation")?.value === '') {
-      this.HotelSearchForm.get("nation")?.setValue('Kuwait')
+      this.HotelSearchForm.get("nation")?.setValue(nation);
     }
     if (this.HotelSearchForm.valid) {
       let location: hotelCities = this.HotelSearchForm.get("location")?.value;
