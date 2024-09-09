@@ -20,7 +20,7 @@ export class FilterAirportPipe implements PipeTransform {
        let cityName: string="";
      
        for(let i=0; i< value.length; i++){
-        if(value[i].cityName.toLowerCase().includes(args.toLowerCase()) || value[i].cityCode.toLowerCase().includes(args.toLowerCase())){
+        if(value[i].cityName.toLowerCase().includes(args.toLowerCase()) || value[i].cityCode.toLowerCase().includes(args.toLowerCase())|| value[i].airportCode.toLowerCase().includes(args.toLowerCase())|| value[i].airportName.toLowerCase().includes(args.toLowerCase())){
           cityName = value[i].cityName.toLowerCase();
           if(airportsMap.has(cityName)){  // If city name exist before then update the new value of this key (City Name)
             airportsArr = airportsMap.get(cityName);  // get old value of this key (City Name)
