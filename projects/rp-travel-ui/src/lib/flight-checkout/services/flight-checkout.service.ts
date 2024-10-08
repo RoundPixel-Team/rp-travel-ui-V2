@@ -5,6 +5,7 @@ import { BreakDownView, Cobon, flightOfflineService, passengersModel, selectedFl
 import { FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { passengerFareBreakDownDTOs,fare } from '../../flight-result/interfaces';
 import { HomePageService } from '../../home-page/services/home-page.service';
+import { DatePipe } from '@angular/common';
 
 type fareCalc = (fare:fare[])=>number;
 type calcEqfare =(flightFaresDTO: passengerFareBreakDownDTOs[],type:string,farecalc:fareCalc)=>number;
@@ -138,7 +139,8 @@ bookingType:string='standard'
     return this.usersForm.get("users")as FormArray
   }
 
-  constructor() { }
+  constructor(    private datePipe: DatePipe,
+  ) { }
 
 
 
@@ -748,6 +750,10 @@ bookingType:string='standard'
         .filter(c=>{return c.countryName == this.usersArray.at(i).get('countryOfResidence')?.value})[0].pseudoCountryCode)
         this.usersArray.at(i).get('IssuedCountry')?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value)
         this.usersArray.at(i).get('nationality')?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value)
+        this.usersArray.at(i).get('dateOfBirth')?.setValue(this.datePipe.transform(
+          this.usersArray.at(i).get('dateOfBirth')?.value,"yyyy-MM-dd"))
+          this.usersArray.at(i).get('PassportExpiry')?.setValue(this.datePipe.transform(
+            this.usersArray.at(i).get('PassportExpiry')?.value,"yyyy-MM-dd"))
     }
     let object : passengersModel = {
       bookingEmail:this.usersArray.at(0).get('email')?.value,
