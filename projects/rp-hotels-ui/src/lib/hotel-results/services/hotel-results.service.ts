@@ -112,7 +112,7 @@ export class HotelResultsService {
               this.ratesArrSelected.push(i + 1);
             }
 
-            this.sorting(1);
+            // this.sorting(3);
 
             //set price slider configurations
             this.maxPrice = [...this.filteredHotels][0].costPrice;
