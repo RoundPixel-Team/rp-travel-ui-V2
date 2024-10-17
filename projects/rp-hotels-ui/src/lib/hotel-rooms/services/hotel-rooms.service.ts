@@ -10,6 +10,7 @@ export class HotelRoomsService {
 roomsLoader:boolean = false;
 cancelLoader:boolean = false;
 roomsData:hotelRoomsResponse=undefined!;
+selectedPackage:any;
 cancelPolicy!:roomCancelPolicy[];
 error:boolean = false;
 groupedRooms!:{};
@@ -24,7 +25,7 @@ groupedRooms!:{};
  * @param pid 
  * this method is responsible for fetching the rooms data in a specified hotel (the selected hotel) and it takes the following parameters : search Id, Hotel Id and provider id
  * */
-getRooms(sid: string, hotelid: string, Pid: string): Observable<any> {
+getRooms(sid: string, hotelid: string, Pid: string,packageKey?: string): Observable<any> {
   this.roomsLoader = true;
 
   return this.api.getHotelsRoomsApi(sid, hotelid, Pid).pipe(
@@ -33,7 +34,24 @@ getRooms(sid: string, hotelid: string, Pid: string): Observable<any> {
       this.roomsLoader = false;
       this.error=false;
       this.roomsData = data;
-      this.groupedRooms = this.groupRooms(this.roomsData);
+      if (packageKey) {
+        const selectedPackage = this.roomsData.Packages.find(pkg => pkg.PackageKey === packageKey);
+        if (selectedPackage) {
+          this.selectedPackage = selectedPackage; // store selected package separately
+          const otherPackages = this.roomsData.Packages.filter(pkg => pkg.PackageKey !== packageKey);
+
+         const filteredRoomsData: hotelRoomsResponse = {
+          ...this.roomsData,
+          Packages: otherPackages
+        };
+
+        this.groupedRooms = this.groupRooms(filteredRoomsData);
+
+        }
+      }else{
+        this.groupedRooms = this.groupRooms(this.roomsData);
+
+      }
       return data; 
     }),
     catchError((err) => {
