@@ -207,7 +207,7 @@ fareLoading: boolean = true;
             this.loading = false;
             this.ResultFound = true;
             this.response = result;
-            
+            this.FlightType=this.response.searchCriteria.flightType;
             this.minAnMax(this.response.airItineraries); //get Min And Max price
             this.findDepartingnMinMax(this.response.airItineraries); //get Min And Max Depart Date
             this.findArrivingMinMax(this.response.airItineraries); //get Min And Max Arrival Date
