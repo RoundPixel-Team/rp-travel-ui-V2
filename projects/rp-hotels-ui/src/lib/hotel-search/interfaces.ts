@@ -4,6 +4,7 @@ import { hotelCities } from "../home-page/interfaces"
 export interface hotelSearchForm {
     location: hotelCities
     nation: string,
+    residence:string,
     checkIn: string,
     checkOut: string,
     roomN: number,
@@ -25,6 +26,7 @@ export interface SearchHoteltModule {
     CityName:string,
     citywithcountry:string,
     nation:string,
+    residence:string,
     checkIn:string |null,
     checkOut:string | null,
     roomN:string,

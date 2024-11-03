@@ -126,8 +126,8 @@ export class HotelCheckoutService {
         this.firstAdultFound = true;
         (<FormArray>this.HotelForm.get('Travellers')).push(new FormGroup({
           "salutation": new FormControl('', [Validators.required]),
-          "firstName": new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z \-\']+'), Validators.minLength(3)]),
-          "lastName": new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z \-\']+'), Validators.minLength(3)]),
+          "firstName": new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z \-\']+'), Validators.minLength(3),Validators.maxLength(25)]),
+          "lastName": new FormControl('', [Validators.required, Validators.pattern('^[a-zA-Z \-\']+'), Validators.minLength(3),Validators.maxLength(25)]),
           "phonenum": new FormControl("", [Validators.required, Validators.maxLength(12)]),
           "roomNo": new FormControl(Number(this.HotelResult[i].RoomCode)),
           "paxType": new FormControl('adt'),
