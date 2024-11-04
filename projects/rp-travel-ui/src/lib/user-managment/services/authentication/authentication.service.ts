@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { EMAIL_VALIDATION, PASSWORD_VALIDATION, PHONE_VALIDATION, REQUIRED_VALIDATION } from "../../constants/validation";
-import { BehaviorSubject, Subscription } from "rxjs";
+import { BehaviorSubject, Subject, Subscription } from "rxjs";
 import { AuthApiService } from "./authentication-api.service";
 import { ILoginResponse } from "../../interfaces";
 
@@ -11,6 +11,14 @@ import { ILoginResponse } from "../../interfaces";
   loginForm: FormGroup = new FormGroup({});
   registerForm: FormGroup = new FormGroup({});
 
+  /**
+   * To notify when any change happens in the authentication process such as:
+   * - Errors
+   * - Successfully Register
+   * - Successfully Loged In
+   */
+  
+  notify: Subject<number> = new Subject();
   subscription: Subscription = new Subscription();
   isLoading: boolean = false;
 
@@ -53,7 +61,6 @@ import { ILoginResponse } from "../../interfaces";
 
   /**
    * this function is responsible to make intgeration between front and backend request (USER REGISTER)
-   * @params router navigation name to navigate to another page (LOGIN PAGE) after register
    */
   regitserSubmit(){
     this.isLoading = true
@@ -63,25 +70,54 @@ import { ILoginResponse } from "../../interfaces";
     }
     else{
       this.authApi.registeration(this.registerForm.value).subscribe({
-        next: (val: any) => {
-          this.isLoading = false
-          if(val.Comment){
-            localStorage.setItem('authenticatedUser',JSON.stringify(val.applicationUser))
+        next: (res) => {
+          this.notify.next(res.status);
+
+          const userInfo = {
+            email: this.registerForm.controls['email'].value,
+            password: this.registerForm.controls['password'].value
           }
+
+          localStorage.setItem('userInfo',JSON.stringify(userInfo));
         },
         error: (error:any) => {
-          console.log("show me signup error",error);
+          this.notify.next(error.error.status);
           this.isLoading = false
         },
       });
+    }
+  }
 
-      console.log(this.registerForm.value);
+  /**
+   * this function is responsible to make intgeration between front and backend request (USER REGISTER)
+   */
+  otpSubmit(otp: string){
+    this.isLoading = true
+    if(this.registerForm.invalid){
+      this.isLoading = false
+    }
+    else{
+      const userInfo = JSON.parse(localStorage.getItem('userInfo') ?? "");
+      console.log({otp, ...userInfo})
+      this.authApi.otpVerification({otp, ...userInfo}).subscribe({
+        next: (res) => {
+          this.notify.next(res.status);
+          
+          this.isLoading = false;
+          if(res.status === 0){
+            localStorage.setItem('token',JSON.stringify(res.returnObject.token));
+          }
+        },
+        error: (error:any) => {
+          this.notify.next(error.error.status);
+          this.isLoading = false
+        },
+      });
     }
   }
 
   /**
    * this function is responsible to make intgeration between front and backend request (USER LOGIN)
-   * @params router navigation name to navigate to another page (HOME PAGE) after login
    */
   loginSubmit(){
     this.isLoading = true
@@ -92,15 +128,15 @@ import { ILoginResponse } from "../../interfaces";
     else {
       this.subscription.add(
         this.authApi.login(this.loginForm.value).subscribe({
-          next: (res: ILoginResponse) => {
-            console.log("show me login submit",res);
+          next: (res) => {
+            this.notify.next(res.status);
             this.isLoading = false
-            // if(val.Comment){
-            //   localStorage.setItem('token',JSON.stringify(val.applicationUser))
-            // }
+            if(res.status === 0){
+              localStorage.setItem('token',JSON.stringify(res.returnObject.token));
+            }
           },
           error: (error: any) => {
-            console.log("user login error",error);
+            this.notify.next(error.error.status);
             this.isLoading = false
           }
         })

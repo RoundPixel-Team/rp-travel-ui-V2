@@ -69,3 +69,9 @@ export interface ReturnObject {
   isAgent: boolean;
   agencyId: string | null;
 }
+
+export interface IOtp {
+  otp: string;
+  email: string;
+  password: string;
+}
