@@ -46,3 +46,26 @@ export interface userModel{
     Id: string,
     UserName: string
 }
+
+export interface IRegisterResponse {
+  status: number;
+  message: string;
+  returnObject: string;
+}
+
+export interface ILoginResponse {
+  status: number;
+  message: string;
+  returnObject: ReturnObject;
+}
+
+export interface ReturnObject {
+  userName: string;
+  email: string;
+  isSuperAdmin: boolean;
+  roles: string[];
+  activeClaims: string[];
+  token: string;
+  isAgent: boolean;
+  agencyId: string | null;
+}

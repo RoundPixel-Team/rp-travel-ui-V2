@@ -14,7 +14,7 @@ export * from './lib/home-page/interfaces'
 
 
 
-// Environment 
+// Environment
 export * from './lib/shared/services/environment.service'
 export * from './lib/shared/interfaces'
 
@@ -39,6 +39,10 @@ export * from './lib/flight-search/interfaces'
 // User Managment
 export * from './lib/user-managment/services/user-managment-api.service'
 export * from './lib/user-managment/services/user-managment.service'
+// Authentication
+export * from './lib/user-managment/services/authentication/authentication.service';
+export * from './lib/user-managment/services/authentication/authentication-api.service';
+
 export * from './lib/user-managment/interfaces'
 
 //flight confirmation
@@ -57,4 +61,3 @@ export * from './lib/shared/pipes/hour-minute.pipe'
 export * from './lib/shared/pipes/limit-to.pipe'
 export * from './lib/shared/pipes/exchange.pipe'
 export * from './lib/shared/pipes/filter-airport.pipe'
-
