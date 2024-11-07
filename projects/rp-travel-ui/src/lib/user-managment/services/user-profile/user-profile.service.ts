@@ -130,9 +130,14 @@ import { UserProfileApiService } from "./user-profile-api.service";
       token = JSON.parse(token);
       this.subscription.add(
         this.userProfileApi.changePasswordApi(token!, this.changePasswordForm.value).subscribe({
-          next: () => {
-            this.isLoading = false;
-            this.notify.next(2);
+          next: (val) => {
+            if(val.status === 1) {
+              this.isLoading = false;
+              this.notify.next(1);
+            } else {
+              this.isLoading = false;
+              this.notify.next(2);
+            }
           },
           error: (error:any) => {
             this.isLoading = false;
