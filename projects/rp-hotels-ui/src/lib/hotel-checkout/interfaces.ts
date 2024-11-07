@@ -8,7 +8,16 @@ import { roomCancelPolicy } from "../hotel-rooms/interfaces";
     BookingBeforePrice: number,
     BookingAfterPrice: number,
     Difference: number,
-    Currency: string
+    Currency: string,
+    Supplements:Supplements[]
+ }
+ export interface Supplements{
+   Cur:string;
+   Description:string;
+   Price:number;
+   SuppChargeType:string;
+   SuppID:number;
+   SuppIsSelected:boolean;
  }
  export interface Cobon {
    promotionDetails: promotionDetails

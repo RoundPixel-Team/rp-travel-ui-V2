@@ -113,6 +113,7 @@ export class HotelCheckoutService {
         this.paymentLinkFailure.next(err);
         this.loader=false;
       })))
+      this.getHotelAvalibility();
   }
   /**
       * 
