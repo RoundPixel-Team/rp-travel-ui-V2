@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { FlightCheckoutApiService } from './flight-checkout-api.service';
 import { BreakDownView, Cobon, flightOfflineService, passengersModel, selectedFlight } from '../interfaces';
-import { FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { passengerFareBreakDownDTOs,fare } from '../../flight-result/interfaces';
 import { HomePageService } from '../../home-page/services/home-page.service';
 
@@ -314,7 +314,7 @@ bookingType:string='standard'
               dateOfBirth: new FormControl("", [Validators.required]),
               PassengerType: new FormControl("ADT"),
               countryOfResidence: new FormControl("", [Validators.required]),
-              PassportNumber: new FormControl("", [Validators.required]),
+              PassportNumber: new FormControl("", [Validators.required, this.passportValidator()]),
               PassportExpiry: new FormControl("", [Validators.required]),
               IssuedCountry: new FormControl("", [Validators.required]),
               position: new FormControl(this.usersArray.length + 1)
@@ -354,7 +354,7 @@ bookingType:string='standard'
               dateOfBirth: new FormControl("", [Validators.required]),
               PassengerType: new FormControl("ADT"),
               countryOfResidence: new FormControl("", [Validators.required]),
-              PassportNumber: new FormControl("", [Validators.required]),
+              PassportNumber: new FormControl("", [Validators.required, this.passportValidator()]),
               PassportExpiry: new FormControl("", [Validators.required]),
               IssuedCountry: new FormControl("", [Validators.required]),
               position: new FormControl(this.usersArray.length + 1)
@@ -390,7 +390,7 @@ bookingType:string='standard'
               phoneNumber: new FormControl(""),
               countryCode: new FormControl(""),
               countryOfResidence: new FormControl("", [Validators.required]),
-              PassportNumber: new FormControl("", [Validators.required]),
+              PassportNumber: new FormControl("", [Validators.required, this.passportValidator()]),
               PassportExpiry: new FormControl("", [Validators.required]),
               IssuedCountry: new FormControl("", [Validators.required]),
               position: new FormControl(this.usersArray.length)
@@ -425,7 +425,7 @@ bookingType:string='standard'
             phoneNumber: new FormControl(""),
             countryCode: new FormControl(""),
             countryOfResidence: new FormControl("", [Validators.required]),
-            PassportNumber: new FormControl("", [Validators.required]),
+            PassportNumber: new FormControl("", [Validators.required, this.passportValidator()]),
             PassportExpiry: new FormControl("", [Validators.required]),
             IssuedCountry: new FormControl("", [Validators.required]),
             position: new FormControl(this.usersArray.length)
@@ -472,7 +472,7 @@ bookingType:string='standard'
             dateOfBirth: new FormControl("", [Validators.required]),
             PassengerType: new FormControl("ADT"),
             countryOfResidence: new FormControl("", [Validators.required]),
-            PassportNumber: new FormControl(""),
+            PassportNumber: new FormControl("", [this.passportValidator()]),
             PassportExpiry: new FormControl(""),
             IssuedCountry: new FormControl(""),
             position: new FormControl(this.usersArray.length + 1)
@@ -506,7 +506,7 @@ bookingType:string='standard'
             phoneNumber: new FormControl(""),
             countryCode: new FormControl(""),
             countryOfResidence: new FormControl(""),
-            PassportNumber: new FormControl(""),
+            PassportNumber: new FormControl("",[this.passportValidator()]),
             PassportExpiry: new FormControl(""),
             IssuedCountry: new FormControl(""),
             position: new FormControl(this.usersArray.length)
@@ -541,7 +541,7 @@ bookingType:string='standard'
           phoneNumber: new FormControl(""),
           countryCode: new FormControl(""),
           countryOfResidence: new FormControl(""),
-          PassportNumber: new FormControl(""),
+          PassportNumber: new FormControl("", [this.passportValidator()]),
           PassportExpiry: new FormControl(""),
           IssuedCountry: new FormControl(""),
           position: new FormControl(this.usersArray.length)
@@ -549,6 +549,18 @@ bookingType:string='standard'
       )
     }
     }
+  }
+
+/**
+ * Passport validator function
+ */
+  passportValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const passportPattern = /^[A-Z0-9]{4,9}$/i; // Alphanumeric, 6-9 characters
+      const isValid = passportPattern.test(control.value);
+  
+      return isValid ? null : { invalidPassport: true };
+    };
   }
 
 
