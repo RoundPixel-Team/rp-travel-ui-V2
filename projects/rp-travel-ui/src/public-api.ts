@@ -42,6 +42,12 @@ export * from './lib/user-managment/services/user-managment.service'
 // Authentication
 export * from './lib/user-managment/services/authentication/authentication.service';
 export * from './lib/user-managment/services/authentication/authentication-api.service';
+// User Profile
+export * from './lib/user-managment/services/user-profile/user-profile.service';
+export * from './lib/user-managment/services/user-profile/user-profile-api.service';
+// Trips
+export * from './lib/user-managment/services/trips/trips.service';
+export * from './lib/user-managment/services/trips/trips-api.service';
 
 export * from './lib/user-managment/interfaces'
 

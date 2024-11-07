@@ -24,6 +24,17 @@ export class AuthApiService {
 
   /**
    *
+   * @param body [Login form value]
+   * @returns all the user data needed to be authinticated within the application
+   */
+  externalLoginApi(provider: string):Observable<any> {
+    let api = `${this.env.users}/api/user/googlelogin`
+    return this.http.get<any>(api, {headers: {provider}}).pipe(take(1), catchError(err=>{throw err})
+    )
+  }
+
+  /**
+   *
    * @param body [Signup form value]
    * @returns all the user data needed to be authinticated within the application
    * also saves a new user on the the database
