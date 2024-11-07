@@ -33,13 +33,14 @@ export class SearchboxComponent implements OnInit {
     // this.searchBox.changeChildPassenger(3);
     // console.log(this.searchBox.changeInfentPassenger(4));
   }
-  onSubmit() {
-    console.log("SUBMIT", this.searchBox.searchFlight.valid);
-    console.log("FORM form", this.searchBox.flightsArray);
+//   onSubmit() {
+//     console.log("SUBMIT", this.searchBox.searchFlight.valid);
+//     console.log("FORM form", this.searchBox.flightsArray);
     
-    console.log("FINAL RESULT", this.searchBox.onSubmit('en','KWD','EG',1,'-'));
-    if(this.searchBox.onSubmit('en','KWD','EG',1,'-')){
-      localStorage.setItem('form', JSON.stringify(this.searchBox.searchFlight.value))
-    }
-  }
+//     console.log("FINAL RESULT", this.searchBox.onSubmit('en','KWD','EG',1,'-'));
+//     if(this.searchBox.onSubmit('en','KWD','EG',1,'-')){
+//       localStorage.setItem('form', JSON.stringify(this.searchBox.searchFlight.value))
+//     }
+//   }
+// }
 }
