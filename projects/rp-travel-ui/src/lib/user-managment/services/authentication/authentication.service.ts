@@ -4,7 +4,12 @@ import { Subject, Subscription } from "rxjs";
 import { EMAIL_ERROR_MESSAGES, FIRST_NAME_ERROR_MESSAGES, LAST_NAME_ERROR_MESSAGES, PASSWORD_ERROR_MESSAGES, PHONE_ERROR_MESSAGES, USER_NAME_ERROR_MESSAGES } from "../../constants/error-messages";
 import { EMAIL_VALIDATION, PASSWORD_VALIDATION, PHONE_VALIDATION, REQUIRED_VALIDATION } from "../../constants/validation";
 import { AuthApiService } from "./authentication-api.service";
-
+import { generateTokenHash } from "../../utils/generateHashToken";
+import { Router } from "@angular/router";
+import { TRIPS_DEFAULT, USER_DEFAULT } from "../../constants/defaultValues";
+import { UserProfileService } from "../user-profile/user-profile.service";
+import { TripsService } from "../trips/trips.service";
+import { jwtDecode } from "jwt-decode";
 @Injectable({
   providedIn: 'root',
 }) export class AuthService {
@@ -23,7 +28,14 @@ import { AuthApiService } from "./authentication-api.service";
   isLoading: boolean = false;
   user: any = {}
 
+  private tokenKey = 'token';
+  private tokenHashKey = 'tokenHash';
+  private secret = 'RP-1011101';
+
   authApi = inject(AuthApiService)
+  userProfileService = inject(UserProfileService);
+  tripsService = inject(TripsService);
+  router = inject(Router);
   fb = inject(FormBuilder);
 
   /**
@@ -58,6 +70,12 @@ import { AuthApiService } from "./authentication-api.service";
 
   confirmPasswordValidator(control: AbstractControl) {
     return control.get('password')?.value === control.get('confirmPassword')?.value ? null : {mismatch: true}
+  }
+
+  async setToken(token: string): Promise<void> {
+    localStorage.setItem(this.tokenKey, token);
+    const tokenHash = await generateTokenHash(token, this.secret);
+    localStorage.setItem(this.tokenHashKey, tokenHash);
   }
 
   /**
@@ -108,7 +126,8 @@ import { AuthApiService } from "./authentication-api.service";
             this.isLoading = false;
   
             if(res.status === 0){
-              localStorage.setItem('token',JSON.stringify(res.returnObject.token));
+              const token = JSON.stringify(res.returnObject.token);
+              this.setToken(token);
               this.notify.next(0);
             } else {
               this.notify.next(1);
@@ -139,7 +158,8 @@ import { AuthApiService } from "./authentication-api.service";
             this.isLoading = false;
 
             if(res.status === 0){
-              localStorage.setItem('token',JSON.stringify(res.returnObject.token));
+              const token = JSON.stringify(res.returnObject.token);
+              this.setToken(token);
               this.notify.next(0);
             }else{
               this.notify.next(1);
@@ -161,6 +181,41 @@ import { AuthApiService } from "./authentication-api.service";
     this.subscription.add(
       this.authApi.externalLoginApi(provider).subscribe()
     )
+  }
+
+  async getToken(): Promise<string | null> {
+    const token = localStorage.getItem(this.tokenKey);
+    const tokenHash = localStorage.getItem(this.tokenHashKey);
+    if (token && tokenHash) {
+      const currentHash = await generateTokenHash(token, this.secret);
+      if (currentHash === tokenHash) {
+        return token;
+      } else {
+        this.removeToken();
+        return null;
+      }
+    }
+    return null;
+  }
+
+  removeToken() {
+    localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.tokenHashKey);
+    
+    this.userProfileService.user = USER_DEFAULT;
+    this.tripsService.allTrips = TRIPS_DEFAULT;
+    
+    this.notify.next(2);
+    this.router.navigate([""]);
+  }
+
+  isTokenExpired(): boolean {
+    const token = localStorage.getItem(this.tokenKey);
+    if (!token) return true;
+
+    const { exp } = jwtDecode<{ exp: number }>(token);
+    console.log("===============>", exp)
+    return Date.now() >= exp * 1000;
   }
 
   getFirstNameErrorMessage(firstNameControl: AbstractControl, lang: 'en' | 'ar' = 'en') {

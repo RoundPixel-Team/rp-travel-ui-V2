@@ -1,4 +1,4 @@
-import { IUser } from "../interfaces";
+import { ITrips, IUser } from "../interfaces";
 
 export const USER_DEFAULT: IUser = {
   firstName: "",
@@ -18,4 +18,9 @@ export const USER_DEFAULT: IUser = {
   lockoutEnd: null,
   lockoutEnabled: false,
   accessFailedCount: 0,
+};
+
+export const TRIPS_DEFAULT: ITrips = {
+  historyFlights: [],
+  upcomingFlights: []
 };
