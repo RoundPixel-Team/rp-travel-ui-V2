@@ -8,8 +8,8 @@ import { ILoginResponse, IRegisterResponse, IOtp } from '../../interfaces';
   providedIn: 'root'
 })
 export class AuthApiService {
-  public http = inject(HttpClient)
-  public env = inject(EnvironmentService)
+  public http = inject(HttpClient);
+  public env = inject(EnvironmentService);
 
   /**
    *
@@ -20,6 +20,28 @@ export class AuthApiService {
     let api = `${this.env.users}/api/user/Login`
     return this.http.post<any>(api, body).pipe(take(1), catchError(err=>{throw err})
     )
+  }
+
+  /**
+   *
+   * @param body [Login form value]
+   * @returns all the user data needed to be authinticated within the application
+   */
+  forgetPasswordApi(body: any):Observable<any> {
+    console.log("hellllllllo");
+    let api = `${this.env.users}/api/user/customerForgotPassword`
+    return this.http.post<any>(api, body).pipe(take(1), catchError(err=>{throw err}))
+  }
+
+  /**
+   *
+   * @param body [Login form value]
+   * @returns all the user data needed to be authinticated within the application
+   */
+  restPasswordApi(body: any):Observable<any> {
+    console.log("hi");
+    let api = `${this.env.users}/api/user/customerResetPassword`
+    return this.http.post<any>(api, body).pipe(take(1), catchError(err=>{throw err}))
   }
 
   /**

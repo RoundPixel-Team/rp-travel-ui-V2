@@ -4,7 +4,6 @@ import { Subject, Subscription } from "rxjs";
 import { EMAIL_ERROR_MESSAGES, FIRST_NAME_ERROR_MESSAGES, LAST_NAME_ERROR_MESSAGES, PASSWORD_ERROR_MESSAGES, PHONE_ERROR_MESSAGES, USER_NAME_ERROR_MESSAGES } from "../../constants/error-messages";
 import { EMAIL_VALIDATION, PASSWORD_VALIDATION, PHONE_VALIDATION, REQUIRED_VALIDATION } from "../../constants/validation";
 import { AuthApiService } from "./authentication-api.service";
-import { generateTokenHash } from "../../utils/generateHashToken";
 import { Router } from "@angular/router";
 import { TRIPS_DEFAULT, USER_DEFAULT } from "../../constants/defaultValues";
 import { UserProfileService } from "../user-profile/user-profile.service";
@@ -15,6 +14,8 @@ import { jwtDecode } from "jwt-decode";
 }) export class AuthService {
   loginForm: FormGroup = new FormGroup({});
   registerForm: FormGroup = new FormGroup({});
+  forgetPasswordForm: FormGroup = new FormGroup({});
+  resetPassword: FormGroup = new FormGroup({});
 
   /**
    * To notify when any change happens in the authentication process such as:
@@ -68,13 +69,35 @@ import { jwtDecode } from "jwt-decode";
     });
   }
 
+  /**
+   * this function is responsible to initialize the Login Form
+   */
+  initForgetPasswordForm() {
+    this.forgetPasswordForm = new FormGroup({
+      email: new FormControl('', EMAIL_VALIDATION)
+    });
+  }
+
+  /**
+   * this function is responsible to initialize the Register(sign up) Form
+   */
+  initResetPasswordForm() {
+    this.registerForm = new FormGroup({
+      newPassword: new FormControl('', PASSWORD_VALIDATION),
+      confirmPassword: new FormControl('', PASSWORD_VALIDATION),
+    },
+    {
+      validators: this.confirmPasswordValidator,
+    });
+  }
+
   confirmPasswordValidator(control: AbstractControl) {
     return control.get('password')?.value === control.get('confirmPassword')?.value ? null : {mismatch: true}
   }
 
   async setToken(token: string): Promise<void> {
     localStorage.setItem(this.tokenKey, token);
-    const tokenHash = await generateTokenHash(token, this.secret);
+    const tokenHash = await this.generateTokenHash(token, this.secret);
     localStorage.setItem(this.tokenHashKey, tokenHash);
   }
 
@@ -175,6 +198,68 @@ import { jwtDecode } from "jwt-decode";
   }
 
   /**
+   * this function is responsible to make intgeration between front and backend request (USER LOGIN)
+   */
+  forgetPassword(){
+    console.log('forget'); 
+    this.isLoading = true
+    if(this.forgetPasswordForm.invalid){
+    console.log('forget'); 
+      this.forgetPasswordForm.markAllAsTouched()
+      this.isLoading = false
+    }
+    else {
+      this.subscription.add(
+        this.authApi.forgetPasswordApi(this.forgetPasswordForm.value).subscribe({
+          next: (res) => {
+            this.isLoading = false;
+
+            if(res.status === 0){
+              this.notify.next(0);
+            }else{
+              this.notify.next(1);
+            }
+          },
+          error: (error: any) => {
+            this.notify.next(1);
+            this.isLoading = false
+          }
+        })
+      )
+    }
+  }
+
+  /**
+   * this function is responsible to make intgeration between front and backend request (USER LOGIN)
+   */
+  restPassword(){
+    this.isLoading = true
+    if(this.resetPassword.invalid){
+      this.resetPassword.markAllAsTouched()
+      this.isLoading = false
+    }
+    else {
+      this.subscription.add(
+        this.authApi.restPasswordApi(this.resetPassword.value).subscribe({
+          next: (res) => {
+            this.isLoading = false;
+
+            if(res.status === 0){
+              this.notify.next(0);
+            }else{
+              this.notify.next(1);
+            }
+          },
+          error: (error: any) => {
+            this.notify.next(1);
+            this.isLoading = false
+          }
+        })
+      )
+    }
+  }
+
+  /**
    * this function is responsible to make intgeration between front and backend request (USER REGISTER)
    */
   externalLogin(provider: string){
@@ -183,11 +268,26 @@ import { jwtDecode } from "jwt-decode";
     )
   }
 
+  async generateTokenHash(token: string, secret: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(secret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+    const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(token));
+    return Array.from(new Uint8Array(signature))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+
   async getToken(): Promise<string | null> {
     const token = localStorage.getItem(this.tokenKey);
     const tokenHash = localStorage.getItem(this.tokenHashKey);
     if (token && tokenHash) {
-      const currentHash = await generateTokenHash(token, this.secret);
+      const currentHash = await this.generateTokenHash(token, this.secret);
       if (currentHash === tokenHash) {
         return token;
       } else {
@@ -201,12 +301,11 @@ import { jwtDecode } from "jwt-decode";
   removeToken() {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.tokenHashKey);
-    
+
     this.userProfileService.user = USER_DEFAULT;
     this.tripsService.allTrips = TRIPS_DEFAULT;
     
     this.notify.next(2);
-    this.router.navigate([""]);
   }
 
   isTokenExpired(): boolean {
@@ -214,7 +313,6 @@ import { jwtDecode } from "jwt-decode";
     if (!token) return true;
 
     const { exp } = jwtDecode<{ exp: number }>(token);
-    console.log("===============>", exp)
     return Date.now() >= exp * 1000;
   }
 
