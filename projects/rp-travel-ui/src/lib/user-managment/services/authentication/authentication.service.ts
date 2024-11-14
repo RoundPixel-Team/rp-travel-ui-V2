@@ -9,13 +9,14 @@ import { TRIPS_DEFAULT, USER_DEFAULT } from "../../constants/defaultValues";
 import { UserProfileService } from "../user-profile/user-profile.service";
 import { TripsService } from "../trips/trips.service";
 import { jwtDecode } from "jwt-decode";
+import { FORGET_PASSWORD_STATUS, LOGIN_STATUS, OTP_STATUS, REGISTER_STATUS, RESET_PASSWORD_STATUS } from "../../constants/statuses";
 @Injectable({
   providedIn: 'root',
 }) export class AuthService {
   loginForm: FormGroup = new FormGroup({});
   registerForm: FormGroup = new FormGroup({});
   forgetPasswordForm: FormGroup = new FormGroup({});
-  resetPassword: FormGroup = new FormGroup({});
+  resetPasswordForm: FormGroup = new FormGroup({});
 
   /**
    * To notify when any change happens in the authentication process such as:
@@ -24,7 +25,7 @@ import { jwtDecode } from "jwt-decode";
    * - Successfully Loged In
    */
 
-  notify: Subject<number> = new Subject();
+  notify: Subject<string> = new Subject();
   subscription: Subscription = new Subscription();
   isLoading: boolean = false;
   user: any = {}
@@ -65,7 +66,7 @@ import { jwtDecode } from "jwt-decode";
       isOAuthEnabled: new FormControl(false)
     },
     {
-      validators: this.confirmPasswordValidator,
+      validators: this.confirmPasswordValidator('password'),
     });
   }
 
@@ -81,18 +82,22 @@ import { jwtDecode } from "jwt-decode";
   /**
    * this function is responsible to initialize the Register(sign up) Form
    */
-  initResetPasswordForm() {
-    this.registerForm = new FormGroup({
+  initResetPasswordForm(token: string, email: string) {
+    this.resetPasswordForm = new FormGroup({
+      token: new FormControl(token),
+      email: new FormControl(email),
       newPassword: new FormControl('', PASSWORD_VALIDATION),
       confirmPassword: new FormControl('', PASSWORD_VALIDATION),
     },
     {
-      validators: this.confirmPasswordValidator,
+      validators: this.confirmPasswordValidator('newPassword'),
     });
   }
 
-  confirmPasswordValidator(control: AbstractControl) {
-    return control.get('password')?.value === control.get('confirmPassword')?.value ? null : {mismatch: true}
+  confirmPasswordValidator(controlName: string) {
+    return (control: AbstractControl) => {
+      return control.get(controlName)?.value === control.get('confirmPassword')?.value ? null : {mismatch: true}
+    }
   }
 
   async setToken(token: string): Promise<void> {
@@ -114,7 +119,7 @@ import { jwtDecode } from "jwt-decode";
       this.subscription.add(
         this.authApi.registeration(this.registerForm.value).subscribe({
           next: (res) => {
-            this.notify.next(0);
+            this.notify.next(REGISTER_STATUS.success);
   
             const userInfo = {
               email: this.registerForm.controls['email'].value,
@@ -124,7 +129,7 @@ import { jwtDecode } from "jwt-decode";
             localStorage.setItem('userInfo',JSON.stringify(userInfo));
           },
           error: (error:any) => {
-            this.notify.next(1);
+            this.notify.next(REGISTER_STATUS.faild);
             this.isLoading = false
           },
         })
@@ -151,13 +156,13 @@ import { jwtDecode } from "jwt-decode";
             if(res.status === 0){
               const token = JSON.stringify(res.returnObject.token);
               this.setToken(token);
-              this.notify.next(0);
+              this.notify.next(OTP_STATUS.success);
             } else {
-              this.notify.next(1);
+              this.notify.next(OTP_STATUS.faild);
             }
           },
           error: (error:any) => {
-            this.notify.next(1);
+            this.notify.next(OTP_STATUS.faild);
             this.isLoading = false
           },
         })
@@ -183,13 +188,13 @@ import { jwtDecode } from "jwt-decode";
             if(res.status === 0){
               const token = JSON.stringify(res.returnObject.token);
               this.setToken(token);
-              this.notify.next(0);
+              this.notify.next(LOGIN_STATUS.success);
             }else{
-              this.notify.next(1);
+              this.notify.next(LOGIN_STATUS.faild);
             }
           },
           error: (error: any) => {
-            this.notify.next(1);
+            this.notify.next(LOGIN_STATUS.faild);
             this.isLoading = false
           }
         })
@@ -201,10 +206,8 @@ import { jwtDecode } from "jwt-decode";
    * this function is responsible to make intgeration between front and backend request (USER LOGIN)
    */
   forgetPassword(){
-    console.log('forget'); 
     this.isLoading = true
     if(this.forgetPasswordForm.invalid){
-    console.log('forget'); 
       this.forgetPasswordForm.markAllAsTouched()
       this.isLoading = false
     }
@@ -215,13 +218,13 @@ import { jwtDecode } from "jwt-decode";
             this.isLoading = false;
 
             if(res.status === 0){
-              this.notify.next(0);
+              this.notify.next(FORGET_PASSWORD_STATUS.success);
             }else{
-              this.notify.next(1);
+              this.notify.next(FORGET_PASSWORD_STATUS.faild);
             }
           },
           error: (error: any) => {
-            this.notify.next(1);
+            this.notify.next(FORGET_PASSWORD_STATUS.faild);
             this.isLoading = false
           }
         })
@@ -234,24 +237,24 @@ import { jwtDecode } from "jwt-decode";
    */
   restPassword(){
     this.isLoading = true
-    if(this.resetPassword.invalid){
-      this.resetPassword.markAllAsTouched()
+    if(this.resetPasswordForm.invalid){
+      this.resetPasswordForm.markAllAsTouched()
       this.isLoading = false
     }
     else {
       this.subscription.add(
-        this.authApi.restPasswordApi(this.resetPassword.value).subscribe({
+        this.authApi.restPasswordApi(this.resetPasswordForm.value).subscribe({
           next: (res) => {
             this.isLoading = false;
 
             if(res.status === 0){
-              this.notify.next(0);
+              this.notify.next(RESET_PASSWORD_STATUS.success);
             }else{
-              this.notify.next(1);
+              this.notify.next(RESET_PASSWORD_STATUS.faild);
             }
           },
           error: (error: any) => {
-            this.notify.next(1);
+            this.notify.next(RESET_PASSWORD_STATUS.faild);
             this.isLoading = false
           }
         })
@@ -259,13 +262,48 @@ import { jwtDecode } from "jwt-decode";
     }
   }
 
-  /**
-   * this function is responsible to make intgeration between front and backend request (USER REGISTER)
-   */
-  externalLogin(provider: string){
-    this.subscription.add(
-      this.authApi.externalLoginApi(provider).subscribe()
-    )
+  // /**
+  //  * this function is responsible to make intgeration between front and backend request (USER REGISTER)
+  //  */
+  // externalLogin(provider: string){
+  //   this.subscription.add(
+  //     this.authApi.externalLoginApi(provider).subscribe()
+  //   )
+  // }
+
+  private popupOpened = false; // Flag to track if popup is opened
+
+  authenticateWithProvider(providerUrl: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (this.popupOpened) {
+        reject("Popup already opened");
+        return;
+      }
+
+      // Open the popup only if not opened
+      const popup = window.open(providerUrl, '_blank', 'width=500,height=600');
+      
+      if (!popup) {
+        reject("Popup blocked or failed to open");
+        return;
+      }
+
+      this.popupOpened = true; // Set flag to prevent reopening
+
+      // Listen for messages from the popup
+      const messageListener = (event: MessageEvent) => {
+        if (event.origin !== window.location.origin) return; // Validate origin
+
+        if (event.data && event.data.authenticated) {
+          resolve(event.data); // Pass authentication response
+          window.removeEventListener('message', messageListener); // Clean up listener
+          this.popupOpened = false; // Reset flag
+          popup.close();
+        }
+      };
+
+      window.addEventListener('message', messageListener);
+    });
   }
 
   async generateTokenHash(token: string, secret: string): Promise<string> {
@@ -304,8 +342,8 @@ import { jwtDecode } from "jwt-decode";
 
     this.userProfileService.user = USER_DEFAULT;
     this.tripsService.allTrips = TRIPS_DEFAULT;
-    
-    this.notify.next(2);
+
+    this.notify.next("Loged Out")
   }
 
   isTokenExpired(): boolean {

@@ -102,6 +102,22 @@ export interface IOtp {
   password: string;
 }
 
+export interface IPassengerDetail {
+  title: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  countryOfResidence: string;
+  nationality: string;
+  issuedCountry: string;
+  countryCode: string | null;
+  phoneNumber: string | null;
+  passportNumber: string;
+  passportExpiry: string;
+  passengerType: string;
+  ticketNumber: string | null;
+}
+
 export interface IFlightModel {
   fareAmount: number;
   additionalServicesAmount: number;
@@ -120,7 +136,7 @@ export interface IFlightModel {
   selectedInsurance: string | null;
   additionalServices: any[];
   airItineraries: IAirItinerary[];
-  passengersDetails: any[];
+  passengersDetails: IPassengerDetail[];
 }
 
 export interface IAirItinerary {
@@ -217,10 +233,17 @@ export interface ITrips {
 export interface ICardModel {
   route: string;
   dates: string;
-  ticketNumber: string[];
+  ticketNumber: IPassengerDetail[];
   itineraryNumber: string;
   bookingRef: string;
   airline: string;
   flightType: string;
   cityImage: string;
+}
+
+export interface IResetPasswordForm {
+  token: string;
+  email: string;
+  newPassword: string;
+  confirmPassword: string;
 }
