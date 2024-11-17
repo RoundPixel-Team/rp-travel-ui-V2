@@ -12,9 +12,10 @@ export class UserProfileApiService {
   public env = inject(EnvironmentService)
 
   /**
+   * Sends a GET request to retrieve the authenticated user's profile data.
    *
-   * @param body [Login form value]
-   * @returns all the user data needed to be authinticated within the application
+   * @param {string} token - The authentication token for the user.
+   * @returns {Observable<IUserResponse>} - An observable containing the user data required for authentication.
    */
   getUserProfileApi(token: string):Observable<IUserResponse> {
     let api = `${this.env.users}/api/user/getUser`
@@ -22,9 +23,11 @@ export class UserProfileApiService {
   }
 
   /**
+   * Sends a POST request to update the user's profile data.
    *
-   * @param body [Login form value]
-   * @returns all the user data needed to be authinticated within the application
+   * @param {string} token - The authentication token for the user.
+   * @param {any} body - The updated profile data.
+   * @returns {Observable<IUserResponse>} - An observable containing the updated user data.
    */
   editUserProfileApi(token: string, body: any):Observable<IUserResponse> {
     let api = `${this.env.users}/api/user/editUser`
@@ -32,9 +35,11 @@ export class UserProfileApiService {
   }
 
   /**
+   * Sends a POST request to change the user's password.
    *
-   * @param body [Login form value]
-   * @returns all the user data needed to be authinticated within the application
+   * @param {string} token - The authentication token for the user.
+   * @param {any} body - The data containing the current and new password values.
+   * @returns {Observable<any>} - An observable that emits the result of the password change operation.
    */
   changePasswordApi(token: string, body: any):Observable<any> {
     let api = `${this.env.users}/api/user/changePassword`

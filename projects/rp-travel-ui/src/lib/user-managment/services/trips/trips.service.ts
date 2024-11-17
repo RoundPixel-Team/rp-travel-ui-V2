@@ -75,10 +75,11 @@ import { IFlightModel, ITrips, ICardModel } from "../../interfaces";
             ? allFlights[0]?.flightDTO?.[allFlights[0]?.flightDTO?.length - 1]?.arrivalTerminalAirport?.cityImage || "default-image-url"
             : allFlights[0]?.flightDTO?.[allFlights[0]?.flightDTO?.length - 1]?.arrivalTerminalAirport?.cityImage || "default-image-url";
 
+        const ticketNumber = flights[0].passengersDetails.filter((ticket) => ticket.ticketNumber);
         return {
             route: `${allFlights[0]?.flightDTO?.[0]?.departureTerminalAirport?.cityName || "Unknown"} to ${allFlights[0]?.flightDTO?.[allFlights[0]?.flightDTO?.length - 1]?.arrivalTerminalAirport?.cityName || "Unknown"}`,
             dates: endDate ? `${startDate} to ${endDate}` : startDate,
-            ticketNumber: flights[0].passengersDetails || [],
+            ticketNumber,
             itineraryNumber: flight.hgNumber || "N/A",
             bookingRef: allFlights[0].flightDTO[0].supplierRefID,
             airline: allFlights[0]?.flightDTO?.[0]?.flightAirline?.airlineName || "Unknown",

@@ -2,21 +2,21 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, retry, take } from 'rxjs';
 import { EnvironmentService } from '../../../shared/services/environment.service';
-import { ILoginResponse, IRegisterResponse, IOtp } from '../../interfaces';
+import { ILoginResponse, IRegisterResponse, IOtp, IResetPasswordForm } from '../../interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthApiService {
-  public http = inject(HttpClient)
-  public env = inject(EnvironmentService)
+  public http = inject(HttpClient);
+  public env = inject(EnvironmentService);
 
   /**
    *
    * @param body [Login form value]
    * @returns all the user data needed to be authinticated within the application
    */
-  login(body: ILoginResponse):Observable<ILoginResponse> {
+  login(body: any):Observable<ILoginResponse> {
     let api = `${this.env.users}/api/user/Login`
     return this.http.post<any>(api, body).pipe(take(1), catchError(err=>{throw err})
     )
@@ -27,9 +27,32 @@ export class AuthApiService {
    * @param body [Login form value]
    * @returns all the user data needed to be authinticated within the application
    */
-  externalLoginApi(provider: string):Observable<any> {
-    let api = `${this.env.users}/api/user/googlelogin`
-    return this.http.get<any>(api, {headers: {provider}}).pipe(take(1), catchError(err=>{throw err})
+  forgetPasswordApi(body: any):Observable<any> {
+    let api = `${this.env.users}/api/user/customerForgotPassword`
+    return this.http.post<any>(api, body).pipe(take(1), catchError(err=>{throw err}))
+  }
+
+  /**
+   *
+   * @param body [Login form value]
+   * @returns all the user data needed to be authinticated within the application
+   */
+  restPasswordApi(body: IResetPasswordForm):Observable<any> {
+    let api = `${this.env.users}/api/user/customerResetPassword`
+    return this.http.post<any>(api, body, {headers: {
+      passwordResetToken: body.token
+    }}).pipe(take(1), catchError(err=>{throw err}))
+  }
+
+  /**
+   *
+   * @param body [Login form value]
+   * @returns all the user data needed to be authinticated within the application
+   */
+  externalLoginGoogleApi():Observable<any> {
+    // let api = `${this.env.users}/api/user/googlelogin`
+    let api = "https://flightsearch.bahmantravel.com/api/user/googlelogin";
+    return this.http.get<any>(api).pipe(take(1), catchError(err=>{throw err})
     )
   }
 

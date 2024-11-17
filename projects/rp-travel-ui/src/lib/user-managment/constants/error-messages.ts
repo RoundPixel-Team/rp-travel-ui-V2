@@ -48,8 +48,8 @@ export const PASSWORD_ERROR_MESSAGES = {
     ar: 'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل.'
   },
   pattern: {
-    en: 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@ or !).',
-    ar: 'يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل، وحرف صغير واحد، ورقم واحد، ورمز خاص واحد (@ أو !).'
+  en: "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+  ar: "يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل، وحرف صغير واحد، ورقم واحد، وحرف خاص واحد."
   }
 };
 

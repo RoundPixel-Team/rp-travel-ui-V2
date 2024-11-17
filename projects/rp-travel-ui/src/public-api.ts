@@ -48,6 +48,8 @@ export * from './lib/user-managment/services/user-profile/user-profile-api.servi
 // Trips
 export * from './lib/user-managment/services/trips/trips.service';
 export * from './lib/user-managment/services/trips/trips-api.service';
+// STATUSES
+export * from './lib/user-managment/constants/statuses';
 
 export * from './lib/user-managment/interfaces'
 
