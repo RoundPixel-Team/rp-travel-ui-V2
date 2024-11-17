@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { EnvironmentService } from '../../shared/services/environment.service';
-import { hotelRoomsResponse } from '../../hotel-rooms/interfaces';
+import { hotelRoomsResponse, HotelSelectedPackage } from '../../hotel-rooms/interfaces';
 import { catchError, mergeMap, retry, take } from 'rxjs';
 import { Cobon, hotelSaveBooking, selectedPackageAvailibilty } from '../interfaces';
 
@@ -36,6 +36,10 @@ export class HotelCheckoutApiService {
       )
       .pipe(take(1));
   }
+  getSelectedPackage(sid:string,pid:string,hotelID:string,packageKey:string){
+    let APi = `${this.env.Apihotels}/api/GetSelectedPackage?searchId=${sid}&packageKey=${packageKey}&providerId=${pid}&hotel=${hotelID}`;
+    return this.http.get<HotelSelectedPackage>(APi).pipe(take(1));
+  }
  /**
    * 
    * @param searchId 
@@ -47,7 +51,7 @@ export class HotelCheckoutApiService {
  
   hotelCheckAvailability(searchId: string, hotelCode: string, packageKey: string, providerId: string) {
     let APi = `${this.env.Apihotels}/api/CheckPackageAvailability?searchId=${searchId}&hotelCode=${hotelCode}&packageKey=${packageKey}&providerId=${providerId}`;
-    return this.http.get<selectedPackageAvailibilty>(APi);
+    return this.http.get<selectedPackageAvailibilty>(APi).pipe(take(1));
   }
   /**
    * 

@@ -1,6 +1,34 @@
 import { amenties } from "../hotel-results/interfaces";
 
-export interface hotelRoomsResponse{
+export interface hotelRoomsResponse extends PackageBase{
+    
+    Packages: packages[];
+   
+}
+export interface HotelSelectedPackage extends PackageBase{
+    Package : packages;
+    HotelFormDto :HotelFormDto;
+}
+export interface HotelFormDto {
+    location: location;
+    nation: string;
+    CheckIn?: Date;
+    CheckOut?: Date;
+    roomN: number;
+    guestInfo: GuestInfo[];
+  }
+  export interface location {
+    cityId: number;
+    city: string;
+    country: string;
+    cityWithCountry: string;
+  }
+  export interface GuestInfo {
+    adult: number;
+    child: number;
+    childGroup: number[];
+  }
+export interface PackageBase{
     hotelCode: string;
     hotelName: string;
     hotelRate: number;
@@ -31,7 +59,6 @@ export interface hotelRoomsResponse{
     CityTaxValue: number;
     CityTaxCurrency?: string;
     Amenities: amenties[];
-    Packages: packages[];
     CheckAvailabilityAfterSaveBooing:string
     CheckAvailabilityBeforeSaveBooing: string
 }

@@ -3,7 +3,7 @@ import { Subject, Subscription } from 'rxjs';
 import { HotelCheckoutApiService } from './hotel-checkout-api.service';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { hotelRoomsResponse, packages, room } from '../../hotel-rooms/interfaces';
+import { hotelRoomsResponse, HotelSelectedPackage, packages, room } from '../../hotel-rooms/interfaces';
 import { Cobon, hotelSaveBooking, selectedPackageAvailibilty } from '../interfaces';
 
 @Injectable({
@@ -30,7 +30,7 @@ export class HotelCheckoutService {
   })
   subscription: Subscription = new Subscription()
   HotelResult: room[] = [];
-  RequiredHotel!: hotelRoomsResponse;
+  RequiredHotel!: HotelSelectedPackage;
   searchId: string = ''
   hotelCode: string = ''
   providerId: string = ''
@@ -52,7 +52,7 @@ export class HotelCheckoutService {
   paymentLinkFailure = new Subject();
   loader: boolean = false;
   TotalPrice: number = 0
-  HotelPackage: packages[] = []
+  HotelPackage: packages  | undefined=undefined;
   constructor() { }
 
   /**
@@ -90,7 +90,7 @@ export class HotelCheckoutService {
   loadDataCard(providerId: string, searchId: string, HotelCode: string, packageKey: string) {
     this.loader = true
     this.subscription.add(
-      this.api.GetHotelRooms(providerId, searchId, HotelCode).subscribe((res) => {
+      this.api.getSelectedPackage(searchId,providerId, HotelCode,packageKey).subscribe((res) => {
         if (res == undefined) {
           this.paymentLinkFailure.next(res);
           this.loader=false;
@@ -98,10 +98,11 @@ export class HotelCheckoutService {
         }
         else {
           if (res) {
+            console.log(res,'selected package');
             this.loader = false
             this.RequiredHotel = res
-            let HotelPackage = res.Packages
-            this.HotelResult = HotelPackage.filter(v => v.PackageKey === packageKey)[0].Rooms
+            let HotelPackage = res.Package
+            this.HotelResult = HotelPackage.Rooms
             this.roomLength = this.HotelResult.length;
             this.FormRooms()
             this.CalculateTotalPrice();
@@ -216,7 +217,7 @@ export class HotelCheckoutService {
   * handle the missing values which is founded in the first adult form only
   * adding the totalSellPrice & the TotalCostPrice
   */
-  prepareData(r: hotelRoomsResponse,currency:string) {
+  prepareData(r: HotelSelectedPackage,currency:string) {
 
     {
       if (sessionStorage.getItem('hotelform')) {
@@ -232,7 +233,7 @@ export class HotelCheckoutService {
       this.HotelForm.get('roomQty')?.setValue(this.HotelResult.length)
 
 
-      for (var i = 0; i < r.Packages[0].Rooms.length; i++) {
+      for (var i = 0; i < r.Package.Rooms.length; i++) {
         this.totalSellPrice += this.HotelResult[i].TotalSellPrice
         this.totalCostPrice += this.HotelResult[i].CostPrice ? this.HotelResult[i].CostPrice : 0
       }
@@ -309,7 +310,7 @@ export class HotelCheckoutService {
     this.subscription.unsubscribe();
     this.HotelForm = new FormGroup({});
     this.HotelResult = [];
-    this.HotelPackage = [];
+    this.HotelPackage =undefined;
     this.searchId = '';
     this.hotelCode = '';
     this.providerId = '';
