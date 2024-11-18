@@ -9,7 +9,7 @@ import { TRIPS_DEFAULT, USER_DEFAULT } from "../../constants/defaultValues";
 import { UserProfileService } from "../user-profile/user-profile.service";
 import { TripsService } from "../trips/trips.service";
 import { jwtDecode } from "jwt-decode";
-import { FORGET_PASSWORD_STATUS, LOGIN_STATUS, OTP_STATUS, REGISTER_STATUS, RESET_PASSWORD_STATUS, VERIFY_TOKEN_STATUS } from "../../constants/statuses";
+import { FORGET_PASSWORD_STATUS, LOGIN_STATUS, OTP_STATUS, REGISTER_STATUS, RESET_PASSWORD_STATUS } from "../../constants/statuses";
 import { SharedService } from "../shared.service";
 import * as CryptoJS from 'crypto-js';
 
@@ -195,7 +195,7 @@ import * as CryptoJS from 'crypto-js';
         this.authApi.login(
           {
             ...this.loginForm.value, 
-            password: this.sharedService.encryptData(this.loginForm.value.password)
+            // password: this.sharedService.encryptData(this.loginForm.value.password)
           }
         ).subscribe({
           next: (res) => {
@@ -282,36 +282,6 @@ import * as CryptoJS from 'crypto-js';
         })
       )
     }
-  }
-
-  /**
-   * this function is responsible to make intgeration between front and backend request (USER LOGIN)
-   */
-  verifyResetPasswordToken(token: string, email: string){
-    this.isLoading = true;
-
-    this.subscription.add(
-      this.authApi.verifyResetPasswordTokenApi(
-        {
-          email,
-          token
-        }
-      ).subscribe({
-        next: (res) => {
-          this.isLoading = false;
-
-          if(res.status === 0){
-            this.notify.next(VERIFY_TOKEN_STATUS.success);
-          }else{
-            this.notify.next(VERIFY_TOKEN_STATUS.faild);
-          }
-        },
-        error: (error: any) => {
-          this.notify.next(VERIFY_TOKEN_STATUS.faild);
-          this.isLoading = false
-        }
-      })
-    )
   }
 
   authenticateWithProvider(providerUrl: string): Promise<any> {

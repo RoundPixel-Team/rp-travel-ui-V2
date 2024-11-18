@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, retry, take } from 'rxjs';
 import { EnvironmentService } from '../../../shared/services/environment.service';
-import { ILoginResponse, IRegisterResponse, IOtp, IResetPasswordForm, ILoginForm, IForgetPasswordForm, IForgetPasswordResponse, IResetPasswordResponse, IVerifyResetPasswordToken } from '../../interfaces';
+import { ILoginResponse, IRegisterResponse, IOtp, IResetPasswordForm, ILoginForm, IForgetPasswordForm, IForgetPasswordResponse, IResetPasswordResponse } from '../../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -42,16 +42,6 @@ export class AuthApiService {
     return this.http.post<IResetPasswordResponse>(api, body, {headers: {
       passwordResetToken: body.token
     }}).pipe(take(1), catchError(err=>{throw err}))
-  }
-
-  /**
-   *
-   * @param body [Login form value]
-   * @returns all the user data needed to be authinticated within the application
-   */
-  verifyResetPasswordTokenApi(body: IVerifyResetPasswordToken):Observable<IResetPasswordResponse> {
-    let api = `${this.env.users}/api/user/VerifyResetPasswordToken`
-    return this.http.post<IResetPasswordResponse>(api, body).pipe(take(1), catchError(err=>{throw err}))
   }
 
   /**

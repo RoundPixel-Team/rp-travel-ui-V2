@@ -37,8 +37,7 @@ export * from './lib/flight-search/services/flight-search.service'
 export * from './lib/flight-search/interfaces'
 
 // User Managment
-export * from './lib/user-managment/services/user-managment-api.service'
-export * from './lib/user-managment/services/user-managment.service'
+export * from './lib/user-managment/services/shared.service'
 // Authentication
 export * from './lib/user-managment/services/authentication/authentication.service';
 export * from './lib/user-managment/services/authentication/authentication-api.service';

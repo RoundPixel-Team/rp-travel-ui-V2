@@ -22,8 +22,3 @@ export const RESET_PASSWORD_STATUS = {
   success: "reset password success",
   faild: "reset password faild",
 }
-
-export const VERIFY_TOKEN_STATUS = {
-  success: "verify reset password token success",
-  faild: "verify reset password token faild",
-}

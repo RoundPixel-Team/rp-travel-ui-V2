@@ -27,6 +27,9 @@
       ],
       "rp-user-management": [
         "dist/rp-user-management"
+      ],
+      "user-management": [
+        "dist/user-management"
       ]
     },
     "target": "es2020",

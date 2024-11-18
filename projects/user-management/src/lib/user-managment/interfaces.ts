@@ -26,11 +26,6 @@ export interface IResetPasswordForm {
   confirmPassword: string;
 }
 
-export interface IVerifyResetPasswordToken {
-  token: string;
-  email: string;
-}
-
 export interface IRegisterResponse {
   status: number;
   message: string;
