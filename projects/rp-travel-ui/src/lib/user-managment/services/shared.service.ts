@@ -5,27 +5,11 @@ import * as CryptoJS from 'crypto-js';
   providedIn: 'root',
 })
 export class SharedService {
-  encryptionKey = CryptoJS.enc.Utf8.parse('roundPixell!!!!!!!!&!!!//!!!!!!'); // Ensure it's parsed
-  iv = CryptoJS.enc.Utf8.parse('1234567890123456'); // Fixed 16-byte IV for consistent encryption
+  encryptionKey =  CryptoJS.enc.Utf8.parse("abcdefghijklmnop");
   
-  encryptData(password: string) {
-      // const encrypted = CryptoJS.AES.encrypt(password, this.encryptionKey, {
-      //     iv: this.iv, // Use the fixed IV
-      //     mode: CryptoJS.mode.CBC,
-      //     padding: CryptoJS.pad.Pkcs7,
-      // });
-  
-      // return encrypted.toString(); // Only return the ciphertext
-      return password;
+  encryptData(password: string) {    
+    let encryptedBytes = CryptoJS.AES.encrypt(password, this.encryptionKey, {mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7});
+    
+    return encryptedBytes.toString();
   }
-  
-  decryptData(cipherText: string) {
-      const decrypted = CryptoJS.AES.decrypt(cipherText, this.encryptionKey, {
-          iv: this.iv, // Use the same fixed IV
-          mode: CryptoJS.mode.CBC,
-          padding: CryptoJS.pad.Pkcs7,
-      });
-  
-      return decrypted.toString(CryptoJS.enc.Utf8);
-  }  
 }
