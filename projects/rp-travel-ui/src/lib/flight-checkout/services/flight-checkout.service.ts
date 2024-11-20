@@ -473,8 +473,8 @@ bookingType:string='standard'
             PassengerType: new FormControl("ADT"),
             countryOfResidence: new FormControl("", [Validators.required]),
             PassportNumber: new FormControl("", [this.passportValidator()]),
-            PassportExpiry: new FormControl(""),
-            IssuedCountry: new FormControl(""),
+            PassportExpiry: new FormControl("", [Validators.required]),
+            IssuedCountry: new FormControl("", [Validators.required]),
             position: new FormControl(this.usersArray.length + 1)
           })
         )
@@ -507,8 +507,8 @@ bookingType:string='standard'
             countryCode: new FormControl(""),
             countryOfResidence: new FormControl(""),
             PassportNumber: new FormControl("",[this.passportValidator()]),
-            PassportExpiry: new FormControl(""),
-            IssuedCountry: new FormControl(""),
+            PassportExpiry: new FormControl("", [Validators.required]),
+            IssuedCountry: new FormControl("", [Validators.required]),
             position: new FormControl(this.usersArray.length)
           })
         )
@@ -542,8 +542,8 @@ bookingType:string='standard'
           countryCode: new FormControl(""),
           countryOfResidence: new FormControl(""),
           PassportNumber: new FormControl("", [this.passportValidator()]),
-          PassportExpiry: new FormControl(""),
-          IssuedCountry: new FormControl(""),
+          PassportExpiry: new FormControl("", [Validators.required]),
+          IssuedCountry: new FormControl("", [Validators.required]),
           position: new FormControl(this.usersArray.length)
         })
       )
