@@ -164,68 +164,6 @@
           }
         }
       }
-    },
-    "rp-user-management": {
-      "projectType": "library",
-      "root": "projects/rp-user-management",
-      "sourceRoot": "projects/rp-user-management/src",
-      "prefix": "lib",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
-          "options": {
-            "project": "projects/rp-user-management/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "projects/rp-user-management/tsconfig.lib.prod.json"
-            },
-            "development": {
-              "tsConfig": "projects/rp-user-management/tsconfig.lib.json"
-            }
-          },
-          "defaultConfiguration": "production"
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/rp-user-management/src/test.ts",
-            "tsConfig": "projects/rp-user-management/tsconfig.spec.json",
-            "karmaConfig": "projects/rp-user-management/karma.conf.js"
-          }
-        }
-      }
-    },
-    "user-management": {
-      "projectType": "library",
-      "root": "projects/user-management",
-      "sourceRoot": "projects/user-management/src",
-      "prefix": "lib",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
-          "options": {
-            "project": "projects/user-management/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "projects/user-management/tsconfig.lib.prod.json"
-            },
-            "development": {
-              "tsConfig": "projects/user-management/tsconfig.lib.json"
-            }
-          },
-          "defaultConfiguration": "production"
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/user-management/src/test.ts",
-            "tsConfig": "projects/user-management/tsconfig.spec.json",
-            "karmaConfig": "projects/user-management/karma.conf.js"
-          }
-        }
-      }
     }
   },
   "cli": {
