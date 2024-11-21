@@ -134,7 +134,7 @@ import * as CryptoJS from 'crypto-js';
   
             const userInfo = {
               email: this.registerForm.controls['email'].value,
-              password: this.registerForm.controls['password'].value
+              password: this.sharedService.encryptData(this.registerForm.controls['password'].value)
             }
   
             localStorage.setItem('userInfo',JSON.stringify(userInfo));
