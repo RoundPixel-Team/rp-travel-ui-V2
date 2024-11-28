@@ -68,6 +68,19 @@ export class HotelResultsService {
     dateTo: string
   ) {
     this.hotelResultsLoader = true;
+    this.hotelDataResponse = {
+      CheckIn: "",
+      CheckOut: "",
+      Locations: [],
+      ResultException: {
+        Code: "",
+        ExceptionMessage: ""
+      },
+      Status: -1,
+      HotelResult: []
+    }
+    this.filteredHotels = [];
+    this.splicedFiltiredHotels = [];
     //call het hotel data API
     this.subscription.add(
       this.api.getHotelsRes(hotelSearchObj).subscribe(
@@ -128,6 +141,8 @@ export class HotelResultsService {
             this.setFormPriceValue(); //set filter form values for price
             this.hotelsFilter();
             this.splicedFiltiredHotels = [...this.filteredHotels.slice(0, 5)];
+            this.hotelResultsLoader = false;
+          } else {
             this.hotelResultsLoader = false;
           }
         },
