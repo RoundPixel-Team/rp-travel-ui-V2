@@ -26,7 +26,7 @@ export class FlightResultApiService {
     ${searchFlight.passengers}/
     ${searchFlight.Cclass}/
     ${searchFlight.showDirect}/
-    all/0/0/Direct?searchID=${searchFlight.serachId}`;
+    ${searchFlight.preferredAirLine ? searchFlight.preferredAirLine : 'all'}/0/0/Direct?searchID=${searchFlight.serachId}`;
     return this.http.get<FlightSearchResult>(api).pipe(retry(2), take(1),catchError(err=>{console.log(err);throw err}) );;
   }
 
