@@ -5,6 +5,7 @@ import { BreakDownView, Cobon, flightOfflineService, passengersModel, selectedFl
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { passengerFareBreakDownDTOs,fare } from '../../flight-result/interfaces';
 import { HomePageService } from '../../home-page/services/home-page.service';
+import { EMAIL_VALIDATION } from '../../user-managment/constants/validation';
 
 type fareCalc = (fare:fare[])=>number;
 type calcEqfare =(flightFaresDTO: passengerFareBreakDownDTOs[],type:string,farecalc:fareCalc)=>number;
@@ -297,12 +298,7 @@ bookingType:string='standard'
                 Validators.pattern("^[a-zA-Z]+"),
                 Validators.minLength(3),
               ]),
-              email: new FormControl("", [
-                Validators.required,
-                Validators.email,
-                Validators.pattern("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$"),
-                Validators.minLength(9),
-              ]),
+              email: new FormControl("", EMAIL_VALIDATION),
               phoneNumber: new FormControl("", [
                 Validators.required,
                 Validators.maxLength(16),
@@ -339,11 +335,7 @@ bookingType:string='standard'
                 Validators.pattern("^[a-zA-Z]+"),
                 Validators.minLength(3),
               ]),
-              email: new FormControl("", [
-                Validators.email,
-                Validators.pattern("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$"),
-                Validators.minLength(9),
-              ]),
+              email: new FormControl("", EMAIL_VALIDATION),
               phoneNumber: new FormControl("", [
                 Validators.maxLength(16),
               ]),
@@ -455,12 +447,7 @@ bookingType:string='standard'
               Validators.pattern("^[a-zA-Z]+"),
               Validators.minLength(3),
             ]),
-            email: new FormControl("", [
-              Validators.required,
-              Validators.email,
-              Validators.pattern("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$"),
-              Validators.minLength(9),
-            ]),
+            email: new FormControl("", EMAIL_VALIDATION),
             phoneNumber: new FormControl("", [
               Validators.required,
               Validators.maxLength(5),

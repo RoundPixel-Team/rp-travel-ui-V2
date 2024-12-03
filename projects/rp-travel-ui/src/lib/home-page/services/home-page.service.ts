@@ -4,6 +4,7 @@ import { BookedOffer, Image, Itinerary, OfferDTO,airPorts, countries, currencyMo
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { EMAIL_VALIDATION } from '../../user-managment/constants/validation';
 
 
 @Injectable({
@@ -80,11 +81,7 @@ selectedCurrency : currencyModel = {
       Validators.minLength(3),
     ]),
 
-    Email: new FormControl("", [
-      Validators.required,
-      Validators.email,
-      Validators.minLength(9),
-    ]),
+    Email: new FormControl("", EMAIL_VALIDATION),
 
     PhoneNumber: new FormControl("", [
       Validators.required,

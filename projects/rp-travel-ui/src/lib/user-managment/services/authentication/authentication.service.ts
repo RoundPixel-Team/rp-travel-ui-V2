@@ -1,43 +1,82 @@
 import { inject, Injectable } from "@angular/core";
 import { AbstractControl, FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { Subject, Subscription } from "rxjs";
-import { EMAIL_ERROR_MESSAGES, FIRST_NAME_ERROR_MESSAGES, LAST_NAME_ERROR_MESSAGES, PASSWORD_ERROR_MESSAGES, PHONE_ERROR_MESSAGES, USER_NAME_ERROR_MESSAGES } from "../../constants/error-messages";
-import { EMAIL_VALIDATION, PASSWORD_VALIDATION, PHONE_VALIDATION, REQUIRED_VALIDATION } from "../../constants/validation";
+import { 
+  EMAIL_ERROR_MESSAGES, 
+  FIRST_NAME_ERROR_MESSAGES, 
+  LAST_NAME_ERROR_MESSAGES, 
+  PASSWORD_ERROR_MESSAGES, 
+  PHONE_ERROR_MESSAGES, 
+  USER_NAME_ERROR_MESSAGES 
+} from "../../constants/error-messages";
+import { 
+  EMAIL_VALIDATION, 
+  PASSWORD_VALIDATION, 
+  PHONE_VALIDATION, 
+  REQUIRED_VALIDATION 
+} from "../../constants/validation";
 import { AuthApiService } from "./authentication-api.service";
 import { Router } from "@angular/router";
 import { TRIPS_DEFAULT, USER_DEFAULT } from "../../constants/defaultValues";
 import { UserProfileService } from "../user-profile/user-profile.service";
 import { TripsService } from "../trips/trips.service";
 import { jwtDecode } from "jwt-decode";
-import { FORGET_PASSWORD_STATUS, LOGIN_STATUS, OTP_STATUS, REGISTER_STATUS, RESET_PASSWORD_STATUS, VERIFY_TOKEN_STATUS } from "../../constants/statuses";
+import { 
+  FORGET_PASSWORD_STATUS, 
+  LOGIN_STATUS, 
+  OTP_STATUS, 
+  REGISTER_STATUS, 
+  RESET_PASSWORD_STATUS, 
+  VERIFY_TOKEN_STATUS 
+} from "../../constants/statuses";
 import { SharedService } from "../shared.service";
 import * as CryptoJS from 'crypto-js';
 
 @Injectable({
   providedIn: 'root',
 }) export class AuthService {
+  /** Form group for login functionality */
   loginForm: FormGroup = new FormGroup({});
+  
+  /** Form group for registration (sign-up) functionality */
   registerForm: FormGroup = new FormGroup({});
+  
+  /** Form group for the forget password functionality */
   forgetPasswordForm: FormGroup = new FormGroup({});
+  
+  /** Form group for the reset password functionality */
   resetPasswordForm: FormGroup = new FormGroup({});
 
   /**
-   * To notify when any change happens in the authentication process such as:
+   * Subject to notify changes during the authentication process:
    * - Errors
-   * - Successfully Register
-   * - Successfully Loged In
+   * - Successful registration
+   * - Successful login
    */
-
   notify: Subject<string> = new Subject();
+
+  /** Subscription instance to manage observable subscriptions */
   subscription: Subscription = new Subscription();
+
+  /** Tracks whether the authentication process is currently loading */
   isLoading: boolean = false;
-  user: any = {}
-  
-  private popupOpened = false; // Flag to track if popup is opened
+
+  /** Stores the current user's data */
+  user: any = {};
+
+  /** Flag to track if a popup is currently opened */
+  private popupOpened = false;
+
+  /** Local storage key for storing JWT tokens */
   private tokenKey = 'token';
+
+  /** Local storage key for storing hashed tokens */
   private tokenHashKey = 'tokenHash';
+
+  /** Secret key used for token hashing */
   private secret = 'RP-1011101';
 
+  /** Dependencies injected using Angular's `inject` API */
   authApi = inject(AuthApiService);
   sharedService = inject(SharedService);
   userProfileService = inject(UserProfileService);
@@ -46,7 +85,7 @@ import * as CryptoJS from 'crypto-js';
   fb = inject(FormBuilder);
 
   /**
-   * this function is responsible to initialize the Login Form
+   * Initializes the login form with email and password fields.
    */
   initLoginForm() {
     this.loginForm = new FormGroup({
@@ -56,36 +95,40 @@ import * as CryptoJS from 'crypto-js';
   }
 
   /**
-   * this function is responsible to initialize the Register(sign up) Form
+   * Initializes the registration (sign-up) form with the necessary fields.
+   * Includes a custom validator for password confirmation.
    */
   initRegisterForm() {
     this.registerForm = new FormGroup({
       firstName: new FormControl('', REQUIRED_VALIDATION),
       lastName: new FormControl('', REQUIRED_VALIDATION),
-      username: new FormControl ('', REQUIRED_VALIDATION),
+      username: new FormControl('', REQUIRED_VALIDATION),
       email: new FormControl('', EMAIL_VALIDATION),
       password: new FormControl('', PASSWORD_VALIDATION),
       confirmPassword: new FormControl('', PASSWORD_VALIDATION),
       userPhoneNumber: new FormControl('', PHONE_VALIDATION),
       isTemporary: new FormControl(true),
       isOAuthEnabled: new FormControl(false)
-    },
-    {
+    }, {
       validators: this.confirmPasswordValidator('password'),
     });
   }
 
   /**
-   * this function is responsible to initialize the Login Form
+   * Initializes the forget password form with an email field.
    */
   initForgetPasswordForm() {
     this.forgetPasswordForm = new FormGroup({
-      email: new FormControl('', EMAIL_VALIDATION)
+      email: new FormControl('', EMAIL_VALIDATION),
     });
   }
 
   /**
-   * this function is responsible to initialize the Register(sign up) Form
+   * Initializes the reset password form with token, email, and new password fields.
+   * Includes a custom validator for password confirmation.
+   * 
+   * @param token - The reset token required for password reset.
+   * @param email - The email of the user resetting their password.
    */
   initResetPasswordForm(token: string, email: string) {
     this.resetPasswordForm = new FormGroup({
@@ -93,22 +136,49 @@ import * as CryptoJS from 'crypto-js';
       email: new FormControl(email),
       newPassword: new FormControl('', PASSWORD_VALIDATION),
       confirmPassword: new FormControl('', PASSWORD_VALIDATION),
-    },
-    {
+    }, {
       validators: this.confirmPasswordValidator('newPassword'),
     });
   }
 
+  /**
+   * Custom validator to check if the password and confirm password fields match.
+   * 
+   * @param controlName - The name of the control to compare with the confirm password field.
+   * @returns A validation function.
+   */
   confirmPasswordValidator(controlName: string) {
     return (control: AbstractControl) => {
-      return control.get(controlName)?.value === control.get('confirmPassword')?.value ? null : {mismatch: true}
-    }
+      return control.get(controlName)?.value === control.get('confirmPassword')?.value 
+        ? null 
+        : { mismatch: true };
+    };
   }
 
+  /**
+   * Stores the authentication token in local storage.
+   * Also generates a hash of the token for additional security.
+   * 
+   * @param token - The JWT token to be stored.
+   * @returns A promise that resolves once the token and hash are stored.
+   */
   async setToken(token: string): Promise<void> {
     localStorage.setItem(this.tokenKey, token);
     const tokenHash = await this.generateTokenHash(token, this.secret);
     localStorage.setItem(this.tokenHashKey, tokenHash);
+  }
+
+  /**
+   * Generates a secure hash of the token using the provided secret.
+   * 
+   * @param token - The JWT token to be hashed.
+   * @param secret - The secret key used for hashing.
+   * @returns The hashed token.
+   */
+  generateTokenHash(token: string, secret: string): string {
+    const hash = CryptoJS.HmacSHA256(token, secret);
+
+    return hash.toString(CryptoJS.enc.Hex);
   }
 
   /**
@@ -347,11 +417,7 @@ import * as CryptoJS from 'crypto-js';
     });
   }
 
-  generateTokenHash(token: string, secret: string): string {
-      const hash = CryptoJS.HmacSHA256(token, secret);
-  
-      return hash.toString(CryptoJS.enc.Hex);
-  }  
+
 
   async getToken(): Promise<string | null> {
     const token = localStorage.getItem(this.tokenKey);
