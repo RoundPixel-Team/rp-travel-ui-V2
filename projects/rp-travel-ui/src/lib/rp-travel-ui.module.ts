@@ -12,6 +12,7 @@ import { HourMinutePipe } from './shared/pipes/hour-minute.pipe';
 import { LimitToPipe } from './shared/pipes/limit-to.pipe';
 import { ExchangePipe } from './shared/pipes/exchange.pipe';
 import { DatePipe } from '@angular/common';
+import { FilterAirportPipe } from './shared/pipes/filter-airport.pipe';
 
 
 
@@ -26,7 +27,8 @@ import { DatePipe } from '@angular/common';
     HotelecitesPipe,
     HourMinutePipe,
     LimitToPipe,
-    ExchangePipe
+    ExchangePipe,
+    FilterAirportPipe
   ],
   imports: [
     HttpClientModule,
@@ -47,7 +49,8 @@ import { DatePipe } from '@angular/common';
     HotelecitesPipe,
     HourMinutePipe,
     LimitToPipe,
-    ExchangePipe
+    ExchangePipe,
+    FilterAirportPipe
   ],
   providers:[HttpClient, DatePipe]
 })
