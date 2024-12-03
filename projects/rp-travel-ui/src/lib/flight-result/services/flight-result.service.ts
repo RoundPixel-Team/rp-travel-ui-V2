@@ -186,13 +186,13 @@ fareLoading: boolean = true;
  * get all data from the router to call api to get flightResultData
  * from Api  searchFlight
  **/
-  getDataFromUrl(lang: string, currency: string, pointOfReservation: string, flightType: string, flightsInfo: string, serachId: string, passengers: string, Cclass: string, showDirect: boolean,endCustomAirlineFilter:number,endCustomAirlineFilterMobile:number) {
+  getDataFromUrl(lang: string, currency: string, pointOfReservation: string, flightType: string, flightsInfo: string, serachId: string, passengers: string, Cclass: string, showDirect: boolean, preferredAirLine:string) {
     this.loading = true
     this.orgnizedResponce = []
     this.FilterData = []
     this.response = undefined
-    this.customFilteredAirlineEnd = endCustomAirlineFilter
-    this.customFilteredAirlineEndMobile = endCustomAirlineFilterMobile
+    // this.customFilteredAirlineEnd = endCustomAirlineFilter
+    // this.customFilteredAirlineEndMobile = endCustomAirlineFilterMobile
     this.searchID = serachId
     this.airlinesA =[];
     this.airLR=[];
@@ -205,7 +205,7 @@ fareLoading: boolean = true;
       this.roundT = false;
     }
     
-    let searchApi: SearchFlightModule = new SearchFlightModule(lang, currency, pointOfReservation, flightType, flightsInfo, passengers, Cclass, serachId, showDirect, 'all');
+    let searchApi: SearchFlightModule = new SearchFlightModule(lang, currency, pointOfReservation, flightType, flightsInfo, passengers, Cclass, serachId, showDirect, preferredAirLine);
     if (SearchFlightModule) {
       let myapi = searchApi;
 

@@ -723,7 +723,8 @@ export class FlightSearchService {
     currency: string,
     pointOfSale: string,
     spiltIndex: number,
-    splitPattern: string
+    splitPattern: string,
+    preferredAirLine:string
   ) {
     let flightList = this.getFlightInfo(spiltIndex, splitPattern);
     let searchApi: searchFlightModel = {
@@ -738,12 +739,12 @@ export class FlightSearchService {
       Cclass: this.searchFlight.get('class')?.value,
       serachId: this.id(),
       showDirect: this.searchFlight.get('Direct')?.value,
-      preferredAirLine: 'all',
+      preferredAirLine: preferredAirLine,
     };
     this.resultLink = searchApi;
-    return `${searchApi.lan}/${searchApi.currency}/${searchApi.pointOfReservation}/${searchApi.flightType}/${searchApi.flightsInfo}/${searchApi.serachId}/${searchApi.passengers}/${searchApi.Cclass}/${searchApi.showDirect}`;
+    return `${searchApi.lan}/${searchApi.currency}/${searchApi.pointOfReservation}/${searchApi.flightType}/${searchApi.flightsInfo}/${searchApi.serachId}/${searchApi.passengers}/${searchApi.Cclass}/${searchApi.showDirect}/${searchApi.preferredAirLine}`;
   }
-  onSubmit(lang: string,currency: string,pointOfSale: string,spiltIndex: number,splitPattern: string) {
+  onSubmit(lang: string,currency: string,pointOfSale: string,spiltIndex: number,splitPattern: string,preferredAirLine:string) {
     if (!this.searchFlight.value) {
       this.searchFlight.markAllAsTouched(); //used this function to make a red border around invalid inputs
       return '';
@@ -769,7 +770,7 @@ export class FlightSearchService {
 
       //If All Validations and conditions are true then save the form at local storage and go to search Results
       if (!adult.enMsg &&!child.enMsg &&!infant.enMsg &&!depDate.enMsg && !retDate?.enMsg) {
-        return this.getSearchresultLink(lang,currency,pointOfSale,spiltIndex,splitPattern);
+        return this.getSearchresultLink(lang,currency,pointOfSale,spiltIndex,splitPattern, preferredAirLine);
       } else {
         return { adult, child, infant, retDate, depDate };
       }
