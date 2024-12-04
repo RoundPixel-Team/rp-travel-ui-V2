@@ -79,8 +79,8 @@ export class HotelResultsService {
           this.hotelResultsLoader = false;
         }
       },err=>{
-        console.log("result response error",err)
         this.hotelResultsLoader = false
+        console.error("result response error",err)
       })
       )
   }

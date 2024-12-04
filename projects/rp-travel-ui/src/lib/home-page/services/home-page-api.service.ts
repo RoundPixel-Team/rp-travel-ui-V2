@@ -22,7 +22,7 @@ export class HomePageApiService {
    */
   UtilityAirports(lang:string) : Observable<airPorts[]>{
     let API:string = `${this.env.backOffice}/api/GetSearchFlowMapping?LangCode=${lang}`;
-    return this.http.get<airPorts[]>(API).pipe(retry(3),take(1),catchError(err=>{console.log(err);throw err}))
+    return this.http.get<airPorts[]>(API).pipe(retry(3),take(1),catchError(err=>{console.error(err);throw err}))
   }
 
 
@@ -33,7 +33,7 @@ export class HomePageApiService {
    */
   currencyApi(baseCurrency:string) : Observable<currencyModel[]>{
     let API:string = `${this.env.admin}/api/CurrencyApi?currency=${baseCurrency}`;
-    return this.http.get<currencyModel[]>(API).pipe(retry(3),take(1),catchError(err=>{console.log(err);throw err}))
+    return this.http.get<currencyModel[]>(API).pipe(retry(3),take(1),catchError(err=>{console.error(err);throw err}))
   }
   
 
@@ -47,14 +47,13 @@ export class HomePageApiService {
       retry(2),
       take(1),
       mergeMap((result) =>{
-        console.log("show me first response",result)
        return  this.http.get<pointOfSaleModel>(
           `https://ipapi.co/${result.ip}/json/`
         )
       }
         
       ),
-      catchError(err=>{console.log(err);throw err})
+      catchError(err=>{console.error(err);throw err})
     );
   }
 
@@ -66,7 +65,7 @@ export class HomePageApiService {
    */
   getCountries(lang: string) {
     let api = `${this.env.backOffice}/api/GetAllCountriesByLangName?LangCode=${lang}`;
-    return this.http.get<countries[]>(api).pipe( retry(2),take(1),catchError(err=>{console.log(err);throw err})
+    return this.http.get<countries[]>(api).pipe( retry(2),take(1),catchError(err=>{console.error(err);throw err})
     );
   }
 /**
@@ -77,7 +76,7 @@ export class HomePageApiService {
 GetAllOffers(pos: string):Observable<{offers:OfferDTO[]}> {
   let API = `${this.env.offers.getAllActive}${pos}`;
   return this.http.get<{offers:OfferDTO[]}>(API).pipe(
-   take(1),retry(3), catchError(err => { console.log(err, "ERROR IN GETTING ALL OFFERS"); throw err })
+   take(1),retry(3), catchError(err => { console.error(err, "ERROR IN GETTING ALL OFFERS"); throw err })
   )
 }
    /**
@@ -90,7 +89,7 @@ GetAllOffers(pos: string):Observable<{offers:OfferDTO[]}> {
     return this.http.get<OfferDTO>(API).pipe(
       retry(3), take(1), map(
         (res: any) => { return res }
-      ), catchError(err => { console.log(err, "ERROR IN GETTING OFFER BY ID"); throw err })
+      ), catchError(err => { console.error(err, "ERROR IN GETTING OFFER BY ID"); throw err })
     )
   }
   /**
@@ -117,7 +116,7 @@ GetAllOffers(pos: string):Observable<{offers:OfferDTO[]}> {
     return this.http.post(API, Body,httpOptions).pipe(
       take(1),
       map(
-        (result:any) => { console.log("show backend book offer response",result); return result }
+        (result:any) => result
       )
     )
   
@@ -128,6 +127,6 @@ GetAllOffers(pos: string):Observable<{offers:OfferDTO[]}> {
  */
      retriveItinerary(id:number |string ) {
       let API: string = `${this.env.offlineSeats}${this.env.offers.RetriveItineraryDetails}?ItineraryId=${id}`;
-      return this.http.get<Itinerary>(API).pipe(retry(3), take(1), catchError(err => { console.log(err); throw err }));
+      return this.http.get<Itinerary>(API).pipe(retry(3), take(1), catchError(err => { console.error(err); throw err }));
     }
 }

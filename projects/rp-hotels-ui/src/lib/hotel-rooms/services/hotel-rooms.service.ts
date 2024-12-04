@@ -31,13 +31,11 @@ getRooms(sid: string, hotelid: string, Pid: string): Observable<any> {
     map((data) => {
       this.roomsLoader = false;
       this.roomsData = data;
-      console.log(this.roomsData, 'test Data');
       this.groupedRooms = this.groupRooms(this.roomsData);
-      console.log(this.groupedRooms, 'test grouping');
       return data; // Return the data to the subscriber
     }),
     catchError((err) => {
-      console.log('get hotel rooms error ->', err);
+      console.error('get hotel rooms error ->', err);
       this.roomsLoader = false;
       // You can handle the error or rethrow it as needed
       return of(null); // Returning an observable with null data in case of error
@@ -79,12 +77,9 @@ groupRooms(Roomsdata:hotelRoomsResponse){
       if(data){
         this.cancelPolicy=data;
         this.cancelLoader = false;
-
-        console.log(this.cancelPolicy,'test cancel policy');
-
       }
     },(err:any)=>{
-        console.log('get cancel policy error ->',err)
+        console.error('get cancel policy error ->',err)
         this.cancelLoader = false
       }
       

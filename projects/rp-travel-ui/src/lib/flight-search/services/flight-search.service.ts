@@ -73,7 +73,7 @@ export class FlightSearchService {
         this.multiData(form);
       }
     }
-    //no values on local storage 
+    //no values on local storage
     else {
       this.searchFlight = new FormGroup({
         flightType: new FormControl('RoundTrip', [Validators.required]),
@@ -468,7 +468,7 @@ export class FlightSearchService {
             continue;
           }
         }
-        //if the current date is the last one in array compare it with the previous one 
+        //if the current date is the last one in array compare it with the previous one
         else if(nextDate!='' || currentDate!=''){
           let prevDate = new Date( this.flightsArray.at(i-1)?.get('departingD')?.value) ;
           //compare between current and next Date
@@ -560,7 +560,7 @@ export class FlightSearchService {
       this.retDateAlert.arMsg = 'يجب عليك تحديد تاريخ العودة';
     }
     return this.retDateAlert;
-    
+
   }
   /**
    * this function is responsible to set the second flight of flights array if the flight type is roundtrip
@@ -783,7 +783,7 @@ export class FlightSearchService {
       } else {
         return { adult, child, infant, retDate, depDate };
       }
-      
+
     }
   }
 

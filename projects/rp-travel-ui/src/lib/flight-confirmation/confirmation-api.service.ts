@@ -58,7 +58,7 @@ export class ConfirmationApiService {
       take(1),
       map((result) => {
         return result;
-      }),catchError((err:any)=>{console.log("CONFIRMATION ERROR",err);throw err})
+      }),catchError((err:any)=>{console.error("CONFIRMATION ERROR",err);throw err})
     );
   }
 }

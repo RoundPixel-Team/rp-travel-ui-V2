@@ -58,7 +58,6 @@ export class ConfirmationService {
       var url = `https://srv.wego.com/analytics/v2/conversions?conversion_id=c-wego-rahaal.co&click_id=${localStorage.getItem('click_id')}&comm_currency_code=${comm_currency_code}&bv_currency_code=${bv_currency_code}&transaction_id=${transaction_id}&commission=${commission}&total_booking_value=${total_booking_value}&status=${status}`;
     }
     else {
-      console.log("CLICK ID NOT FOUND");
       var url = `https://srv.wego.com/analytics/v2/conversions?conversion_id=c-wego-rahaal.co&click_id=${'no_click_id'}&comm_currency_code=${comm_currency_code}&bv_currency_code=${bv_currency_code}&transaction_id=${transaction_id}&commission=${commission}&total_booking_value=${total_booking_value}&status=${status}`;
     }
     

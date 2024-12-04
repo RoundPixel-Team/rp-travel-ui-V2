@@ -38,7 +38,6 @@ this.HotelCheckout.getHotelAvalibility()
     // )
 
     // this.subscription.add(this.flight.paymentLink.subscribe((res)=>{
-    //   console.log("show me link update" , res)
     // }))
     
   }
@@ -70,6 +69,5 @@ this.HotelCheckout.getHotelAvalibility()
 //   }
 onSubmit(){
   this.HotelCheckout.prepareData(this.HotelCheckout.RequiredHotel)
-  console.log("form value", this.HotelCheckout.HotelForm.value)
 }
 }

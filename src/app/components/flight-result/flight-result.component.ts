@@ -23,16 +23,9 @@ export class FlightResultComponent implements OnInit {
   ngOnInit(): void {
 
     this.hotelResults.getHotelDataFromUrl();
-    console.log('new lang', location.pathname)
-    
-    // setTimeout(() => {
-    //   console.log("Updated Filtered Data", this.hotelResults.filteredHotels)
-    // }, 3000);
-
     
     this.route.params.subscribe(
       (params: Params) => {
-        console.log("lang", params['language'], params['directOnly'])
         let lang = params['language']
         let currency = params['currency'];
         let pointOfReservation = params['SearchPoint'];
@@ -51,8 +44,6 @@ export class FlightResultComponent implements OnInit {
           showDirect = true;
         }
         this.FlightResultService.getDataFromUrl(lang, currency, pointOfReservation, flightType, flightsInfo, serachId, passengers, Cclass, showDirect,4,2)
-        console.log("ggfggf", this.FlightResultService.getDataFromUrl(lang, currency, pointOfReservation, flightType, flightsInfo, serachId, passengers, Cclass, showDirect,4,2))
-
       });     
       }
 
@@ -61,8 +52,6 @@ export class FlightResultComponent implements OnInit {
       sort(val: number) {
         if (this.FlightResultService.response != undefined) {
           this.FlightResultService.sortMyResult(val) 
-          console.log("sortData" ,this.FlightResultService.FilterData)
-          
         }
         
       }

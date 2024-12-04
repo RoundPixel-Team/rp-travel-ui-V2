@@ -183,12 +183,12 @@ bookingType:string='standard'
           
           else{
             this.selectedFlightError = true
-            console.log("now error happens")
+            console.error("now error happens")
           }
 
         }
       },(err:any)=>{
-        console.log('get selected flight error ->',err)
+        console.error('get selected flight error ->',err)
         this.loader = false
         this.selectedFlightError = true
       })
@@ -224,7 +224,7 @@ bookingType:string='standard'
         }
         this.offlineServicesLoader = false
       },(err)=>{
-        console.log('get selected flight offline services error ->',err)
+        console.error('get selected flight offline services error ->',err)
         this.offlineServicesLoader = false
       })
     )
@@ -643,7 +643,7 @@ bookingType:string='standard'
           this.copounCodeLoader = false
         }
       },(err)=>{
-        console.log("apply copoun code ERROR",err)
+        console.error("apply copoun code ERROR",err)
         this.copounCodeError = err
         this.copounCodeLoader = false
       })
@@ -715,10 +715,10 @@ bookingType:string='standard'
       this.paymentLink.next(res)
       this.loader = false;
     },(err)=>{
-      console.log("SAVE BOOKING ERROR", err)
       this.paymentLinkFailure.next(err)
       this.loader = false
       this.selectedFlightError = true
+      console.error("SAVE BOOKING ERROR", err)
     }))
     
   }

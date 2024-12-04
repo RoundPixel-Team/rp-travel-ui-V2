@@ -21,7 +21,6 @@ export class SearchBoxHotelComponent implements OnInit {
       let filter = filterValue.trim().toLowerCase();
       this.HomeService.getHotelsCities(filter).subscribe((x)=>{
         this.CitiesData= x;
-        console.log("citiesData",this.CitiesData)
       })
     }
   ngOnInit(): void {
