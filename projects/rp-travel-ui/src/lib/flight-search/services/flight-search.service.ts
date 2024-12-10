@@ -451,6 +451,7 @@ export class FlightSearchService {
     if(this.flightsArray.length > 1){
       for(let i=0; i<this.flightsArray.length; i++){
         let currentDate = this.flightsArray.at(i).get('departingD')?.value;
+
         //condition on the last flight
         if(i != this.flightsArray.length-1){
           var nextDate = this.flightsArray.at(i+1).get('departingD')?.value;
@@ -470,9 +471,11 @@ export class FlightSearchService {
         }
         //if the current date is the last one in array compare it with the previous one
         else if(nextDate!='' || currentDate!=''){
-          let prevDate = new Date( this.flightsArray.at(i-1)?.get('departingD')?.value) ;
+          let prevDate = new Date( this.flightsArray.at(i-1)?.get('departingD')?.value);
+          currentDate = new Date(currentDate);
+
           //compare between current and next Date
-          if(prevDate.getTime() > currentDate.getTime()){
+          if(prevDate?.getTime() > currentDate?.getTime()){
             this.validMultiDateAlert.enMsg='The First Flight should Have A date Before next Flight';
             this.validMultiDateAlert.arMsg='يجب أن يكون للرحلة الأولى تاريخ قبل الرحلة التالية';
             this.flightsArray.at(i)?.get('departingD')?.setValue('');

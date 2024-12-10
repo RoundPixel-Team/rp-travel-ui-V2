@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { Subscription} from 'rxjs';
+import { Subject, Subscription} from 'rxjs';
 import { FareRules, FlightSearchResult, SearchFlightModule, airItineraries, filterFlightInterface, flight, flightResultFilter } from '../interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FlightResultApiService } from './flight-result-api.service';
@@ -53,6 +53,7 @@ fareLoading: boolean = true;
   maxPriceValueForSlider:number = 100;
 
   FilterChanges$: Subscription = new Subscription();
+  notify = new Subject<null>();
 
   /**
  * inital rate currecy code kwd
@@ -283,7 +284,9 @@ fareLoading: boolean = true;
             this.formINIT = true;
             this.refundedItineries = result.airItineraries.filter((res)=>{return res.isRefundable}).length
             this.nonRefundedItieneries = result.airItineraries.filter((res)=>{return !res.isRefundable}).length
-            this.updateFilter()
+            this.updateFilter();
+            
+            this.notify.next(null);
           }
           else {
             this.normalError = "No result found. <br> please search again"
