@@ -8,9 +8,8 @@ describe('SearchBoxHotelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SearchBoxHotelComponent ]
-    })
-    .compileComponents();
+      declarations: [SearchBoxHotelComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(SearchBoxHotelComponent);
     component = fixture.componentInstance;

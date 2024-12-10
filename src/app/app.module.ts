@@ -19,7 +19,7 @@ import { SearchBoxHotelComponent } from './components/search-box-hotel/search-bo
     CheckoutComponent,
     SearchboxComponent,
     FlightResultComponent,
-    SearchBoxHotelComponent
+    SearchBoxHotelComponent,
   ],
   imports: [
     BrowserModule,
@@ -27,9 +27,9 @@ import { SearchBoxHotelComponent } from './components/search-box-hotel/search-bo
     RpTravelUiModule,
     NgxSliderModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   providers: [],
-  bootstrap: [AppComponent] 
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

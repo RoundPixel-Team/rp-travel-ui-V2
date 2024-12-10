@@ -3,72 +3,78 @@
 
 <p>filter</p>
 
-
 <form [formGroup]="FlightResultService.filterForm">
+  <p>pricefilter</p>
 
-    <p>
-       pricefilter
-    </p>
-    
-        <div class="custom-slider"> 
-   
-        <div formGroupName="stopsForm">
-            
-            <input type="checkbox" formControlName="noStops"> Direct
-            <input type="checkbox" formControlName="oneStop">One 
-            <input type="checkbox" formControlName="twoAndm">2+ Stops
+  <div class="custom-slider">
+    <div formGroupName="stopsForm">
+      <input type="checkbox" formControlName="noStops" /> Direct
+      <input type="checkbox" formControlName="oneStop" />One
+      <input type="checkbox" formControlName="twoAndm" />2+ Stops
+    </div>
+    <p>experience</p>
+    <div class="" formGroupName="experience">
+      <input type="checkbox" formControlName="overNight" /> overNight
+      <input type="checkbox" formControlName="longStops" />longStops
+    </div>
+    <p>flexibleTickets</p>
+    <div class="" formGroupName="flexibleTickets">
+      <input type="checkbox" formControlName="refund" /> Ref
+      <input type="checkbox" formControlName="nonRefund" />non-Ref
+    </div>
 
-          
-        </div>
-        <p>experience</p>
-        <div class=""  formGroupName="experience">
-
-          <input type="checkbox" formControlName="overNight"> overNight
-          <input type="checkbox" formControlName="longStops">longStops
-        </div>
-        <p>flexibleTickets</p>
-        <div class=""  formGroupName="flexibleTickets">
-
-          <input type="checkbox" formControlName="refund"> Ref
-          <input type="checkbox" formControlName="nonRefund">non-Ref
-        </div>
-
-
-
-        <ng-container formGroupName="airline">
-            <ng-container formArrayName='airlines'>
-              <ng-container *ngFor="let item of this.FlightResultService.airlinesA;let i= index">
-                <div class="row pl-3">
-                  <input type="checkbox"   class="filterCheckbox" [formControlName]="i">{{FlightResultService.airlinesA[i]}}
-                </div>
-              </ng-container>
-            </ng-container>
-          </ng-container>
-
-        </div>
+    <ng-container formGroupName="airline">
+      <ng-container formArrayName="airlines">
+        <ng-container
+          *ngFor="let item of this.FlightResultService.airlinesA; let i = index"
+        >
+          <div class="row pl-3">
+            <input
+              type="checkbox"
+              class="filterCheckbox"
+              [formControlName]="i"
+            />{{ FlightResultService.airlinesA[i] }}
+          </div>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </div>
 </form>
-
 
 <!-- Hotel Filter Form-->
 <div *ngIf="!hotelResults.hotelResultsLoader">
-  <form [formGroup]="hotelResults.filterForm" (click)="hotelResults.hotelsFilter()">
-      <ng-container formArrayName="hotelRates">
-        <ng-container *ngFor="let item of hotelResults.hotelRatesArray['controls'] ; let i= index;">
-          <ng-container [formGroupName]="i">
-            <div>
-              <p>{{i+1}}</p>
-              <input formControlName="rate"  type="checkbox" class="form-check-input" id="exampleCheck{{i}}" (click)="hotelResults.selectHotelRates(i)">
-              <label class="form-check-label" for="exampleCheck{{i}}">Check me out</label>
-            </div>
-          </ng-container>
+  <form
+    [formGroup]="hotelResults.filterForm"
+    (click)="hotelResults.hotelsFilter()"
+  >
+    <ng-container formArrayName="hotelRates">
+      <ng-container
+        *ngFor="
+          let item of hotelResults.hotelRatesArray['controls'];
+          let i = index
+        "
+      >
+        <ng-container [formGroupName]="i">
+          <div>
+            <p>{{ i + 1 }}</p>
+            <input
+              formControlName="rate"
+              type="checkbox"
+              class="form-check-input"
+              id="exampleCheck{{ i }}"
+              (click)="hotelResults.selectHotelRates(i)"
+            />
+            <label class="form-check-label" for="exampleCheck{{ i }}"
+              >Check me out</label
+            >
+          </div>
         </ng-container>
       </ng-container>
+    </ng-container>
   </form>
 </div>
 
-
 <div class="spinner" *ngIf="hotelResults.hotelResultsLoader"></div>
 <div class="Data" *ngIf="!hotelResults.hotelResultsLoader">
-  {{hotelResults.hotelDataResponse?.Locations}}
+  {{ hotelResults.hotelDataResponse?.Locations }}
 </div>
-

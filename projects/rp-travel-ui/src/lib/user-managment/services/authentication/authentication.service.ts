@@ -1,49 +1,55 @@
-import { inject, Injectable } from "@angular/core";
-import { AbstractControl, FormBuilder, FormControl, FormGroup } from "@angular/forms";
-import { Subject, Subscription } from "rxjs";
-import { 
-  EMAIL_ERROR_MESSAGES, 
-  FIRST_NAME_ERROR_MESSAGES, 
-  LAST_NAME_ERROR_MESSAGES, 
-  PASSWORD_ERROR_MESSAGES, 
-  PHONE_ERROR_MESSAGES, 
-  USER_NAME_ERROR_MESSAGES 
-} from "../../constants/error-messages";
-import { 
-  EMAIL_VALIDATION, 
-  PASSWORD_VALIDATION, 
-  PHONE_VALIDATION, 
-  REQUIRED_VALIDATION 
-} from "../../constants/validation";
-import { AuthApiService } from "./authentication-api.service";
-import { Router } from "@angular/router";
-import { TRIPS_DEFAULT, USER_DEFAULT } from "../../constants/defaultValues";
-import { UserProfileService } from "../user-profile/user-profile.service";
-import { TripsService } from "../trips/trips.service";
-import { jwtDecode } from "jwt-decode";
-import { 
-  FORGET_PASSWORD_STATUS, 
-  LOGIN_STATUS, 
-  OTP_STATUS, 
-  REGISTER_STATUS, 
-  RESET_PASSWORD_STATUS, 
-  VERIFY_TOKEN_STATUS 
-} from "../../constants/statuses";
-import { SharedService } from "../shared.service";
+import { inject, Injectable } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+} from '@angular/forms';
+import { Subject, Subscription } from 'rxjs';
+import {
+  EMAIL_ERROR_MESSAGES,
+  FIRST_NAME_ERROR_MESSAGES,
+  LAST_NAME_ERROR_MESSAGES,
+  PASSWORD_ERROR_MESSAGES,
+  PHONE_ERROR_MESSAGES,
+  USER_NAME_ERROR_MESSAGES,
+} from '../../constants/error-messages';
+import {
+  EMAIL_VALIDATION,
+  PASSWORD_VALIDATION,
+  PHONE_VALIDATION,
+  REQUIRED_VALIDATION,
+} from '../../constants/validation';
+import { AuthApiService } from './authentication-api.service';
+import { Router } from '@angular/router';
+import { TRIPS_DEFAULT, USER_DEFAULT } from '../../constants/defaultValues';
+import { UserProfileService } from '../user-profile/user-profile.service';
+import { TripsService } from '../trips/trips.service';
+import { jwtDecode } from 'jwt-decode';
+import {
+  FORGET_PASSWORD_STATUS,
+  LOGIN_STATUS,
+  OTP_STATUS,
+  REGISTER_STATUS,
+  RESET_PASSWORD_STATUS,
+  VERIFY_TOKEN_STATUS,
+} from '../../constants/statuses';
+import { SharedService } from '../shared.service';
 import * as CryptoJS from 'crypto-js';
 
 @Injectable({
   providedIn: 'root',
-}) export class AuthService {
+})
+export class AuthService {
   /** Form group for login functionality */
   loginForm: FormGroup = new FormGroup({});
-  
+
   /** Form group for registration (sign-up) functionality */
   registerForm: FormGroup = new FormGroup({});
-  
+
   /** Form group for the forget password functionality */
   forgetPasswordForm: FormGroup = new FormGroup({});
-  
+
   /** Form group for the reset password functionality */
   resetPasswordForm: FormGroup = new FormGroup({});
 
@@ -99,19 +105,22 @@ import * as CryptoJS from 'crypto-js';
    * Includes a custom validator for password confirmation.
    */
   initRegisterForm() {
-    this.registerForm = new FormGroup({
-      firstName: new FormControl('', REQUIRED_VALIDATION),
-      lastName: new FormControl('', REQUIRED_VALIDATION),
-      username: new FormControl('', REQUIRED_VALIDATION),
-      email: new FormControl('', EMAIL_VALIDATION),
-      password: new FormControl('', PASSWORD_VALIDATION),
-      confirmPassword: new FormControl('', PASSWORD_VALIDATION),
-      userPhoneNumber: new FormControl('', PHONE_VALIDATION),
-      isTemporary: new FormControl(true),
-      isOAuthEnabled: new FormControl(false)
-    }, {
-      validators: this.confirmPasswordValidator('password'),
-    });
+    this.registerForm = new FormGroup(
+      {
+        firstName: new FormControl('', REQUIRED_VALIDATION),
+        lastName: new FormControl('', REQUIRED_VALIDATION),
+        username: new FormControl('', REQUIRED_VALIDATION),
+        email: new FormControl('', EMAIL_VALIDATION),
+        password: new FormControl('', PASSWORD_VALIDATION),
+        confirmPassword: new FormControl('', PASSWORD_VALIDATION),
+        userPhoneNumber: new FormControl('', PHONE_VALIDATION),
+        isTemporary: new FormControl(true),
+        isOAuthEnabled: new FormControl(false),
+      },
+      {
+        validators: this.confirmPasswordValidator('password'),
+      },
+    );
   }
 
   /**
@@ -126,31 +135,35 @@ import * as CryptoJS from 'crypto-js';
   /**
    * Initializes the reset password form with token, email, and new password fields.
    * Includes a custom validator for password confirmation.
-   * 
+   *
    * @param token - The reset token required for password reset.
    * @param email - The email of the user resetting their password.
    */
   initResetPasswordForm(token: string, email: string) {
-    this.resetPasswordForm = new FormGroup({
-      token: new FormControl(token),
-      email: new FormControl(email),
-      newPassword: new FormControl('', PASSWORD_VALIDATION),
-      confirmPassword: new FormControl('', PASSWORD_VALIDATION),
-    }, {
-      validators: this.confirmPasswordValidator('newPassword'),
-    });
+    this.resetPasswordForm = new FormGroup(
+      {
+        token: new FormControl(token),
+        email: new FormControl(email),
+        newPassword: new FormControl('', PASSWORD_VALIDATION),
+        confirmPassword: new FormControl('', PASSWORD_VALIDATION),
+      },
+      {
+        validators: this.confirmPasswordValidator('newPassword'),
+      },
+    );
   }
 
   /**
    * Custom validator to check if the password and confirm password fields match.
-   * 
+   *
    * @param controlName - The name of the control to compare with the confirm password field.
    * @returns A validation function.
    */
   confirmPasswordValidator(controlName: string) {
     return (control: AbstractControl) => {
-      return control.get(controlName)?.value === control.get('confirmPassword')?.value 
-        ? null 
+      return control.get(controlName)?.value ===
+        control.get('confirmPassword')?.value
+        ? null
         : { mismatch: true };
     };
   }
@@ -158,7 +171,7 @@ import * as CryptoJS from 'crypto-js';
   /**
    * Stores the authentication token in local storage.
    * Also generates a hash of the token for additional security.
-   * 
+   *
    * @param token - The JWT token to be stored.
    * @returns A promise that resolves once the token and hash are stored.
    */
@@ -170,7 +183,7 @@ import * as CryptoJS from 'crypto-js';
 
   /**
    * Generates a secure hash of the token using the provided secret.
-   * 
+   *
    * @param token - The JWT token to be hashed.
    * @param secret - The secret key used for hashing.
    * @returns The hashed token.
@@ -184,57 +197,61 @@ import * as CryptoJS from 'crypto-js';
   /**
    * this function is responsible to make intgeration between front and backend request (USER REGISTER)
    */
-  regitserSubmit(){
-    this.isLoading = true
-    if(this.registerForm.invalid){
+  regitserSubmit() {
+    this.isLoading = true;
+    if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
-      this.isLoading = false
-    }
-    else{
+      this.isLoading = false;
+    } else {
       this.subscription.add(
-        this.authApi.registeration(
-          {
-            ...this.registerForm.value, 
-            password: this.sharedService.encryptData(this.registerForm.value.password),
-            confirmPassword: this.sharedService.encryptData(this.registerForm.value.confirmPassword),
-          }
-        ).subscribe({
-          next: (res) => {
-            this.notify.next(REGISTER_STATUS.success);
-  
-            const userInfo = {
-              email: this.registerForm.controls['email'].value,
-              password: this.sharedService.encryptData(this.registerForm.controls['password'].value)
-            }
-  
-            localStorage.setItem('userInfo',JSON.stringify(userInfo));
-          },
-          error: (error:any) => {
-            this.notify.next(REGISTER_STATUS.faild);
-            this.isLoading = false
-          },
-        })
-      )
+        this.authApi
+          .registeration({
+            ...this.registerForm.value,
+            password: this.sharedService.encryptData(
+              this.registerForm.value.password,
+            ),
+            confirmPassword: this.sharedService.encryptData(
+              this.registerForm.value.confirmPassword,
+            ),
+          })
+          .subscribe({
+            next: (res) => {
+              this.notify.next(REGISTER_STATUS.success);
+
+              const userInfo = {
+                email: this.registerForm.controls['email'].value,
+                password: this.sharedService.encryptData(
+                  this.registerForm.controls['password'].value,
+                ),
+              };
+
+              localStorage.setItem('userInfo', JSON.stringify(userInfo));
+            },
+            error: (error: any) => {
+              this.notify.next(REGISTER_STATUS.faild);
+              this.isLoading = false;
+            },
+          }),
+      );
     }
   }
 
   /**
    * this function is responsible to make intgeration between front and backend request (USER REGISTER)
    */
-  otpSubmit(otp: string){
-    this.isLoading = true
-    if(this.registerForm.invalid){
-      this.isLoading = false
-    }
-    else{
-      const userInfo = JSON.parse(localStorage.getItem('userInfo') ?? "");
+  otpSubmit(otp: string) {
+    this.isLoading = true;
+    if (this.registerForm.invalid) {
+      this.isLoading = false;
+    } else {
+      const userInfo = JSON.parse(localStorage.getItem('userInfo') ?? '');
 
       this.subscription.add(
-        this.authApi.otpVerification({otp, ...userInfo}).subscribe({
+        this.authApi.otpVerification({ otp, ...userInfo }).subscribe({
           next: (res) => {
             this.isLoading = false;
-  
-            if(res.status === 0){
+
+            if (res.status === 0) {
               const token = JSON.stringify(res.returnObject.token);
               this.setToken(token);
               this.notify.next(OTP_STATUS.success);
@@ -242,160 +259,165 @@ import * as CryptoJS from 'crypto-js';
               this.notify.next(OTP_STATUS.faild);
             }
           },
-          error: (error:any) => {
+          error: (error: any) => {
             this.notify.next(OTP_STATUS.faild);
-            this.isLoading = false
+            this.isLoading = false;
           },
-        })
-      )
+        }),
+      );
     }
   }
 
   /**
    * this function is responsible to make intgeration between front and backend request (USER LOGIN)
    */
-  loginSubmit(){
-    this.isLoading = true
-    if(this.loginForm.invalid){
-      this.loginForm.markAllAsTouched()
-      this.isLoading = false
-    }
-    else {
+  loginSubmit() {
+    this.isLoading = true;
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      this.isLoading = false;
+    } else {
       this.subscription.add(
-        this.authApi.login(
-          {
-            ...this.loginForm.value, 
-            password: this.sharedService.encryptData(this.loginForm.value.password)
-          }
-        ).subscribe({
-          next: (res) => {
-            this.isLoading = false;
+        this.authApi
+          .login({
+            ...this.loginForm.value,
+            password: this.sharedService.encryptData(
+              this.loginForm.value.password,
+            ),
+          })
+          .subscribe({
+            next: (res) => {
+              this.isLoading = false;
 
-            if(res.status === 0){
-              const token = JSON.stringify(res.returnObject.token);
-              this.setToken(token);
-              this.notify.next(LOGIN_STATUS.success);
-            }else{
+              if (res.status === 0) {
+                const token = JSON.stringify(res.returnObject.token);
+                this.setToken(token);
+                this.notify.next(LOGIN_STATUS.success);
+              } else {
+                this.notify.next(LOGIN_STATUS.faild);
+              }
+            },
+            error: (error: any) => {
               this.notify.next(LOGIN_STATUS.faild);
-            }
-          },
-          error: (error: any) => {
-            this.notify.next(LOGIN_STATUS.faild);
-            this.isLoading = false
-          }
-        })
-      )
+              this.isLoading = false;
+            },
+          }),
+      );
     }
   }
 
   /**
    * this function is responsible to make intgeration between front and backend request (USER LOGIN)
    */
-  forgetPassword(){
-    this.isLoading = true
-    if(this.forgetPasswordForm.invalid){
-      this.forgetPasswordForm.markAllAsTouched()
-      this.isLoading = false
-    }
-    else {
+  forgetPassword() {
+    this.isLoading = true;
+    if (this.forgetPasswordForm.invalid) {
+      this.forgetPasswordForm.markAllAsTouched();
+      this.isLoading = false;
+    } else {
       this.subscription.add(
-        this.authApi.forgetPasswordApi(this.forgetPasswordForm.value).subscribe({
-          next: (res) => {
-            this.isLoading = false;
+        this.authApi
+          .forgetPasswordApi(this.forgetPasswordForm.value)
+          .subscribe({
+            next: (res) => {
+              this.isLoading = false;
 
-            if(res.status === 0){
-              this.notify.next(FORGET_PASSWORD_STATUS.success);
-            }else{
+              if (res.status === 0) {
+                this.notify.next(FORGET_PASSWORD_STATUS.success);
+              } else {
+                this.notify.next(FORGET_PASSWORD_STATUS.faild);
+              }
+            },
+            error: (error: any) => {
               this.notify.next(FORGET_PASSWORD_STATUS.faild);
-            }
-          },
-          error: (error: any) => {
-            this.notify.next(FORGET_PASSWORD_STATUS.faild);
-            this.isLoading = false
-          }
-        })
-      )
+              this.isLoading = false;
+            },
+          }),
+      );
     }
   }
 
   /**
    * this function is responsible to make intgeration between front and backend request (USER LOGIN)
    */
-  restPassword(){
-    this.isLoading = true
-    if(this.resetPasswordForm.invalid){
-      this.resetPasswordForm.markAllAsTouched()
-      this.isLoading = false
-    }
-    else {
+  restPassword() {
+    this.isLoading = true;
+    if (this.resetPasswordForm.invalid) {
+      this.resetPasswordForm.markAllAsTouched();
+      this.isLoading = false;
+    } else {
       this.subscription.add(
-        this.authApi.restPasswordApi(
-          {
+        this.authApi
+          .restPasswordApi({
             ...this.resetPasswordForm.value,
-            newPassword: this.sharedService.encryptData(this.resetPasswordForm.value.newPassword),
-            confirmPassword: this.sharedService.encryptData(this.resetPasswordForm.value.confirmPassword),
-          }
-        ).subscribe({
-          next: (res) => {
-            this.isLoading = false;
+            newPassword: this.sharedService.encryptData(
+              this.resetPasswordForm.value.newPassword,
+            ),
+            confirmPassword: this.sharedService.encryptData(
+              this.resetPasswordForm.value.confirmPassword,
+            ),
+          })
+          .subscribe({
+            next: (res) => {
+              this.isLoading = false;
 
-            if(res.status === 0){
-              this.notify.next(RESET_PASSWORD_STATUS.success);
-            }else{
+              if (res.status === 0) {
+                this.notify.next(RESET_PASSWORD_STATUS.success);
+              } else {
+                this.notify.next(RESET_PASSWORD_STATUS.faild);
+              }
+            },
+            error: (error: any) => {
               this.notify.next(RESET_PASSWORD_STATUS.faild);
-            }
-          },
-          error: (error: any) => {
-            this.notify.next(RESET_PASSWORD_STATUS.faild);
-            this.isLoading = false
-          }
-        })
-      )
+              this.isLoading = false;
+            },
+          }),
+      );
     }
   }
 
   /**
    * this function is responsible to make intgeration between front and backend request (USER LOGIN)
    */
-  verifyResetPasswordToken(token: string, email: string){
+  verifyResetPasswordToken(token: string, email: string) {
     this.isLoading = true;
 
     this.subscription.add(
-      this.authApi.verifyResetPasswordTokenApi(
-        {
+      this.authApi
+        .verifyResetPasswordTokenApi({
           email,
-          token
-        }
-      ).subscribe({
-        next: (res) => {
-          this.isLoading = false;
+          token,
+        })
+        .subscribe({
+          next: (res) => {
+            this.isLoading = false;
 
-          if(res.status === 0){
-            this.notify.next(VERIFY_TOKEN_STATUS.success);
-          }else{
+            if (res.status === 0) {
+              this.notify.next(VERIFY_TOKEN_STATUS.success);
+            } else {
+              this.notify.next(VERIFY_TOKEN_STATUS.faild);
+            }
+          },
+          error: (error: any) => {
             this.notify.next(VERIFY_TOKEN_STATUS.faild);
-          }
-        },
-        error: (error: any) => {
-          this.notify.next(VERIFY_TOKEN_STATUS.faild);
-          this.isLoading = false
-        }
-      })
-    )
+            this.isLoading = false;
+          },
+        }),
+    );
   }
 
   authenticateWithProvider(providerUrl: string): Promise<any> {
     return new Promise((resolve, reject) => {
       if (this.popupOpened) {
-        reject("Popup already opened");
+        reject('Popup already opened');
         return;
       }
 
       // Open the popup only if not opened
       const popup = window.open(providerUrl, '_blank', 'width=500,height=600');
-      
+
       if (!popup) {
-        reject("Popup blocked or failed to open");
+        reject('Popup blocked or failed to open');
         return;
       }
 
@@ -416,8 +438,6 @@ import * as CryptoJS from 'crypto-js';
       window.addEventListener('message', messageListener);
     });
   }
-
-
 
   async getToken(): Promise<string | null> {
     const token = localStorage.getItem(this.tokenKey);
@@ -441,7 +461,7 @@ import * as CryptoJS from 'crypto-js';
     this.userProfileService.user = USER_DEFAULT;
     this.tripsService.allTrips = TRIPS_DEFAULT;
 
-    this.notify.next("Loged Out")
+    this.notify.next('Loged Out');
   }
 
   isTokenExpired(): boolean {
@@ -452,28 +472,40 @@ import * as CryptoJS from 'crypto-js';
     return Date.now() >= exp * 1000;
   }
 
-  getFirstNameErrorMessage(firstNameControl: AbstractControl, lang: 'en' | 'ar' = 'en') {
+  getFirstNameErrorMessage(
+    firstNameControl: AbstractControl,
+    lang: 'en' | 'ar' = 'en',
+  ) {
     if (firstNameControl.hasError('required')) {
       return FIRST_NAME_ERROR_MESSAGES.required[lang];
     }
     return '';
   }
-  
-  getLastNameErrorMessage(lastNameControl: AbstractControl, lang: 'en' | 'ar' = 'en') {
+
+  getLastNameErrorMessage(
+    lastNameControl: AbstractControl,
+    lang: 'en' | 'ar' = 'en',
+  ) {
     if (lastNameControl.hasError('required')) {
       return LAST_NAME_ERROR_MESSAGES.required[lang];
     }
     return '';
   }
-  
-  getUserNameErrorMessage(userNameControl: AbstractControl, lang: 'en' | 'ar' = 'en') {
+
+  getUserNameErrorMessage(
+    userNameControl: AbstractControl,
+    lang: 'en' | 'ar' = 'en',
+  ) {
     if (userNameControl.hasError('required')) {
       return USER_NAME_ERROR_MESSAGES.required[lang];
     }
     return '';
   }
-  
-  getEmailErrorMessage(emailControl: AbstractControl, lang: 'en' | 'ar' = 'en') {
+
+  getEmailErrorMessage(
+    emailControl: AbstractControl,
+    lang: 'en' | 'ar' = 'en',
+  ) {
     if (emailControl.hasError('required')) {
       return EMAIL_ERROR_MESSAGES.required[lang];
     }
@@ -488,8 +520,12 @@ import * as CryptoJS from 'crypto-js';
     }
     return '';
   }
-  
-  getPasswordErrorMessage(passwordControl: AbstractControl, lang: 'en' | 'ar' = 'en', isRegister: boolean = false) {
+
+  getPasswordErrorMessage(
+    passwordControl: AbstractControl,
+    lang: 'en' | 'ar' = 'en',
+    isRegister: boolean = false,
+  ) {
     if (passwordControl.hasError('required')) {
       return PASSWORD_ERROR_MESSAGES.required[lang];
     }
@@ -501,8 +537,11 @@ import * as CryptoJS from 'crypto-js';
     }
     return '';
   }
-  
-  getPhoneErrorMessage(phoneControl: AbstractControl, lang: 'en' | 'ar' = 'en') {
+
+  getPhoneErrorMessage(
+    phoneControl: AbstractControl,
+    lang: 'en' | 'ar' = 'en',
+  ) {
     if (phoneControl.hasError('required')) {
       return PHONE_ERROR_MESSAGES.required[lang];
     }
@@ -513,7 +552,7 @@ import * as CryptoJS from 'crypto-js';
       return PHONE_ERROR_MESSAGES.pattern[lang];
     }
     return '';
-  }  
+  }
 
   destroyer() {
     this.subscription.unsubscribe();

@@ -2,20 +2,20 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, retry, take } from 'rxjs';
 import { EnvironmentService } from '../../../shared/services/environment.service';
-import { 
-  ILoginResponse, 
-  IRegisterResponse, 
-  IOtp, 
-  IResetPasswordForm, 
-  ILoginForm, 
-  IForgetPasswordForm, 
-  IForgetPasswordResponse, 
-  IResetPasswordResponse, 
-  IVerifyResetPasswordToken 
+import {
+  ILoginResponse,
+  IRegisterResponse,
+  IOtp,
+  IResetPasswordForm,
+  ILoginForm,
+  IForgetPasswordForm,
+  IForgetPasswordResponse,
+  IResetPasswordResponse,
+  IVerifyResetPasswordToken,
 } from '../../interfaces';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthApiService {
   public http = inject(HttpClient);
@@ -31,7 +31,9 @@ export class AuthApiService {
     const api = `${this.env.users}/api/user/Login`;
     return this.http.post<ILoginResponse>(api, body).pipe(
       take(1),
-      catchError(err => { throw err; })
+      catchError((err) => {
+        throw err;
+      }),
     );
   }
 
@@ -41,11 +43,15 @@ export class AuthApiService {
    * @param body - Forget password form data containing the email or username.
    * @returns An observable with the forget password response.
    */
-  forgetPasswordApi(body: IForgetPasswordForm): Observable<IForgetPasswordResponse> {
+  forgetPasswordApi(
+    body: IForgetPasswordForm,
+  ): Observable<IForgetPasswordResponse> {
     const api = `${this.env.users}/api/user/customerForgotPassword`;
     return this.http.post<IForgetPasswordResponse>(api, body).pipe(
       take(1),
-      catchError(err => { throw err; })
+      catchError((err) => {
+        throw err;
+      }),
     );
   }
 
@@ -55,16 +61,22 @@ export class AuthApiService {
    * @param body - Reset password form data containing the new password and token.
    * @returns An observable with the reset password response.
    */
-  restPasswordApi(body: IResetPasswordForm): Observable<IResetPasswordResponse> {
+  restPasswordApi(
+    body: IResetPasswordForm,
+  ): Observable<IResetPasswordResponse> {
     const api = `${this.env.users}/api/user/customerResetPassword`;
-    return this.http.post<IResetPasswordResponse>(api, body, {
-      headers: {
-        passwordResetToken: body.token
-      }
-    }).pipe(
-      take(1),
-      catchError(err => { throw err; })
-    );
+    return this.http
+      .post<IResetPasswordResponse>(api, body, {
+        headers: {
+          passwordResetToken: body.token,
+        },
+      })
+      .pipe(
+        take(1),
+        catchError((err) => {
+          throw err;
+        }),
+      );
   }
 
   /**
@@ -73,11 +85,15 @@ export class AuthApiService {
    * @param body - Data containing the reset password token to be verified.
    * @returns An observable with the verification response.
    */
-  verifyResetPasswordTokenApi(body: IVerifyResetPasswordToken): Observable<IResetPasswordResponse> {
+  verifyResetPasswordTokenApi(
+    body: IVerifyResetPasswordToken,
+  ): Observable<IResetPasswordResponse> {
     const api = `${this.env.users}/api/user/VerifyResetPasswordToken`;
     return this.http.post<IResetPasswordResponse>(api, body).pipe(
       take(1),
-      catchError(err => { throw err; })
+      catchError((err) => {
+        throw err;
+      }),
     );
   }
 
@@ -87,10 +103,12 @@ export class AuthApiService {
    * @returns An observable with the external login response.
    */
   externalLoginGoogleApi(): Observable<any> {
-    const api = "https://flightsearch.bahmantravel.com/api/user/googlelogin";
+    const api = 'https://flightsearch.bahmantravel.com/api/user/googlelogin';
     return this.http.get<any>(api).pipe(
       take(1),
-      catchError(err => { throw err; })
+      catchError((err) => {
+        throw err;
+      }),
     );
   }
 
@@ -104,7 +122,9 @@ export class AuthApiService {
     const api = `${this.env.users}/api/user/register`;
     return this.http.post<IRegisterResponse>(api, body).pipe(
       take(1),
-      catchError(err => { throw err; })
+      catchError((err) => {
+        throw err;
+      }),
     );
   }
 
@@ -118,7 +138,9 @@ export class AuthApiService {
     const api = `${this.env.users}/api/user/verifyOtp`;
     return this.http.post<ILoginResponse>(api, body).pipe(
       take(1),
-      catchError(err => { throw err; })
+      catchError((err) => {
+        throw err;
+      }),
     );
   }
 }

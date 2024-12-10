@@ -1,17 +1,17 @@
-import { ITrips, IUser } from "../interfaces";
+import { ITrips, IUser } from '../interfaces';
 
 export const USER_DEFAULT: IUser = {
-  firstName: "",
-  lastName: "",
-  id: "",
-  userName: "",
-  normalizedUserName: "",
-  email: "",
-  normalizedEmail: "",
+  firstName: '',
+  lastName: '',
+  id: '',
+  userName: '',
+  normalizedUserName: '',
+  email: '',
+  normalizedEmail: '',
   emailConfirmed: false,
-  passwordHash: "",
-  securityStamp: "",
-  concurrencyStamp: "",
+  passwordHash: '',
+  securityStamp: '',
+  concurrencyStamp: '',
   phoneNumber: null,
   phoneNumberConfirmed: false,
   twoFactorEnabled: false,
@@ -22,5 +22,5 @@ export const USER_DEFAULT: IUser = {
 
 export const TRIPS_DEFAULT: ITrips = {
   historyFlights: [],
-  upcomingFlights: []
+  upcomingFlights: [],
 };

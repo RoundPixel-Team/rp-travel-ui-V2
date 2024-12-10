@@ -4,94 +4,103 @@ import { HotelRoomsApiService } from './hotel-rooms-api.service';
 import { hotelRoomsResponse, roomCancelPolicy } from '../interfaces';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class HotelRoomsService {
-roomsLoader:boolean = false;
-cancelLoader:boolean = false;
-roomsData:hotelRoomsResponse=undefined!;
-cancelPolicy!:roomCancelPolicy[];
-groupedRooms!:{};
-  api = inject(HotelRoomsApiService)
+  roomsLoader: boolean = false;
+  cancelLoader: boolean = false;
+  roomsData: hotelRoomsResponse = undefined!;
+  cancelPolicy!: roomCancelPolicy[];
+  groupedRooms!: {};
+  api = inject(HotelRoomsApiService);
 
-  subscription : Subscription = new Subscription()
+  subscription: Subscription = new Subscription();
 
-  constructor() { }
-/**
- * @param sid 
- * @param hotelid  
- * @param pid 
- * this method is responsible for fetching the rooms data in a specified hotel (the selected hotel) and it takes the following parameters : search Id, Hotel Id and provider id
- * */
-getRooms(sid: string, hotelid: string, Pid: string): Observable<any> {
-  this.roomsLoader = true;
+  constructor() {}
+  /**
+   * @param sid
+   * @param hotelid
+   * @param pid
+   * this method is responsible for fetching the rooms data in a specified hotel (the selected hotel) and it takes the following parameters : search Id, Hotel Id and provider id
+   * */
+  getRooms(sid: string, hotelid: string, Pid: string): Observable<any> {
+    this.roomsLoader = true;
 
-  return this.api.getHotelsRoomsApi(sid, hotelid, Pid).pipe(
-    take(1),
-    map((data) => {
-      this.roomsLoader = false;
-      this.roomsData = data;
-      this.groupedRooms = this.groupRooms(this.roomsData);
-      return data; // Return the data to the subscriber
-    }),
-    catchError((err) => {
-      console.error('get hotel rooms error ->', err);
-      this.roomsLoader = false;
-      // You can handle the error or rethrow it as needed
-      return of(null); // Returning an observable with null data in case of error
-    })
-  )}
-/**
- * 
- * @param Roomsdata 
- * @returns this method is responsible for grouping the rooms based on thier type and it returns an array of the grouped rooms
- */
-groupRooms(Roomsdata:hotelRoomsResponse){
-  const allRooms=Roomsdata.Packages.flatMap(pkg=>pkg.Rooms);
-   this.groupedRooms = allRooms.reduce((acc:any, room) => {
-    const roomType = room.RoomType;
-    if (!acc[roomType]) {
-      acc[roomType] = [];
-    }
-    acc[roomType].push(room);
-    return acc;
-  }, {});
-
-  return this.groupedRooms;
-}
-
-/**
- * 
- * @param sid 
- * @param hotelcode 
- * @param roomindex 
- * @param packageKey 
- * @param PId 
- * this method is responsible for fetching the cancelation policy data in each room
- */
- getCancelPolicy(sid: string, hotelcode: any, roomindex: any,packageKey:string, PId: any){
-  this.cancelLoader = true;
-
-  this.subscription.add(
-    this.api.GetRoomCancelPolicy(sid, hotelcode, roomindex,packageKey, PId).subscribe((data)=>{
-      if(data){
-        this.cancelPolicy=data;
-        this.cancelLoader = false;
+    return this.api.getHotelsRoomsApi(sid, hotelid, Pid).pipe(
+      take(1),
+      map((data) => {
+        this.roomsLoader = false;
+        this.roomsData = data;
+        this.groupedRooms = this.groupRooms(this.roomsData);
+        return data; // Return the data to the subscriber
+      }),
+      catchError((err) => {
+        console.error('get hotel rooms error ->', err);
+        this.roomsLoader = false;
+        // You can handle the error or rethrow it as needed
+        return of(null); // Returning an observable with null data in case of error
+      }),
+    );
+  }
+  /**
+   *
+   * @param Roomsdata
+   * @returns this method is responsible for grouping the rooms based on thier type and it returns an array of the grouped rooms
+   */
+  groupRooms(Roomsdata: hotelRoomsResponse) {
+    const allRooms = Roomsdata.Packages.flatMap((pkg) => pkg.Rooms);
+    this.groupedRooms = allRooms.reduce((acc: any, room) => {
+      const roomType = room.RoomType;
+      if (!acc[roomType]) {
+        acc[roomType] = [];
       }
-    },(err:any)=>{
-        console.error('get cancel policy error ->',err)
-        this.cancelLoader = false
-      }
-      
-    )
-  )
+      acc[roomType].push(room);
+      return acc;
+    }, {});
 
-}
+    return this.groupedRooms;
+  }
+
+  /**
+   *
+   * @param sid
+   * @param hotelcode
+   * @param roomindex
+   * @param packageKey
+   * @param PId
+   * this method is responsible for fetching the cancelation policy data in each room
+   */
+  getCancelPolicy(
+    sid: string,
+    hotelcode: any,
+    roomindex: any,
+    packageKey: string,
+    PId: any,
+  ) {
+    this.cancelLoader = true;
+
+    this.subscription.add(
+      this.api
+        .GetRoomCancelPolicy(sid, hotelcode, roomindex, packageKey, PId)
+        .subscribe(
+          (data) => {
+            if (data) {
+              this.cancelPolicy = data;
+              this.cancelLoader = false;
+            }
+          },
+          (err: any) => {
+            console.error('get cancel policy error ->', err);
+            this.cancelLoader = false;
+          },
+        ),
+    );
+  }
 
   /**
    * this function is responsible to destory any opened subscription on this service
    */
-  destroyer(){
-    this.subscription.unsubscribe()
+  destroyer() {
+    this.subscription.unsubscribe();
   }
 }

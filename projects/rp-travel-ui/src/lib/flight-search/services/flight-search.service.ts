@@ -53,23 +53,27 @@ export class FlightSearchService {
   /**
    * this function is responsible to fill the searchbox form from local storage if it has a previous data
    */
-  initSearchForm(form:searchBoxModel) {
+  initSearchForm(form: searchBoxModel) {
     if (form) {
       this.flightType = form.flightType;
       //get the flight type based
-      if (this.flightType == 'OneWay' || this.flightType == 'oneway' || this.flightType == 'oneWay') {
+      if (
+        this.flightType == 'OneWay' ||
+        this.flightType == 'oneway' ||
+        this.flightType == 'oneWay'
+      ) {
         this.oneWayData(form);
-      }
-       else if (
+      } else if (
         this.flightType == 'RoundTrip' ||
         this.flightType == 'roundTrip' ||
         this.flightType == 'roundtrip'
       ) {
         this.roundTripData(form);
-      }
-      else if(this.flightType == 'MultiCity' ||
-      this.flightType == 'multiCity' ||
-      this.flightType == 'multicity') {
+      } else if (
+        this.flightType == 'MultiCity' ||
+        this.flightType == 'multiCity' ||
+        this.flightType == 'multicity'
+      ) {
         this.multiData(form);
       }
     }
@@ -78,18 +82,21 @@ export class FlightSearchService {
       this.searchFlight = new FormGroup({
         flightType: new FormControl('RoundTrip', [Validators.required]),
         Direct: new FormControl(false, [Validators.required]),
-        Flights: new FormArray([
-          new FormGroup({
-            departing: new FormControl('', [Validators.required]),
-            landing: new FormControl('', [Validators.required]),
-            departingD: new FormControl('', [Validators.required]),
-          }),
-          new FormGroup({
-            departing: new FormControl('', [Validators.required]),
-            landing: new FormControl('', [Validators.required]),
-            departingD: new FormControl('', [Validators.required]),
-          })
-        ], [Validators.required]),
+        Flights: new FormArray(
+          [
+            new FormGroup({
+              departing: new FormControl('', [Validators.required]),
+              landing: new FormControl('', [Validators.required]),
+              departingD: new FormControl('', [Validators.required]),
+            }),
+            new FormGroup({
+              departing: new FormControl('', [Validators.required]),
+              landing: new FormControl('', [Validators.required]),
+              departingD: new FormControl('', [Validators.required]),
+            }),
+          ],
+          [Validators.required],
+        ),
         returnDate: new FormControl(''),
         passengers: new FormGroup(
           {
@@ -104,23 +111,17 @@ export class FlightSearchService {
               Validators.min(0),
             ]),
           },
-          []
+          [],
         ),
         class: new FormControl('Economy', [Validators.required]),
       });
       //Intialize Empty Flight
       (<FormArray>this.searchFlight.get('Flights')).push(
         new FormGroup({
-          departing: new FormControl('', [
-            Validators.required,
-          ]),
-          landing: new FormControl('', [
-            Validators.required,
-          ]),
-          departingD: new FormControl('', [
-            Validators.required,
-          ]),
-        })
+          departing: new FormControl('', [Validators.required]),
+          landing: new FormControl('', [Validators.required]),
+          departingD: new FormControl('', [Validators.required]),
+        }),
       );
     }
   }
@@ -151,7 +152,7 @@ export class FlightSearchService {
             Validators.min(0),
           ]),
         },
-        []
+        [],
       ),
       class: new FormControl(localForm['class'], [Validators.required]),
     });
@@ -167,7 +168,7 @@ export class FlightSearchService {
         departingD: new FormControl(localForm.Flights[0].departingD, [
           Validators.required,
         ]),
-      })
+      }),
     );
   }
   /**
@@ -199,7 +200,7 @@ export class FlightSearchService {
             Validators.min(0),
           ]),
         },
-        []
+        [],
       ),
       class: new FormControl(localForm['class'], [Validators.required]),
     });
@@ -215,7 +216,7 @@ export class FlightSearchService {
         departingD: new FormControl(localForm.Flights[0].departingD, [
           Validators.required,
         ]),
-      })
+      }),
     );
     //change between depart and land cities and pushing it to flights array
     (<FormArray>this.searchFlight.get('Flights')).push(
@@ -226,10 +227,10 @@ export class FlightSearchService {
         landing: new FormControl(localForm.Flights[0].departing, [
           Validators.required,
         ]),
-        departingD: new FormControl(localForm.returnDate,[
+        departingD: new FormControl(localForm.returnDate, [
           Validators.required,
         ]),
-      })
+      }),
     );
   }
   /**
@@ -258,7 +259,7 @@ export class FlightSearchService {
             Validators.min(0),
           ]),
         },
-        []
+        [],
       ),
       class: new FormControl(localForm['class'], [Validators.required]),
     });
@@ -275,7 +276,7 @@ export class FlightSearchService {
           departingD: new FormControl(localForm.Flights[i].departingD, [
             Validators.required,
           ]),
-        })
+        }),
       );
     }
   }
@@ -304,14 +305,18 @@ export class FlightSearchService {
       return this.flightAlert;
     } else {
       if (len >= 1) {
-        this.lastFlight = (<FormArray>this.searchFlight.get('Flights')).value[len - 1];
+        this.lastFlight = (<FormArray>this.searchFlight.get('Flights')).value[
+          len - 1
+        ];
       }
       (<FormArray>this.searchFlight.get('Flights')).push(
         new FormGroup({
-          departing: new FormControl(this.lastFlight?.landing, [Validators.required]),
+          departing: new FormControl(this.lastFlight?.landing, [
+            Validators.required,
+          ]),
           landing: new FormControl('', [Validators.required]),
           departingD: new FormControl('', [Validators.required]),
-        })
+        }),
       );
       return this.flightAlert;
     }
@@ -323,7 +328,7 @@ export class FlightSearchService {
   removeFlight() {
     let len = this.flightsArray.length;
     if (len > 1) {
-      (<FormArray>this.searchFlight.get('Flights')).removeAt(len-1);
+      (<FormArray>this.searchFlight.get('Flights')).removeAt(len - 1);
       return this.removeFlightAlert;
     } else {
       this.removeFlightAlert.enMsg = "You Don't have any flights to remove";
@@ -350,7 +355,7 @@ export class FlightSearchService {
     let Total = this.getTotalPassengers(
       num,
       this.searchFlight?.get('passengers.child')?.value,
-      this.searchFlight?.get('passengers.infant')?.value
+      this.searchFlight?.get('passengers.infant')?.value,
     );
     if (num <= 9 && num != 0 && Total <= 9) {
       this.searchFlight?.get('passengers.adults')?.setValue(num);
@@ -372,12 +377,12 @@ export class FlightSearchService {
    */
   changeChildPassenger(num: number) {
     this.passengerAlert.arMsg = '';
-      this.passengerAlert.enMsg = '';
+    this.passengerAlert.enMsg = '';
     //get total number of passenger with new selected child value
     let Total = this.getTotalPassengers(
       this.searchFlight?.get('passengers.adults')?.value,
       num,
-      this.searchFlight?.get('passengers.infant')?.value
+      this.searchFlight?.get('passengers.infant')?.value,
     );
     if (num <= 9 && Total <= 9) {
       this.searchFlight?.get('passengers.child')?.setValue(num);
@@ -397,13 +402,13 @@ export class FlightSearchService {
    */
   changeinfantPassenger(num: number) {
     this.passengerAlert.arMsg = '';
-      this.passengerAlert.enMsg = '';
+    this.passengerAlert.enMsg = '';
     let adultVal = this.searchFlight?.get('passengers.adults')?.value;
     //get total number of passenger with new selected infant value
     let Total = this.getTotalPassengers(
       adultVal,
       this.searchFlight?.get('passengers.child')?.value,
-      num
+      num,
     );
     if (num <= adultVal && Total <= 9) {
       this.searchFlight?.get('passengers.infant')?.setValue(num);
@@ -429,11 +434,11 @@ export class FlightSearchService {
    * this function is responsible to exchange between destinations
    * @params item which i want to exchange (from Type searchBoxFlights)
    */
-  switchDestination(item : any) {
-    let destination1 = item.get("landing")?.value;
-    let destination2 = item.get("departing")?.value;
-    item.get("departing")?.setValue(destination1);
-    item.get("landing")?.setValue(destination2);
+  switchDestination(item: any) {
+    let destination1 = item.get('landing')?.value;
+    let destination2 = item.get('departing')?.value;
+    item.get('departing')?.setValue(destination1);
+    item.get('landing')?.setValue(destination2);
     item.updateValueAndValidity();
   }
   /**
@@ -443,54 +448,60 @@ export class FlightSearchService {
     let date = new Date();
     return date.toISOString().split('T')[0];
   }
-    /**
+  /**
    * this function is responsible to validate the Multi City searchbox Dates
    * @retuer string with alert message if it has error else return true
    */
-  validateMultiCityDates(){
-    if(this.flightsArray.length > 1){
-      for(let i=0; i<this.flightsArray.length; i++){
+  validateMultiCityDates() {
+    if (this.flightsArray.length > 1) {
+      for (let i = 0; i < this.flightsArray.length; i++) {
         let currentDate = this.flightsArray.at(i).get('departingD')?.value;
 
         //condition on the last flight
-        if(i != this.flightsArray.length-1){
-          var nextDate = this.flightsArray.at(i+1).get('departingD')?.value;
+        if (i != this.flightsArray.length - 1) {
+          var nextDate = this.flightsArray.at(i + 1).get('departingD')?.value;
         }
-        if(i == 0 && nextDate!=''){
-          if(nextDate < currentDate){
-            this.validMultiDateAlert.enMsg='The First Flight should Have A date Before next Flight';
-            this.validMultiDateAlert.arMsg='يجب أن يكون للرحلة الأولى تاريخ قبل الرحلة التالية';
-            this.flightsArray.at(i+1)?.get('departingD')?.setValue('');
+        if (i == 0 && nextDate != '') {
+          if (nextDate < currentDate) {
+            this.validMultiDateAlert.enMsg =
+              'The First Flight should Have A date Before next Flight';
+            this.validMultiDateAlert.arMsg =
+              'يجب أن يكون للرحلة الأولى تاريخ قبل الرحلة التالية';
+            this.flightsArray
+              .at(i + 1)
+              ?.get('departingD')
+              ?.setValue('');
             break;
-          }
-          else{
-            this.validMultiDateAlert.enMsg='True';
-            this.validMultiDateAlert.arMsg='True';
+          } else {
+            this.validMultiDateAlert.enMsg = 'True';
+            this.validMultiDateAlert.arMsg = 'True';
             continue;
           }
         }
         //if the current date is the last one in array compare it with the previous one
-        else if(nextDate!='' || currentDate!=''){
-          let prevDate = new Date( this.flightsArray.at(i-1)?.get('departingD')?.value);
+        else if (nextDate != '' || currentDate != '') {
+          let prevDate = new Date(
+            this.flightsArray.at(i - 1)?.get('departingD')?.value,
+          );
           currentDate = new Date(currentDate);
 
           //compare between current and next Date
-          if(prevDate?.getTime() > currentDate?.getTime()){
-            this.validMultiDateAlert.enMsg='The First Flight should Have A date Before next Flight';
-            this.validMultiDateAlert.arMsg='يجب أن يكون للرحلة الأولى تاريخ قبل الرحلة التالية';
+          if (prevDate?.getTime() > currentDate?.getTime()) {
+            this.validMultiDateAlert.enMsg =
+              'The First Flight should Have A date Before next Flight';
+            this.validMultiDateAlert.arMsg =
+              'يجب أن يكون للرحلة الأولى تاريخ قبل الرحلة التالية';
             this.flightsArray.at(i)?.get('departingD')?.setValue('');
+          } else {
+            this.validMultiDateAlert.enMsg = 'True';
+            this.validMultiDateAlert.arMsg = 'True';
           }
-          else{
-            this.validMultiDateAlert.enMsg='True';
-            this.validMultiDateAlert.arMsg='True';
-          }
-        }
-        else{
+        } else {
           break;
         }
       }
     }
-    return this.validMultiDateAlert
+    return this.validMultiDateAlert;
   }
   /**
    * this function is responsible to set the value of depart Date after validate it
@@ -540,8 +551,8 @@ export class FlightSearchService {
     this.retDateAlert.arMsg = '';
     if (retDate) {
       let depDate = (<FormArray>this.searchFlight?.get('Flights'))
-      .at(0)
-      ?.get('departingD')?.value;
+        .at(0)
+        ?.get('departingD')?.value;
       //check if date is previous than today
       if (retDate <= this.todayDate()) {
         this.retDateAlert.enMsg = 'You Should select a date after this day';
@@ -563,24 +574,27 @@ export class FlightSearchService {
       this.retDateAlert.arMsg = 'يجب عليك تحديد تاريخ العودة';
     }
     return this.retDateAlert;
-
   }
   /**
    * this function is responsible to set the second flight of flights array if the flight type is roundtrip
    */
   setRetFlight() {
-    if(this.flightsArray.length == 1)
-    (<FormArray>this.searchFlight.get('Flights')).push(
-      new FormGroup({
-        departing: new FormControl(this.flightsArray.at(0).get('landing')?.value, [
-          Validators.required,
-        ]),
-        landing: new FormControl(this.flightsArray.at(0).get('departing')?.value, [
-          Validators.required,
-        ]),
-        departingD: new FormControl(this.searchFlight.get('returnDate')?.value),
-      })
-    );
+    if (this.flightsArray.length == 1)
+      (<FormArray>this.searchFlight.get('Flights')).push(
+        new FormGroup({
+          departing: new FormControl(
+            this.flightsArray.at(0).get('landing')?.value,
+            [Validators.required],
+          ),
+          landing: new FormControl(
+            this.flightsArray.at(0).get('departing')?.value,
+            [Validators.required],
+          ),
+          departingD: new FormControl(
+            this.searchFlight.get('returnDate')?.value,
+          ),
+        }),
+      );
   }
   /**
    * this function is responsible to generate Search Id
@@ -636,21 +650,21 @@ export class FlightSearchService {
       const roundElement1 = (<FormArray>this.searchFlight.get('Flights'))
         .controls[0]; //first flight of RoundTrip
       var depart = this.getAirportCode(
-        (roundElement1.value['departing']).split(splitPattern).length-1, 
+        roundElement1.value['departing'].split(splitPattern).length - 1,
         splitPattern,
-        roundElement1.value['departing']
+        roundElement1.value['departing'],
       );
       var landing = this.getAirportCode(
-        (roundElement1.value['landing']).split(splitPattern).length-1,
+        roundElement1.value['landing'].split(splitPattern).length - 1,
         splitPattern,
-        roundElement1.value['landing']
+        roundElement1.value['landing'],
       );
       let depFlight: searchBoxFlights = {
         departing: depart,
         landing: landing,
         departingD: this.datePipe.transform(
           roundElement1.value['departingD'],
-          'MMMM dd, y'
+          'MMMM dd, y',
         ),
       };
       flightout.push(depFlight);
@@ -661,7 +675,7 @@ export class FlightSearchService {
         landing: depart,
         departingD: this.datePipe.transform(
           this.searchFlight.controls['returnDate'].value,
-          'MMMM dd, y'
+          'MMMM dd, y',
         ),
       };
       flightout.push(landFlight);
@@ -678,18 +692,18 @@ export class FlightSearchService {
       ];
       let flight: searchBoxFlights = {
         departing: this.getAirportCode(
-          (element.value['departing']).split(splitPattern).length-1,
+          element.value['departing'].split(splitPattern).length - 1,
           splitPattern,
-          element.value['departing']
+          element.value['departing'],
         ),
         landing: this.getAirportCode(
-          (element.value['landing']).split(splitPattern).length-1,
+          element.value['landing'].split(splitPattern).length - 1,
           splitPattern,
-          element.value['landing']
+          element.value['landing'],
         ),
         departingD: this.datePipe.transform(
           element.value['departingD'],
-          'MMMM dd, y'
+          'MMMM dd, y',
         ),
       };
       flightout.push(flight);
@@ -736,7 +750,7 @@ export class FlightSearchService {
     lang: string,
     currency: string,
     pointOfSale: string,
-    splitPattern: string
+    splitPattern: string,
   ) {
     let flightList = this.getFlightInfo(splitPattern);
     let searchApi: searchFlightModel = {
@@ -746,7 +760,7 @@ export class FlightSearchService {
       flightType: this.searchFlight.get('flightType')?.value,
       flightsInfo: this.flightInfoFormatter(flightList),
       passengers: this.passengerFormatter(
-        this.searchFlight.get('passengers')?.value
+        this.searchFlight.get('passengers')?.value,
       ),
       Cclass: this.searchFlight.get('class')?.value,
       serachId: this.id(),
@@ -756,37 +770,71 @@ export class FlightSearchService {
     this.resultLink = searchApi;
     return `${searchApi.lan}/${searchApi.currency}/${searchApi.pointOfReservation}/${searchApi.flightType}/${searchApi.flightsInfo}/${searchApi.serachId}/${searchApi.passengers}/${searchApi.Cclass}/${searchApi.showDirect}`;
   }
-  onSubmit(lang: string,currency: string,pointOfSale: string,splitPattern: string) {
+  onSubmit(
+    lang: string,
+    currency: string,
+    pointOfSale: string,
+    splitPattern: string,
+  ) {
     if (!this.searchFlight.value) {
       this.searchFlight.markAllAsTouched(); //used this function to make a red border around invalid inputs
       return '';
     } else {
       //call all functions validation for all passengers type and flight dates
-      let adult = this.changeAdultPassenger(this.searchFlight?.get('passengers.adult')?.value);
-      let child = this.changeChildPassenger(this.searchFlight?.get('passengers.child')?.value);
-      let infant = this.changeinfantPassenger( this.searchFlight?.get('passengers.infant')?.value);
+      let adult = this.changeAdultPassenger(
+        this.searchFlight?.get('passengers.adult')?.value,
+      );
+      let child = this.changeChildPassenger(
+        this.searchFlight?.get('passengers.child')?.value,
+      );
+      let infant = this.changeinfantPassenger(
+        this.searchFlight?.get('passengers.infant')?.value,
+      );
       var retDate: AlertMsgModel = { arMsg: '', enMsg: '' };
-      let depDate = this.setDepDate((<FormArray>this.searchFlight?.get('Flights')).at(0)?.get('departingD')?.value,0);
+      let depDate = this.setDepDate(
+        (<FormArray>this.searchFlight?.get('Flights')).at(0)?.get('departingD')
+          ?.value,
+        0,
+      );
 
-      if(this.searchFlight.controls['flightType']?.value == 'roundtrip' || this.searchFlight.controls['flightType']?.value == 'RoundTrip' || this.searchFlight.controls['flightType']?.value == 'roundTrip') {
+      if (
+        this.searchFlight.controls['flightType']?.value == 'roundtrip' ||
+        this.searchFlight.controls['flightType']?.value == 'RoundTrip' ||
+        this.searchFlight.controls['flightType']?.value == 'roundTrip'
+      ) {
         //set return date value
-        retDate = this.setRetDate(this.searchFlight.controls['returnDate'].value);
+        retDate = this.setRetDate(
+          this.searchFlight.controls['returnDate'].value,
+        );
         //change between depart and land cities and pushing it to flights array
         this.setRetFlight();
-      }
-      else if(this.searchFlight.controls['flightType']?.value == 'oneway' || this.searchFlight.controls['flightType']?.value == 'OneWay' || this.searchFlight.controls['flightType']?.value == 'oneWay'){
-        if(this.flightsArray.length>1){
+      } else if (
+        this.searchFlight.controls['flightType']?.value == 'oneway' ||
+        this.searchFlight.controls['flightType']?.value == 'OneWay' ||
+        this.searchFlight.controls['flightType']?.value == 'oneWay'
+      ) {
+        if (this.flightsArray.length > 1) {
           this.removeFlight();
         }
       }
 
       //If All Validations and conditions are true then save the form at local storage and go to search Results
-      if (!adult.enMsg &&!child.enMsg &&!infant.enMsg &&!depDate.enMsg && !retDate?.enMsg) {
-        return this.getSearchresultLink(lang,currency,pointOfSale,splitPattern);
+      if (
+        !adult.enMsg &&
+        !child.enMsg &&
+        !infant.enMsg &&
+        !depDate.enMsg &&
+        !retDate?.enMsg
+      ) {
+        return this.getSearchresultLink(
+          lang,
+          currency,
+          pointOfSale,
+          splitPattern,
+        );
       } else {
         return { adult, child, infant, retDate, depDate };
       }
-
     }
   }
 

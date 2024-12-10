@@ -11,9 +11,8 @@ describe('SearchboxComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SearchboxComponent ]
-    })
-    .compileComponents();
+      declarations: [SearchboxComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

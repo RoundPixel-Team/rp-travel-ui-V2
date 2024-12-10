@@ -8,9 +8,8 @@ describe('RpHotelsUiComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RpHotelsUiComponent ]
-    })
-    .compileComponents();
+      declarations: [RpHotelsUiComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(RpHotelsUiComponent);
     component = fixture.componentInstance;

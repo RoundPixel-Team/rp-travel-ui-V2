@@ -5,11 +5,14 @@ import * as CryptoJS from 'crypto-js';
   providedIn: 'root',
 })
 export class SharedService {
-  encryptionKey =  CryptoJS.enc.Utf8.parse("abcdefghijklmnop");
-  
-  encryptData(password: string) {    
-    let encryptedBytes = CryptoJS.AES.encrypt(password, this.encryptionKey, {mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7});
-    
+  encryptionKey = CryptoJS.enc.Utf8.parse('abcdefghijklmnop');
+
+  encryptData(password: string) {
+    let encryptedBytes = CryptoJS.AES.encrypt(password, this.encryptionKey, {
+      mode: CryptoJS.mode.ECB,
+      padding: CryptoJS.pad.Pkcs7,
+    });
+
     return encryptedBytes.toString();
   }
 }

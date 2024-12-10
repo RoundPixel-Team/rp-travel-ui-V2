@@ -6,15 +6,21 @@ import { FlightResultComponent } from './components/flight-result/flight-result.
 import { SearchboxComponent } from './components/searchbox/searchbox.component';
 import { SearchBoxHotelComponent } from './components/search-box-hotel/search-box-hotel.component';
 const routes: Routes = [
-  {path:'checkout/:pId/:sId/:hotelId/:rooms/:package',component:CheckoutComponent},
-  {path:'home',component:HomePageComponent},
-  {path:'flightResult/:language/:currency/:SearchPoint/:flightType/:flightInfo/:searchId/:passengers/:Cclass/:directOnly',component:FlightResultComponent},
-  {path:'searchbox',component:SearchboxComponent},
-  {path:'searchboxhotel',component:SearchBoxHotelComponent}
-]
+  {
+    path: 'checkout/:pId/:sId/:hotelId/:rooms/:package',
+    component: CheckoutComponent,
+  },
+  { path: 'home', component: HomePageComponent },
+  {
+    path: 'flightResult/:language/:currency/:SearchPoint/:flightType/:flightInfo/:searchId/:passengers/:Cclass/:directOnly',
+    component: FlightResultComponent,
+  },
+  { path: 'searchbox', component: SearchboxComponent },
+  { path: 'searchboxhotel', component: SearchBoxHotelComponent },
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

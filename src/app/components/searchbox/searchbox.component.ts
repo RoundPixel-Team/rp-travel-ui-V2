@@ -8,13 +8,12 @@ import { FlightSearchService } from 'projects/rp-travel-ui/src/public-api';
   styleUrls: ['./searchbox.component.css'],
 })
 export class SearchboxComponent implements OnInit {
-
   public searchBox = inject(FlightSearchService);
 
   constructor() {}
 
   ngOnInit() {
-    let form = JSON.parse(localStorage.getItem('form') as string)
+    let form = JSON.parse(localStorage.getItem('form') as string);
     this.searchBox.initSearchForm(form);
   }
 }

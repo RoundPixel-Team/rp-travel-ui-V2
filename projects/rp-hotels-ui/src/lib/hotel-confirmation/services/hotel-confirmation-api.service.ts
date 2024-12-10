@@ -3,12 +3,11 @@ import { Injectable, inject } from '@angular/core';
 import { EnvironmentService } from '../../shared/services/environment.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class HotelConfirmationApiService {
+  public http = inject(HttpClient);
+  public env = inject(EnvironmentService);
 
-  public http = inject(HttpClient)
-  public env = inject(EnvironmentService)
-
-  constructor() { }
+  constructor() {}
 }

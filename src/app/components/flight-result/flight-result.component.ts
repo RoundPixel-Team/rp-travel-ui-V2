@@ -8,54 +8,60 @@ import { filter } from 'rxjs';
 @Component({
   selector: 'app-flight-result',
   templateUrl: './flight-result.component.html',
-  styleUrls: ['./flight-result.component.scss']
+  styleUrls: ['./flight-result.component.scss'],
 })
 export class FlightResultComponent implements OnInit {
-  FlightResultService = inject(FlightResultService)
-  route = inject(ActivatedRoute)
-  hotelResults = inject(HotelResultsService)
+  FlightResultService = inject(FlightResultService);
+  route = inject(ActivatedRoute);
+  hotelResults = inject(HotelResultsService);
 
-  starRating:Array<string>=['','','','',''];
-  filterFormm: FormGroup  = this.FlightResultService.filterForm
+  starRating: Array<string> = ['', '', '', '', ''];
+  filterFormm: FormGroup = this.FlightResultService.filterForm;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
-
     this.hotelResults.getHotelDataFromUrl();
-    
-    this.route.params.subscribe(
-      (params: Params) => {
-        let lang = params['language']
-        let currency = params['currency'];
-        let pointOfReservation = params['SearchPoint'];
-        let flightType = params['flightType'];
-        let flightsInfo = params['flightInfo'];
 
-        let serachId = params['searchId'];
-        let passengers = params['passengers'];
-        let Cclass = params['Cclass'];
-        let showDirect: boolean;
+    this.route.params.subscribe((params: Params) => {
+      let lang = params['language'];
+      let currency = params['currency'];
+      let pointOfReservation = params['SearchPoint'];
+      let flightType = params['flightType'];
+      let flightsInfo = params['flightInfo'];
 
-        if (params['directOnly'] == 'false') {
-          showDirect = false;
-        }
-        else {
-          showDirect = true;
-        }
-        this.FlightResultService.getDataFromUrl(lang, currency, pointOfReservation, flightType, flightsInfo, serachId, passengers, Cclass, showDirect,4,2)
-      });     
-      }
+      let serachId = params['searchId'];
+      let passengers = params['passengers'];
+      let Cclass = params['Cclass'];
+      let showDirect: boolean;
 
-     
-      
-      sort(val: number) {
-        if (this.FlightResultService.response != undefined) {
-          this.FlightResultService.sortMyResult(val) 
-        }
-        
+      if (params['directOnly'] == 'false') {
+        showDirect = false;
+      } else {
+        showDirect = true;
       }
-      starsRating(rate:number){
-        // this.hotelResults.formValueChanged();
-      }
+      this.FlightResultService.getDataFromUrl(
+        lang,
+        currency,
+        pointOfReservation,
+        flightType,
+        flightsInfo,
+        serachId,
+        passengers,
+        Cclass,
+        showDirect,
+        4,
+        2,
+      );
+    });
+  }
+
+  sort(val: number) {
+    if (this.FlightResultService.response != undefined) {
+      this.FlightResultService.sortMyResult(val);
+    }
+  }
+  starsRating(rate: number) {
+    // this.hotelResults.formValueChanged();
+  }
 }

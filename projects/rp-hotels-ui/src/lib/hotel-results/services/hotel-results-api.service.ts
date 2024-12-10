@@ -6,17 +6,22 @@ import { hotelSearchForm } from '../../hotel-search/interfaces';
 import { GetHotelModule, hotelResults } from '../interfaces';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class HotelResultsApiService {
+  public http = inject(HttpClient);
+  public env = inject(EnvironmentService);
 
-  public http = inject(HttpClient)
-  public env = inject(EnvironmentService)
+  constructor(private httpClient: HttpClient) {}
 
-  constructor(private httpClient : HttpClient) {}
-
-  getHotelsRes(hotelSearch:GetHotelModule){
+  getHotelsRes(hotelSearch: GetHotelModule) {
     let api = `${this.env.Apihotels}/api/HotelSearch`;
-    return this.httpClient.post<hotelResults>(api, hotelSearch).pipe(retry(3),catchError(err=>{console.error("Load Hotel Data Error", err);throw err}));
-  }  
+    return this.httpClient.post<hotelResults>(api, hotelSearch).pipe(
+      retry(3),
+      catchError((err) => {
+        console.error('Load Hotel Data Error', err);
+        throw err;
+      }),
+    );
+  }
 }

@@ -11,7 +11,6 @@ import { LimitToPipe } from './shared/pipes/limit-to.pipe';
 import { ExchangePipe } from './shared/pipes/exchange.pipe';
 import { DatePipe } from '@angular/common';
 
-
 @NgModule({
   declarations: [
     RpHotelsUiComponent,
@@ -21,13 +20,9 @@ import { DatePipe } from '@angular/common';
     HotelecitesPipe,
     HourMinutePipe,
     LimitToPipe,
-    ExchangePipe
+    ExchangePipe,
   ],
-  imports: [
-    HttpClientModule,
-    ReactiveFormsModule,
-    FormsModule,
-  ],
+  imports: [HttpClientModule, ReactiveFormsModule, FormsModule],
   exports: [
     RpHotelsUiComponent,
     HttpClientModule,
@@ -39,8 +34,8 @@ import { DatePipe } from '@angular/common';
     HotelecitesPipe,
     HourMinutePipe,
     LimitToPipe,
-    ExchangePipe
+    ExchangePipe,
   ],
-  providers:[HttpClient, DatePipe]
+  providers: [HttpClient, DatePipe],
 })
-export class RpHotelsUiModule { }
+export class RpHotelsUiModule {}

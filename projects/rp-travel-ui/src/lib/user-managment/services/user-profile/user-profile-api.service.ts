@@ -5,11 +5,11 @@ import { EnvironmentService } from '../../../shared/services/environment.service
 import { IUserResponse } from '../../interfaces';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserProfileApiService {
-  public http = inject(HttpClient)
-  public env = inject(EnvironmentService)
+  public http = inject(HttpClient);
+  public env = inject(EnvironmentService);
 
   /**
    * Sends a GET request to retrieve the authenticated user's profile data.
@@ -17,9 +17,14 @@ export class UserProfileApiService {
    * @param {string} token - The authentication token for the user.
    * @returns {Observable<IUserResponse>} - An observable containing the user data required for authentication.
    */
-  getUserProfileApi(token: string):Observable<IUserResponse> {
-    let api = `${this.env.users}/api/user/getUser`
-    return this.http.get<any>(api, {headers: {token}}).pipe(take(1), catchError(err=>{throw err}))
+  getUserProfileApi(token: string): Observable<IUserResponse> {
+    let api = `${this.env.users}/api/user/getUser`;
+    return this.http.get<any>(api, { headers: { token } }).pipe(
+      take(1),
+      catchError((err) => {
+        throw err;
+      }),
+    );
   }
 
   /**
@@ -29,9 +34,14 @@ export class UserProfileApiService {
    * @param {any} body - The updated profile data.
    * @returns {Observable<IUserResponse>} - An observable containing the updated user data.
    */
-  editUserProfileApi(token: string, body: any):Observable<IUserResponse> {
-    let api = `${this.env.users}/api/user/editUser`
-    return this.http.post<any>(api, body, {headers: {token}}).pipe(take(1), catchError(err=>{throw err}))
+  editUserProfileApi(token: string, body: any): Observable<IUserResponse> {
+    let api = `${this.env.users}/api/user/editUser`;
+    return this.http.post<any>(api, body, { headers: { token } }).pipe(
+      take(1),
+      catchError((err) => {
+        throw err;
+      }),
+    );
   }
 
   /**
@@ -41,8 +51,13 @@ export class UserProfileApiService {
    * @param {any} body - The data containing the current and new password values.
    * @returns {Observable<any>} - An observable that emits the result of the password change operation.
    */
-  changePasswordApi(token: string, body: any):Observable<any> {
-    let api = `${this.env.users}/api/user/changePassword`
-    return this.http.post<any>(api, body, {headers: {token}}).pipe(take(1), catchError(err=>{throw err}))
+  changePasswordApi(token: string, body: any): Observable<any> {
+    let api = `${this.env.users}/api/user/changePassword`;
+    return this.http.post<any>(api, body, { headers: { token } }).pipe(
+      take(1),
+      catchError((err) => {
+        throw err;
+      }),
+    );
   }
 }

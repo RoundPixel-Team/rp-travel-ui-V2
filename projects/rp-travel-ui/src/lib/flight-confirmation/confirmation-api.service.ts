@@ -6,32 +6,31 @@ import { FlightSearchResult } from '../flight-result/interfaces';
 import { confirmationModel } from './interfaces';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ConfirmationApiService {
+  public http = inject(HttpClient);
+  public env = inject(EnvironmentService);
 
-  public http = inject(HttpClient)
-  public env = inject(EnvironmentService)
-
-  constructor() { }
+  constructor() {}
   /**
-   * 
-   * @param url 
-   * @returns  the payment result status 
+   *
+   * @param url
+   * @returns  the payment result status
    */
   getPaymentResult(url: string) {
     let api = `${this.env.prepay}/api/paymentresult?${url}`;
     return this.http.get<any>(api).pipe(
       take(1),
-      map(
-        (result) => { return result; }
-      )
-    )
+      map((result) => {
+        return result;
+      }),
+    );
   }
   /**
    *
-   * @param tok 
-   * @param url 
+   * @param tok
+   * @param url
    * @returns status after successful payment
    */
   PostProcessing(tok: string, url: string) {
@@ -40,25 +39,29 @@ export class ConfirmationApiService {
       take(1),
       map((result) => {
         return result;
-      })
+      }),
     );
   }
 
   /**
-   * 
-   * @param HGNu 
-   * @param searchid 
-   * @param tok 
+   *
+   * @param HGNu
+   * @param searchid
+   * @param tok
    * @returns flight confirmation details after payment has been finshed
    */
-  getConfirmation(HGNu: string, searchid: string,tok?:string) {
+  getConfirmation(HGNu: string, searchid: string, tok?: string) {
     let api = `${this.env.BookingFlow}/api/BookingConfirmation?HG=${HGNu}&SId=${searchid}&tok=${tok}`;
     return this.http.get<confirmationModel>(api).pipe(
       retry(3),
       take(1),
       map((result) => {
         return result;
-      }),catchError((err:any)=>{console.error("CONFIRMATION ERROR",err);throw err})
+      }),
+      catchError((err: any) => {
+        console.error('CONFIRMATION ERROR', err);
+        throw err;
+      }),
     );
   }
 }

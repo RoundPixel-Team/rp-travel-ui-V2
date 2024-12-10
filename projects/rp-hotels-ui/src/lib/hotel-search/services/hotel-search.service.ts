@@ -5,32 +5,36 @@ import { HttpClient } from '@angular/common/http';
 
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { CountriescodeModule, SearchHoteltModule, hotelSearchForm } from '../interfaces';
+import {
+  CountriescodeModule,
+  SearchHoteltModule,
+  hotelSearchForm,
+} from '../interfaces';
 import { Router } from '@angular/router';
 import { AlertMsgModels } from '../interfaces';
-import { hotelCities, } from '../../home-page/interfaces'
+import { hotelCities } from '../../home-page/interfaces';
 import { HomePageApiService } from '../../home-page/services/home-page-api.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class HotelSearchService {
-  public http = inject(HttpClient)
-  public env = inject(EnvironmentService)
-  public HomePageService = inject(HomePageApiService)
-  searchApi: SearchHoteltModule | undefined
+  public http = inject(HttpClient);
+  public env = inject(EnvironmentService);
+  public HomePageService = inject(HomePageApiService);
+  searchApi: SearchHoteltModule | undefined;
   allGuest: number = 2;
   roomNumber: number = 1;
-  adultNum: number = 1
-  childNum: number = 0
-  today: Date=new Date();
-  formday: Date=new Date();
-  stringGuest: string = ''
+  adultNum: number = 1;
+  childNum: number = 0;
+  today: Date = new Date();
+  formday: Date = new Date();
+  stringGuest: string = '';
   citiesNames: string[] = [];
   valuesBeforeA: string[] = [];
 
   valuesBeforeRAndAfterC: string[] = [];
-  selectAllcities: any
+  selectAllcities: any;
   LocalStorage!: hotelSearchForm;
   DateMessageError: AlertMsgModels = {
     arMsg: '',
@@ -45,15 +49,18 @@ export class HotelSearchService {
     enMsg: '',
   };
 
-  subscription: Subscription = new Subscription()
+  subscription: Subscription = new Subscription();
   /**
-     * 
-     * inital form Search Hotel
-     * 
-     */
+   *
+   * inital form Search Hotel
+   *
+   */
   HotelSearchForm: FormGroup = new FormGroup({
-    location: new FormControl("", [Validators.required, Validators.minLength(3)]),
-    nation: new FormControl(""),
+    location: new FormControl('', [
+      Validators.required,
+      Validators.minLength(3),
+    ]),
+    nation: new FormControl(''),
     checkIn: new FormControl(this.formday, Validators.required),
     checkOut: new FormControl(this.today, Validators.required),
     roomN: new FormControl(1, [Validators.required, Validators.min(1)]),
@@ -61,29 +68,27 @@ export class HotelSearchService {
     guestInfo: new FormArray([]),
   });
 
-  constructor(private router: Router) {
-
-  }
+  constructor(private router: Router) {}
   /**
-   * 
-   *geter value control location 
-   * 
+   *
+   *geter value control location
+   *
    */
   public get citySearchKey(): FormControl {
-    return this.HotelSearchForm?.get('location') as FormControl
+    return this.HotelSearchForm?.get('location') as FormControl;
   }
   /**
-   * 
-   *geter value control guestInfo 
-   * 
+   *
+   *geter value control guestInfo
+   *
    */
   public get GuestData(): FormArray {
     return this.HotelSearchForm.get('guestInfo') as FormArray;
   }
   /**
-   * 
-   *govert String guest num get from url 
-   * 
+   *
+   *govert String guest num get from url
+   *
    */
   convertguestString(guest: string) {
     const parts: string[] = guest.split('A');
@@ -101,230 +106,269 @@ export class HotelSearchService {
       this.valuesBeforeRAndAfterC.push(partsAfterC[1]);
     }
   }
-   /**
-   * 
+  /**
+   *
    *get Data Fron route to set value in from as inital value
-   * 
+   *
    */
-  getDataFromUrl(Location: hotelCities, checkIn: Date, checkOut: Date, roomN: number | string, adultN: number | string, childN: number | string) {
+  getDataFromUrl(
+    Location: hotelCities,
+    checkIn: Date,
+    checkOut: Date,
+    roomN: number | string,
+    adultN: number | string,
+    childN: number | string,
+  ) {
     let form: any = {
-      "location": Location,
-      "nation": "Kuwait",
-      "checkIn": checkIn,
-      "checkOut": checkOut,
-      "roomN": roomN,
-      "guestInfo": [{ "adultN": adultN, "childN": childN }]
-    }
+      location: Location,
+      nation: 'Kuwait',
+      checkIn: checkIn,
+      checkOut: checkOut,
+      roomN: roomN,
+      guestInfo: [{ adultN: adultN, childN: childN }],
+    };
 
-    this.SetDataFromStorage(form)
-
+    this.SetDataFromStorage(form);
   }
   /**
-   * 
-   *inital HotelSearchForm Form  
-   * 
+   *
+   *inital HotelSearchForm Form
+   *
    */
   initSearchForm(form: hotelSearchForm) {
     // set data in storage in form
     if (form) {
-      this.SetDataFromStorage(form)
+      this.SetDataFromStorage(form);
     }
     // if no value in storage
     else {
       this.HotelSearchForm = new FormGroup({
-        location: new FormControl("", [Validators.required, Validators.minLength(3)]),
-        nation: new FormControl(""),
+        location: new FormControl('', [
+          Validators.required,
+          Validators.minLength(3),
+        ]),
+        nation: new FormControl(''),
         checkIn: new FormControl(this.formday, Validators.required),
         checkOut: new FormControl(this.today, Validators.required),
         roomN: new FormControl(1, [Validators.required, Validators.min(1)]),
         guestInfo: new FormArray([]),
-
       });
 
-      (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
+      (<FormArray>this.HotelSearchForm.get('guestInfo')).push(
         new FormGroup({
-          adultN: new FormControl(2, [Validators.required, Validators.min(1), Validators.max(5)]),
+          adultN: new FormControl(2, [
+            Validators.required,
+            Validators.min(1),
+            Validators.max(5),
+          ]),
           childN: new FormControl(0, [Validators.required, Validators.max(2)]),
-          childGroup: new FormArray([])
-
-        }));
+          childGroup: new FormArray([]),
+        }),
+      );
     }
 
-    this.GuestData.valueChanges.subscribe(data => {
-      this.guestNumberValidation()
+    this.GuestData.valueChanges.subscribe((data) => {
+      this.guestNumberValidation();
     });
-
   }
   /**
-  * 
-  * this function set data from starge in form 
-  * 
-  */
+   *
+   * this function set data from starge in form
+   *
+   */
   SetDataFromStorage(FormStorage: hotelSearchForm) {
     this.HotelSearchForm = new FormGroup({
-      location: new FormControl(FormStorage.location, [Validators.required, Validators.minLength(3)]),
+      location: new FormControl(FormStorage.location, [
+        Validators.required,
+        Validators.minLength(3),
+      ]),
       nation: new FormControl(FormStorage.nation),
       checkIn: new FormControl(FormStorage.checkIn, Validators.required),
       checkOut: new FormControl(FormStorage.checkOut, Validators.required),
-      roomN: new FormControl(FormStorage.roomN, [Validators.required, Validators.min(1)]),
+      roomN: new FormControl(FormStorage.roomN, [
+        Validators.required,
+        Validators.min(1),
+      ]),
       guestInfo: new FormArray([]),
-
     });
 
-    (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
+    (<FormArray>this.HotelSearchForm.get('guestInfo')).push(
       new FormGroup({
-        adultN: new FormControl(2, [Validators.required, Validators.min(1), Validators.max(5)]),
+        adultN: new FormControl(2, [
+          Validators.required,
+          Validators.min(1),
+          Validators.max(5),
+        ]),
         childN: new FormControl(0, [Validators.required, Validators.max(2)]),
-        childGroup: new FormArray([])
-
-      }));
+        childGroup: new FormArray([]),
+      }),
+    );
   }
   /**
-   * 
-   *get Cities based Key (country code ) 
-   * 
+   *
+   *get Cities based Key (country code )
+   *
    */
   getCitiesById(Key: string) {
     this.subscription.add(
       this.HomePageService.getHotelsCities(Key).subscribe((res) => {
         this.selectAllcities = res;
-      }))
-
-
+      }),
+    );
   }
 
   /**
-  * 
-  *get Nationality based on lang 
-  * 
-  */
+   *
+   *get Nationality based on lang
+   *
+   */
   getNationality(lang: string) {
     this.subscription.add(
       this.HomePageService.getCountries(lang).subscribe((nati) => {
-        this.extractNationality(nati)
-      })
-    )
+        this.extractNationality(nati);
+      }),
+    );
   }
   /**
-   * 
-   *extract nationality based on country 
-   * 
+   *
+   *extract nationality based on country
+   *
    */
 
   extractNationality(countries: CountriescodeModule[]) {
     if (countries) {
-      return countries.map(v => v.countryName.toLowerCase())
+      return countries.map((v) => v.countryName.toLowerCase());
     }
-    return
-
+    return;
   }
 
-
   /**
-  * 
-  * add Roome to Room Array
-  * 
-  */
+   *
+   * add Roome to Room Array
+   *
+   */
   addRoom() {
-
     let numRoom = this.HotelSearchForm.get('roomN')?.value;
     if (numRoom > 5) {
-      this.RoomMessageError.enMsg = "Maximun Rooms Shouldn't be more than 5"
-      this.RoomMessageError.arMsg = "لا يجب حجز اكثر من 5 غرف"
-    }
-    else {
+      this.RoomMessageError.enMsg = "Maximun Rooms Shouldn't be more than 5";
+      this.RoomMessageError.arMsg = 'لا يجب حجز اكثر من 5 غرف';
+    } else {
       this.HotelSearchForm.get('roomN')?.setValue(numRoom + 1);
       this.HotelSearchForm.get('roomN')?.updateValueAndValidity();
-      (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
+      (<FormArray>this.HotelSearchForm.get('guestInfo')).push(
         new FormGroup({
-          adultN: new FormControl(1, [Validators.required, Validators.min(1), Validators.max(5)]),
+          adultN: new FormControl(1, [
+            Validators.required,
+            Validators.min(1),
+            Validators.max(5),
+          ]),
           childN: new FormControl(0, [Validators.required, Validators.max(2)]),
-          childGroup: new FormArray([])
-
-        }));
-      (<FormArray>this.HotelSearchForm.get("guestInfo")).updateValueAndValidity();
+          childGroup: new FormArray([]),
+        }),
+      );
+      (<FormArray>(
+        this.HotelSearchForm.get('guestInfo')
+      )).updateValueAndValidity();
       this.roomNumber = this.roomNumber + 1;
     }
-
   }
 
   /**
-     * 
-     * Remove Roome from Room Array
-     * 
-     */
+   *
+   * Remove Roome from Room Array
+   *
+   */
   removeRoom() {
     let numRoom = this.HotelSearchForm.get('roomN')?.value;
     if (numRoom > 1) {
       this.HotelSearchForm.get('roomN')?.setValue(numRoom - 1);
       this.HotelSearchForm.get('roomN')?.updateValueAndValidity();
-      (<FormArray>this.HotelSearchForm.get("guestInfo")).removeAt(numRoom - 1);
+      (<FormArray>this.HotelSearchForm.get('guestInfo')).removeAt(numRoom - 1);
       this.roomNumber = this.roomNumber - 1;
     }
-
   }
   /**
-   * 
+   *
    * validation on guest Number con't be more than  9
-   * 
+   *
    */
 
-
   guestNumberValidation() {
-    let search = this.GuestData.value
+    let search = this.GuestData.value;
     let adults = 0;
     let childs = 0;
     for (let i = 0; i < search.length; i++) {
-      adults += Number(this.GuestData.at(i).get('adultN')?.value)
-      childs += Number(this.GuestData.at(i).get('childN')?.value)
-
+      adults += Number(this.GuestData.at(i).get('adultN')?.value);
+      childs += Number(this.GuestData.at(i).get('childN')?.value);
     }
     this.allGuest = adults + childs;
-  
 
     if (adults + childs > 9) {
-      this.guestMessageError.enMsg = "Maximun Number guest Shouldn't be more than 9"
-      this.guestMessageError.arMsg = "لا يجب يزيد عدد الحجزين عن 9 افراد"
+      this.guestMessageError.enMsg =
+        "Maximun Number guest Shouldn't be more than 9";
+      this.guestMessageError.arMsg = 'لا يجب يزيد عدد الحجزين عن 9 افراد';
     }
-    return this.allGuest
+    return this.allGuest;
   }
 
-
   /**
-      * 
-      * validation on checkIn & checkout Date
-      * 
-      */
+   *
+   * validation on checkIn & checkout Date
+   *
+   */
   ValidationDate() {
     this.subscription.add(
-      this.HotelSearchForm.get('checkOut')?.valueChanges.subscribe(
-        (val) => {
-          if (val < this.HotelSearchForm.get('checkIn')?.value) {
-            this.DateMessageError.enMsg = "Please Enter checkoutDate after CheckInDate"
-            this.DateMessageError.arMsg = "يجب ان يكون وقت الوصول اكبر من وقت الذهاب"
-          }
+      this.HotelSearchForm.get('checkOut')?.valueChanges.subscribe((val) => {
+        if (val < this.HotelSearchForm.get('checkIn')?.value) {
+          this.DateMessageError.enMsg =
+            'Please Enter checkoutDate after CheckInDate';
+          this.DateMessageError.arMsg =
+            'يجب ان يكون وقت الوصول اكبر من وقت الذهاب';
         }
-
-      ))
+      }),
+    );
   }
   /**
-     * 
-     * search id value 
-     * 
-     */
+   *
+   * search id value
+   *
+   */
   id() {
     let date = new Date();
-    let myId = date.getFullYear() + 'B' + date.getUTCMonth() + 'I' + date.getUTCDay() + 'S' + date.getMilliseconds() + 'H' + Math.floor(Math.random() * (9 - 0 + 1)) + 0 + 'B' + Math.floor(Math.random() * (9 - 0 + 1)) + 0 + 'I'
-      + Math.floor(Math.random() * (9 - 0 + 1)) + 0
-      + 'S' + Math.floor(Math.random() * (9 - 0 + 1)) + 0 + 'H' + Math.floor(Math.random() * (9 - 0 + 1)) + 0 + 'I' + Math.floor(Math.random() * (9 - 0 + 1)) + 0;
+    let myId =
+      date.getFullYear() +
+      'B' +
+      date.getUTCMonth() +
+      'I' +
+      date.getUTCDay() +
+      'S' +
+      date.getMilliseconds() +
+      'H' +
+      Math.floor(Math.random() * (9 - 0 + 1)) +
+      0 +
+      'B' +
+      Math.floor(Math.random() * (9 - 0 + 1)) +
+      0 +
+      'I' +
+      Math.floor(Math.random() * (9 - 0 + 1)) +
+      0 +
+      'S' +
+      Math.floor(Math.random() * (9 - 0 + 1)) +
+      0 +
+      'H' +
+      Math.floor(Math.random() * (9 - 0 + 1)) +
+      0 +
+      'I' +
+      Math.floor(Math.random() * (9 - 0 + 1)) +
+      0;
     return myId;
   }
 
   /**
-       * 
-       * push cities Data To citiesNames to show data   
-       * 
-       */
+   *
+   * push cities Data To citiesNames to show data
+   *
+   */
 
   extractcites(hotelcities: hotelCities[]) {
     hotelcities.forEach((city) => {
@@ -333,21 +377,25 @@ export class HotelSearchService {
     });
   }
   /**
-       * 
-       * format guestInfo To used in Routing 
-       * 
-       */
+   *
+   * format guestInfo To used in Routing
+   *
+   */
   formatGuestInfo(guestInfo: any) {
-    this.GuestData.setValue(guestInfo)
+    this.GuestData.setValue(guestInfo);
     let guesttxt = '';
 
     for (let i = 0; i < guestInfo.length; i++) {
-      guesttxt += "R" + i + "A" + this.GuestData.at(i).get('adultN')?.value + "C" + this.GuestData.at(i).get('childN')?.value
-      let guestValue = this.GuestData.at(i).get('childGroup')?.value
+      guesttxt +=
+        'R' +
+        i +
+        'A' +
+        this.GuestData.at(i).get('adultN')?.value +
+        'C' +
+        this.GuestData.at(i).get('childN')?.value;
+      let guestValue = this.GuestData.at(i).get('childGroup')?.value;
       for (let j = 0; j < guestValue.length; j++) {
-
-        guesttxt += "G" + 7;
-
+        guesttxt += 'G' + 7;
       }
     }
     return guesttxt;
@@ -357,19 +405,18 @@ export class HotelSearchService {
    */
 
   onSubmit(lang: string, currency: string, pointOfSale: string) {
-    if (this.HotelSearchForm.get("nation")?.value === '') {
-      this.HotelSearchForm.get("nation")?.setValue('Kuwait')
+    if (this.HotelSearchForm.get('nation')?.value === '') {
+      this.HotelSearchForm.get('nation')?.setValue('Kuwait');
     }
     if (this.HotelSearchForm.valid) {
-
-      let location: hotelCities = this.HotelSearchForm.get("location")?.value;
+      let location: hotelCities = this.HotelSearchForm.get('location')?.value;
       let locationId: string = location.CityId;
       let citywithcountry = location.CityWithCountry;
-      let nation = this.HotelSearchForm.get("nation")?.value;
-      let checkIn = this.HotelSearchForm.get("checkIn")?.value;
-      let checkOut = this.HotelSearchForm.get("checkOut")?.value;
-      let roomNumber = this.HotelSearchForm.get("roomN")?.value;
-      let guestInfo = this.HotelSearchForm.get("guestInfo")?.value;
+      let nation = this.HotelSearchForm.get('nation')?.value;
+      let checkIn = this.HotelSearchForm.get('checkIn')?.value;
+      let checkOut = this.HotelSearchForm.get('checkOut')?.value;
+      let roomNumber = this.HotelSearchForm.get('roomN')?.value;
+      let guestInfo = this.HotelSearchForm.get('guestInfo')?.value;
       this.stringGuest = this.formatGuestInfo(guestInfo);
       this.searchApi = {
         lan: lang,
@@ -382,9 +429,8 @@ export class HotelSearchService {
         checkOut: checkOut,
         roomN: roomNumber,
         guestInfo: guestInfo,
-        CityName: locationId
-      }
-
+        CityName: locationId,
+      };
     }
   }
 
@@ -392,6 +438,6 @@ export class HotelSearchService {
    * this function is responsible to destory any opened subscription on this service
    */
   destroyer() {
-    this.subscription.unsubscribe()
+    this.subscription.unsubscribe();
   }
 }

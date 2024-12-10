@@ -2,27 +2,22 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { airPorts } from '../../home-page/interfaces';
 
 @Pipe({
-  name: 'codToCity'
+  name: 'codToCity',
 })
 export class CodToCityPipe implements PipeTransform {
-
   transform(value: string, args: airPorts[]): string {
     if (!value || !args) {
       return value;
-    }
-    else {
-      
+    } else {
       for (let index = 0; index < args.length; index++) {
         let element: airPorts = args[index];
         let a = element.cityCode.toLowerCase();
-       
-        if (a == value.toLowerCase() ) {
-          return element.cityName
-        }
 
+        if (a == value.toLowerCase()) {
+          return element.cityName;
+        }
       }
       return value;
     }
   }
-
 }
