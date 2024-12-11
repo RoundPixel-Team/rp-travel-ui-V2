@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RpTravelUiComponent } from './rp-travel-ui.component';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CodToCityPipe } from './shared/pipes/cod-to-city.pipe';
 import { CouncodePipe } from './shared/pipes/councode.pipe';
@@ -16,42 +16,33 @@ import { FilterAirportPipe } from './shared/pipes/filter-airport.pipe';
 
 
 
-@NgModule({
-  declarations: [
-    RpTravelUiComponent,
-    CodToCityPipe,
-    CouncodePipe,
-    DurationToHourMinPipe,
-    FilterCityPipe,
-    HighlighterPipe,
-    HotelecitesPipe,
-    HourMinutePipe,
-    LimitToPipe,
-    ExchangePipe,
-    FilterAirportPipe
-  ],
-  imports: [
-    HttpClientModule,
-    ReactiveFormsModule,
-    FormsModule,
-
-  ],
-  exports: [
-    RpTravelUiComponent,
-    HttpClientModule,
-    ReactiveFormsModule,
-    FormsModule,
-    CodToCityPipe,
-    CouncodePipe,
-    DurationToHourMinPipe,
-    FilterCityPipe,
-    FilterAirportPipe,
-    HighlighterPipe,
-    HotelecitesPipe,
-    HourMinutePipe,
-    LimitToPipe,
-    ExchangePipe
-  ],
-  providers:[HttpClient, DatePipe]
-})
+@NgModule({ declarations: [
+        RpTravelUiComponent,
+        CodToCityPipe,
+        CouncodePipe,
+        DurationToHourMinPipe,
+        FilterCityPipe,
+        HighlighterPipe,
+        HotelecitesPipe,
+        HourMinutePipe,
+        LimitToPipe,
+        ExchangePipe,
+        FilterAirportPipe
+    ],
+    exports: [
+        RpTravelUiComponent,
+        ReactiveFormsModule,
+        FormsModule,
+        CodToCityPipe,
+        CouncodePipe,
+        DurationToHourMinPipe,
+        FilterCityPipe,
+        FilterAirportPipe,
+        HighlighterPipe,
+        HotelecitesPipe,
+        HourMinutePipe,
+        LimitToPipe,
+        ExchangePipe
+    ], imports: [ReactiveFormsModule,
+        FormsModule], providers: [HttpClient, DatePipe, provideHttpClient(withInterceptorsFromDi())] })
 export class RpTravelUiModule { }
