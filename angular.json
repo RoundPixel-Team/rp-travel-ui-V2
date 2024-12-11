@@ -69,10 +69,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "rp-travel-ui-V2:build:production"
+              "buildTarget": "rp-travel-ui-V2:build:production"
             },
             "development": {
-              "browserTarget": "rp-travel-ui-V2:build:development"
+              "buildTarget": "rp-travel-ui-V2:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -80,7 +80,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "rp-travel-ui-V2:build"
+            "buildTarget": "rp-travel-ui-V2:build"
           }
         },
         "test": {
