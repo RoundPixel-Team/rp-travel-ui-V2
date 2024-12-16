@@ -10,6 +10,8 @@ export class HotelRoomsService {
 roomsLoader:boolean = false;
 cancelLoader:boolean = false;
 roomsData:hotelRoomsResponse=undefined!;
+filteredRoomsData!: hotelRoomsResponse;
+
 selectedPackage:any;
 cancelPolicy!:roomCancelPolicy[];
 error:boolean = false;
@@ -25,42 +27,45 @@ groupedRooms!:{};
  * @param pid 
  * this method is responsible for fetching the rooms data in a specified hotel (the selected hotel) and it takes the following parameters : search Id, Hotel Id and provider id
  * */
-getRooms(sid: string, hotelid: string, Pid: string,packageKey?: string): Observable<any> {
+getRooms(sid: string, hotelid: string, Pid: string, packageKey?: string): Observable<any> {
   this.roomsLoader = true;
 
   return this.api.getHotelsRoomsApi(sid, hotelid, Pid).pipe(
     take(1),
     map((data) => {
       this.roomsLoader = false;
-      this.error=false;
+      this.error = false;
       this.roomsData = data;
+
       if (packageKey) {
         const selectedPackage = this.roomsData.Packages.find(pkg => pkg.PackageKey === packageKey);
+
         if (selectedPackage) {
-          this.selectedPackage = selectedPackage; // store selected package separately
+          this.selectedPackage = selectedPackage; // Store selected package separately
           const otherPackages = this.roomsData.Packages.filter(pkg => pkg.PackageKey !== packageKey);
 
-         const filteredRoomsData: hotelRoomsResponse = {
-          ...this.roomsData,
-          Packages: otherPackages
-        };
+          this.filteredRoomsData = {
+            ...this.roomsData,
+            Packages: otherPackages
+          };
 
-        this.groupedRooms = this.groupRooms(filteredRoomsData);
-
+          this.groupedRooms = this.groupRooms(this.filteredRoomsData);
         }
-      }else{
-        this.groupedRooms = this.groupRooms(this.roomsData);
-
+      } else {
+        this.filteredRoomsData = this.roomsData; // Assign roomsData if no packageKey is provided
+        this.groupedRooms = this.groupRooms(this.filteredRoomsData);
       }
-      return data; 
+
+      return data;
     }),
     catchError((err) => {
       console.log('get hotel rooms error ->', err);
       this.roomsLoader = false;
-     this.error=true;
-      return of(null); 
+      this.error = true;
+      return of(null);
     })
-  )}
+  );
+}
 /**
  * 
  * @param Roomsdata 

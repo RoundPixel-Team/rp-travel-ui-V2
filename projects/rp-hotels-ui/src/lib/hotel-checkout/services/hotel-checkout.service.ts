@@ -238,7 +238,7 @@ export class HotelCheckoutService {
         this.totalCostPrice += this.HotelResult[i].CostPrice ? this.HotelResult[i].CostPrice : 0
       }
 
-      this.HotelForm.get('sellPrice')?.setValue(parseFloat((Math.round(this.totalSellPrice * 100) / 100).toFixed(2)));
+      this.HotelForm.get('sellPrice')?.setValue(this.TotalPrice);
       this.HotelForm.get('totalCost')?.setValue(this.totalCostPrice);
       this.HotelForm.get('currency')?.setValue(currency);
       let phoneNumberObject: any = { ...(<FormArray>this.HotelForm.get('Travellers')).at(0).get('phonenum')?.value };
