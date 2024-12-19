@@ -335,7 +335,7 @@ bookingType:string='standard'
                 Validators.pattern("^[a-zA-Z]+"),
                 Validators.minLength(3),
               ]),
-              email: new FormControl("", EMAIL_VALIDATION),
+              email: new FormControl("", Validators.email),
               phoneNumber: new FormControl("", [
                 Validators.maxLength(16),
               ]),
@@ -447,7 +447,7 @@ bookingType:string='standard'
               Validators.pattern("^[a-zA-Z]+"),
               Validators.minLength(3),
             ]),
-            email: new FormControl("", EMAIL_VALIDATION),
+            email: new FormControl("", Validators.email),
             phoneNumber: new FormControl("", [
               Validators.required,
               Validators.maxLength(5),
