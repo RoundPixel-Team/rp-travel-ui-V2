@@ -304,8 +304,7 @@ bookingType:string='standard'
                 Validators.minLength(9),
               ]),
               phoneNumber: new FormControl("", [
-                Validators.required,
-                Validators.maxLength(16),
+                Validators.required
               ]),
               countryCode: new FormControl(""),
               nationality: new FormControl("", [
@@ -343,9 +342,7 @@ bookingType:string='standard'
                 Validators.email,
                 Validators.minLength(9),
               ]),
-              phoneNumber: new FormControl("", [
-                Validators.maxLength(16),
-              ]),
+              phoneNumber: new FormControl(""),
               countryCode: new FormControl(""),
               nationality: new FormControl("", [
                 Validators.required
@@ -460,8 +457,7 @@ bookingType:string='standard'
               Validators.minLength(9),
             ]),
             phoneNumber: new FormControl("", [
-              Validators.required,
-              Validators.maxLength(5),
+              Validators.required
             ]),
             countryCode: new FormControl(""),
             nationality: new FormControl("", [
