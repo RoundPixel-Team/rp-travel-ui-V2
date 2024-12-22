@@ -20,7 +20,7 @@ import { Router } from "@angular/router";
 import { TRIPS_DEFAULT, USER_DEFAULT } from "../../constants/defaultValues";
 import { UserProfileService } from "../user-profile/user-profile.service";
 import { TripsService } from "../trips/trips.service";
-// import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { 
   FORGET_PASSWORD_STATUS, 
   LOGIN_STATUS, 
@@ -30,7 +30,7 @@ import {
   VERIFY_TOKEN_STATUS 
 } from "../../constants/statuses";
 import { SharedService } from "../shared.service";
-// import * as CryptoJS from 'crypto-js';
+import * as CryptoJS from 'crypto-js';
 
 @Injectable({
   providedIn: 'root',
@@ -176,10 +176,9 @@ import { SharedService } from "../shared.service";
    * @returns The hashed token.
    */
   generateTokenHash(token: string, secret: string): string {
-    // const hash = CryptoJS.HmacSHA256(token, secret);
+    const hash = CryptoJS.HmacSHA256(token, secret);
 
-    // return hash.toString(CryptoJS.enc.Hex);
-    return ''
+    return hash.toString(CryptoJS.enc.Hex);
   }
 
   /**
@@ -448,10 +447,9 @@ import { SharedService } from "../shared.service";
   isTokenExpired(): boolean {
     const token = localStorage.getItem(this.tokenKey);
     if (!token) {return true;}
-    else{return false}
 
-    // const { exp } = jwtDecode<{ exp: number }>(token);
-    // return Date.now() >= exp * 1000;
+    const { exp } = jwtDecode<{ exp: number }>(token);
+    return Date.now() >= exp * 1000;
   }
 
   getFirstNameErrorMessage(firstNameControl: AbstractControl, lang: 'en' | 'ar' = 'en') {
