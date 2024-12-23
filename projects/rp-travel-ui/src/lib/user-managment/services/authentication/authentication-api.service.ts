@@ -11,7 +11,8 @@ import {
   IForgetPasswordForm, 
   IForgetPasswordResponse, 
   IResetPasswordResponse, 
-  IVerifyResetPasswordToken 
+  IVerifyResetPasswordToken, 
+  GoogleAuthResponse
 } from '../../interfaces';
 
 @Injectable({
@@ -34,6 +35,23 @@ export class AuthApiService {
       catchError(err => { throw err; })
     );
   }
+
+  
+   /**
+   * social login request
+   *
+   * @param body - Login form data containing user credentials returned from google.
+   * @returns An observable with the login response, containing user authentication data.
+   */
+   googleLogin(body: GoogleAuthResponse): Observable<ILoginResponse> {
+    const api = `${this.env.users}/api/User/SigninGoogle`;
+    return this.http.post<ILoginResponse>(api, body).pipe(
+      take(1),
+      catchError(err => { throw err; })
+    );
+  }
+
+
 
   /**
    * Sends a request to initiate the forgot password process.
