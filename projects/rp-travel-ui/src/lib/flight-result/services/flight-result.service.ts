@@ -132,6 +132,11 @@ fareLoading: boolean = true;
       overNight: new FormControl(false),
       longStops: new FormControl(false)
     }),
+    schedule: new FormGroup({
+      startTime: new FormControl(""),
+      endTime: new FormControl(""),
+      isDeparting: new FormControl(false),
+    }),
 
     flexibleTickets: new FormGroup({
       refund: new FormControl(false),
@@ -249,11 +254,16 @@ fareLoading: boolean = true;
                 overNight: new FormControl(false),
                 longStops: new FormControl(false)
               }),
+              schedule: new FormGroup({
+                startTime: new FormControl(""),
+                endTime: new FormControl(""),
+                isDeparting: new FormControl(false),
+              }),
 
               flexibleTickets: new FormGroup({
                 refund: new FormControl(false),
                 nonRefund: new FormControl(false)
-              })
+              }),
             });
 
             this.filterForm.get("mindepartingSlider")?.setValue( this.minDepartingValueForSlider);
@@ -322,9 +332,10 @@ fareLoading: boolean = true;
             this.stopsvalues(),
             [this.filterForm.get('experience')?.get('overNight')?.value!],
             [this.filterForm.get('flexibleTickets')?.get('refund')?.value!, this.filterForm.get('flexibleTickets')?.get('nonRefund')?.value!],
-
+            
             this.filteringbyairline(this.filterForm.get('airline')?.get('airlines')?.value!),
-            this.filteringbyBookingSites(this.filterForm.get('bookingSite')?.get('bookingSites')?.value!)
+            this.filteringbyBookingSites(this.filterForm.get('bookingSite')?.get('bookingSites')?.value!),
+            this.filterForm.get("schedule")?.value!,
 
           );
         
@@ -348,7 +359,8 @@ fareLoading: boolean = true;
       this.filterWithExperience(v, filter) &&
       this.filterFlighWithReturnTime(v, filter, this.roundT) &&
       this.completeTripOnSameAirline(v, filter) &&
-      this.filterFlightWithAirlineFunction(v, filter,this.roundT)
+      this.filterFlightWithAirlineFunction(v, filter,this.roundT) &&
+      this.filterWithSchedule(v)
     ))
 
   }
@@ -534,6 +546,27 @@ fareLoading: boolean = true;
     let tm = hr + m;
     return tm
   }
+  filterWithSchedule(flight: airItineraries): boolean {
+    const schedule =this.filterForm.get('schedule')?.value;
+
+    if(schedule?.endTime && schedule.startTime) {
+      const date = new Date(schedule.isDeparting ? flight.deptDate : flight.arrivalDate);
+      const currentHours = date.getHours();
+      const currentMinutes = date.getMinutes();
+  
+      const [startHours, startMinutes] = schedule.startTime.split(':').map(Number);
+      const [endHours, endMinutes] = schedule.endTime.split(':').map(Number);
+  
+      const currentTimeInMinutes = currentHours * 60 + currentMinutes;
+      const startTimeInMinutes = startHours * 60 + startMinutes;
+      const endTimeInMinutes = endHours * 60 + endMinutes;
+  
+      return currentTimeInMinutes >= startTimeInMinutes && currentTimeInMinutes <= endTimeInMinutes;
+    }
+
+    return true;
+  }
+
   /**
  *  filter by price value
  **/
@@ -702,6 +735,29 @@ fareLoading: boolean = true;
 
 
   filteringbyBookingSites(val: string[]) {
+    let selectedSites: any[] = [];
+    for (let index = 0; index < val.length; index++) {
+      const element = val[index];
+      if (element) {
+        selectedSites.push(this.bookingSites[index]);
+      }
+
+    };
+    if (selectedSites.length == 0) {
+      let out = selectedSites;
+      return out
+    }
+    else {
+      return selectedSites;
+    }
+  }
+
+  /**
+ *  filter by booking sites
+ **/
+
+
+  filteringBySchedule(val: string, dest: string) {
     let selectedSites: any[] = [];
     for (let index = 0; index < val.length; index++) {
       const element = val[index];
@@ -1129,7 +1185,13 @@ updateCurrencyCode(code: string){
       flexibleTickets: new FormGroup({
         refund: new FormControl(false),
         nonRefund: new FormControl(false)
-      })
+      }),
+
+      schedule: new FormGroup({
+        startTime: new FormControl(""),
+        endTime: new FormControl(""),
+        isDeparting: new FormControl(false),
+      }),
     });
 
     this.formINIT =false;

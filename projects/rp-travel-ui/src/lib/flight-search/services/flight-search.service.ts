@@ -1,5 +1,5 @@
 import { Inject, Injectable, inject } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import {
   searchBoxFlights,
@@ -9,6 +9,7 @@ import {
 } from '../interfaces';
 import { AlertMsgModel } from '../../shared/interfaces';
 import { DatePipe } from '@angular/common';
+import { DEPARTING_ERROR_MESSAGES } from '../constants/error-messages';
 
 @Injectable({
   providedIn: 'root',
@@ -53,24 +54,32 @@ export class FlightSearchService {
   /**
    * this function is responsible to fill the searchbox form from local storage if it has a previous data
    */
+
+  departingLandingValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const departing = control.get('departing')?.value;
+      const landing = control.get('landing')?.value;
+      return departing && landing && departing === landing
+        ? { sameLocation: true }
+        : null;
+    };
+  }
+
   initSearchForm(form:searchBoxModel) {
     if (form) {
-      this.flightType = form.flightType;
       //get the flight type based
-      if (this.flightType == 'OneWay' || this.flightType == 'oneway' || this.flightType == 'oneWay') {
-        this.oneWayData(form);
-      }
-       else if (
-        this.flightType == 'RoundTrip' ||
-        this.flightType == 'roundTrip' ||
-        this.flightType == 'roundtrip'
-      ) {
-        this.roundTripData(form);
-      }
-      else if(this.flightType == 'MultiCity' ||
-      this.flightType == 'multiCity' ||
-      this.flightType == 'multicity') {
-        this.multiData(form);
+      this.flightType = form.flightType.toLowerCase();
+
+      switch(this.flightType) {
+        case('oneway'):
+          this.oneWayData(form);
+          break;
+        case('roundtrip'):
+          this.roundTripData(form);
+          break;
+        case('multicity'):
+          this.multiData(form);
+          break;
       }
     }
     //no values on local storage
@@ -78,18 +87,7 @@ export class FlightSearchService {
       this.searchFlight = new FormGroup({
         flightType: new FormControl('RoundTrip', [Validators.required]),
         Direct: new FormControl(false, [Validators.required]),
-        Flights: new FormArray([
-          new FormGroup({
-            departing: new FormControl('', [Validators.required]),
-            landing: new FormControl('', [Validators.required]),
-            departingD: new FormControl('', [Validators.required]),
-          }),
-          new FormGroup({
-            departing: new FormControl('', [Validators.required]),
-            landing: new FormControl('', [Validators.required]),
-            departingD: new FormControl('', [Validators.required]),
-          })
-        ], [Validators.required]),
+        Flights: new FormArray([], [Validators.required]),
         returnDate: new FormControl(''),
         passengers: new FormGroup(
           {
@@ -111,6 +109,8 @@ export class FlightSearchService {
       //Intialize Empty Flight
       (<FormArray>this.searchFlight.get('Flights')).push(
         new FormGroup({
+          isDepartingSelected: new FormControl<boolean>(false),
+          isLandingSelected: new FormControl<boolean>(false),
           departing: new FormControl('', [
             Validators.required,
           ]),
@@ -120,7 +120,9 @@ export class FlightSearchService {
           departingD: new FormControl('', [
             Validators.required,
           ]),
-        })
+        },
+        { validators: this.departingLandingValidator() }
+      )
       );
     }
   }
@@ -158,6 +160,8 @@ export class FlightSearchService {
     //push the first Flight to the flights form array
     (<FormArray>this.searchFlight.get('Flights')).push(
       new FormGroup({
+        isDepartingSelected: new FormControl<boolean>(localForm.Flights[0].isDepartingSelected),
+        isLandingSelected: new FormControl<boolean>(localForm.Flights[0].isLandingSelected),
         departing: new FormControl(localForm.Flights[0].departing, [
           Validators.required,
         ]),
@@ -167,7 +171,9 @@ export class FlightSearchService {
         departingD: new FormControl(localForm.Flights[0].departingD, [
           Validators.required,
         ]),
-      })
+      },
+      { validators: this.departingLandingValidator() }
+    )
     );
   }
   /**
@@ -652,6 +658,8 @@ export class FlightSearchService {
           roundElement1.value['departingD'],
           'MMMM dd, y'
         ),
+        isDepartingSelected: true,
+        isLandingSelected: true
       };
       flightout.push(depFlight);
 
@@ -663,6 +671,8 @@ export class FlightSearchService {
           this.searchFlight.controls['returnDate'].value,
           'MMMM dd, y'
         ),
+        isDepartingSelected: true,
+        isLandingSelected: true
       };
       flightout.push(landFlight);
       return flightout;
@@ -691,6 +701,8 @@ export class FlightSearchService {
           element.value['departingD'],
           'MMMM dd, y'
         ),
+        isDepartingSelected: true,
+        isLandingSelected: true
       };
       flightout.push(flight);
     }
@@ -788,6 +800,20 @@ export class FlightSearchService {
       }
 
     }
+  }
+  
+  getDeparingErrorMessage(departingControl: AbstractControl, lang: 'en' | 'ar' = 'en') {
+    if (departingControl.hasError('required')) {
+      return DEPARTING_ERROR_MESSAGES.selecting[lang];
+    }
+    return '';
+  }
+  
+  getLandingErrorMessage(landingControl: AbstractControl, lang: 'en' | 'ar' = 'en') {
+    if (landingControl.hasError('required')) {
+      return DEPARTING_ERROR_MESSAGES.selecting[lang];
+    }
+    return '';
   }
 
   /**

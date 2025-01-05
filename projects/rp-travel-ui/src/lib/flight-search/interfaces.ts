@@ -27,6 +27,8 @@ export interface searchBoxModel{
 }
 
 export interface searchBoxFlights{
+    isDepartingSelected:boolean;
+    isLandingSelected:boolean;
     departing:string
     landing:string
     departingD:string|null

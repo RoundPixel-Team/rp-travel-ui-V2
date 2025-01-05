@@ -116,7 +116,8 @@ export class flightResultFilter{
     public experience?:boolean[],
     public flexibleTicket?:boolean[],
     public airlines?:string[],
-    public bookingSites?:string[]
+    public bookingSites?:string[],
+    public schedule?: any,
   ){}
 }
 
@@ -137,7 +138,8 @@ export interface filterFlightInterface{
    experience?:boolean[],
    flexibleTicket?:boolean[],
    airlines?:string[],
-   bookingSites?:string[]
+   bookingSites?:string[],
+  schedule?:number,
 }
 
 /**
