@@ -5,6 +5,7 @@ import { BreakDownView, Cobon, flightOfflineService, passengersModel, selectedFl
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { passengerFareBreakDownDTOs,fare } from '../../flight-result/interfaces';
 import { HomePageService } from '../../home-page/services/home-page.service';
+import { EMAIL_VALIDATION } from '../../user-managment/constants/validation';
 
 type fareCalc = (fare:fare[])=>number;
 type calcEqfare =(flightFaresDTO: passengerFareBreakDownDTOs[],type:string,farecalc:fareCalc)=>number;
@@ -182,12 +183,12 @@ bookingType:string='standard'
           
           else{
             this.selectedFlightError = true
-            console.log("now error happens")
+            console.error("now error happens")
           }
 
         }
       },(err:any)=>{
-        console.log('get selected flight error ->',err)
+        console.error('get selected flight error ->',err)
         this.loader = false
         this.selectedFlightError = true
       })
@@ -223,7 +224,7 @@ bookingType:string='standard'
         }
         this.offlineServicesLoader = false
       },(err)=>{
-        console.log('get selected flight offline services error ->',err)
+        console.error('get selected flight offline services error ->',err)
         this.offlineServicesLoader = false
       })
     )
@@ -297,12 +298,7 @@ bookingType:string='standard'
                 Validators.pattern("^[a-zA-Z]+"),
                 Validators.minLength(3),
               ]),
-              email: new FormControl("", [
-                Validators.required,
-                Validators.email,
-                Validators.pattern("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$"),
-                Validators.minLength(9),
-              ]),
+              email: new FormControl("", EMAIL_VALIDATION),
               phoneNumber: new FormControl("", [
                 Validators.required,
                 Validators.maxLength(16),
@@ -339,11 +335,7 @@ bookingType:string='standard'
                 Validators.pattern("^[a-zA-Z]+"),
                 Validators.minLength(3),
               ]),
-              email: new FormControl("", [
-                Validators.email,
-                Validators.pattern("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$"),
-                Validators.minLength(9),
-              ]),
+              email: new FormControl("", Validators.email),
               phoneNumber: new FormControl("", [
                 Validators.maxLength(16),
               ]),
@@ -455,12 +447,7 @@ bookingType:string='standard'
               Validators.pattern("^[a-zA-Z]+"),
               Validators.minLength(3),
             ]),
-            email: new FormControl("", [
-              Validators.required,
-              Validators.email,
-              Validators.pattern("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}$"),
-              Validators.minLength(9),
-            ]),
+            email: new FormControl("", Validators.email),
             phoneNumber: new FormControl("", [
               Validators.required,
               Validators.maxLength(5),
@@ -473,8 +460,8 @@ bookingType:string='standard'
             PassengerType: new FormControl("ADT"),
             countryOfResidence: new FormControl("", [Validators.required]),
             PassportNumber: new FormControl("", [this.passportValidator()]),
-            PassportExpiry: new FormControl(""),
-            IssuedCountry: new FormControl(""),
+            PassportExpiry: new FormControl("", [Validators.required]),
+            IssuedCountry: new FormControl("", [Validators.required]),
             position: new FormControl(this.usersArray.length + 1)
           })
         )
@@ -507,8 +494,8 @@ bookingType:string='standard'
             countryCode: new FormControl(""),
             countryOfResidence: new FormControl(""),
             PassportNumber: new FormControl("",[this.passportValidator()]),
-            PassportExpiry: new FormControl(""),
-            IssuedCountry: new FormControl(""),
+            PassportExpiry: new FormControl("", [Validators.required]),
+            IssuedCountry: new FormControl("", [Validators.required]),
             position: new FormControl(this.usersArray.length)
           })
         )
@@ -542,8 +529,8 @@ bookingType:string='standard'
           countryCode: new FormControl(""),
           countryOfResidence: new FormControl(""),
           PassportNumber: new FormControl("", [this.passportValidator()]),
-          PassportExpiry: new FormControl(""),
-          IssuedCountry: new FormControl(""),
+          PassportExpiry: new FormControl("", [Validators.required]),
+          IssuedCountry: new FormControl("", [Validators.required]),
           position: new FormControl(this.usersArray.length)
         })
       )
@@ -656,7 +643,7 @@ bookingType:string='standard'
           this.copounCodeLoader = false
         }
       },(err)=>{
-        console.log("apply copoun code ERROR",err)
+        console.error("apply copoun code ERROR",err)
         this.copounCodeError = err
         this.copounCodeLoader = false
       })
@@ -719,8 +706,8 @@ bookingType:string='standard'
       this.selectedFlight?.airItineraryDTO.pKey!.toString()!,
       this.selectedFlight?.searchCriteria.language!,
       type=='premium'?this.selectedOfflineServices:this.selectedOfflineServices.filter((s)=>{return s != this.recommendedOfflineService?.serviceCode}),
-      this.home.pointOfSale.ip || "00.00.000.000",
-      this.home.pointOfSale.country || 'kw',
+      this.home.pointOfSale?.ip || "00.00.000.000",
+      this.home.pointOfSale?.country || 'kw',
       pcc
       )
 
@@ -728,10 +715,10 @@ bookingType:string='standard'
       this.paymentLink.next(res)
       this.loader = false;
     },(err)=>{
-      console.log("SAVE BOOKING ERROR", err)
       this.paymentLinkFailure.next(err)
       this.loader = false
       this.selectedFlightError = true
+      console.error("SAVE BOOKING ERROR", err)
     }))
     
   }

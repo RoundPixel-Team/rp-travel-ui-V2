@@ -35,7 +35,7 @@ export class FlightCheckoutApiService {
    */
   offlineServices(SID: string,POS:string) {
     let api = `${this.env.BookingFlow}/api/GetOfflineServices?SID=${SID}&POS=${POS}`;
-    return this.http.get<flightOfflineService[]>(api).pipe(retry(2),take(1),catchError(err=>{console.log(err);throw err}));
+    return this.http.get<flightOfflineService[]>(api).pipe(retry(2),take(1),catchError(err=>{console.error(err);throw err}));
   }
 
 
@@ -78,9 +78,9 @@ export class FlightCheckoutApiService {
               UserSeletedServices: { SeletedServicesCodes: selectedServices },
             };
             return this.http.post<any>(apis, bodys).pipe(take(1),retry(1))
-          }),catchError(err=>{console.log(err);throw err}));
+          }),catchError(err=>{console.error(err);throw err}));
          }
-      ),catchError(err=>{console.log(err);throw err})
+      ),catchError(err=>{console.error(err);throw err})
     )
   }
 }

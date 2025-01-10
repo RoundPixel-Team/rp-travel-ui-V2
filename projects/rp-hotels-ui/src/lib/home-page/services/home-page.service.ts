@@ -63,8 +63,8 @@ export class HomePageService {
           this.loader = false
         }
       },(err:any)=>{
-        console.log('get all currency error ->',err)
         this.loader = false
+        console.error('get all currency error ->',err)
       })
     )
   }
@@ -92,8 +92,8 @@ export class HomePageService {
             this.loader = false
           }
         },(err:any)=>{
-          console.log('get all countires error ->',err)
           this.loader = false
+          console.error('get all countires error ->',err)
         })
       )
     }
@@ -111,8 +111,8 @@ getPointOfSale(){
                   this.loader = false
                 }
       },(err:any)=>{
-        console.log('get all pointofsales error ->',err)
         this.loader = false
+        console.error('get all pointofsales error ->',err)
       })
   )
 }

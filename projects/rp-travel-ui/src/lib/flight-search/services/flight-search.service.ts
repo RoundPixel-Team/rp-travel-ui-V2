@@ -73,12 +73,23 @@ export class FlightSearchService {
         this.multiData(form);
       }
     }
-    //no values on local storage 
+    //no values on local storage
     else {
       this.searchFlight = new FormGroup({
         flightType: new FormControl('RoundTrip', [Validators.required]),
         Direct: new FormControl(false, [Validators.required]),
-        Flights: new FormArray([], [Validators.required]),
+        Flights: new FormArray([
+          new FormGroup({
+            departing: new FormControl('', [Validators.required]),
+            landing: new FormControl('', [Validators.required]),
+            departingD: new FormControl('', [Validators.required]),
+          }),
+          new FormGroup({
+            departing: new FormControl('', [Validators.required]),
+            landing: new FormControl('', [Validators.required]),
+            departingD: new FormControl('', [Validators.required]),
+          })
+        ], [Validators.required]),
         returnDate: new FormControl(''),
         passengers: new FormGroup(
           {
@@ -440,6 +451,7 @@ export class FlightSearchService {
     if(this.flightsArray.length > 1){
       for(let i=0; i<this.flightsArray.length; i++){
         let currentDate = this.flightsArray.at(i).get('departingD')?.value;
+
         //condition on the last flight
         if(i != this.flightsArray.length-1){
           var nextDate = this.flightsArray.at(i+1).get('departingD')?.value;
@@ -457,11 +469,13 @@ export class FlightSearchService {
             continue;
           }
         }
-        //if the current date is the last one in array compare it with the previous one 
+        //if the current date is the last one in array compare it with the previous one
         else if(nextDate!='' || currentDate!=''){
-          let prevDate = new Date( this.flightsArray.at(i-1)?.get('departingD')?.value) ;
+          let prevDate = new Date( this.flightsArray.at(i-1)?.get('departingD')?.value);
+          currentDate = new Date(currentDate);
+
           //compare between current and next Date
-          if(prevDate.getTime() > currentDate.getTime()){
+          if(prevDate?.getTime() > currentDate?.getTime()){
             this.validMultiDateAlert.enMsg='The First Flight should Have A date Before next Flight';
             this.validMultiDateAlert.arMsg='يجب أن يكون للرحلة الأولى تاريخ قبل الرحلة التالية';
             this.flightsArray.at(i)?.get('departingD')?.setValue('');
@@ -549,7 +563,7 @@ export class FlightSearchService {
       this.retDateAlert.arMsg = 'يجب عليك تحديد تاريخ العودة';
     }
     return this.retDateAlert;
-    
+
   }
   /**
    * this function is responsible to set the second flight of flights array if the flight type is roundtrip
@@ -772,7 +786,7 @@ export class FlightSearchService {
       } else {
         return { adult, child, infant, retDate, depDate };
       }
-      
+
     }
   }
 

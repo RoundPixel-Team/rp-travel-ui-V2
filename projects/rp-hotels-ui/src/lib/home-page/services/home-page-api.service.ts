@@ -23,7 +23,7 @@ export class HomePageApiService {
    */
   currencyApi(baseCurrency:string) : Observable<currencyModel[]>{
     let API:string = `${this.env.admin}/api/CurrencyApi?currency=${baseCurrency}`;
-    return this.http.get<currencyModel[]>(API).pipe(retry(3),take(1),catchError(err=>{console.log(err);throw err}))
+    return this.http.get<currencyModel[]>(API).pipe(retry(3),take(1),catchError(err=>{console.error(err);throw err}))
   }
   
 
@@ -37,14 +37,13 @@ export class HomePageApiService {
       retry(2),
       take(1),
       mergeMap((result) =>{
-        console.log("show me first response",result)
        return  this.http.get<pointOfSaleModel>(
           `https://ipapi.co/${result.ip}/json/`
         )
       }
         
       ),
-      catchError(err=>{console.log(err);throw err})
+      catchError(err=>{console.error(err);throw err})
     );
   }
 
@@ -56,7 +55,7 @@ export class HomePageApiService {
    */
   getCountries(lang: string) {
     let api = `${this.env.backOffice}/api/GetAllCountriesByLangName?LangCode=${lang}`;
-    return this.http.get<countries[]>(api).pipe( retry(2),take(1),catchError(err=>{console.log(err);throw err})
+    return this.http.get<countries[]>(api).pipe( retry(2),take(1),catchError(err=>{console.error(err);throw err})
     );
   }
    /**

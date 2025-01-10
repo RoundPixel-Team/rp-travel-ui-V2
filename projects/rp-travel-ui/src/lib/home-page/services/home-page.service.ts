@@ -4,6 +4,7 @@ import { BookedOffer, Image, Itinerary, OfferDTO,airPorts, countries, currencyMo
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { EMAIL_VALIDATION } from '../../user-managment/constants/validation';
 
 
 @Injectable({
@@ -80,11 +81,7 @@ selectedCurrency : currencyModel = {
       Validators.minLength(3),
     ]),
 
-    Email: new FormControl("", [
-      Validators.required,
-      Validators.email,
-      Validators.minLength(9),
-    ]),
+    Email: new FormControl("", EMAIL_VALIDATION),
 
     PhoneNumber: new FormControl("", [
       Validators.required,
@@ -114,7 +111,7 @@ selectedCurrency : currencyModel = {
           this.loader = false
         }
       },(err:any)=>{
-        console.log('get all currency error ->',err)
+        console.error('get all currency error ->',err)
         this.loader = false
       })
     )
@@ -143,7 +140,7 @@ selectedCurrency : currencyModel = {
           this.loader = false
         }
       },(err:any)=>{
-        console.log('get all airports error ->',err)
+        console.error('get all airports error ->',err)
         this.loader = false
       })
     )
@@ -163,7 +160,7 @@ selectedCurrency : currencyModel = {
           this.loader = false
         }
       },(err:any)=>{
-        console.log('get all countires error ->',err)
+        console.error('get all countires error ->',err)
         this.loader = false
       })
     )
@@ -182,7 +179,7 @@ getPointOfSale(){
                   this.loader = false
                 }
       },(err:any)=>{
-        console.log('get all pointofsales error ->',err)
+        console.error('get all pointofsales error ->',err)
         this.loader = false
       })
   )
@@ -198,14 +195,11 @@ getAllOffers(pos:string){
   this.subscription.add(
     this.api.GetAllOffers(pos).subscribe((res)=>{
       if(res){
-       
         this.allOffers=res.offers;
         this.loader = false;
-        console.log(res,'show offers');
-       
       }
     },(err:any)=>{
-      console.log('get all offers error ->',err)
+      console.error('get all offers error ->',err)
       this.loader = false
     })
   )
@@ -220,16 +214,13 @@ getOfferById(id:number | string){
   this.loader= true;
   this.subscription.add(
     this.api.getOfferBYId(id).subscribe((res)=>{
-      console.log('get ID',id);
       if (res){
         this.selectedOffer=res;
-        this.loader= false;
-        console.log("Offer",res);
-       
+        this.loader= false
       }
         
       },(err:any)=>{
-        console.log('get offer by ID err==>',err);
+        console.error('get offer by ID err==>',err);
         this.loader= false;
     })
   )
@@ -255,12 +246,8 @@ extractOfferData(id:number | string){
               this.offlineItinerary=res;
             }
           },(err:any)=>{
-            console.log('offline itinerary err==>',err);
+            console.error('offline itinerary err==>',err);
             })
-
-        
-
-        
     )}
     })
     
@@ -291,7 +278,7 @@ this.subscription.add(
       this.submittedForm=res;
     }
   },(err:any)=>{
-    console.log('Book offer err==>',err);
+    console.error('Book offer err==>',err);
     })
 )
 

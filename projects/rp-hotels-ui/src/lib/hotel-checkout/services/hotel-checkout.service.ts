@@ -263,7 +263,6 @@ export class HotelCheckoutService {
    * here is OnSubmit function which returning the payment link if all params is good
    */
   onSubmit() {
-    console.log("formCheckout", this.HotelForm.value)
     if (this.HotelForm.valid) {
       debugger
       let bookObject: hotelSaveBooking = { ...this.HotelForm.value }

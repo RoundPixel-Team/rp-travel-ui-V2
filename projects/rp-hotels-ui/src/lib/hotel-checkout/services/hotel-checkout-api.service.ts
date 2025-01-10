@@ -23,7 +23,6 @@ export class HotelCheckoutApiService {
   GetHotelRooms(Pid: string, sid: string, hotelID: string) {
     // RETURN hOTELS ROOM
     let apiHotel = `${this.env.Apihotels}/`
-    console.log(apiHotel, "myapi");
     return this.http
       .get<hotelRoomsResponse>(
         apiHotel +
@@ -98,7 +97,7 @@ export class HotelCheckoutApiService {
           return this.http.get<any>(api).pipe(retry(1),take(1),
           )
          }
-      ),catchError(err=>{console.log(err);throw err})
+      ),catchError(err=>{console.error(err);throw err})
     )
   }
   constructor() { }

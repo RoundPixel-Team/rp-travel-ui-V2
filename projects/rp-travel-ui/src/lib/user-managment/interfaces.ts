@@ -1,50 +1,34 @@
-/**
- * this model is mappinf for the user login form
- */
-export interface userLoginForm{
-    Email: string,
-    Password: string,
-    Isbase?:number
+export interface ILoginForm {
+  email: string;
+  password: string;
 }
 
-
-/**
- * this model is mappinf for the user signup form
- */
-export interface userSignupForm{
-    isbase:number,
-    email: string,
-    password: string,
-    imageURL: string,
-    phoneNumber: string,
-    confirmPassword: string,
-    username: string
+export interface IRegitserForm {
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  userPhoneNumber: string;
+  isTemporary: boolean;
+  isOAuthEnabled: boolean;
 }
 
+export interface IForgetPasswordForm {
+  email: string;
+}
 
-/**
- * this model is mapping to the response of the user api (login/signup)
- */
-export interface userModel{
-    Claims: string[],
-    Logins: string[],
-    Roles: string[],
-    ImageURL: string,
-    FirstName: string,
-    LastName: string,
-    AccessToken: string,
-    Email: string
-    EmailConfirmed: boolean,
-    PasswordHash: string,
-    SecurityStamp: string,
-    PhoneNumber: string,
-    PhoneNumberConfirmed: boolean,
-    TwoFactorEnabled: boolean,
-    LockoutEndDateUtc: any,
-    LockoutEnabled: boolean,
-    AccessFailedCount: number,
-    Id: string,
-    UserName: string
+export interface IResetPasswordForm {
+  token: string;
+  email: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export interface IVerifyResetPasswordToken {
+  token: string;
+  email: string;
 }
 
 export interface IRegisterResponse {
@@ -102,6 +86,34 @@ export interface IOtp {
   password: string;
 }
 
+export interface IForgetPasswordResponse {
+  status: number;
+  message: string;
+  returnObject: string;
+}
+
+export interface IResetPasswordResponse {
+  status: number;
+  message: string;
+  returnObject: string;
+}
+
+export interface IPassengerDetail {
+  title: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  countryOfResidence: string;
+  nationality: string;
+  issuedCountry: string;
+  countryCode: string | null;
+  phoneNumber: string | null;
+  passportNumber: string;
+  passportExpiry: string;
+  passengerType: string;
+  ticketNumber: string | null;
+}
+
 export interface IFlightModel {
   fareAmount: number;
   additionalServicesAmount: number;
@@ -120,7 +132,7 @@ export interface IFlightModel {
   selectedInsurance: string | null;
   additionalServices: any[];
   airItineraries: IAirItinerary[];
-  passengersDetails: any[];
+  passengersDetails: IPassengerDetail[];
 }
 
 export interface IAirItinerary {
@@ -217,10 +229,35 @@ export interface ITrips {
 export interface ICardModel {
   route: string;
   dates: string;
-  ticketNumber: string[];
+  ticketNumber: IPassengerDetail[];
   itineraryNumber: string;
   bookingRef: string;
   airline: string;
   flightType: string;
   cityImage: string;
+}
+
+export interface IResetPasswordForm {
+  token: string;
+  email: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export interface GoogleAuthResponse {
+  iss: string,
+  azp: string,
+  aud: string,
+  sub: string,
+  hd: string,
+  email: string,
+  email_verified: boolean,
+  nbf: number,
+  name: string,
+  picture: string,
+  given_name: string,
+  family_name: string,
+  iat: number,
+  exp: number,
+  jti: string
 }

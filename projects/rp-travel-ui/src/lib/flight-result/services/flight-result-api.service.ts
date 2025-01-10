@@ -18,12 +18,11 @@ export class FlightResultApiService {
 
   searchFlight(searchFlight: SearchFlightModule) {
     let api: string = `${this.env.searchflow}/flights/flightsSearch/${searchFlight.lan}/${searchFlight.currency}/${searchFlight.pointOfReservation}/${searchFlight.flightType}/${searchFlight.flightsInfo}/${searchFlight.passengers}/${searchFlight.Cclass}/${searchFlight.showDirect}/all/0/0/Direct?searchID=${searchFlight.serachId}`;
-    return this.http.get<FlightSearchResult>(api).pipe(retry(2), take(1),catchError(err=>{console.log(err);throw err}) );;
+    return this.http.get<FlightSearchResult>(api).pipe(retry(2), take(1),catchError(err=>{console.error(err);throw err}) );;
   }
 
   fareRules(sid: string, seq: number, pKey: string) {
     let api = `${this.env.FareRules}/api/GetFareRules?SId=${sid}&SeqNum=${seq}&PKey=${pKey}`;
-    console.log(api);
 
     return this.http.get<fareRulesResponse>(api).pipe(take(1));
   }
