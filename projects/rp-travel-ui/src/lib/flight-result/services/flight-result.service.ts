@@ -547,7 +547,7 @@ fareLoading: boolean = true;
     return tm
   }
   filterWithSchedule(flight: airItineraries): boolean {
-    const schedule =this.filterForm.get('schedule')?.value;
+    const schedule = this.filterForm.get('schedule')?.value;
 
     if(schedule?.endTime && schedule.startTime) {
       const date = new Date(schedule.isDeparting ? flight.deptDate : flight.arrivalDate);

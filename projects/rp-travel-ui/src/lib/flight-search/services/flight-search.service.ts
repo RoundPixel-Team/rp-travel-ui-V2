@@ -436,10 +436,16 @@ export class FlightSearchService {
    * @params item which i want to exchange (from Type searchBoxFlights)
    */
   switchDestination(item : any) {
-    let destination1 = item.get("landing")?.value;
-    let destination2 = item.get("departing")?.value;
-    item.get("departing")?.setValue(destination1);
-    item.get("landing")?.setValue(destination2);
+    let landing = item.get("landing")?.value;
+    let departing = item.get("departing")?.value;
+    let isLandingSelected = item.get('isLandingSelected')?.value;
+    let isDepartingSelected = item.get('isDepartingSelected')?.value;
+
+    item.get("departing")?.setValue(landing);
+    item.get("landing")?.setValue(departing);
+    item.get('isDepartingSelected')?.setValue(isLandingSelected);
+    item.get('isLandingSelected')?.setValue(isDepartingSelected);
+
     item.updateValueAndValidity();
   }
   /**
