@@ -12,7 +12,8 @@ import {
   IForgetPasswordResponse, 
   IResetPasswordResponse, 
   IVerifyResetPasswordToken, 
-  GoogleAuthResponse
+  GoogleAuthResponse,
+  IRegitserForm
 } from '../../interfaces';
 
 @Injectable({
@@ -118,7 +119,7 @@ export class AuthApiService {
    * @param body - Registration form data containing user details.
    * @returns An observable with the registration response.
    */
-  registeration(body: IRegisterResponse): Observable<IRegisterResponse> {
+  registeration(body: IRegitserForm): Observable<IRegisterResponse> {
     const api = `${this.env.users}/api/user/register`;
     return this.http.post<IRegisterResponse>(api, body).pipe(
       take(1),
