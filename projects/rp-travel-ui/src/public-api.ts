@@ -36,9 +36,21 @@ export * from './lib/flight-search/services/flight-search-api.service'
 export * from './lib/flight-search/services/flight-search.service'
 export * from './lib/flight-search/interfaces'
 
+
 // User Managment
-export * from './lib/user-managment/services/user-managment-api.service'
-export * from './lib/user-managment/services/user-managment.service'
+export * from './lib/user-managment/services/shared.service'
+// Authentication
+export * from './lib/user-managment/services/authentication/authentication.service';
+export * from './lib/user-managment/services/authentication/authentication-api.service';
+// User Profile
+export * from './lib/user-managment/services/user-profile/user-profile.service';
+export * from './lib/user-managment/services/user-profile/user-profile-api.service';
+// Trips
+export * from './lib/user-managment/services/trips/trips.service';
+export * from './lib/user-managment/services/trips/trips-api.service';
+// STATUSES
+export * from './lib/user-managment/constants/statuses';
+
 export * from './lib/user-managment/interfaces'
 
 //flight confirmation
