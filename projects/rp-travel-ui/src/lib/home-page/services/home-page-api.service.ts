@@ -20,8 +20,8 @@ export class HomePageApiService {
    * @param lang 
    * @returns all airports depends on the current languague
    */
-  UtilityAirports(lang:string) : Observable<airPorts[]>{
-    let API:string = `${this.env.backOffice}/api/GetSearchFlowMapping?LangCode=${lang}`;
+  UtilityAirports(lang:string,searchStr:string) : Observable<airPorts[]>{
+    let API:string = `https://backofficeapi.round-pixel.net/api/GetSearchFlowMapping?langCode=${lang}&searchStr=${searchStr}`;
     return this.http.get<airPorts[]>(API).pipe(retry(3),take(1),catchError(err=>{console.log(err);throw err}))
   }
 

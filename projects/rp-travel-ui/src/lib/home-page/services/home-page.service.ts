@@ -131,13 +131,14 @@ selectedCurrency : currencyModel = {
   /**
  * 
  * @param currentLang 
+ * @param searchStr
  * this is for fetching all airports (allAirports: airPorts[]) based on current language
  * also updates loader state (loader:boolean)
  */
-  getAirports(currentLang:string){
+  getAirports(currentLang:string,searchStr:string){
     this.loader = true
     this.subscription.add(
-      this.api.UtilityAirports(currentLang).subscribe((res:airPorts[])=>{
+      this.api.UtilityAirports(currentLang,searchStr).subscribe((res:airPorts[])=>{
         if(res){
           this.allAirports = res
           this.loader = false
