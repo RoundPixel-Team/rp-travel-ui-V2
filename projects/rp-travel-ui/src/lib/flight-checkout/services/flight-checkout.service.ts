@@ -24,6 +24,8 @@ export class FlightCheckoutService {
   packageVaild:boolean = false ;
   addbuttonVaild:boolean = false ;
   
+  notify = new Subject<null>();
+  
   /**
    * here is the loaded selected data 
    */
@@ -163,6 +165,7 @@ bookingType:string='standard'
           if(res.status == 'Valid'){
             this.priceWithRecommenedService += res.airItineraryDTO.itinTotalFare.amount
             
+            this.notify.next(null);
             // initilize users forms
             this.buildUsersForm(
               res.searchCriteria.adultNum,
