@@ -136,7 +136,7 @@ export class FlightCheckoutService {
    */
   fareBreackup: BreakDownView | undefined;
 
-  paymentLink = new Subject();
+  paymentLink = new Subject<string>();
   paymentLinkFailure = new Subject();
 
   /**
@@ -808,7 +808,7 @@ export class FlightCheckoutService {
         .subscribe(
           {
             next: (res) => {
-              this.paymentLink.next(res);
+              this.paymentLink.next(res.getPaymentViewResponse.link);
               this.loader = false;
             },
             complete: () => {
