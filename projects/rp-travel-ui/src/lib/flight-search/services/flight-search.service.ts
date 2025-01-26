@@ -212,6 +212,12 @@ export class FlightSearchService {
     //push the first Flight to the flights form array
     (<FormArray>this.searchFlight.get('Flights')).push(
       new FormGroup({
+        isDepartingSelected: new FormControl<boolean>(
+          localForm.Flights[0].isDepartingSelected
+        ),
+        isLandingSelected: new FormControl<boolean>(
+          localForm.Flights[0].isLandingSelected
+        ),
         departing: new FormControl(localForm.Flights[0].departing, [
           Validators.required,
         ]),
@@ -226,13 +232,19 @@ export class FlightSearchService {
     //change between depart and land cities and pushing it to flights array
     (<FormArray>this.searchFlight.get('Flights')).push(
       new FormGroup({
+        isDepartingSelected: new FormControl<boolean>(
+          localForm.Flights[0].isDepartingSelected
+        ),
+        isLandingSelected: new FormControl<boolean>(
+          localForm.Flights[0].isLandingSelected
+        ),
         departing: new FormControl(localForm.Flights[0].landing, [
           Validators.required,
         ]),
         landing: new FormControl(localForm.Flights[0].departing, [
           Validators.required,
         ]),
-        departingD: new FormControl(localForm.returnDate,[
+        departingD: new FormControl(localForm.returnDate, [
           Validators.required,
         ]),
       })
@@ -272,6 +284,12 @@ export class FlightSearchService {
     for (let i = 0; i < localForm.Flights?.length; i++) {
       (<FormArray>this.searchFlight.get('Flights')).push(
         new FormGroup({
+          isDepartingSelected: new FormControl<boolean>(
+            localForm.Flights[0].isDepartingSelected
+          ),
+          isLandingSelected: new FormControl<boolean>(
+            localForm.Flights[0].isLandingSelected
+          ),
           departing: new FormControl(localForm.Flights[i].departing, [
             Validators.required,
           ]),
@@ -314,7 +332,11 @@ export class FlightSearchService {
       }
       (<FormArray>this.searchFlight.get('Flights')).push(
         new FormGroup({
-          departing: new FormControl(this.lastFlight?.landing, [Validators.required]),
+          isDepartingSelected: new FormControl<boolean>(false),
+          isLandingSelected: new FormControl<boolean>(false),
+          departing: new FormControl(this.lastFlight?.landing, [
+            Validators.required,
+          ]),
           landing: new FormControl('', [Validators.required]),
           departingD: new FormControl('', [Validators.required]),
         })
@@ -584,12 +606,16 @@ export class FlightSearchService {
     if(this.flightsArray.length == 1)
     (<FormArray>this.searchFlight.get('Flights')).push(
       new FormGroup({
-        departing: new FormControl(this.flightsArray.at(0).get('landing')?.value, [
-          Validators.required,
-        ]),
-        landing: new FormControl(this.flightsArray.at(0).get('departing')?.value, [
-          Validators.required,
-        ]),
+        isDepartingSelected: new FormControl<boolean>(false),
+        isLandingSelected: new FormControl<boolean>(false),
+        departing: new FormControl(
+          this.flightsArray.at(0).get('landing')?.value,
+          [Validators.required]
+        ),
+        landing: new FormControl(
+          this.flightsArray.at(0).get('departing')?.value,
+          [Validators.required]
+        ),
         departingD: new FormControl(this.searchFlight.get('returnDate')?.value),
       })
     );
