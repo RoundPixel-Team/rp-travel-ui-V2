@@ -99,26 +99,27 @@ export interface flighFilterForm{
  * [this is a generic model for the filter containing all filter criteria and you can use only what you need]
  */
 
-export class flightResultFilter{
+export class flightResultFilter {
   constructor(
-    public sameAirline:boolean,
-    public  priceMin?:number,
-    public  priceMax?:number,
-    public durationMin?:number,
-    public durationMax?:number,
-    public depatingMin?:number,
-    public departingMax?:number,
-    public arrivingMin?:number,
-    public arrivingMax?:number,
-    public returnMin?:number,
-    public returnMax?:number,
-    public stops?:number[],
-    public experience?:boolean[],
-    public flexibleTicket?:boolean[],
-    public airlines?:string[],
-    public bookingSites?:string[],
-    public schedule?: any,
-  ){}
+    public sameAirline: boolean,
+    public priceMin?: number,
+    public priceMax?: number,
+    public durationMin?: number,
+    public durationMax?: number,
+    public depatingMin?: number,
+    public departingMax?: number,
+    public arrivingMin?: number,
+    public arrivingMax?: number,
+    public returnMin?: number,
+    public returnMax?: number,
+    public stops?: number[],
+    public experience?: boolean[],
+    public flexibleTicket?: boolean[],
+    public airlines?: string[],
+    public bookingSites?: string[],
+    public departSchedule?: any,
+    public schedreturnScheduleule?: any
+  ) {}
 }
 
 

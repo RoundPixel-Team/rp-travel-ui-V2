@@ -132,7 +132,14 @@ fareLoading: boolean = true;
       overNight: new FormControl(false),
       longStops: new FormControl(false)
     }),
-    schedule: new FormGroup({
+    
+    departSchedule: new FormGroup({
+      startTime: new FormControl(""),
+      endTime: new FormControl(""),
+      isDeparting: new FormControl(false),
+    }),
+    
+    returnSchedule: new FormGroup({
       startTime: new FormControl(""),
       endTime: new FormControl(""),
       isDeparting: new FormControl(false),
@@ -227,17 +234,17 @@ fareLoading: boolean = true;
 
             this.filterForm = new FormGroup({
               airline: new FormGroup({
-                airlines: new FormArray([])
+                airlines: new FormArray([]),
               }),
 
               bookingSite: new FormGroup({
-                bookingSites: new FormArray([])
+                bookingSites: new FormArray([]),
               }),
 
               stopsForm: new FormGroup({
                 noStops: new FormControl(false),
                 oneStop: new FormControl(false),
-                twoAndm: new FormControl(false)
+                twoAndm: new FormControl(false),
               }),
               sameAirline: new FormControl(false),
               minpriceSlider: new FormControl(0),
@@ -252,17 +259,22 @@ fareLoading: boolean = true;
 
               experience: new FormGroup({
                 overNight: new FormControl(false),
-                longStops: new FormControl(false)
+                longStops: new FormControl(false),
               }),
-              schedule: new FormGroup({
-                startTime: new FormControl(""),
-                endTime: new FormControl(""),
+              departSchedule: new FormGroup({
+                startTime: new FormControl(''),
+                endTime: new FormControl(''),
+                isDeparting: new FormControl(false),
+              }),
+              returnSchedule: new FormGroup({
+                startTime: new FormControl(''),
+                endTime: new FormControl(''),
                 isDeparting: new FormControl(false),
               }),
 
               flexibleTickets: new FormGroup({
                 refund: new FormControl(false),
-                nonRefund: new FormControl(false)
+                nonRefund: new FormControl(false),
               }),
             });
 
@@ -335,7 +347,8 @@ fareLoading: boolean = true;
             
             this.filteringbyairline(this.filterForm.get('airline')?.get('airlines')?.value!),
             this.filteringbyBookingSites(this.filterForm.get('bookingSite')?.get('bookingSites')?.value!),
-            this.filterForm.get("schedule")?.value!,
+            this.filterForm.get("departSchedule")?.value!,
+            this.filterForm.get("returnSchedule")?.value!,
 
           );
         
@@ -349,19 +362,23 @@ fareLoading: boolean = true;
 
  
   oneForAll(filter: filterFlightInterface, fligtsArray: airItineraries[], round: boolean) {
-      this.orgnizedResponce = this.orgnize(fligtsArray.filter(v =>
-      this.filterFlighWithPrice(v) &&
-      this.filterFlighWithDepartionTime(v) &&
-      this.filterFlighWithArrivalTime(v) &&
-      this.filterFlighWithDuration(v) &&
-      this.FlexTicketcheck(v, filter) &&
-      this.filterFlightWithNumberofStopsFunction(v, filter) &&
-      this.filterWithExperience(v, filter) &&
-      this.filterFlighWithReturnTime(v, filter, this.roundT) &&
-      this.completeTripOnSameAirline(v, filter) &&
-      this.filterFlightWithAirlineFunction(v, filter,this.roundT) &&
-      this.filterWithSchedule(v)
-    ))
+      this.orgnizedResponce = this.orgnize(
+        fligtsArray.filter(
+          (v) =>
+            this.filterFlighWithPrice(v) &&
+            this.filterFlighWithDepartionTime(v) &&
+            this.filterFlighWithArrivalTime(v) &&
+            this.filterFlighWithDuration(v) &&
+            this.FlexTicketcheck(v, filter) &&
+            this.filterFlightWithNumberofStopsFunction(v, filter) &&
+            this.filterWithExperience(v, filter) &&
+            this.filterFlighWithReturnTime(v, filter, this.roundT) &&
+            this.completeTripOnSameAirline(v, filter) &&
+            this.filterFlightWithAirlineFunction(v, filter, this.roundT) &&
+            this.filterWithSchedule(v, true) &&
+            this.filterWithSchedule(v, false)
+        )
+      );
 
   }
 
@@ -546,11 +563,26 @@ fareLoading: boolean = true;
     let tm = hr + m;
     return tm
   }
-  filterWithSchedule(flight: airItineraries): boolean {
-    const schedule = this.filterForm.get('schedule')?.value;
+  filterWithSchedule(flight: airItineraries, isDeparting: Boolean): boolean {
+    const schedule = this.filterForm.get(
+      isDeparting ? 'departSchedule' : 'returnSchedule'
+    )?.value;
 
     if(schedule?.endTime && schedule.startTime) {
-      const date = new Date(schedule.isDeparting ? flight.deptDate : flight.arrivalDate);
+      
+      // const date = new Date(schedule.isDeparting ? flight.deptDate : flight.arrivalDate);
+      const flightObj = flight.allJourney.flights[isDeparting ? 0 : 1];
+
+      const date = new Date(
+        schedule.isDeparting
+          ? flightObj.flightDTO[
+              isDeparting ? 0 : flightObj.flightDTO.length - 1
+            ].departureDate
+          : flightObj.flightDTO[
+              isDeparting ? 0 : flightObj.flightDTO.length - 1
+            ].arrivalDate
+      );
+
       const currentHours = date.getHours();
       const currentMinutes = date.getMinutes();
   
@@ -1187,7 +1219,13 @@ updateCurrencyCode(code: string){
         nonRefund: new FormControl(false)
       }),
 
-      schedule: new FormGroup({
+      departSchedule: new FormGroup({
+        startTime: new FormControl(""),
+        endTime: new FormControl(""),
+        isDeparting: new FormControl(false),
+      }),
+
+      returnSchedule: new FormGroup({
         startTime: new FormControl(""),
         endTime: new FormControl(""),
         isDeparting: new FormControl(false),
