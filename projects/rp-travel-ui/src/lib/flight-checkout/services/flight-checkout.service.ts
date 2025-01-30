@@ -399,8 +399,8 @@ export class FlightCheckoutService {
                 Validators.pattern('^[a-zA-Z]+'),
                 Validators.minLength(3),
               ]),
-              email: new FormControl('', EMAIL_VALIDATION),
-              phoneNumber: new FormControl('', [Validators.maxLength(16)]),
+              email: new FormControl(''),
+              phoneNumber: new FormControl(''),
               countryCode: new FormControl(''),
               nationality: new FormControl('', [Validators.required]),
               dateOfBirth: new FormControl('', [Validators.required]),
@@ -483,7 +483,6 @@ export class FlightCheckoutService {
             dateOfBirth: new FormControl('', [Validators.required]),
             nationality: new FormControl('', [Validators.required]),
             PassengerType: new FormControl('INF'),
-            phoneNumber: new FormControl(''),
             countryCode: new FormControl(''),
             countryOfResidence: new FormControl('', [Validators.required]),
             PassportNumber: new FormControl('', [
