@@ -191,7 +191,6 @@ export class FlightCheckoutService {
                 this.priceWithRecommenedService +=
                   res.airItineraryDTO.itinTotalFare.amount;
 
-                this.notify.next(1);
                 // initilize users forms
                 this.buildUsersForm(
                   res.searchCriteria.adultNum,
@@ -212,12 +211,14 @@ export class FlightCheckoutService {
                 this.selectedFlightError = true;
                 console.error('now error happens');
               }
+              this.notify.next(1);
             }
           },
           (err: any) => {
             console.error('get selected flight error ->', err);
             this.loader = false;
             this.selectedFlightError = true;
+            this.notify.next(1);
           }
         )
     );
@@ -376,6 +377,7 @@ export class FlightCheckoutService {
               ]),
               PassportExpiry: new FormControl('', [Validators.required]),
               IssuedCountry: new FormControl('', [Validators.required]),
+              isIssuedCountrySelected: new FormControl(null, [Validators.required]),
               position: new FormControl(this.usersArray.length + 1),
             })
           );
@@ -412,6 +414,9 @@ export class FlightCheckoutService {
               ]),
               PassportExpiry: new FormControl('', [Validators.required]),
               IssuedCountry: new FormControl('', [Validators.required]),
+              isIssuedCountrySelected: new FormControl(null, [
+                Validators.required,
+              ]),
               position: new FormControl(this.usersArray.length + 1),
             })
           );
@@ -452,6 +457,9 @@ export class FlightCheckoutService {
             ]),
             PassportExpiry: new FormControl('', [Validators.required]),
             IssuedCountry: new FormControl('', [Validators.required]),
+            isIssuedCountrySelected: new FormControl(null, [
+              Validators.required,
+            ]),
             position: new FormControl(this.usersArray.length),
           })
         );
@@ -491,6 +499,10 @@ export class FlightCheckoutService {
             ]),
             PassportExpiry: new FormControl('', [Validators.required]),
             IssuedCountry: new FormControl('', [Validators.required]),
+            isIssuedCountrySelected: new FormControl(null, [
+              Validators.required,
+            ]),
+
             position: new FormControl(this.usersArray.length),
           })
         );
@@ -533,6 +545,10 @@ export class FlightCheckoutService {
             PassportNumber: new FormControl('', [this.passportValidator()]),
             PassportExpiry: new FormControl('', [Validators.required]),
             IssuedCountry: new FormControl('', [Validators.required]),
+            isIssuedCountrySelected: new FormControl(null, [
+              Validators.required,
+            ]),
+
             position: new FormControl(this.usersArray.length + 1),
           })
         );
@@ -569,6 +585,10 @@ export class FlightCheckoutService {
             PassportNumber: new FormControl('', [this.passportValidator()]),
             PassportExpiry: new FormControl('', [Validators.required]),
             IssuedCountry: new FormControl('', [Validators.required]),
+            isIssuedCountrySelected: new FormControl(null, [
+              Validators.required,
+            ]),
+
             position: new FormControl(this.usersArray.length),
           })
         );
@@ -606,6 +626,10 @@ export class FlightCheckoutService {
             PassportNumber: new FormControl('', [this.passportValidator()]),
             PassportExpiry: new FormControl('', [Validators.required]),
             IssuedCountry: new FormControl('', [Validators.required]),
+            isIssuedCountrySelected: new FormControl(null, [
+              Validators.required,
+            ]),
+
             position: new FormControl(this.usersArray.length),
           })
         );
