@@ -7,6 +7,7 @@ export interface hotelResults{
     Locations: string[]
     ResultException: {Code:string,ExceptionMessage:string}
     Status: number
+    Inclusion:string[]
 }
 
 export interface hotel{

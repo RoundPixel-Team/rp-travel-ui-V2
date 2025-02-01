@@ -93,7 +93,8 @@ export interface room{
     ChargeType:any
     Curency:string
     HotelNorms:any
-    Inclusion:any
+    Inclusion:any;
+    RoomPromotion:string;
     SpecialPromo:string []
     Supplements:any[]
 }

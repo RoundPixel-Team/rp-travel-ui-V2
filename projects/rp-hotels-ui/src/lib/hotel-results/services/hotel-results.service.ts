@@ -32,6 +32,7 @@ export class HotelResultsService {
   maxPriceValueForSlider: number = 100;
   nightsNumber: any = 0;
   resultError: boolean = false;
+  InclusionsArray:string[]=[]
   subscription: Subscription = new Subscription();
   filterForm: FormGroup = new FormGroup({
     hotelName: new FormControl(''),
@@ -39,6 +40,7 @@ export class HotelResultsService {
     hotelPriceMax: new FormControl(),
     hotelPriceMin: new FormControl(),
     hotelLocations: new FormArray([]),
+    inclusions:new FormArray([])
   });
 
   constructor() {}
@@ -52,6 +54,7 @@ export class HotelResultsService {
       hotelPriceMax: new FormControl(),
       hotelPriceMin: new FormControl(),
       hotelLocations: new FormArray([]),
+      inclusions:new FormArray([])
     });
   }
 
@@ -72,6 +75,7 @@ export class HotelResultsService {
       CheckIn: "",
       CheckOut: "",
       Locations: [],
+      Inclusion:[],
       ResultException: {
         Code: "",
         ExceptionMessage: ""
@@ -91,7 +95,7 @@ export class HotelResultsService {
             this.resetHotelForm();
             this.hotelDataResponse = res;
             this.resultError = false;
-
+            this.InclusionsArray=res.Inclusion;
             this.filteredHotels = res.HotelResult;
             this.hotelLocationsArr = [
               ...res.Locations.filter((l) => {
@@ -103,7 +107,14 @@ export class HotelResultsService {
                 return l != '';
               }),
             ];
+                // Set Inclusions Array
+          this.InclusionsArray = res.Inclusion;
 
+          // ✅ Initialize FormArray for inclusions
+          this.InclusionsArray.forEach(() => {
+            this.addInclusion();  // Ensure each inclusion has a FormControl
+          });
+            
             //GET START AND END DATE TO CALCULATE ROOM NIGHTS NUMBER
             let startDate: Date = new Date(
               dateFrom.replace(new RegExp('%20', 'g'), ' ')
@@ -124,7 +135,6 @@ export class HotelResultsService {
               this.addRating();
               this.ratesArrSelected.push(i + 1);
             }
-
             // this.sorting(3);
 
             //set price slider configurations
@@ -153,6 +163,10 @@ export class HotelResultsService {
         }
       )
     );
+  }
+  addInclusion(){
+    (this.filterForm.get('inclusions') as FormArray).push(new FormControl(false));
+
   }
   /**
    * this function is responsible to calculate Nights Number from Dates
@@ -261,10 +275,9 @@ export class HotelResultsService {
       this.filterForm.valueChanges.subscribe(
         (res) => {
           if (this.hotelDataResponse?.HotelResult) {
-            console.log(
-              'show me hotel name val',
-              this.filterForm.get('hotelName')?.value
-            );
+           
+            this.filterByRoomInclusion();
+
             this.filteredHotels = this.hotelDataResponse?.HotelResult.filter(
               (hotel) => this.filterHotelData(hotel)
             );
@@ -275,6 +288,7 @@ export class HotelResultsService {
           console.log("VALUE CHANGES DOESN'T WORK", error);
         }
       )
+      
     );
   }
 
@@ -359,6 +373,33 @@ export class HotelResultsService {
   public get hotelLocationsArray(): FormArray {
     return this.filterForm.get('hotelLocations') as FormArray;
   }
+ 
+  filterByRoomInclusion() {
+    let selectedInclusions = this.filterForm.value.inclusions
+      .map((checked: any, index: number) => (checked ? this.InclusionsArray[index] : null))
+      .filter((inclusion: any) => inclusion !== null);
+  
+    if (!this.hotelDataResponse || !this.hotelDataResponse.HotelResult) {
+      this.filteredHotels = []; // Ensure it's always an array
+      return;
+    }
+    if (selectedInclusions.length === 0) {
+      this.filteredHotels = [...this.hotelDataResponse.HotelResult];
+    } else {
+      this.filteredHotels = this.hotelDataResponse.HotelResult.filter((hotel: any) => {
+        return hotel.Packages && hotel.Packages.some((pkg: any) => 
+          pkg.Rooms && pkg.Rooms.some((room: any) => 
+            room.Inclusion && selectedInclusions.some((inclusion: any) => room.Inclusion.includes(inclusion))
+          )
+        );
+      });
+    }
+  
+    
+    this.splicedFiltiredHotels = [...this.filteredHotels.slice(0, 5)];
+
+  }
+  
   /**
    * this function is responsible to set max and min Price for initial price Form
    */
