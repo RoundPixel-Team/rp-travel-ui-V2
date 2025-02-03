@@ -1,4 +1,5 @@
 import { roomCancelPolicy } from "../hotel-rooms/interfaces";
+import { amenties } from "../hotel-results/interfaces";
 
  export interface selectedPackageAvailibilty{
     Status: string,
@@ -9,7 +10,9 @@ import { roomCancelPolicy } from "../hotel-rooms/interfaces";
     BookingAfterPrice: number,
     Difference: number,
     Currency: string,
-    Supplements:Supplements[]
+    Supplements:Supplements[],
+    Amenities: amenties[],
+    RoomPromotion:string | null
  }
  export interface Supplements{
    Cur:string;
