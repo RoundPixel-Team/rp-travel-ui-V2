@@ -1,16 +1,13 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { catchError, retry, take } from 'rxjs';
 import { EnvironmentService } from '../../shared/services/environment.service';
 import {
   BookingRequest,
-  CheckOutDetails,
   Cobon,
   flightOfflineService,
-  OfflineServices,
-  passengersModel,
-  selectedFlight,
+  selectedFlight
 } from '../interfaces';
-import { catchError, mergeMap, retry, take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',

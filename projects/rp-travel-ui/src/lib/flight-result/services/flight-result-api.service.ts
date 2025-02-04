@@ -4,26 +4,39 @@ import { EnvironmentService } from '../../shared/services/environment.service';
 import { FareRules, FlightSearchResult, SearchFlightModule, fareRulesResponse } from '../interfaces';
 import { catchError, retry, take } from 'rxjs';
 import { searchFlightModel } from '../../flight-search/interfaces';
+import { FlightSearchResponse } from '../models/brandedFares.models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FlightResultApiService {
+  public http = inject(HttpClient);
+  public env = inject(EnvironmentService);
 
-  public http = inject(HttpClient)
-  public env = inject(EnvironmentService)
-
-  constructor() { }
-
+  constructor() {}
 
   searchFlight(searchFlight: SearchFlightModule) {
     let api: string = `${this.env.searchflow}/flights/flightsSearch/${searchFlight.lan}/${searchFlight.currency}/${searchFlight.pointOfReservation}/${searchFlight.flightType}/${searchFlight.flightsInfo}/${searchFlight.passengers}/${searchFlight.Cclass}/${searchFlight.showDirect}/all/0/0/Direct?searchID=${searchFlight.serachId}`;
-    return this.http.get<FlightSearchResult>(api).pipe(retry(2), take(1),catchError(err=>{console.error(err);throw err}) );;
+
+    return this.http.get<FlightSearchResult>(api).pipe(
+      retry(2),
+      take(1),
+      catchError((err) => {
+        console.error(err);
+        throw err;
+      })
+    );
   }
 
   fareRules(sid: string, seq: number, pKey: string) {
     let api = `${this.env.FareRules}/api/GetFareRules?SId=${sid}&SeqNum=${seq}&PKey=${pKey}`;
 
     return this.http.get<fareRulesResponse>(api).pipe(take(1));
+  }
+
+  getBrandedFaresApi(sid: string, seq: number, pKey: string, pcc: string) {
+    let api = `${this.env.FareRules}/api/GetBrandedFares?SId=${sid}&SeqNum=${seq}&PKey=${pKey}&Pcc=${pcc}`;
+
+    return this.http.get<FlightSearchResponse>(api).pipe(take(1));
   }
 }

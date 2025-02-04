@@ -19,9 +19,10 @@ export class FilterCityPipe implements PipeTransform {
       for (let index = 0; index < value.length; index++) {
         let element: airPorts = value[index];
         let a = element.cityName.toLowerCase();
+        let d = element.countryName.toLowerCase();
         let b = element.airportCode.toLowerCase();
         let c = element.airportName.toLowerCase();
-        if (a.indexOf(args.toLowerCase()) != -1 || b.indexOf(args.toLowerCase()) != -1 || c.indexOf(args.toLowerCase()) != -1) {
+        if (a.indexOf(args.toLowerCase()) != -1 || b.indexOf(args.toLowerCase()) != -1 || c.indexOf(args.toLowerCase()) != -1 || d.indexOf(args.toLowerCase()) != -1) {
           result.push(element);
         }
 
