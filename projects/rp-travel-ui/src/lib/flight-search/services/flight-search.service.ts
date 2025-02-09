@@ -331,16 +331,20 @@ export class FlightSearchService {
         this.lastFlight = (<FormArray>this.searchFlight.get('Flights')).value[len - 1];
       }
       (<FormArray>this.searchFlight.get('Flights')).push(
-        new FormGroup({
-          isDepartingSelected: new FormControl<boolean>(false),
-          isLandingSelected: new FormControl<boolean>(false),
-          departing: new FormControl(this.lastFlight?.landing, [
-            Validators.required,
-          ]),
-          landing: new FormControl('', [Validators.required]),
-          departingD: new FormControl('', [Validators.required]),
-        })
+        new FormGroup(
+          {
+            isDepartingSelected: new FormControl<boolean>(false),
+            isLandingSelected: new FormControl<boolean>(false),
+            departing: new FormControl(this.lastFlight?.landing, [
+              Validators.required,
+            ]),
+            landing: new FormControl('', [Validators.required]),
+            departingD: new FormControl('', [Validators.required]),
+          },
+          { validators: this.departingLandingValidator() }
+        )
       );
+      this.searchFlight.get('Flights')?.updateValueAndValidity();
       return this.flightAlert;
     }
   }
@@ -348,10 +352,10 @@ export class FlightSearchService {
    * this function is responsible to remove flight from multi city
    * @return object of string error message (removeFlightAlert)
    */
-  removeFlight() {
+  removeFlight(index: number | null) {
     let len = this.flightsArray.length;
     if (len > 1) {
-      (<FormArray>this.searchFlight.get('Flights')).removeAt(len-1);
+      (<FormArray>this.searchFlight.get('Flights')).removeAt(index ?? len-1);
       return this.removeFlightAlert;
     } else {
       this.removeFlightAlert.enMsg = "You Don't have any flights to remove";
@@ -820,7 +824,7 @@ export class FlightSearchService {
       }
       else if(this.searchFlight.controls['flightType']?.value == 'oneway' || this.searchFlight.controls['flightType']?.value == 'OneWay' || this.searchFlight.controls['flightType']?.value == 'oneWay'){
         if(this.flightsArray.length>1){
-          this.removeFlight();
+          this.removeFlight(null);
         }
       }
 
