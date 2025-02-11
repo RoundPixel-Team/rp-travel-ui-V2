@@ -26,6 +26,7 @@ import {
 } from '../../flight-result/interfaces';
 import { HomePageService } from '../../home-page/services/home-page.service';
 import { EMAIL_VALIDATION } from '../../user-managment/constants/validation';
+import { DatePipe } from '@angular/common';
 
 type fareCalc = (fare: fare[]) => number;
 type calcEqfare = (
@@ -48,6 +49,8 @@ export class FlightCheckoutService {
   addbuttonVaild: boolean = false;
 
   notify = new Subject<number>();
+
+  datePipe = inject(DatePipe);
 
   /**
    * here is the loaded selected data
@@ -91,6 +94,7 @@ export class FlightCheckoutService {
    * loading state ..
    */
   loader: boolean = false;
+  saveBookingLoadeer = false;
 
   /**
    * applying copoun code loading state ..
@@ -809,7 +813,7 @@ export class FlightCheckoutService {
    * it also updates the behaviour subject (paymentLinkFailure) with the error
    */
   saveBooking(currentCurrency: string, type: string, pcc: string) {
-    this.loader = true;
+    this.saveBookingLoadeer = true;
     this.subscription.add(
       this.api
         .saveBooking(
@@ -832,14 +836,14 @@ export class FlightCheckoutService {
           {
             next: (res) => {
               this.paymentLink.next(res.getPaymentViewResponse.link);
-              this.loader = false;
+              this.saveBookingLoadeer = false;
             },
             complete: () => {
               this.notify.next(2);
             },
             error: (err) => {
               this.paymentLinkFailure.next(err);
-              this.loader = false;
+              this.saveBookingLoadeer = false;
               this.selectedFlightError = true;
               console.error('SAVE BOOKING ERROR', err);
             }
@@ -860,6 +864,20 @@ export class FlightCheckoutService {
       } else if (this.usersArray.at(i).get('title')!.value == 'Female') {
         this.usersArray.at(i).get('title')!.setValue('Ms');
       }
+      
+      const dateOfBirth = this.datePipe.transform(
+        this.usersArray.at(i).get('dateOfBirth')?.value,
+        'yyyy-MM-dd'
+      );
+
+      const passportExpiry = this.datePipe.transform(
+        this.usersArray.at(i).get('dateOfBirth')?.value,
+        'yyyy-MM-dd'
+      );
+
+      this.usersArray.at(i).get('dateOfBirth')?.setValue(dateOfBirth);
+      this.usersArray.at(i).get('PassportExpiry')?.setValue(passportExpiry);
+
       if (this.usersArray.at(i).get('phoneNumber')?.value != '') {
         this.usersArray
           .at(i)

@@ -10,12 +10,29 @@ export interface Brand {
   brandId: string;
   sequenceNumber: number;
   cabinClasse: string;
-  baggageAllowances: any; // Change type if structure is known
+  baggageAllowances: BaggageAllowance[] | null;
   brandedFaresDTOs: FareDetail[];
-  AdminCharges: AdminCharge[];
+  adminCharges: adminCharge[];
   itinTotalFare: ItinTotalFare;
   passengerFareBreakDowns: PassengerFareBreakDown[];
   optionalServices: OptionalService[];
+}
+
+export interface BaggageAllowance {
+  paxType: string;
+  baggageAllowanceDetails: BaggageAllowanceDetail[];
+}
+
+export interface BaggageAllowanceDetail {
+  baggage: string;
+  flightRoute: string;
+  baggageAllowanceInfo: BaggageAllowanceInfo;
+}
+
+export interface BaggageAllowanceInfo {
+  unit: string;
+  size: string;
+  dimensions?: string | null; // Optional since it's sometimes null
 }
 
 export interface FareDetail {
@@ -24,7 +41,7 @@ export interface FareDetail {
   currencyCode: string;
 }
 
-export interface AdminCharge {
+export interface adminCharge {
   price: number;
   curency: string;
   Type: string;

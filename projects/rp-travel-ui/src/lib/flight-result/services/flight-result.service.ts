@@ -63,6 +63,7 @@ export class FlightResultService {
 
   FilterChanges$: Subscription = new Subscription();
   notify = new Subject<null>();
+  brandedFareNotifier = new Subject<null>();
 
   /**
    * inital rate currecy code kwd
@@ -1271,7 +1272,7 @@ export class FlightResultService {
       this.currentSelectedBrands = JSON.parse(
         sessionStorage.getItem(itemKey) ?? ''
       );
-      this.notify.next(null);
+      this.brandedFareNotifier.next(null);
       this.isBrandedFaresLoading = false;
     } else {
       this.api.getBrandedFaresApi(searchId, squencNumber, pKey, pcc).subscribe({
@@ -1280,11 +1281,10 @@ export class FlightResultService {
           this.isBrandedFaresLoading = false;
           
           sessionStorage.setItem(itemKey, JSON.stringify(result.brands));
-          this.notify.next(null);
+          this.brandedFareNotifier.next(null);
         },
       });
     }
-
   }
 
   /**
