@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { Subscription} from 'rxjs';
-import { FareRules, FlightSearchResult, SearchFlightModule, airItineraries, filterFlightInterface, flight, flightResultFilter } from '../interfaces';
+import { Subject, Subscription} from 'rxjs';
+import { Brand, FareRules, FlightSearchResult, SearchFlightModule, airItineraries, filterFlightInterface, flight, flightResultFilter } from '../interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FlightResultApiService } from './flight-result-api.service';
 import { customAirlineFilter } from '../interfaces'
@@ -45,7 +45,9 @@ export class FlightResultService {
 /**fare rules loading state */
 fareLoading: boolean = true;
   ResultFound: boolean = false
-
+  isBrandedFaresLoading: boolean = false;
+  notify = new Subject<null>();
+  currentSelectedBrands: Brand[] = [];
   //Price Filter Values
   priceMinValue:number=0;
   priceMaxValue:number=100;
@@ -1056,7 +1058,34 @@ updateCurrencyCode(code: string){
     });
     return TtransitTime;
   }
+  getBrandedFares(
+    searchId: string,
+    squencNumber: number,
+    pKey: string,
+    pcc: string
+  ) {
+    this.isBrandedFaresLoading = true;
+    const itemKey = searchId + squencNumber + pKey + pcc;
 
+    if (sessionStorage.getItem(itemKey)) {
+      this.currentSelectedBrands = JSON.parse(
+        sessionStorage.getItem(itemKey) ?? ''
+      );
+      this.notify.next(null);
+      this.isBrandedFaresLoading = false;
+    } else {
+      this.api.getBrandedFaresApi(searchId, squencNumber, pKey, pcc).subscribe({
+        next: (result) => {
+          this.currentSelectedBrands = result.brands;
+          this.isBrandedFaresLoading = false;
+          
+          sessionStorage.setItem(itemKey, JSON.stringify(result.brands));
+          this.notify.next(null);
+        },
+      });
+    }
+
+  }
   /**
    * this function is responsible to destory any opened subscription on this service
    */
