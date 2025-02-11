@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { EnvironmentService } from '../../shared/services/environment.service';
-import { Cobon, flightOfflineService, passengersModel, selectedFlight } from '../interfaces';
+import { BookingRequest, Cobon, flightOfflineService, passengersModel, selectedFlight } from '../interfaces';
 import { catchError, mergeMap, retry, take } from 'rxjs';
 
 @Injectable({
@@ -82,5 +82,16 @@ export class FlightCheckoutApiService {
          }
       ),catchError(err=>{console.log(err);throw err})
     )
+  }
+  bookItinerary(body: BookingRequest) {
+    let api = `${this.env.BookingFlow}/api/BookItinerary`;
+    return this.http.post<any>(api, body).pipe(
+      take(1),
+      retry(1),
+      catchError((err) => {
+        console.error(err);
+        throw err;
+      })
+    );
   }
 }

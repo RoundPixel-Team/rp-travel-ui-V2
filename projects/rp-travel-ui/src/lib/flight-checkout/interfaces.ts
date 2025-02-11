@@ -97,3 +97,52 @@ export interface promotionDetails {
     discountCode: any,
     newFare: number
 }
+export interface CheckOutDetails {
+  bookingEmail: string;
+  DiscountCode?: string;
+  passengersDetails: PassengerDetails[];
+  UserCurrency: string;
+}
+
+export interface PassengerDetails {
+  title: string;
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  countryCode: string;
+  nationality: string;
+  dateOfBirth: string;
+  PassengerType: string; // e.g., ADT for Adult, CHD for Child, etc.
+  countryOfResidence: string;
+  PassportNumber: string;
+  PassportExpiry: string;
+  IssuedCountry: string;
+  position: number; // Position of the passenger in the list
+}
+
+export interface OfflineServices {
+  UserSeletedInsurance: UserSelectedInsurance;
+  UserSeletedServices: UserSelectedServices;
+}
+export interface UserSelectedInsurance {
+  ProductId?: string; // ID of the selected insurance product, if any
+}
+
+export interface UserSelectedServices {
+  SeletedServicesCodes: string[]; // Codes of selected services, if any
+}
+export interface BookingRequest {
+  checkOutDetails: CheckOutDetails;
+  offlineServices: OfflineServices;
+  searchId: string;
+  sequenceNumber: number;
+  providerKey: string;
+  pcc: string; // Point of sale code
+  token: string; // Authentication token if required
+  ip: string; // IP address of the user
+  pos: string; // Point of sale location
+  notifyToken?: string; // Notification token if applicable
+  language: string; // Language of the request (e.g., EN, AR)
+}

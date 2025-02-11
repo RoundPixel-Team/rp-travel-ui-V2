@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { FlightCheckoutApiService } from './flight-checkout-api.service';
-import { BreakDownView, Cobon, flightOfflineService, passengersModel, selectedFlight } from '../interfaces';
+import { BookingRequest, BreakDownView, CheckOutDetails, Cobon, flightOfflineService, OfflineServices, passengersModel, selectedFlight } from '../interfaces';
 import { FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { passengerFareBreakDownDTOs,fare } from '../../flight-result/interfaces';
 import { HomePageService } from '../../home-page/services/home-page.service';
@@ -19,6 +19,7 @@ export class FlightCheckoutService {
   home = inject(HomePageService)
   subscription : Subscription = new Subscription()
   serviceFees: number= 0;
+  notify = new Subject<number>();
 
   yesOrNoVaild:boolean = false;
   packageVaild:boolean = false ;
@@ -68,7 +69,7 @@ bookingType:string='standard'
    * loading state ..
    */
   loader : boolean = false
-
+  paymentLoader : boolean = false;
 
   /**
    * applying copoun code loading state ..
@@ -724,7 +725,134 @@ bookingType:string='standard'
     }))
     
   }
+  generateSaveBookingBody(
+    checkOutDetails: CheckOutDetails,
+    offlineServices: OfflineServices,
+    searchId: string,
+    sequenceNumber: number,
+    providerKey: string,
+    pcc: string,
+    token: string,
+    ip: string,
+    pos: string,
+    notifyToken: string,
+    language: string
+  ): BookingRequest {
+    return {
+      checkOutDetails,
+      offlineServices,
+      searchId,
+      sequenceNumber,
+      providerKey,
+      pcc,
+      token,
+      ip,
+      pos,
+      notifyToken,
+      language
+    };
+  }
+ generateOfflineServices(type: string): OfflineServices {
+    let SeletedServicesCodes =
+      type == 'premium'
+        ? this.selectedOfflineServices
+        : this.selectedOfflineServices.filter((s) => {
+            return s != this.recommendedOfflineService?.serviceCode;
+          });
 
+    return {
+      UserSeletedInsurance: { ProductId: '' },
+      UserSeletedServices: { SeletedServicesCodes },
+    };
+  }
+  generateCheckoutDetails(currentCurrency: string): CheckOutDetails {
+    for (var i = 0; i < this.usersArray.length; i++) {
+      if (this.usersArray.at(i).get('title')!.value == 'Male') {
+        this.usersArray.at(i).get('title')!.setValue('Mr');
+      } else if (this.usersArray.at(i).get('title')!.value == 'Female') {
+        this.usersArray.at(i).get('title')!.setValue('Ms');
+      }
+      if (this.usersArray.at(i).get('phoneNumber')?.value != '') {
+        this.usersArray
+          .at(i)
+          .get('countryCode')
+          ?.setValue(
+            (<string>(
+              this.usersArray.at(i).get('phoneNumber')?.value.dialCode
+            )).replace('+', '')
+          );
+        this.usersArray
+          .at(i)
+          .get('phoneNumber')
+          ?.setValue(this.usersArray.at(i).get('phoneNumber')?.value.number);
+      }
+
+      this.usersArray
+        .at(i)
+        .get('countryOfResidence')
+        ?.setValue(
+          this.home.allCountries.filter((c) => {
+            return (
+              c.countryName ==
+              this.usersArray.at(i).get('countryOfResidence')?.value
+            );
+          })[0].pseudoCountryCode
+        );
+      this.usersArray
+        .at(i)
+        .get('IssuedCountry')
+        ?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value);
+      this.usersArray
+        .at(i)
+        .get('nationality')
+        ?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value);
+    }
+    return {
+      bookingEmail: this.usersArray.at(0).get('email')?.value,
+      DiscountCode: this.copounCodeDetails?.promotionDetails.discountCode || '',
+      passengersDetails: this.usersArray.value,
+      UserCurrency: currentCurrency,
+    };
+  }
+  bookItinerary(currentCurrency: string, type: string, pcc: string) {
+    this.paymentLoader = true;
+    this.subscription.add(
+      this.api
+        .bookItinerary(
+          this.generateSaveBookingBody(
+            this.generateCheckoutDetails(currentCurrency),
+            this.generateOfflineServices(type),
+            this.selectedFlight?.searchCriteria.searchId!,
+            this.selectedFlight?.airItineraryDTO.sequenceNum!,
+            this.selectedFlight?.airItineraryDTO.pKey!.toString()!,
+            pcc,
+            "",
+            this.home.pointOfSale?.ip || '00.00.000.000',
+            this.home.pointOfSale?.country || 'kw',
+            "",
+            this.selectedFlight?.searchCriteria.language!,
+          )
+        )
+
+        .subscribe(
+          {
+            next: (res) => {
+              this.paymentLink.next(res.getPaymentViewResponse.link);
+              this.paymentLoader = false;
+            },
+            complete: () => {
+              this.notify.next(2);
+            },
+            error: (err) => {
+              this.paymentLinkFailure.next(err);
+              this.paymentLoader = false;
+              this.selectedFlightError = true;
+              console.error('SAVE BOOKING ERROR', err);
+            }
+          }
+        )
+    );
+  }
 
   /**
    * 
