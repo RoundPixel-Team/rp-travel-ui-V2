@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { EnvironmentService } from '../../shared/services/environment.service';
-import { FareRules, FlightSearchResponse, FlightSearchResult, SearchFlightModule, fareRulesResponse } from '../interfaces';
+import { FareRules, FlightSearchResult, SearchFlightModule, fareRulesResponse } from '../interfaces';
 import { catchError, retry, take } from 'rxjs';
 import { searchFlightModel } from '../../flight-search/interfaces';
+import { FlightSearchResponse } from './brandedfares.models';
 
 @Injectable({
   providedIn: 'root'

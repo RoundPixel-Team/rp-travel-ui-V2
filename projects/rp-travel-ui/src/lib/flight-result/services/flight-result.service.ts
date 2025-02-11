@@ -1,11 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Subject, Subscription} from 'rxjs';
-import { Brand, FareRules, FlightSearchResult, SearchFlightModule, airItineraries, filterFlightInterface, flight, flightResultFilter } from '../interfaces';
+import { FareRules, FlightSearchResult, SearchFlightModule, airItineraries, filterFlightInterface, flight, flightResultFilter } from '../interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FlightResultApiService } from './flight-result-api.service';
 import { customAirlineFilter } from '../interfaces'
 import { FlightSearchService } from '../../flight-search/services/flight-search.service';
+import { Brand } from './brandedfares.models';
 
 @Injectable({
   providedIn: 'root'
