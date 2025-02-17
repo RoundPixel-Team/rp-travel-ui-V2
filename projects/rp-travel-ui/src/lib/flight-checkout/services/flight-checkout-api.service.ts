@@ -21,8 +21,8 @@ export class FlightCheckoutApiService {
    * @param providerKey 
    * @returns all information about the selected flight according to its searchId , sequence number and provider key
    */
-  getSelectedFlight(searchid: string,sequenceNum: number,providerKey: number,pcc:string) {
-    let api = `${this.env.searchflow}/api/GetSelectedFlight?searchid=${searchid}&SequenceNum=${sequenceNum}&PKey=${providerKey}&sCode=${pcc}`;
+  getSelectedFlight(searchid: string,sequenceNum: number,providerKey: number,pcc:string,device:string,os:string,browser:string) {
+    let api = `${this.env.searchflow}/api/GetSelectedFlight?searchid=${searchid}&SequenceNum=${sequenceNum}&PKey=${providerKey}&sCode=${pcc}&device=${device}&os=${os}&browser=${browser}`;
     return this.http.get<selectedFlight>(api).pipe(retry(3),take(1),catchError(err=>{throw err}));
   }
 
@@ -83,8 +83,8 @@ export class FlightCheckoutApiService {
       ),catchError(err=>{console.log(err);throw err})
     )
   }
-  bookItinerary(body: BookingRequest) {
-    let api = `${this.env.BookingFlow}/api/BookItinerary`;
+  bookItinerary(body: BookingRequest,device:string,os:string,browser:string) {
+    let api = `${this.env.BookingFlow}/api/BookItinerary?device=${device}&os=${os}&browser=${browser}`;
     return this.http.post<any>(api, body).pipe(
       take(1),
       retry(1),

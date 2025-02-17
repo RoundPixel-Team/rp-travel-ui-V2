@@ -152,10 +152,10 @@ bookingType:string='standard'
    * this is for fetching the selected flight data and update selected flight state (selectedFlight:selectedFlight)
    * also update loader state
    */
-  getSelectedFlightData(searchId:string,sequenceNum:number,providerKey:number,userCombinedNames:boolean,pcc:string){
+  getSelectedFlightData(searchId:string,sequenceNum:number,providerKey:number,userCombinedNames:boolean,pcc:string,device:string,os:string,browser:string){
     this.loader = true
     this.subscription.add(
-      this.api.getSelectedFlight(searchId,sequenceNum,providerKey,pcc).subscribe((res:selectedFlight)=>{
+      this.api.getSelectedFlight(searchId,sequenceNum,providerKey,pcc,device,os,browser).subscribe((res:selectedFlight)=>{
         if(res){
           // updating the selected flight state
           this.selectedFlight = res
@@ -814,7 +814,7 @@ bookingType:string='standard'
       UserCurrency: currentCurrency,
     };
   }
-  bookItinerary(currentCurrency: string, type: string, pcc: string) {
+  bookItinerary(currentCurrency: string, type: string, pcc: string,device:string,os:string,browser:string) {
     this.paymentLoader = true;
     this.subscription.add(
       this.api
@@ -831,7 +831,10 @@ bookingType:string='standard'
             this.home.pointOfSale?.country || 'kw',
             "",
             this.selectedFlight?.searchCriteria.language!,
-          )
+          ),
+          device,
+          os,
+          browser
         )
 
         .subscribe(
