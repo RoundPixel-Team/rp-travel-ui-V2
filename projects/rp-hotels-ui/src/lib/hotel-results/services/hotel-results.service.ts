@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Subscription, catchError } from 'rxjs';
+import { Subject, Subscription, catchError } from 'rxjs';
 import { HotelResultsApiService } from './hotel-results-api.service';
 import { GetHotelModule, hotel, hotelResults } from '../interfaces';
 import { guests } from '../../hotel-search/interfaces';
@@ -21,6 +21,9 @@ export class HotelResultsService {
    * this varrivale to make binding for hotels results cards [IN CASE OF USING LOAD MORE OPTION]
    */
   splicedFiltiredHotels: hotel[] = [];
+  public selectedInclusionsSubject = new Subject<any>();
+  public selectedInclusions$ = this.selectedInclusionsSubject.asObservable();
+
 
   locationsArrSelected: Array<string> = [];
   ratesArrSelected: Array<number> = [];
@@ -114,7 +117,7 @@ export class HotelResultsService {
           this.InclusionsArray.forEach(() => {
             this.addInclusion();  // Ensure each inclusion has a FormControl
           });
-            
+
             //GET START AND END DATE TO CALCULATE ROOM NIGHTS NUMBER
             let startDate: Date = new Date(
               dateFrom.replace(new RegExp('%20', 'g'), ' ')
@@ -272,25 +275,26 @@ export class HotelResultsService {
   }
   hotelsFilter() {
     this.subscription.add(
-      this.filterForm.valueChanges.subscribe(
-        (res) => {
-          if (this.hotelDataResponse?.HotelResult) {
-           
-            this.filterByRoomInclusion();
+      this.filterForm.valueChanges.subscribe(() => {
+        if (this.hotelDataResponse?.HotelResult) {
+          let allHotels = [...this.hotelDataResponse.HotelResult];
 
-            this.filteredHotels = this.hotelDataResponse?.HotelResult.filter(
-              (hotel) => this.filterHotelData(hotel)
-            );
-            this.splicedFiltiredHotels = [...this.filteredHotels.slice(0, 5)];
-          }
-        },
-        (error) => {
-          console.log("VALUE CHANGES DOESN'T WORK", error);
+          this.filteredHotels = allHotels.filter(
+            (hotel) =>
+              this.filterHotelData(hotel) &&
+              this.filterByRoomInclusion(hotel)
+          );
+
+          this.splicedFiltiredHotels = [...this.filteredHotels.slice(0, 5)];
         }
-      )
-      
+      },
+      (error) => {
+        console.log("VALUE CHANGES DOESN'T WORK", error);
+      })
     );
   }
+
+
 
   /**
    * this function is used in case of using load more option to increase the loadded hotels +5
@@ -373,33 +377,50 @@ export class HotelResultsService {
   public get hotelLocationsArray(): FormArray {
     return this.filterForm.get('hotelLocations') as FormArray;
   }
- 
-  filterByRoomInclusion() {
+
+  // filterByRoomInclusion() {
+  //   let selectedInclusions = this.filterForm.value.inclusions
+  //     .map((checked: any, index: number) => (checked ? this.InclusionsArray[index] : null))
+  //     .filter((inclusion: any) => inclusion !== null);
+  //   console.log("✅ Selected Inclusions:", selectedInclusions); // لوج لقيم الـ selected inclusions
+  //   // تحديث Subject الخاص بالانكلوجنز
+  //   this.selectedInclusionsSubject.next(selectedInclusions);
+  //   if (!this.hotelDataResponse || !this.hotelDataResponse.HotelResult) {
+  //     this.filteredHotels = [];
+  //     console.log("❌ No hotel data available!");
+  //     return;
+  //   }
+  //   if (selectedInclusions.length === 0) {
+  //     this.filteredHotels = [...this.hotelDataResponse.HotelResult];
+  //   } else {
+  //     this.filteredHotels = this.hotelDataResponse.HotelResult.filter((hotel: any) => {
+  //       return hotel.Packages && hotel.Packages.some((pkg: any) =>
+  //         pkg.Rooms && pkg.Rooms.some((room: any) =>
+  //           room.Inclusion && selectedInclusions.some((inclusion: any) => room.Inclusion.includes(inclusion))
+  //         )
+  //       );
+  //     });
+  //   }
+  //   console.log("🏨 Filtered Hotels:", this.filteredHotels); // لوج للفنادق بعد الفلترة
+  //   this.splicedFiltiredHotels = [...this.filteredHotels.slice(0, 5)];
+  //   console.log("📌 Displayed Hotels (first 5):", this.splicedFiltiredHotels); // لوج لأول 5 فنادق
+  // }
+  filterByRoomInclusion(hotel: any): boolean {
     let selectedInclusions = this.filterForm.value.inclusions
       .map((checked: any, index: number) => (checked ? this.InclusionsArray[index] : null))
       .filter((inclusion: any) => inclusion !== null);
-  
-    if (!this.hotelDataResponse || !this.hotelDataResponse.HotelResult) {
-      this.filteredHotels = []; // Ensure it's always an array
-      return;
-    }
-    if (selectedInclusions.length === 0) {
-      this.filteredHotels = [...this.hotelDataResponse.HotelResult];
-    } else {
-      this.filteredHotels = this.hotelDataResponse.HotelResult.filter((hotel: any) => {
-        return hotel.Packages && hotel.Packages.some((pkg: any) => 
-          pkg.Rooms && pkg.Rooms.some((room: any) => 
-            room.Inclusion && selectedInclusions.some((inclusion: any) => room.Inclusion.includes(inclusion))
-          )
-        );
-      });
-    }
-  
-    
-    this.splicedFiltiredHotels = [...this.filteredHotels.slice(0, 5)];
 
+      this.selectedInclusionsSubject.next(selectedInclusions);
+    if (selectedInclusions.length === 0) {
+      return true;
+    }
+    return hotel.Packages && hotel.Packages.some((pkg: any) =>
+      pkg.Rooms && pkg.Rooms.some((room: any) =>
+        room.Inclusion && selectedInclusions.some((inclusion: any) => room.Inclusion.includes(inclusion))
+      )
+    );
   }
-  
+
   /**
    * this function is responsible to set max and min Price for initial price Form
    */
