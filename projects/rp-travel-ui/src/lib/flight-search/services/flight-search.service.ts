@@ -309,6 +309,7 @@ export class FlightSearchService {
    */
   changeFlightType(flightType: string) {
     this.searchFlight.controls['flightType'].setValue(flightType);
+    
   }
   /**
    * this function is responsible to get flights form array

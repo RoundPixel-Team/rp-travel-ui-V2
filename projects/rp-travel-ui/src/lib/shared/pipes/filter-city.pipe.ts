@@ -17,13 +17,24 @@ export class FilterCityPipe implements PipeTransform {
       let result: airPorts[] = []
       for (let index = 0; index < value.length; index++) {
         let element: airPorts = value[index];
-        let a = element.cityName.toLowerCase();
-        let b = element.airportCode.toLowerCase();
-        let c = element.airportName.toLowerCase();
-        if (a.indexOf(args.toLowerCase()) != -1 || b.indexOf(args.toLowerCase()) != -1 || c.indexOf(args.toLowerCase()) != -1) {
+
+        let cityName = element.cityName.toLowerCase();
+        let cityCode = element.cityCode.toLowerCase();
+        let airportName = element.airportName.toLowerCase();
+        let airportCode = element.airportCode.toLowerCase();
+        let countryName = element.countryName.toLowerCase();
+        let countryCode = element.countryCode.toLowerCase();
+        
+        if (
+          cityName.indexOf(args.toLowerCase()) != -1 || 
+          cityCode.indexOf(args.toLowerCase()) != -1 ||
+          airportName.indexOf(args.toLowerCase()) != -1 || 
+          airportCode.indexOf(args.toLowerCase()) != -1 ||
+          countryName.indexOf(args.toLowerCase()) != -1 ||
+          countryCode.indexOf(args.toLowerCase()) != -1 
+        ) {
           result.push(element);
         }
-
       }
       return result;
     }

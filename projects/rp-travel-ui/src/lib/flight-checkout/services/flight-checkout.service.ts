@@ -812,7 +812,7 @@ export class FlightCheckoutService {
    * it updates the behaviour subject (paymentLink) with the link
    * it also updates the behaviour subject (paymentLinkFailure) with the error
    */
-  saveBooking(currentCurrency: string, type: string, pcc: string) {
+  saveBooking(currentCurrency: string, type: string, pcc: string, brandId: string) {
     this.saveBookingLoadeer = true;
     this.subscription.add(
       this.api
@@ -829,6 +829,7 @@ export class FlightCheckoutService {
             this.home.pointOfSale?.country || 'kw',
             "",
             this.selectedFlight?.searchCriteria.language!,
+            brandId
           )
         )
 
@@ -946,7 +947,8 @@ export class FlightCheckoutService {
     ip: string,
     pos: string,
     notifyToken: string,
-    language: string
+    language: string,
+    brandId: string
   ): BookingRequest {
     return {
       checkOutDetails,
@@ -959,7 +961,8 @@ export class FlightCheckoutService {
       ip,
       pos,
       notifyToken,
-      language
+      language,
+      brandId
     };
   }
 

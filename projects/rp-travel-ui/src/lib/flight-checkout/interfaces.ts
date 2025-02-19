@@ -113,6 +113,7 @@ export interface passengerInfoModel  {
     pos: string; // Point of sale location
     notifyToken?: string; // Notification token if applicable
     language: string; // Language of the request (e.g., EN, AR)
+    brandId: string; // Brand Id
   }  
    export interface  passengersModel {  
       bookingEmail:string,
