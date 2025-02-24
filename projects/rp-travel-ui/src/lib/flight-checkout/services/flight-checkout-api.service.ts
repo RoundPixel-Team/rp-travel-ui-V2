@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { EnvironmentService } from '../../shared/services/environment.service';
 import { Cobon, flightOfflineService, passengersModel, selectedFlight } from '../interfaces';
@@ -64,9 +64,14 @@ export class FlightCheckoutApiService {
    * @param selectedServices 
    * @returns this function is resposible to call the save booking then checking flight validations and them generate your payment link
    */
-  saveBooking(searchid: string, sequenceNum: number, body: passengersModel, pkey: string, lang:string,selectedServices:string[],ip:string,ipLocation:string,pcc:string) {
-    let api = `${this.env.BookingFlow}/api/SaveBooking?SearchId=${searchid}&SeqNum=${sequenceNum}&PKey=${pkey}&sCode=${pcc}`;
-    return this.http.post<any>(api, body).pipe(take(1),retry(1),
+  saveBooking(searchid: string, sequenceNum: number, body: passengersModel, pkey: string, lang:string,selectedServices:string[],ip:string,ipLocation:string,pcc:string,token:string | null) {
+    let api:string = `${this.env.BookingFlow}/api/SaveBooking?SearchId=${searchid}&SeqNum=${sequenceNum}&PKey=${pkey}&sCode=${pcc}`
+    if(token){
+      api = `${this.env.BookingFlow}/api/SaveBooking?SearchId=${searchid}&SeqNum=${sequenceNum}&PKey=${pkey}&sCode=${pcc}`;
+      const headers = new HttpHeaders({
+        Token: token
+      });
+      return this.http.post<any>(api, body, {headers}).pipe(take(1),retry(1),
       mergeMap(
         (result) => { 
           let api = `${this.env.BookingFlow}/api/CheckFlightValidation?HGNum=${result.hgNumber}&Language=${lang}&SearchId=${searchid}&SeqNum=${sequenceNum}&PKey=${pkey}`;
@@ -82,5 +87,27 @@ export class FlightCheckoutApiService {
          }
       ),catchError(err=>{console.log(err);throw err})
     )
+    }else{
+      api = `${this.env.BookingFlow}/api/SaveBooking?SearchId=${searchid}&SeqNum=${sequenceNum}&PKey=${pkey}&sCode=${pcc}`
+      return this.http.post<any>(api, body).pipe(take(1),retry(1),
+      mergeMap(
+        (result) => { 
+          let api = `${this.env.BookingFlow}/api/CheckFlightValidation?HGNum=${result.hgNumber}&Language=${lang}&SearchId=${searchid}&SeqNum=${sequenceNum}&PKey=${pkey}`;
+          return this.http.get<any>(api).pipe(retry(1),take(1),
+          mergeMap(()=>{
+            let apis = `${this.env.BookingFlow}/api/GetPaymentView?IP=${ip}&IPLoc=${ipLocation}&HG=${result.hgNumber}&SId=${searchid}&NotifyToken=`;
+            let bodys = {
+              UserSeletedInsurance: { ProductId: "" },
+              UserSeletedServices: { SeletedServicesCodes: selectedServices },
+            };
+            return this.http.post<any>(apis, bodys).pipe(take(1),retry(1))
+          }),catchError(err=>{console.log(err);throw err}));
+         }
+      ),catchError(err=>{console.log(err);throw err})
+    )
+    }
+
+
+    
   }
 }
