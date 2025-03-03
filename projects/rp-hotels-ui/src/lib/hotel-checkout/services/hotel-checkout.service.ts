@@ -56,9 +56,9 @@ export class HotelCheckoutService {
   constructor() { }
 
   /**
-    * 
-    *inital form check out & set searchId, HotelId, ProviderId in control 
-    * 
+    *
+    *inital form check out & set searchId, HotelId, ProviderId in control
+    *
     */
   initalCkeckoutForm(cityId:number) {
     this.HotelForm = new FormGroup({
@@ -83,9 +83,9 @@ export class HotelCheckoutService {
     return this.HotelForm.get("Travellers") as FormArray
   }
   /**
-       * 
+       *
        *load Data Hotel Selected
-       * 
+       *
        */
   loadDataCard(providerId: string, searchId: string, HotelCode: string, packageKey: string) {
     this.loader = true
@@ -117,9 +117,9 @@ export class HotelCheckoutService {
       this.getHotelAvalibility();
   }
   /**
-      * 
+      *
       *Form Data Rooms based on Number Room
-      * 
+      *
       */
   FormRooms() {
     for (var i = 0; i < this.roomLength; i++) {
@@ -165,9 +165,9 @@ export class HotelCheckoutService {
     }
   }
 /**
-      * 
+      *
       *Calculate TotalPrice For ALL Rooms
-      * 
+      *
       */
   CalculateTotalPrice() {
     let total = 0;
@@ -180,10 +180,10 @@ export class HotelCheckoutService {
 
   }
   /**
-    * 
-    * @param copounCode 
-    * @param searchId 
-    * @param packageKey 
+    *
+    * @param copounCode
+    * @param searchId
+    * @param packageKey
     * @param providerId
     * check if the entered copoun code is valid and apply the disscount amount on the hotel Room price
     * it updates the state of [copounCodeLoader : boolean]
@@ -212,7 +212,7 @@ export class HotelCheckoutService {
 
 
   /**
-  * prepare the whole object to send to API 
+  * prepare the whole object to send to API
   * make the default values
   * handle the missing values which is founded in the first adult form only
   * adding the totalSellPrice & the TotalCostPrice
@@ -220,10 +220,14 @@ export class HotelCheckoutService {
   prepareData(r: HotelSelectedPackage,currency:string) {
 
     {
-      if (sessionStorage.getItem('hotelform')) {
-        let searchForm: any = sessionStorage.getItem('hotelform');
+      console.log(sessionStorage.getItem('hotelformDate'));
+
+      if (sessionStorage.getItem('hotelformDate')) {
+        let searchForm: any = sessionStorage.getItem('hotelformDate');
         let obj = JSON.parse(searchForm)
         this.city = obj.CityId;
+        console.log(this.city);
+        console.log(obj);
 
         if (this.city) {
           this.HotelForm.get('cityName')?.setValue(this.city);
@@ -245,7 +249,7 @@ export class HotelCheckoutService {
 
       let phone: string = phoneNumberObject.number;
       let dialCode: string = phoneNumberObject.dialCode;
-   
+
       for (var i = 0; i < (<FormArray>this.HotelForm.get('Travellers')).length; i++) {
         (<FormArray>this.HotelForm.get('Travellers')).at(i).get('dateOfBirth')
         ?.setValue('2012-01-12T22:00:00.000Z');
@@ -270,14 +274,16 @@ export class HotelCheckoutService {
   }
 
   /**
-   * 
-   * 
+   *
+   *
    * here is OnSubmit function which returning the payment link if all params is good
    */
   onSubmit(iplocation:string) {
     if (this.HotelForm.valid) {
       this.loader = true
       let bookObject: hotelSaveBooking = { ...this.HotelForm.value }
+      console.log("bookObject", bookObject);
+
       this.subscription.add(
         this.api.saveBooking(bookObject, this.searchId, this.ip, iplocation, this.lang).subscribe
           ((res) => {
@@ -293,9 +299,9 @@ export class HotelCheckoutService {
     }
   }
   /**
-     * 
-     *Load Avalibilty for select Hotel 
-     * 
+     *
+     *Load Avalibilty for select Hotel
+     *
      */
   getHotelAvalibility() {
     this.subscription.add(
