@@ -64,8 +64,8 @@ export class FlightCheckoutApiService {
    * @param selectedServices 
    * @returns this function is resposible to call the save booking then checking flight validations and them generate your payment link
    */
-  saveBooking(searchid: string, sequenceNum: number, body: passengersModel, pkey: string, lang:string,selectedServices:string[],ip:string,ipLocation:string,pcc:string) {
-    let api = `${this.env.BookingFlow}/api/SaveBooking?SearchId=${searchid}&SeqNum=${sequenceNum}&PKey=${pkey}&sCode=${pcc}`;
+  saveBooking(searchid: string, sequenceNum: number, body: passengersModel, pkey: string, lang:string,selectedServices:string[],ip:string,ipLocation:string,pcc:string,device:string,os:string,browser:string) {
+    let api = `${this.env.BookingFlow}/api/SaveBooking?SearchId=${searchid}&SeqNum=${sequenceNum}&PKey=${pkey}&sCode=${pcc}&device=${device}&os=${os}&browser=${browser}`;
     return this.http.post<any>(api, body).pipe(take(1),retry(1),
       mergeMap(
         (result) => { 

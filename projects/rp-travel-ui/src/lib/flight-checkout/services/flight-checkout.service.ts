@@ -699,7 +699,7 @@ bookingType:string='standard'
    * it updates the behaviour subject (paymentLink) with the link
    * it also updates the behaviour subject (paymentLinkFailure) with the error
    */
-  saveBooking(currentCurrency:string,type:string,pcc:string,pos:string){
+  saveBooking(currentCurrency:string,type:string,pcc:string,pos:string,device:string,os:string,browser:string){
     this.loader = true
     this.subscription.add(
       this.api.saveBooking(
@@ -711,7 +711,10 @@ bookingType:string='standard'
       type=='premium'?this.selectedOfflineServices:this.selectedOfflineServices.filter((s)=>{return s != this.recommendedOfflineService?.serviceCode}),
       pos,
       pos,
-      pcc
+      pcc,
+      device,
+      os,
+      browser
       )
 
     .subscribe((res)=>{
