@@ -16,9 +16,19 @@ export class FilterAirportPipe implements PipeTransform {
        let airportsMap = new Map();
        let airportsArr: airPorts[] = [];
        let cityName: string="";
-     
+
        for(let i=0; i< value.length; i++){
-        if(value[i].cityName.toLowerCase().includes(args.toLowerCase()) || value[i].cityCode.toLowerCase().includes(args.toLowerCase())|| value[i].airportCode.toLowerCase().includes(args.toLowerCase())|| value[i].countryName.toLowerCase().includes(args.toLowerCase()) || value[i].countryCode.toLowerCase().includes(args.toLowerCase())){
+        if (value[i].cityName.toLowerCase().startsWith(args.toLowerCase()) ||
+        // value[i].cityName.toLowerCase().includes(args.toLowerCase()) ||
+        value[i].cityCode.toLowerCase().startsWith(args.toLowerCase()) ||
+        value[i].cityCode.toLowerCase().includes(args.toLowerCase()) ||
+        value[i].airportCode.toLowerCase().startsWith(args.toLowerCase()) ||
+        value[i].airportCode.toLowerCase().includes(args.toLowerCase()) ||
+        value[i].countryName.toLowerCase().startsWith(args.toLowerCase()) ||
+        value[i].countryName.toLowerCase().includes(args.toLowerCase()) ||
+        value[i].countryCode.toLowerCase().startsWith(args.toLowerCase()) ||
+        value[i].countryCode.toLowerCase().includes(args.toLowerCase())
+      ){
           cityName = value[i].cityName.toLowerCase();
           if(airportsMap.has(cityName)){  // If city name exist before then update the new value of this key (City Name)
             airportsArr = airportsMap.get(cityName);  // get old value of this key (City Name)
@@ -26,7 +36,7 @@ export class FilterAirportPipe implements PipeTransform {
             airportsMap.set(cityName, [...airportsArr]); //update the value of this key
           }
           else{
-            airportsArr.push(value[i]); 
+            airportsArr.push(value[i]);
             airportsMap.set(cityName, [...airportsArr]);
           }
           airportsArr = [];
@@ -36,7 +46,7 @@ export class FilterAirportPipe implements PipeTransform {
           continue;
         }
       }
-      
+
       return [...airportsMap];
     }
   }
