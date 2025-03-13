@@ -10,6 +10,7 @@ import {
   OfflineServices,
   passengersModel,
   selectedFlight,
+  userControllersKeys,
 } from '../interfaces';
 import {
   AbstractControl,
@@ -27,6 +28,7 @@ import {
 import { HomePageService } from '../../home-page/services/home-page.service';
 import { EMAIL_VALIDATION } from '../../user-managment/constants/validation';
 import { DatePipe } from '@angular/common';
+import { FORM_ERROR_MESSAGES } from '../constants/error-messages';
 
 type fareCalc = (fare: fare[]) => number;
 type calcEqfare = (
@@ -1183,6 +1185,20 @@ export class FlightCheckoutService {
 
   updateYesOrNoServiceInteractionValidation(val: boolean) {
     this.yesOrNoVaild = val;
+  }
+
+  getErrorMessage(control: AbstractControl, fieldName: userControllersKeys, lang: 'en' | 'ar' = 'en'): string {
+    const errorMessages = FORM_ERROR_MESSAGES[fieldName];
+    if (!control || !errorMessages) return '';
+  
+    const errors = control.errors || {};
+  
+    for (const errorKey of Object.keys(errors)) {
+      if (errorMessages[errorKey as keyof typeof errorMessages]) {
+        return errorMessages[errorKey as keyof typeof errorMessages][lang];
+      }
+    }
+    return '';
   }
 
   /**

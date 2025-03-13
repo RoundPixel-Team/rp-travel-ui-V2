@@ -1,5 +1,6 @@
 
 import { airItineraries, searchCriteria } from "../flight-result/interfaces";
+import { FORM_ERROR_MESSAGES } from "./constants/error-messages";
 
 
 /**
@@ -149,3 +150,5 @@ export interface promotionDetails {
     discountCode: any,
     newFare: number
 }
+
+export type userControllersKeys = keyof typeof FORM_ERROR_MESSAGES;
