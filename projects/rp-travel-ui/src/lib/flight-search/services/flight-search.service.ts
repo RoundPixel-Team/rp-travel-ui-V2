@@ -1,6 +1,6 @@
 import { Inject, Injectable, inject } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { debounce, debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 import {
   searchBoxFlights,
   searchBoxModel,
@@ -10,11 +10,13 @@ import {
 import { AlertMsgModel } from '../../shared/interfaces';
 import { DatePipe } from '@angular/common';
 import { DEPARTING_ERROR_MESSAGES } from '../constants/error-messages';
+import { FlightSearchApiService } from './flight-search-api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FlightSearchService {
+  flightSearchApiService = inject(FlightSearchApiService);
   subscription: Subscription = new Subscription();
 
   //#region Variablses
@@ -851,6 +853,10 @@ export class FlightSearchService {
       return DEPARTING_ERROR_MESSAGES.selecting[lang];
     }
     return '';
+  }
+
+  getAirports(lang: 'en' | 'ar', searchString: string) {
+    return this.flightSearchApiService.getAirportsApi(lang, searchString);
   }
 
   /**
