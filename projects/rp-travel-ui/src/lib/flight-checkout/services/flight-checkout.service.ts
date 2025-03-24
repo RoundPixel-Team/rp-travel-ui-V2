@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { FlightCheckoutApiService } from './flight-checkout-api.service';
-import { BreakDownView, Cobon, flightOfflineService, passengersModel, selectedFlight } from '../interfaces';
+import { BreakDownView, Coupon, flightOfflineService, passengersModel, selectedFlight } from '../interfaces';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { passengerFareBreakDownDTOs,fare } from '../../flight-result/interfaces';
 import { HomePageService } from '../../home-page/services/home-page.service';
@@ -72,19 +72,19 @@ bookingType:string='standard'
 
 
   /**
-   * applying copoun code loading state ..
+   * applying coupon code loading state ..
    */
-  copounCodeLoader : boolean = false
+  couponCodeLoader : boolean = false
 
   /**
    * this contains all the applied copon code details
    */
-  copounCodeDetails : Cobon | undefined
+  couponCodeDetails : Coupon | null = null;
 
   /**
-   * this is containing the error while applying copoun code
+   * this is containing the error while applying coupon code
    */
-  copounCodeError : string = ''
+  couponCodeError : string = ''
 
   /**
    * indicating which pcc provided the selected itinerary
@@ -132,6 +132,7 @@ bookingType:string='standard'
 
   /**errors varriables */
   selectedFlightError : boolean = false
+  
 
   /**
    * this is a getter to return the users array forms (users) from the main form (usersForm)
@@ -623,34 +624,44 @@ bookingType:string='standard'
 
   /**
    * 
-   * @param copounCode 
+   * @param couponCode 
    * @param searchId 
    * @param sequenceNum 
    * @param providerKey
-   * check if the entered copoun code is valid and apply the disscount amount on the flight price
-   * it updates the state of [copounCodeLoader : boolean]
-   * it also updates the state of [copounCodeDetails:Copon]
+   * check if the entered coupon code is valid and apply the disscount amount on the flight price
+   * it updates the state of [couponCodeLoader : boolean]
+   * it also updates the state of [couponCodeDetails:Copon]
    */
-  applyCopounCode(copounCode:string,searchId:string,sequenceNum:number,providerKey:string,pcc:string){
-    this.copounCodeLoader = true
+  applyCouponCode(couponCode:string,searchId:string,sequenceNum:number,providerKey:string,pcc:string){
+    this.couponCodeLoader = true
     this.subscription.add(
-      this.api.activateCobon(copounCode,searchId,sequenceNum,providerKey,pcc).subscribe((res)=>{
+      this.api.activateCobon(couponCode,searchId,sequenceNum,providerKey,pcc).subscribe((res)=>{
         if(res){
           // apply disscount on the selected flight price amount
-          if(this.selectedFlight){
-            this.copounCodeDetails = res
-            this.selectedFlight.airItineraryDTO.itinTotalFare.amount -= res.promotionDetails.discountAmount
+          if(this.selectedFlight && res.status.toLowerCase() === 'active'){
+            this.couponCodeDetails = res;
+            this.selectedFlight.airItineraryDTO.itinTotalFare.amount -= res.promotionDetails.discountAmount;
+          } else {
+            console.error("apply coupon code ERROR")
+            this.couponCodeError = 'Not valid'
           }
-          this.copounCodeLoader = false
+          this.couponCodeLoader = false
         }
       },(err)=>{
-        console.error("apply copoun code ERROR",err)
-        this.copounCodeError = err
-        this.copounCodeLoader = false
+        console.error("apply coupon code ERROR",err)
+        this.couponCodeError = err
+        this.couponCodeLoader = false
       })
     )
   }
 
+  removeCouponCode() {
+    if(this.selectedFlight && this.couponCodeDetails) {
+      this.selectedFlight.airItineraryDTO.itinTotalFare.amount += this.couponCodeDetails.promotionDetails.discountAmount;
+    }
+
+    this.couponCodeDetails = null;
+  }
 
   /**
    * this is responsible for assigning last passengers form value before last payment
@@ -755,7 +766,7 @@ bookingType:string='standard'
     }
     let object : passengersModel = {
       bookingEmail:this.usersArray.at(0).get('email')?.value,
-      DiscountCode:this.copounCodeDetails?.promotionDetails.discountCode || '',
+      DiscountCode:this.couponCodeDetails?.promotionDetails.discountCode || '',
       passengersDetails:this.usersArray.value,
       UserCurrency:currentCurrency
     }
@@ -915,9 +926,9 @@ bookingType:string='standard'
     this.priceWithRecommenedService = 0;
     this.offlineServicesLoader = false
     this.loader  = false
-    this.copounCodeLoader  = false
-    this.copounCodeDetails = undefined
-    this.copounCodeError  = ''
+    this.couponCodeLoader  = false
+    this.couponCodeDetails = null;
+    this.couponCodeError  = ''
     this.usersForm = new FormGroup({
       users : new FormArray([])
     });

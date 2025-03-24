@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { EnvironmentService } from '../../shared/services/environment.service';
-import { Cobon, flightOfflineService, passengersModel, selectedFlight } from '../interfaces';
+import { Coupon, flightOfflineService, passengersModel, selectedFlight } from '../interfaces';
 import { catchError, mergeMap, retry, take } from 'rxjs';
 
 @Injectable({
@@ -50,7 +50,7 @@ export class FlightCheckoutApiService {
   activateCobon(promo: string, Sid: string, sequenceNum: any, pkey: string,pcc:string) {
     //check the validity of cobon and return
     let api = `${this.env.BookingFlow}/api/GetPromotionDetails?PromoCode=${promo}&SearchId=${Sid}&SeqNum=${sequenceNum}&PKey=${pkey}&sCode=${pcc}`;
-    return this.http.get<Cobon>(api).pipe(take(1));
+    return this.http.get<Coupon>(api).pipe(take(1));
   }
 
 

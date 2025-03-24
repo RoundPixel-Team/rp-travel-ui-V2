@@ -86,7 +86,7 @@ export interface passengerInfoModel  {
   }
 
 
-  export interface Cobon {
+  export interface Coupon {
     promotionDetails: promotionDetails
     status: string
 }
