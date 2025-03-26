@@ -261,6 +261,20 @@ export class HotelResultsService {
         );
         break;
       }
+      case 4: {
+        this.filteredHotels = this.filteredHotels.sort((a, b) => {
+          const starDiff = b.hotelStars - a.hotelStars;
+          const priceDiff = a.TotalSellPrice - b.TotalSellPrice;
+          return starDiff * 2 + priceDiff;
+        });
+
+        this.splicedFiltiredHotels = this.splicedFiltiredHotels.sort((a, b) => {
+          const starDiff = b.hotelStars - a.hotelStars;
+          const priceDiff = a.TotalSellPrice - b.TotalSellPrice;
+          return starDiff * 2 + priceDiff;
+        });
+        break;
+      }
       default: {
         this.filteredHotels = this.filteredHotels.sort(
           (low, high) => high.TotalSellPrice - low.TotalSellPrice
