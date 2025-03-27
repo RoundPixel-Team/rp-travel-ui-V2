@@ -809,6 +809,12 @@ bookingType:string='standard'
         .at(i)
         .get('nationality')
         ?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value);
+        
+        this.usersArray.at(i).get('dateOfBirth')?.setValue(this.datePipe.transform(
+          this.usersArray.at(i).get('dateOfBirth')?.value,"yyyy-MM-dd"));
+
+          this.usersArray.at(i).get('PassportExpiry')?.setValue(this.datePipe.transform(
+            this.usersArray.at(i).get('PassportExpiry')?.value,"yyyy-MM-dd"))
     }
     return {
       bookingEmail: this.usersArray.at(0).get('email')?.value,
