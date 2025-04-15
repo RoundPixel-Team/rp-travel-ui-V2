@@ -73,7 +73,7 @@ fareLoading: boolean = true;
  * 
  */
   rate: number = 1;
-  code: string = "KWD"
+  code: string = "EGP"
   /**
  *  array of  type string return feh kol airline back from airItineraries
  * 
@@ -251,6 +251,7 @@ fareLoading: boolean = true;
             this.filterForm.get('priceSlider')?.setValue(this.minAnMax(this.response.airItineraries));
             this.stopsvalues(),
               this.airlinesA = this.response.airlines;
+              console.log("airlines",this.airlinesA)
             this.airlinesForm = []
             this.airlinesA.forEach(element => {
               (<FormArray>this.filterForm.get('airline')?.get('airlines')).push(new FormControl(false));
@@ -1106,7 +1107,7 @@ updateCurrencyCode(code: string){
       },
     };
     this.rate = 1;
-    this.code = "KWD"
+    this.code = "EGP"
     this.airlinesA = [];
     this.airlinesForm = [];
     this.bookingSites = ['KhaleejGate', 'other'];
