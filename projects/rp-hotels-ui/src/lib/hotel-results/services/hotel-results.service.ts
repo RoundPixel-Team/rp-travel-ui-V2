@@ -13,6 +13,7 @@ export class HotelResultsService {
 
   hotelDataResponse?: hotelResults;
   hotelLocationsArr: Array<string> = [];
+
   /**
    * the main varriable to make binding for the hotels results cards
    */
@@ -110,6 +111,11 @@ export class HotelResultsService {
                 return l != '';
               }),
             ];
+            if (!res.Inclusion) {
+              console.log("Inclusionغير موجوده ل.");
+              this.hotelResultsLoader = false;
+              return;
+            }
                 // Set Inclusions Array
           this.InclusionsArray = res.Inclusion;
 
@@ -141,17 +147,14 @@ export class HotelResultsService {
             // this.sorting(3);
 
             //set price slider configurations
-            this.maxPrice = [...this.filteredHotels][0].costPrice;
-            this.maxPriceValueForSlider =
-              [...this.filteredHotels][0].costPrice + 100;
-            this.minPrice = [...this.filteredHotels][
-              this.filteredHotels.length - 1
-            ].costPrice;
-            this.minPriceValueForSlider = [...this.filteredHotels][
-              this.filteredHotels.length - 1
-            ].costPrice;
+            const allPrices = this.filteredHotels.map((e) => e.costPrice);
+            allPrices.sort((a, b) => a - b);
+            this.maxPrice = allPrices[allPrices.length - 1];
+            this.maxPriceValueForSlider = allPrices[allPrices.length - 1];
+            this.minPrice = allPrices[0];
+            this.minPriceValueForSlider = allPrices[0];
 
-            this.setFormPriceValue(); //set filter form values for price
+            this.setFormPriceValue();
             this.hotelsFilter();
             this.splicedFiltiredHotels = [...this.filteredHotels.slice(0, 5)];
             this.hotelResultsLoader = false;
@@ -339,6 +342,7 @@ export class HotelResultsService {
         : true)
     );
     // && this.filterLocations(hotel.Address)
+
   }
   /**
    * initialize hotel rates form array with true value to make it selected
@@ -392,33 +396,6 @@ export class HotelResultsService {
     return this.filterForm.get('hotelLocations') as FormArray;
   }
 
-  // filterByRoomInclusion() {
-  //   let selectedInclusions = this.filterForm.value.inclusions
-  //     .map((checked: any, index: number) => (checked ? this.InclusionsArray[index] : null))
-  //     .filter((inclusion: any) => inclusion !== null);
-  //   console.log("✅ Selected Inclusions:", selectedInclusions); // لوج لقيم الـ selected inclusions
-  //   // تحديث Subject الخاص بالانكلوجنز
-  //   this.selectedInclusionsSubject.next(selectedInclusions);
-  //   if (!this.hotelDataResponse || !this.hotelDataResponse.HotelResult) {
-  //     this.filteredHotels = [];
-  //     console.log("❌ No hotel data available!");
-  //     return;
-  //   }
-  //   if (selectedInclusions.length === 0) {
-  //     this.filteredHotels = [...this.hotelDataResponse.HotelResult];
-  //   } else {
-  //     this.filteredHotels = this.hotelDataResponse.HotelResult.filter((hotel: any) => {
-  //       return hotel.Packages && hotel.Packages.some((pkg: any) =>
-  //         pkg.Rooms && pkg.Rooms.some((room: any) =>
-  //           room.Inclusion && selectedInclusions.some((inclusion: any) => room.Inclusion.includes(inclusion))
-  //         )
-  //       );
-  //     });
-  //   }
-  //   console.log("🏨 Filtered Hotels:", this.filteredHotels); // لوج للفنادق بعد الفلترة
-  //   this.splicedFiltiredHotels = [...this.filteredHotels.slice(0, 5)];
-  //   console.log("📌 Displayed Hotels (first 5):", this.splicedFiltiredHotels); // لوج لأول 5 فنادق
-  // }
   filterByRoomInclusion(hotel: any): boolean {
     let selectedInclusions = this.filterForm.value.inclusions
       .map((checked: any, index: number) => (checked ? this.InclusionsArray[index] : null))

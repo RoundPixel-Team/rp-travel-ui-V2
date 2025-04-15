@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, Subscription, catchError, map, of, take } from 'rxjs';
 import { HotelRoomsApiService } from './hotel-rooms-api.service';
-import { hotelRoomsResponse, roomCancelPolicy } from '../interfaces';
+import { hotelRoomsResponse, room, roomCancelPolicy } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -22,9 +22,9 @@ groupedRooms!:{};
 
   constructor() { }
 /**
- * @param sid 
- * @param hotelid  
- * @param pid 
+ * @param sid
+ * @param hotelid
+ * @param pid
  * this method is responsible for fetching the rooms data in a specified hotel (the selected hotel) and it takes the following parameters : search Id, Hotel Id and provider id
  * */
 getRooms(sid: string, hotelid: string, Pid: string, packageKey?: string): Observable<any> {
@@ -67,8 +67,8 @@ getRooms(sid: string, hotelid: string, Pid: string, packageKey?: string): Observ
   );
 }
 /**
- * 
- * @param Roomsdata 
+ *
+ * @param Roomsdata
  * @returns this method is responsible for grouping the rooms based on thier type and it returns an array of the grouped rooms
  */
 groupRooms(Roomsdata:hotelRoomsResponse){
@@ -86,12 +86,12 @@ groupRooms(Roomsdata:hotelRoomsResponse){
 }
 
 /**
- * 
- * @param sid 
- * @param hotelcode 
- * @param roomindex 
- * @param packageKey 
- * @param PId 
+ *
+ * @param sid
+ * @param hotelcode
+ * @param roomindex
+ * @param packageKey
+ * @param PId
  * this method is responsible for fetching the cancelation policy data in each room
  */
  getCancelPolicy(sid: string, hotelcode: any, roomindex: any,packageKey:string, PId: any){
@@ -109,7 +109,7 @@ groupRooms(Roomsdata:hotelRoomsResponse){
         console.log('get cancel policy error ->',err)
         this.cancelLoader = false
       }
-      
+
     )
   )
 
@@ -126,5 +126,10 @@ groupRooms(Roomsdata:hotelRoomsResponse){
     this.cancelPolicy=[];
     this.error = false;
     this.groupedRooms={};
+  }
+
+  filterByRefundRoom(isRefundable:boolean) {
+  const allRooms = this.filteredRoomsData.Packages.flatMap(pkg=>pkg.Rooms) ||[]
+  return allRooms.filter(room => room.IsRefundable === isRefundable)
   }
 }
