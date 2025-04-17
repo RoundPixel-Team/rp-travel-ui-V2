@@ -19,7 +19,7 @@ export class HotelConfirmationApiService {
    */
   getHotelsPaymentResult(url: string) {
     // get the payment result status for hotels
-    let api = `${this.env.prepay}api/paymentresult?${url}`;
+    let api = `${this.env.prepay}/api/paymentresult?${url}`;
     return this.http.get<any>(api).pipe(take(1));
   }
   /**
@@ -31,7 +31,7 @@ export class HotelConfirmationApiService {
    */
   HotelsPostProcessing(HGNu: string, searchid: string, tok: string, url: string) {
     //  get satus after succesful payment
-    let api = `${this.env.Apihotels}/Api/ConfirmHotelStatus?sid=${searchid}&bookingNum=${HGNu}&tok=${tok}`;
+    let api = `${this.env.Apihotels}/api/HotelBooking/ConfirmHotelStatus?sid=${searchid}&bookingNum=${HGNu}&tok=${tok}`;
     console.log(api);
     return this.http.get<any>(api).pipe(take(1));
   }
