@@ -343,6 +343,15 @@ export class FlightCheckoutService {
     passportFlag: boolean,
     userCombinedNames: boolean
   ) {
+
+     // Clear existing forms first
+  while (this.usersArray.length) {
+    this.usersArray.removeAt(0);
+  }
+
+  // Store current length once at the beginning
+  const initialLength = this.usersArray.length;
+  
     // build form when passports details are required
     if (passportFlag) {
       // build adults forms WITH paspport details

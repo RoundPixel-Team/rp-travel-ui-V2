@@ -1262,7 +1262,7 @@ export class FlightResultService {
   getBrandedFares(
     searchId: string,
     squencNumber: number,
-    pKey: string,
+    pKey: number,
     pcc: string
   ) {
     this.isBrandedFaresLoading = true;
@@ -1275,6 +1275,7 @@ export class FlightResultService {
       this.brandedFareNotifier.next(null);
       this.isBrandedFaresLoading = false;
     } else {
+      this.isBrandedFaresLoading = true
       this.api.getBrandedFaresApi(searchId, squencNumber, pKey, pcc).subscribe({
         next: (result) => {
           this.currentSelectedBrands = result.brands;
