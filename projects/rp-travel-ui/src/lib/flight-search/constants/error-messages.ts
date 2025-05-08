@@ -1,13 +1,20 @@
-export const DEPARTING_ERROR_MESSAGES = {
+export const DESTINATION_ERROR_MESSAGES = {
   selecting: {
-    en: 'Please select departing city.',
-    ar: 'البريد الإلكتروني مطلوب.'
+    en: 'Please select a destination.',
+    ar: 'يرجى اختيار وجهة السفر.'
   }
 };
 
-export const LANDING_ERROR_MESSAGES = {
+export const FLIGHT_ERROR_MESSAGES = {
+  sameLocation: {
+    en: 'Please select different destinations.',
+    ar: 'من فضلك اختر وجهات مختلفه'
+  }
+};
+
+export const DATE_ERROR_MESSAGES = {
   selecting: {
-    en: 'Please select landing city.',
-    ar: 'البريد الإلكتروني مطلوب.'
+    en: 'Please select a travel date.',
+    ar: 'يرجى اختيار تاريخ السفر.'
   }
 };

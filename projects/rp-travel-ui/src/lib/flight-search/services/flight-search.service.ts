@@ -1,15 +1,15 @@
-import { Inject, Injectable, inject } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { inject, Injectable } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { debounce, debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
+import { AlertMsgModel } from '../../shared/interfaces';
+import { DATE_ERROR_MESSAGES, DESTINATION_ERROR_MESSAGES, FLIGHT_ERROR_MESSAGES } from '../constants/error-messages';
 import {
   searchBoxFlights,
   searchBoxModel,
   searchBoxPassengers,
   searchFlightModel,
 } from '../interfaces';
-import { AlertMsgModel } from '../../shared/interfaces';
-import { DatePipe } from '@angular/common';
-import { DEPARTING_ERROR_MESSAGES } from '../constants/error-messages';
 import { FlightSearchApiService } from './flight-search-api.service';
 
 @Injectable({
@@ -841,16 +841,23 @@ export class FlightSearchService {
     }
   }
   
-  getDeparingErrorMessage(departingControl: AbstractControl, lang: 'en' | 'ar' = 'en') {
-    if (departingControl.hasError('required')) {
-      return DEPARTING_ERROR_MESSAGES.selecting[lang];
+  getDestinationErrorMessage(destControl: AbstractControl, lang: 'en' | 'ar' = 'en') {
+    if (destControl.hasError('required')) {
+      return DESTINATION_ERROR_MESSAGES.selecting[lang];
     }
     return '';
   }
   
-  getLandingErrorMessage(landingControl: AbstractControl, lang: 'en' | 'ar' = 'en') {
-    if (landingControl.hasError('required')) {
-      return DEPARTING_ERROR_MESSAGES.selecting[lang];
+  getDateErrorMessage(dateControl: AbstractControl, lang: 'en' | 'ar' = 'en') {
+    if (dateControl.hasError('required')) {
+      return DATE_ERROR_MESSAGES.selecting[lang];
+    }
+    return '';
+  }
+  
+  getFlightErrorMessage(flightControl: AbstractControl, lang: 'en' | 'ar' = 'en') {
+    if (flightControl.hasError('sameLocation')) {
+      return FLIGHT_ERROR_MESSAGES.sameLocation[lang];
     }
     return '';
   }
