@@ -150,5 +150,21 @@ export interface promotionDetails {
     discountCode: any,
     newFare: number
 }
-
+export interface paymentGateways {
+  PaymentMethod:string,
+  cardImg:string,
+  GatewayType:string
+}
+export interface paymentCharges {
+  amount: number,
+    currency: string,
+    paymentMethod: string
+}
+export interface mergedGates{
+  Amount: number,
+  Currency: string,
+  PaymentMethod: string,
+  cardImg:string,
+  GatewayType:string
+}
 export type userControllersKeys = keyof typeof FORM_ERROR_MESSAGES;

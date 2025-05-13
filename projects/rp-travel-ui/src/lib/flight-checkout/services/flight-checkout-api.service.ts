@@ -1,13 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { catchError, retry, take } from 'rxjs';
+import { catchError, map, retry, take } from 'rxjs';
 import { EnvironmentService } from '../../shared/services/environment.service';
 import {
   BookingRequest,
   Cobon,
   flightOfflineService,
+  mergedGates,
+  paymentCharges,
+  paymentGateways,
   selectedFlight
 } from '../interfaces';
+import { airItineraries } from '../../flight-result/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +19,155 @@ import {
 export class FlightCheckoutApiService {
   public http = inject(HttpClient);
   public env = inject(EnvironmentService);
+paymentGates:paymentGateways[]=[
+  {
+    PaymentMethod:'fss',
+    cardImg:'assets/cards/visamaster.png',
+    GatewayType:'FSSCard'
+  },
+  {
+    PaymentMethod:'fss',
+    cardImg:'assets/cards/checkout_masterdebit.png',
+    GatewayType:'FSSMasterDebit'
+  },
+  {
+    PaymentMethod:'fss',
+    cardImg:'assets/cards/checkout_mastercredit.png',
+    GatewayType:'FSSMasterCredit'
+  },
+  {
+    PaymentMethod:'fss',
+    cardImg:'assets/cards/checkout_visadebit.png',
+    GatewayType:'FSSVisaDebit'
+  },
+  {
+    PaymentMethod:'fss',
+    cardImg:'assets/cards/checkout_visacredit.png',
+    GatewayType:'FSSVisaCredit'
+  },
+  {
+    PaymentMethod:'HostedKnet',
+    cardImg:'assets/cards/KNETL.svg',
+    GatewayType:'HostedKnet'
+  },
+  {
+    PaymentMethod:'knet',
+    cardImg:'assets/cards/KNETL.svg',
+    GatewayType:'Knet'
+  },
+  {
+    PaymentMethod:'mada',
+    cardImg:'assets/cards/mada.png',
+    GatewayType:'Mada'
+  },
+  {
+    PaymentMethod:'cards',
+    cardImg:'assets/cards/checkout_masterdebit.png',
+    GatewayType:'TapMasterDebit'
+  },
+  {
+    PaymentMethod:'cards',
+    cardImg:'assets/cards/checkout_mastercredit.png',
+    GatewayType:'TapMasterCredit'
+  },
+  {
+    PaymentMethod:'cards',
+    cardImg:'assets/cards/checkout_visadebit.png',
+    GatewayType:'TapVisaDebit'
+  },
+  {
+    PaymentMethod:'cards',
+    cardImg:'assets/cards/checkout_visacredit.png',
+    GatewayType:'TapVisaCredit'
+  },
+  {
+    PaymentMethod:'PnetCC',
+    cardImg:'assets/cards/visamaster.png',
+    GatewayType:'PnetCard'
+  },
+  {
+    PaymentMethod:'PnetCC',
+    cardImg:'assets/cards/checkout_masterdebit.png',
+    GatewayType:'PnetMasterDebit'
+  },
+  {
+    PaymentMethod:'PnetCC',
+    cardImg:'assets/cards/checkout_mastercredit.png',
+    GatewayType:'PnetMasterCredit'
+  },
+  {
+    PaymentMethod:'PnetCC',
+    cardImg:'assets/cards/checkout_visadebit.png',
+    GatewayType:'PnetVisaDebit'
+  },
+  {
+    PaymentMethod:'PnetCC',
+    cardImg:'assets/cards/checkout_visacredit.png',
+    GatewayType:'PnetVisaCredit'
+  },
+  {
+    PaymentMethod:'pnetKnet',
+    cardImg:'assets/cards/KNETL.svg',
+    GatewayType:'PnetKnet'
+  },
+  {
+    PaymentMethod:'myfatoorahcc',
+    cardImg:'assets/cards/visamaster.png',
+    GatewayType:'MyFatoorahCard'
+  },
+  {
+    PaymentMethod:'myfatoorahcc',
+    cardImg:'assets/cards/checkout_masterdebit.png',
+    GatewayType:'MyFatoorahMasterDebit'
+  },
+  {
+    PaymentMethod:'myfatoorahcc',
+    cardImg:'assets/cards/checkout_mastercredit.png',
+    GatewayType:'MyFatoorahMasterCredit'
+  },
+  {
+    PaymentMethod:'myfatoorahcc',
+    cardImg:'assets/cards/checkout_visadebit.png',
+    GatewayType:'MyFatoorahVisaDebit'
+  },
+  {
+    PaymentMethod:'myfatoorahcc',
+    cardImg:'assets/cards/checkout_visacredit.png',
+    GatewayType:'MyFatoorahVisaCredit'
+  },
+  {
+    PaymentMethod:'MyFatoorahKnet',
+    cardImg:'assets/cards/KNETL.svg',
+    GatewayType:'MyFatoorahKnet'
+  },
+  {
+    PaymentMethod:'dafa3nycc',
+    cardImg:'assets/cards/visamaster.png',
+    GatewayType:'Dafa3nyCC'
+  },
+  {
+    PaymentMethod:'dafa3nycc',
+    cardImg:'assets/cards/checkout_masterdebit.png',
+    GatewayType:'dafa3nymasterdebit'
+  },
+  {
+    PaymentMethod:'dafa3nycc',
+    cardImg:'assets/cards/checkout_mastercredit.png',
+    GatewayType:'dafa3nymastercredit'
+  },
+  {
+    PaymentMethod:'dafa3nycc',
+    cardImg:'assets/cards/checkout_visadebit.png',
+    GatewayType:'dafa3nyvisadebit'
+  },
+  {
+    PaymentMethod:'dafa3nycc',
+    cardImg:'assets/cards/checkout_visacredit.png',
+    GatewayType:'dafa3nyvisaCredit'
+  },
+
+]
+
 
   constructor() {}
 
@@ -100,4 +253,49 @@ export class FlightCheckoutApiService {
       })
     );
   }
+   /**
+  * 
+  * @param charge array of payment charges
+  * @param gate array of payment gates with logos
+  * @returns merged object of payment charges with imgs and api info
+  */
+ mergePayment(charges:paymentCharges[],gates:paymentGateways[]):mergedGates[]{
+  let mergedGates: mergedGates[]=[];
+  if (!Array.isArray(charges) || !Array.isArray(gates)) {
+    console.warn('Invalid charges or gates input');
+
+    return [];
+  }
+  charges.forEach(
+      (charge)=>{
+        let gate = gates.filter((val)=> val?.GatewayType?.trim().toLowerCase() ===  charge?.paymentMethod?.trim().toLowerCase())[0]
+       
+        let merge:mergedGates ={
+    
+          cardImg:gate?.cardImg,
+          GatewayType:charge?.paymentMethod,
+          Currency:charge?.currency,
+          Amount:charge?.amount,
+          PaymentMethod:gate?.PaymentMethod
+        }
+        mergedGates.push(merge)
+      }
+    )
+    return mergedGates
+ }
+
+
+ addPaymentGateways(userCurrency:string,paymentLoction:string,body:airItineraries){
+  let api = `${this.env.BookingFlow}/api/checkoutApplyPaymentGateway?UserCurrency=${userCurrency}&PaymentLocation=${paymentLoction}`;
+  return this.http.post<any>(api, body).pipe(
+    
+    retry(3),
+    map(val=>{return this.mergePayment(val,this.paymentGates)}),
+    catchError((err) => {
+      console.error(err);
+      throw err;
+    }),
+    take(1)
+  );
+ }
 }
