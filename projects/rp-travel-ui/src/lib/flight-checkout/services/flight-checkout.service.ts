@@ -871,6 +871,8 @@ export class FlightCheckoutService {
   }
 newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandId: string,selectedMethod:mergedGates) {
  this.saveBookingLoadeer = true;
+ console.log(this.selectedFlight);
+ 
     this.subscription.add(
       this.api
         .saveBooking(
@@ -893,9 +895,13 @@ newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandI
         .subscribe(
           {
             next: (res) => {
-
+              this.HG = res.savedBookingResponse.hgNumber;
+              const url = res.getPaymentViewResponse.link
+              const urlParams = new URLSearchParams(url.split('?')[1]);
+              const tokValue = urlParams.get('tok')!;
+              
               this.saveBookingLoadeer = false;
-              this.Pay(selectedMethod);
+              this.Pay(selectedMethod,this.HG ,tokValue);
               
             },
             complete: () => {
@@ -911,11 +917,11 @@ newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandI
         )
     );
 }
-Pay(selectedMethod:mergedGates){
+Pay(selectedMethod:mergedGates,HG:string,token:string){
       this.api.startPaymentProcess(
-        this.HG,
+        HG,
         this.selectedFlight?.searchCriteria.searchId!,
-        this.HGtoken,
+        token,
         selectedMethod.PaymentMethod,
         selectedMethod.Amount.toString(),
         selectedMethod.GatewayType
@@ -975,26 +981,28 @@ Pay(selectedMethod:mergedGates){
           .get('phoneNumber')
           ?.setValue(this.usersArray.at(i).get('phoneNumber')?.value.number);
       }
+      console.log(this.usersArray.at(i).get('countryOfResidence'));
+      
 
-      this.usersArray
-        .at(i)
-        .get('countryOfResidence')
-        ?.setValue(
-          this.home.allCountries.filter((c) => {
-            return (
-              c.countryName ==
-              this.usersArray.at(i).get('countryOfResidence')?.value
-            );
-          })[0].pseudoCountryCode
-        );
-      this.usersArray
-        .at(i)
-        .get('IssuedCountry')
-        ?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value);
-      this.usersArray
-        .at(i)
-        .get('nationality')
-        ?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value);
+      // this.usersArray
+      //   .at(i)
+      //   .get('countryOfResidence')
+      //   ?.setValue(
+      //     this.home.allCountries.filter((c) => {
+      //       return (
+      //         c.countryName ==
+      //         this.usersArray.at(i).get('countryOfResidence')?.value
+      //       );
+      //     })[0].pseudoCountryCode
+      //   );
+      // this.usersArray
+      //   .at(i)
+      //   .get('IssuedCountry')
+      //   ?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value);
+      // this.usersArray
+      //   .at(i)
+      //   .get('nationality')
+      //   ?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value);
     }
     return {
       bookingEmail: this.usersArray.at(0).get('email')?.value,
