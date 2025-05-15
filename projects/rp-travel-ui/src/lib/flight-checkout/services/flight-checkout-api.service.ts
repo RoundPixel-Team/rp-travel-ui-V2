@@ -9,6 +9,7 @@ import {
   mergedGates,
   paymentCharges,
   paymentGateways,
+  paymnetdata,
   selectedFlight
 } from '../interfaces';
 import { airItineraries } from '../../flight-result/interfaces';
@@ -167,6 +168,7 @@ paymentGates:paymentGateways[]=[
   },
 
 ]
+  isPnet:boolean = false;
 
 
   constructor() {}
@@ -298,4 +300,35 @@ paymentGates:paymentGateways[]=[
     take(1)
   );
  }
+  startPaymentProcess(hg: string, SID: string, tok: string, paymnntMethod: string, GatewayCharges: string, GatewayType: string, src: string = 'mop', payToken: string = '') {
+    let api = `${this.env.prepay}/api/startpaymentProcess?HG=${hg}&payToken=${payToken}&SId=${SID}&Tok=${tok}&paymentMethod=${paymnntMethod}&GatewayCharges=${GatewayCharges}&GatewayType=${GatewayType}`;
+    let body = { HG: hg, Tok: tok, SId: SID, payToken: tok, paymentMethod: paymnntMethod, GatewayCharges: GatewayCharges, GatewayType: GatewayType }
+    if (src === 'mop' || src === '' || !src) {
+       if(paymnntMethod ==='pnetKnet' || paymnntMethod ==='PnetCC'){
+         this.isPnet = true;
+       }
+      return this.http.get<paymnetdata>(api).pipe(retry(3), take(1),
+        map((va) => {
+          if (!va || va.Status != 0) {
+            throw  'somthisng wrong with output';
+          } else {
+            return va.paymentResult.RedirectUrl
+          }
+        }), catchError(err => {throw err}))
+    } else {
+      if(paymnntMethod ==='pnetKnet' || paymnntMethod ==='PnetCC'){
+        this.isPnet = true;
+      }
+      return this.http.post<paymnetdata>(this.env.prepay + '/api/startpaymentProcess', body).pipe(retry(3), take(1),
+      map((va) => {
+        if (!va || va.Status != 0) {
+          throw 'somthisng wrong with output';
+        } else {
+          return va.paymentResult.RedirectUrl
+        }
+      }), catchError(err => {throw err}))
+    }
+
+
+  }
 }

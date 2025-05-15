@@ -167,4 +167,32 @@ export interface mergedGates{
   cardImg:string,
   GatewayType:string
 }
+export interface paymnetdata {
+    Status: number, 
+    Message: string, 
+    PaymentFareDetails: fareDetails, 
+    HGToken: string,
+    paymentResult: paymentResult, 
+    ProductType: string
+}
+export interface fareDetails {
+    CustomerPaymentCurrency: string,
+    ExchangeRate: number,
+    FareAmount: number,
+    PromoCodeValue: number,
+    TaxAmount: number,
+    TotalAmount: number,
+    TotalChargeAmount: number
+}
+export interface paymentResult {
+    HGNumber: string,
+    HGToken: string,
+    RedirectUrl: string,
+    PaymentOutput:string,
+    FraudOutput:string,
+    UserCurrency:string,
+    PaymentLocation:string,
+    PostPayment:string,
+
+}
 export type userControllersKeys = keyof typeof FORM_ERROR_MESSAGES;

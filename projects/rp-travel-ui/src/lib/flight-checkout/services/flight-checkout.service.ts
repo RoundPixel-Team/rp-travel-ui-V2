@@ -7,6 +7,7 @@ import {
   CheckOutDetails,
   Cobon,
   flightOfflineService,
+  mergedGates,
   OfflineServices,
   passengersModel,
   selectedFlight,
@@ -29,6 +30,7 @@ import { HomePageService } from '../../home-page/services/home-page.service';
 import { EMAIL_VALIDATION } from '../../user-managment/constants/validation';
 import { DatePipe } from '@angular/common';
 import { FORM_ERROR_MESSAGES } from '../constants/error-messages';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 type fareCalc = (fare: fare[]) => number;
 type calcEqfare = (
@@ -49,8 +51,11 @@ export class FlightCheckoutService {
   yesOrNoVaild: boolean = false;
   packageVaild: boolean = false;
   addbuttonVaild: boolean = false;
-
+  isPnet: boolean = false;
+  HG: string = '';
+  HGtoken: string = '';
   notify = new Subject<number>();
+  redirect: SafeHtml = '';
 
   datePipe = inject(DatePipe);
 
@@ -165,7 +170,8 @@ export class FlightCheckoutService {
     return this.usersForm.get('users') as FormArray;
   }
 
-  constructor() {}
+  constructor(public sanitizer: DomSanitizer
+) {}
 
   /**
    *
@@ -863,7 +869,72 @@ export class FlightCheckoutService {
         )
     );
   }
+newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandId: string,selectedMethod:mergedGates) {
+ this.saveBookingLoadeer = true;
+    this.subscription.add(
+      this.api
+        .saveBooking(
+          this.generateSaveBookingBody(
+            this.generateCheckoutDetails(currentCurrency),
+            this.generateOfflineServices(type),
+            this.selectedFlight?.searchCriteria.searchId!,
+            this.selectedFlight?.airItineraryDTO.sequenceNum!,
+            this.selectedFlight?.airItineraryDTO.pKey!.toString()!,
+            pcc,
+            "",
+            this.home.pointOfSale?.ip || '00.00.000.000',
+            this.home.pointOfSale?.country || 'kw',
+            "",
+            this.selectedFlight?.searchCriteria.language!,
+            brandId
+          )
+        )
 
+        .subscribe(
+          {
+            next: (res) => {
+
+              this.saveBookingLoadeer = false;
+              this.Pay(selectedMethod);
+              
+            },
+            complete: () => {
+              this.notify.next(2);
+            },
+            error: (err) => {
+              this.paymentLinkFailure.next(err);
+              this.saveBookingLoadeer = false;
+              this.selectedFlightError = true;
+              console.error('SAVE BOOKING ERROR', err);
+            }
+          }
+        )
+    );
+}
+Pay(selectedMethod:mergedGates){
+      this.api.startPaymentProcess(
+        this.HG,
+        this.selectedFlight?.searchCriteria.searchId!,
+        this.HGtoken,
+        selectedMethod.PaymentMethod,
+        selectedMethod.Amount.toString(),
+        selectedMethod.GatewayType
+      )
+      .subscribe((val) => {
+        this.isPnet = this.api.isPnet;
+        if (typeof val === 'string' && !this.isPnet) {
+          if (window.self !== window.top) {
+            // checking if it is an iframe
+            window.parent.location.href = val;
+          } else {
+            window.location.href = val;
+          }
+        } else {
+          this.redirect = this.sanitizer.bypassSecurityTrustHtml(val);
+          
+        }
+      });
+}
   /**
    *
    * @param currentCurrency
