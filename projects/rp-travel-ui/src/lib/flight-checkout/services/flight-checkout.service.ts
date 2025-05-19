@@ -829,7 +829,7 @@ export class FlightCheckoutService {
    * it updates the behaviour subject (paymentLink) with the link
    * it also updates the behaviour subject (paymentLinkFailure) with the error
    */
-  saveBooking(currentCurrency: string, type: string, pcc: string, brandId: string) {
+  saveBooking(currentCurrency: string, type: string, pcc: string, brandId: number) {
     this.saveBookingLoadeer = true;
     this.subscription.add(
       this.api
@@ -869,7 +869,7 @@ export class FlightCheckoutService {
         )
     );
   }
-newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandId: string,selectedMethod:mergedGates) {
+newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandId: number,selectedMethod:mergedGates) {
  this.saveBookingLoadeer = true;
  console.log(this.selectedFlight);
  
@@ -917,30 +917,41 @@ newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandI
         )
     );
 }
-Pay(selectedMethod:mergedGates,HG:string,token:string){
-      this.api.startPaymentProcess(
-        HG,
-        this.selectedFlight?.searchCriteria.searchId!,
-        token,
-        selectedMethod.PaymentMethod,
-        selectedMethod.Amount.toString(),
-        selectedMethod.GatewayType
-      )
-      .subscribe((val) => {
-        this.isPnet = this.api.isPnet;
-        if (typeof val === 'string' && !this.isPnet) {
-          if (window.self !== window.top) {
-            // checking if it is an iframe
-            window.parent.location.href = val;
-          } else {
-            window.location.href = val;
-          }
+Pay(selectedMethod: mergedGates, HG: string, token: string) {
+  this.saveBookingLoadeer = true; // Start loader here
+
+  this.api.startPaymentProcess(
+    HG,
+    this.selectedFlight?.searchCriteria.searchId!,
+    token,
+    selectedMethod.PaymentMethod,
+    selectedMethod.Amount.toString(),
+    selectedMethod.GatewayType
+  )
+  .subscribe({
+    next: (val) => {
+      this.isPnet = this.api.isPnet;
+
+      if (typeof val === 'string' && !this.isPnet) {
+        if (window.self !== window.top) {
+          window.parent.location.href = val;
         } else {
-          this.redirect = this.sanitizer.bypassSecurityTrustHtml(val);
-          
+          window.location.href = val;
         }
-      });
+      } else {
+        this.redirect = this.sanitizer.bypassSecurityTrustHtml(val);
+      }
+    },
+    error: (err) => {
+      console.error('Payment process error:', err);
+      this.saveBookingLoadeer = false; 
+    },
+    complete: () => {
+      this.saveBookingLoadeer = false; 
+    }
+  });
 }
+
   /**
    *
    * @param currentCurrency
@@ -1038,7 +1049,7 @@ Pay(selectedMethod:mergedGates,HG:string,token:string){
     pos: string,
     notifyToken: string,
     language: string,
-    brandId: string
+    brandId: number
   ): BookingRequest {
     return {
       checkOutDetails,
