@@ -31,6 +31,7 @@ import {
 } from "../../constants/statuses";
 import { SharedService } from "../shared.service";
 import * as CryptoJS from 'crypto-js';
+import { GoogleAuthResponse } from "../../interfaces";
 
 @Injectable({
   providedIn: 'root',
@@ -514,6 +515,39 @@ import * as CryptoJS from 'crypto-js';
     }
     return '';
   }  
+
+  /**
+   * this function is responsible to make intgeration between front and backend request (USER LOGIN USING GOOGLE)
+   */
+  googleLoginSubmit(payload:GoogleAuthResponse){
+    this.isLoading = true
+    if(this.loginForm.invalid){
+      this.loginForm.markAllAsTouched()
+      this.isLoading = false
+    }
+    else {
+      this.subscription.add(
+        this.authApi.googleLogin(payload)
+        .subscribe({
+          next: (res) => {
+            this.isLoading = false;
+
+            if(res.status === 0){
+              const token = JSON.stringify(res.returnObject.token);
+              this.setToken(token);
+              this.notify.next(LOGIN_STATUS.success);
+            }else{
+              this.notify.next(LOGIN_STATUS.faild);
+            }
+          },
+          error: (error: any) => {
+            this.notify.next(LOGIN_STATUS.faild);
+            this.isLoading = false
+          }
+        })
+      )
+    }
+  }
 
   destroyer() {
     this.subscription.unsubscribe();
