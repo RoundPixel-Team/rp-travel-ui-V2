@@ -213,6 +213,7 @@ export interface FlightDTO {
       countryCode: string;
       countryName: string;
       regionName: string;
+      terminal:string;
     };
     arrivalTerminalAirport: {
       airportCode: string;
@@ -222,6 +223,7 @@ export interface FlightDTO {
       countryCode: string;
       countryName: string;
       regionName: string;
+      terminal:string;
     };
     transitTime: string;
     flightInfo: {

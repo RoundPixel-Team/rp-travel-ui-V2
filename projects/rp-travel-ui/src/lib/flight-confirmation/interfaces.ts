@@ -86,6 +86,7 @@ export interface confirmationModel {
     countryCode: string;
     countryName: string;
     regionName: string;
+    terminal:string;
   }
   export interface FlightInfo {
     flightNumber: string;
