@@ -958,41 +958,50 @@ Pay(selectedMethod: mergedGates, HG: string, token: string) {
    * @returns the passenger details (body param) needed by backend to make the save booking action
    */
   generateCheckoutDetails(currentCurrency: string): CheckOutDetails {
+    if (!this.usersArray || this.usersArray.length === 0) {
+      throw new Error('Users array is not initialized');
+    }
+
     for (var i = 0; i < this.usersArray.length; i++) {
-      if (this.usersArray.at(i).get('title')!.value == 'Male') {
-        this.usersArray.at(i).get('title')!.setValue('Mr');
-      } else if (this.usersArray.at(i).get('title')!.value == 'Female') {
-        this.usersArray.at(i).get('title')!.setValue('Ms');
+      const userForm = this.usersArray.at(i);
+      
+      // Title handling
+      const title = userForm.get('title')?.value;
+      if (title === 'Male') {
+        userForm.get('title')?.setValue('Mr');
+      } else if (title === 'Female') {
+        userForm.get('title')?.setValue('Ms');
       }
       
+      // Date handling
       const dateOfBirth = this.datePipe.transform(
-        this.usersArray.at(i).get('dateOfBirth')?.value,
+        userForm.get('dateOfBirth')?.value,
         'yyyy-MM-dd'
-      );
+      ) || '';
 
       const passportExpiry = this.datePipe.transform(
-        this.usersArray.at(i).get('dateOfBirth')?.value,
+        userForm.get('PassportExpiry')?.value,
         'yyyy-MM-dd'
-      );
+      ) || '';
 
-      this.usersArray.at(i).get('dateOfBirth')?.setValue(dateOfBirth);
-      this.usersArray.at(i).get('PassportExpiry')?.setValue(passportExpiry);
+      userForm.get('dateOfBirth')?.setValue(dateOfBirth);
+      userForm.get('PassportExpiry')?.setValue(passportExpiry);
 
-      if (this.usersArray.at(i).get('phoneNumber')?.value != '') {
-        this.usersArray
-          .at(i)
-          .get('countryCode')
-          ?.setValue(
-            (<string>(
-              this.usersArray.at(i).get('phoneNumber')?.value.dialCode
-            )).replace('+', '')
+      // Phone number handling (with null checks)
+      const phoneControl = userForm.get('phoneNumber');
+      if (phoneControl?.value) {
+        const phoneValue = phoneControl.value;
+        
+        if (typeof phoneValue === 'object' && phoneValue.dialCode) {
+          userForm.get('countryCode')?.setValue(
+            String(phoneValue.dialCode).replace('+', '')
           );
-        this.usersArray
-          .at(i)
-          .get('phoneNumber')
-          ?.setValue(this.usersArray.at(i).get('phoneNumber')?.value.number);
+          userForm.get('phoneNumber')?.setValue(phoneValue.number || '');
+        } else {
+          userForm.get('phoneNumber')?.setValue(String(phoneValue));
+        }
       }
-      console.log(this.usersArray.at(i).get('countryOfResidence'));
+      // console.log(this.usersArray.at(i).get('countryOfResidence'));
       
 
       // this.usersArray
