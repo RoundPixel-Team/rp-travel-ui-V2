@@ -1,11 +1,12 @@
 import { Injectable, inject } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { FlightCheckoutApiService } from './flight-checkout-api.service';
-import { BookingRequest, BreakDownView, CheckOutDetails, Cobon, flightOfflineService, OfflineServices, passengersModel, selectedFlight } from '../interfaces';
+import { BookingRequest, BreakDownView, CheckOutDetails, Cobon, flightOfflineService, mergedGates, OfflineServices, passengersModel, selectedFlight } from '../interfaces';
 import { FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { passengerFareBreakDownDTOs,fare } from '../../flight-result/interfaces';
 import { HomePageService } from '../../home-page/services/home-page.service';
 import { DatePipe } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 type fareCalc = (fare:fare[])=>number;
 type calcEqfare =(flightFaresDTO: passengerFareBreakDownDTOs[],type:string,farecalc:fareCalc)=>number;
@@ -29,8 +30,9 @@ export class FlightCheckoutService {
    * here is the loaded selected data 
    */
   selectedFlight : selectedFlight | undefined = undefined
-
+selectedFlightSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   /**
+   * 
    * here is all the loaded offline services
    */
   allOfflineServices : flightOfflineService[] = []
@@ -132,6 +134,11 @@ bookingType:string='standard'
 
   /**errors varriables */
   selectedFlightError : boolean = false
+  newSaveBookingLoadar:boolean=false;
+  HG: string = '';
+  HGtoken: string = '';
+   isPnet: boolean = false;
+  redirect: SafeHtml = '';
 
   /**
    * this is a getter to return the users array forms (users) from the main form (usersForm)
@@ -140,7 +147,7 @@ bookingType:string='standard'
     return this.usersForm.get("users")as FormArray
   }
 
-  constructor(   private datePipe: DatePipe,) { }
+  constructor(private datePipe: DatePipe,public sanitizer: DomSanitizer) { }
 
 
 
@@ -159,6 +166,7 @@ bookingType:string='standard'
         if(res){
           // updating the selected flight state
           this.selectedFlight = res
+          this.selectedFlightSubject.next(res);
           // updating the loading state
           this.loader = false
           if(res.status == 'Valid'){
@@ -1043,6 +1051,91 @@ bookingType:string='standard'
   updateYesOrNoServiceInteractionValidation(val:boolean){
     this.yesOrNoVaild = val
   }
+
+newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandId: number,selectedMethod:mergedGates,device:string,os:string,browser:string) {
+ this.newSaveBookingLoadar = true;
+ console.log(this.selectedFlight);
+ 
+    this.subscription.add(
+      this.api
+       .bookItinerary(
+          this.generateSaveBookingBody(
+            this.generateCheckoutDetails(currentCurrency),
+            this.generateOfflineServices(type),
+            this.selectedFlight?.searchCriteria.searchId!,
+            this.selectedFlight?.airItineraryDTO.sequenceNum!,
+            this.selectedFlight?.airItineraryDTO.pKey!.toString()!,
+            pcc,
+            "",
+            this.home.pointOfSale?.ip || '00.00.000.000',
+            this.home.pointOfSale?.country || 'kw',
+            "",
+            this.selectedFlight?.searchCriteria.language!,
+          ),
+          device,
+          os,
+          browser
+        )
+
+        .subscribe(
+          {
+            next: (res) => {
+              this.HG = res.savedBookingResponse.hgNumber;
+              const url = res.getPaymentViewResponse.link
+              const urlParams = new URLSearchParams(url.split('?')[1]);
+              const tokValue = urlParams.get('tok')!;
+              
+              this.newSaveBookingLoadar = false;
+              this.Pay(selectedMethod,this.HG ,tokValue);
+              
+            },
+            complete: () => {
+              this.notify.next(2);
+            },
+            error: (err) => {
+              this.paymentLinkFailure.next(err);
+              this.newSaveBookingLoadar = false;
+              this.selectedFlightError = true;
+              console.error('SAVE BOOKING ERROR', err);
+            }
+          }
+        )
+    );
+}
+Pay(selectedMethod: mergedGates, HG: string, token: string) {
+  this.newSaveBookingLoadar = true; // Start loader here
+
+  this.api.startPaymentProcess(
+    HG,
+    this.selectedFlight?.searchCriteria.searchId!,
+    token,
+    selectedMethod.PaymentMethod,
+    selectedMethod.Amount.toString(),
+    selectedMethod.GatewayType
+  )
+  .subscribe({
+    next: (val) => {
+      this.isPnet = this.api.isPnet;
+
+      if (typeof val === 'string' && !this.isPnet) {
+        if (window.self !== window.top) {
+          window.parent.location.href = val;
+        } else {
+          window.location.href = val;
+        }
+      } else {
+        this.redirect = this.sanitizer.bypassSecurityTrustHtml(val);
+      }
+    },
+    error: (err) => {
+      console.error('Payment process error:', err);
+      this.newSaveBookingLoadar = false; 
+    },
+    complete: () => {
+      this.newSaveBookingLoadar = false; 
+    }
+  });
+}
 
   /**
    * this function is responsible to destory any opened subscription on this service

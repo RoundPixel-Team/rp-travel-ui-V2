@@ -146,3 +146,50 @@ export interface BookingRequest {
   notifyToken?: string; // Notification token if applicable
   language: string; // Language of the request (e.g., EN, AR)
 }
+export interface paymentGateways {
+  PaymentMethod:string,
+  cardImg:string,
+  GatewayType:string
+}
+export interface paymentCharges {
+  amount: number,
+    currency: string,
+    paymentMethod: string
+}
+
+export interface paymnetdata {
+    Status: number, 
+    Message: string, 
+    PaymentFareDetails: fareDetails, 
+    HGToken: string,
+    paymentResult: paymentResult, 
+    ProductType: string
+}
+export interface fareDetails {
+    CustomerPaymentCurrency: string,
+    ExchangeRate: number,
+    FareAmount: number,
+    PromoCodeValue: number,
+    TaxAmount: number,
+    TotalAmount: number,
+    TotalChargeAmount: number
+}
+export interface paymentResult {
+    HGNumber: string,
+    HGToken: string,
+    RedirectUrl: string,
+    PaymentOutput:string,
+    FraudOutput:string,
+    UserCurrency:string,
+    PaymentLocation:string,
+    PostPayment:string,
+
+}
+
+export interface mergedGates{
+  Amount: number,
+  Currency: string,
+  PaymentMethod: string,
+  cardImg:string,
+  GatewayType:string
+}
