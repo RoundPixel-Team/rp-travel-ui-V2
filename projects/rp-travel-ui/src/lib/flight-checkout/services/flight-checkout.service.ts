@@ -797,27 +797,10 @@ bookingType:string='standard'
           .get('phoneNumber')
           ?.setValue(this.usersArray.at(i).get('phoneNumber')?.value.number);
       }
-
-      this.usersArray
-        .at(i)
-        .get('countryOfResidence')
-        ?.setValue(
-          this.home.allCountries.filter((c) => {
-            return (
-              c.countryName ==
-              this.usersArray.at(i).get('countryOfResidence')?.value
-            );
-          })[0].pseudoCountryCode
-        );
-      this.usersArray
-        .at(i)
-        .get('IssuedCountry')
-        ?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value);
-      this.usersArray
-        .at(i)
-        .get('nationality')
-        ?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value);
-        
+      this.usersArray.at(i).get('countryOfResidence')?.setValue(this.home.allCountries
+        .filter(c=>{return c.countryName == this.usersArray.at(i).get('countryOfResidence')?.value})[0].pseudoCountryCode)
+        this.usersArray.at(i).get('IssuedCountry')?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value)
+        this.usersArray.at(i).get('nationality')?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value)
         this.usersArray.at(i).get('dateOfBirth')?.setValue(this.datePipe.transform(
           this.usersArray.at(i).get('dateOfBirth')?.value,"yyyy-MM-dd"));
 
