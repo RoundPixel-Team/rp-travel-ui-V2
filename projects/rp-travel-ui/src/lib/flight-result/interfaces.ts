@@ -343,7 +343,7 @@ export interface Brand {
   baggageAllowances: BaggageAllowance[] | null;
   brandedFaresDTOs: FareDetail[];
   adminCharges: adminCharge[];
-  itinTotalFare: ItinTotalFare;
+  itinTotalFare: ItinTotalBrandedFare;
   passengerFareBreakDowns: PassengerFareBreakDown[];
   optionalServices: OptionalService[];
 }
@@ -378,7 +378,7 @@ export interface adminCharge {
   sector: string;
 }
 
-export interface ItinTotalFare {
+export interface ItinTotalBrandedFare {
   amount: number;
   fareAmount: number;
   promoCode: string | null;
