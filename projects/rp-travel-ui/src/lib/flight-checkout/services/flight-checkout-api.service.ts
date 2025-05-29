@@ -64,23 +64,56 @@ export class FlightCheckoutApiService {
    * @param selectedServices 
    * @returns this function is resposible to call the save booking then checking flight validations and them generate your payment link
    */
-  saveBooking(searchid: string, sequenceNum: number, body: passengersModel, pkey: string, lang:string,selectedServices:string[],ip:string,ipLocation:string,pcc:string) {
-    let api = `${this.env.BookingFlow}/api/SaveBooking?SearchId=${searchid}&SeqNum=${sequenceNum}&PKey=${pkey}&sCode=${pcc}`;
-    return this.http.post<any>(api, body).pipe(take(1),retry(1),
-      mergeMap(
-        (result) => { 
-          let api = `${this.env.BookingFlow}/api/CheckFlightValidation?HGNum=${result.hgNumber}&Language=${lang}&SearchId=${searchid}&SeqNum=${sequenceNum}&PKey=${pkey}`;
-          return this.http.get<any>(api).pipe(retry(1),take(1),
-          mergeMap(()=>{
-            let apis = `${this.env.BookingFlow}/api/GetPaymentView?IP=${ip}&IPLoc=${ipLocation}&HG=${result.hgNumber}&SId=${searchid}&NotifyToken=`;
-            let bodys = {
-              UserSeletedInsurance: { ProductId: "" },
-              UserSeletedServices: { SeletedServicesCodes: selectedServices },
-            };
-            return this.http.post<any>(apis, bodys).pipe(take(1),retry(1))
-          }),catchError(err=>{console.error(err);throw err}));
-         }
-      ),catchError(err=>{console.error(err);throw err})
-    )
+ saveBooking(
+  searchid: string,
+  sequenceNum: number,
+  body: passengersModel,
+  pkey: string,
+  lang: string,
+  selectedServices: string[],
+  ip: string,
+  ipLocation: string,
+  pcc: string,
+  UtmSource?: string,
+  UtmMedium?: string
+) {
+  let api = `${this.env.BookingFlow}/api/SaveBooking?SearchId=${searchid}&SeqNum=${sequenceNum}&PKey=${pkey}&sCode=${pcc}`;
+
+  // Conditionally append optional UTM parameters
+  if (UtmSource) {
+    api += `&UtmSource=${encodeURIComponent(UtmSource)}`;
   }
+  if (UtmMedium) {
+    api += `&UtmMedium=${encodeURIComponent(UtmMedium)}`;
+  }
+
+  return this.http.post<any>(api, body).pipe(
+    take(1),
+    retry(1),
+    mergeMap((result) => {
+      let api = `${this.env.BookingFlow}/api/CheckFlightValidation?HGNum=${result.hgNumber}&Language=${lang}&SearchId=${searchid}&SeqNum=${sequenceNum}&PKey=${pkey}`;
+      return this.http.get<any>(api).pipe(
+        retry(1),
+        take(1),
+        mergeMap(() => {
+          let apis = `${this.env.BookingFlow}/api/GetPaymentView?IP=${ip}&IPLoc=${ipLocation}&HG=${result.hgNumber}&SId=${searchid}&NotifyToken=`;
+          let bodys = {
+            UserSeletedInsurance: { ProductId: "" },
+            UserSeletedServices: { SeletedServicesCodes: selectedServices },
+          };
+          return this.http.post<any>(apis, bodys).pipe(take(1), retry(1));
+        }),
+        catchError((err) => {
+          console.error(err);
+          throw err;
+        })
+      );
+    }),
+    catchError((err) => {
+      console.error(err);
+      throw err;
+    })
+  );
+}
+
 }
