@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { Subject, Subscription} from 'rxjs';
-import { FareRules, FlightSearchResult, SearchFlightModule, airItineraries, filterFlightInterface, flight, flightResultFilter } from '../interfaces';
+import { Brand, FareRules, FlightSearchResult, SearchFlightModule, airItineraries, filterFlightInterface, flight, flightResultFilter } from '../interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FlightResultApiService } from './flight-result-api.service';
 import { customAirlineFilter } from '../interfaces'
@@ -172,8 +172,11 @@ fareLoading: boolean = true;
   customFilteredAirlineSliceMobile:customAirlineFilter[] = [];
   customFilteredAirlineStartMobile : number = 0;
   customFilteredAirlineEndMobile : number = 2;
-  constructor() { }
 
+  /* Branded Fares Properties */
+  currentSelectedBrands: Brand[] = [];
+  isBrandedFaresLoading: boolean = false;
+  brandedFareNotifier = new Subject<null>();
 
 
   /**
@@ -1058,6 +1061,40 @@ updateCurrencyCode(code: string){
         TtransitTime += transitTime
     });
     return TtransitTime;
+  }
+
+  /** A method to get branded fares */
+  getBrandedFares(
+    searchId: string,
+    squencNumber: number,
+    pKey: number,
+    pcc: string
+  ) {
+    this.isBrandedFaresLoading = true;
+    const itemKey = searchId + squencNumber + pKey + pcc;
+
+    if (sessionStorage.getItem(itemKey)) {
+      this.currentSelectedBrands = JSON.parse(
+        sessionStorage.getItem(itemKey) ?? ''
+      );
+      this.brandedFareNotifier.next(null);
+      this.isBrandedFaresLoading = false;
+    } else {
+      this.isBrandedFaresLoading = true
+      this.api.getBrandedFaresApi(searchId, squencNumber, pKey, pcc).subscribe({
+        next: (result) => {
+          this.currentSelectedBrands = result.brands;
+          this.isBrandedFaresLoading = false;
+          
+          sessionStorage.setItem(itemKey, JSON.stringify(result.brands));
+          this.brandedFareNotifier.next(null);
+        },
+        error: (err) => {
+          console.error(err.message);
+          this.isBrandedFaresLoading = false;
+        }
+      });
+    }
   }
 
   /**
