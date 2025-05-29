@@ -1284,6 +1284,10 @@ export class FlightResultService {
           sessionStorage.setItem(itemKey, JSON.stringify(result.brands));
           this.brandedFareNotifier.next(null);
         },
+        error: (err) => {
+          console.error(err.message);
+          this.isBrandedFaresLoading = false;
+        }
       });
     }
   }
