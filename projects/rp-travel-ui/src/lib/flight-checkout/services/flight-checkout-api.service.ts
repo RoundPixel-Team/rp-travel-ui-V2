@@ -175,8 +175,11 @@ paymentGates:paymentGateways[]=[
    * @param providerKey 
    * @returns all information about the selected flight according to its searchId , sequence number and provider key
    */
-  getSelectedFlight(searchid: string,sequenceNum: number,providerKey: number,pcc:string,device:string,os:string,browser:string) {
+  getSelectedFlight(searchid: string,sequenceNum: number,providerKey: number,pcc:string,device:string,os:string,browser:string,skyscannerRedirectId?:string) {
     let api = `${this.env.searchflow}/api/GetSelectedFlight?searchid=${searchid}&SequenceNum=${sequenceNum}&PKey=${providerKey}&sCode=${pcc}&device=${device}&os=${os}&browser=${browser}`;
+      if (skyscannerRedirectId) {
+    api += `&skyscannerRedirectId=${encodeURIComponent(skyscannerRedirectId)}`;
+  }
     return this.http.get<selectedFlight>(api).pipe(retry(3),take(1),catchError(err=>{throw err}));
   }
 
