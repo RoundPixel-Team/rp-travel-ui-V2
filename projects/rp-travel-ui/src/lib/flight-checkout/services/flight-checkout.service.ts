@@ -843,7 +843,7 @@ export class FlightCheckoutService {
             pcc,
             "",
             this.home.pointOfSale?.ip || '00.00.000.000',
-            this.home.pointOfSale?.country || 'kw',
+            this.home.pointOfSale?.country || 'KW',
             "",
             this.selectedFlight?.searchCriteria.language!,
             brandId
@@ -885,7 +885,7 @@ newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandI
             pcc,
             "",
             this.home.pointOfSale?.ip || '00.00.000.000',
-            this.home.pointOfSale?.country || 'kw',
+            this.home.pointOfSale?.country || 'KW',
             "",
             this.selectedFlight?.searchCriteria.language!,
             brandId
@@ -1001,28 +1001,28 @@ Pay(selectedMethod: mergedGates, HG: string, token: string) {
           userForm.get('phoneNumber')?.setValue(String(phoneValue));
         }
       }
-      // console.log(this.usersArray.at(i).get('countryOfResidence'));
+      console.log(this.usersArray.at(i).get('countryOfResidence'));
       
 
-      // this.usersArray
-      //   .at(i)
-      //   .get('countryOfResidence')
-      //   ?.setValue(
-      //     this.home.allCountries.filter((c) => {
-      //       return (
-      //         c.countryName ==
-      //         this.usersArray.at(i).get('countryOfResidence')?.value
-      //       );
-      //     })[0].pseudoCountryCode
-      //   );
-      // this.usersArray
-      //   .at(i)
-      //   .get('IssuedCountry')
-      //   ?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value);
-      // this.usersArray
-      //   .at(i)
-      //   .get('nationality')
-      //   ?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value);
+      this.usersArray
+        .at(i)
+        .get('countryOfResidence')
+        ?.setValue(
+          this.home.allCountries.filter((c) => {
+            return (
+              c.countryName ==
+              this.usersArray.at(i).get('countryOfResidence')?.value
+            );
+          })[0].pseudoCountryCode
+        );
+      this.usersArray
+        .at(i)
+        .get('IssuedCountry')
+        ?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value);
+      this.usersArray
+        .at(i)
+        .get('nationality')
+        ?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value);
     }
     return {
       bookingEmail: this.usersArray.at(0).get('email')?.value,
