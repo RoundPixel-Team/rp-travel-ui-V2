@@ -858,12 +858,14 @@ export class FlightCheckoutService {
             },
             complete: () => {
               this.notify.next(2);
+              this.saveBookingLoadeer = false;
             },
             error: (err) => {
-              this.paymentLinkFailure.next(err);
+              this.paymentLinkFailure.next('');
               this.saveBookingLoadeer = false;
               this.selectedFlightError = true;
               console.error('SAVE BOOKING ERROR', err);
+              console.log('eeeeeeeeeeeeeeeeerrrrrrrrrrrrrrrrrr')
             }
           }
         )
@@ -905,13 +907,15 @@ newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandI
               
             },
             complete: () => {
+              this.saveBookingLoadeer = false;
               this.notify.next(2);
             },
             error: (err) => {
-              this.paymentLinkFailure.next(err);
+              this.paymentLinkFailure.next('');
               this.saveBookingLoadeer = false;
               this.selectedFlightError = true;
               console.error('SAVE BOOKING ERROR', err);
+              console.log('eeeeeeeeeeeeeeeeerrrrrrrrrrrrrrrrrr')
             }
           }
         )
@@ -945,9 +949,10 @@ Pay(selectedMethod: mergedGates, HG: string, token: string) {
     error: (err) => {
       console.error('Payment process error:', err);
       this.saveBookingLoadeer = false; 
+      this.paymentLinkFailure.next('');
     },
     complete: () => {
-      this.saveBookingLoadeer = false; 
+      this.saveBookingLoadeer = false;
     }
   });
 }
@@ -1330,7 +1335,6 @@ Pay(selectedMethod: mergedGates, HG: string, token: string) {
     this.fareDisscount = [0, '', ''];
     this.fareBreackup = undefined;
     this.paymentLink = new Subject();
-    this.paymentLinkFailure = new Subject();
     this.selectedFlightLang = new Subject();
     this.offlineServicesResponse = new Subject();
     this.selectedFlightError = false;
