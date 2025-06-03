@@ -871,59 +871,50 @@ export class FlightCheckoutService {
         )
     );
   }
-newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandId: number,selectedMethod:mergedGates) {
- this.saveBookingLoadeer = true;
- console.log(this.selectedFlight);
- 
-    this.subscription.add(
-      this.api
-        .saveBooking(
-          this.generateSaveBookingBody(
-            this.generateCheckoutDetails(currentCurrency),
-            this.generateOfflineServices(type),
-            this.selectedFlight?.searchCriteria.searchId!,
-            this.selectedFlight?.airItineraryDTO.sequenceNum!,
-            this.selectedFlight?.airItineraryDTO.pKey!.toString()!,
-            pcc,
-            "",
-            this.home.pointOfSale?.ip || '00.00.000.000',
-            this.home.pointOfSale?.country || 'KW',
-            "",
-            this.selectedFlight?.searchCriteria.language!,
-            brandId
-          )
+newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandId: number, selectedMethod: mergedGates) {
+  this.saveBookingLoadeer = true;
+  console.log(this.selectedFlight);
+  
+  this.subscription.add(
+    this.api
+      .saveBooking(
+        this.generateSaveBookingBody(
+          this.generateCheckoutDetails(currentCurrency),
+          this.generateOfflineServices(type),
+          this.selectedFlight?.searchCriteria.searchId!,
+          this.selectedFlight?.airItineraryDTO.sequenceNum!,
+          this.selectedFlight?.airItineraryDTO.pKey!.toString()!,
+          pcc,
+          "",
+          this.home.pointOfSale?.ip || '00.00.000.000',
+          this.home.pointOfSale?.country || 'KW',
+          "",
+          this.selectedFlight?.searchCriteria.language!,
+          brandId
         )
-
-        .subscribe(
-          {
-            next: (res) => {
-              this.HG = res.savedBookingResponse.hgNumber;
-              const url = res.getPaymentViewResponse.link
-              const urlParams = new URLSearchParams(url.split('?')[1]);
-              const tokValue = urlParams.get('tok')!;
-              
-              this.saveBookingLoadeer = false;
-              this.Pay(selectedMethod,this.HG ,tokValue);
-              
-            },
-            complete: () => {
-              this.saveBookingLoadeer = false;
-              this.notify.next(2);
-            },
-            error: (err) => {
-              this.paymentLinkFailure.next('');
-              this.saveBookingLoadeer = false;
-              this.selectedFlightError = true;
-              console.error('SAVE BOOKING ERROR', err);
-              console.log('eeeeeeeeeeeeeeeeerrrrrrrrrrrrrrrrrr')
-            }
-          }
-        )
-    );
+      )
+      .subscribe({
+        next: (res) => {
+          this.HG = res.savedBookingResponse.hgNumber;
+          const url = res.getPaymentViewResponse.link;
+          const urlParams = new URLSearchParams(url.split('?')[1]);
+          const tokValue = urlParams.get('tok')!;
+          
+          this.Pay(selectedMethod, this.HG, tokValue);
+        },
+        error: (err) => {
+          this.paymentLinkFailure.next('');
+          this.saveBookingLoadeer = false;
+          this.selectedFlightError = true;
+          console.error('SAVE BOOKING ERROR', err);
+        }
+        // Removed complete handler here since we want loader to continue
+      })
+  );
 }
-Pay(selectedMethod: mergedGates, HG: string, token: string) {
-  this.saveBookingLoadeer = true; // Start loader here
 
+Pay(selectedMethod: mergedGates, HG: string, token: string) {
+  // Loader is already true from the first call, no need to set it again
   this.api.startPaymentProcess(
     HG,
     this.selectedFlight?.searchCriteria.searchId!,
