@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { catchError, map, retry, take } from 'rxjs';
+import { catchError, map, retry, take, throwError } from 'rxjs';
 import { EnvironmentService } from '../../shared/services/environment.service';
 import {
   BookingRequest,
@@ -331,4 +331,14 @@ paymentGates:paymentGateways[]=[
 
 
   }
+  createMPGSSession(paymentMethod: string, amount: number, currency: string) {
+  const url = `${this.env.prepay}/api/CreateMPGsSession?paymentMethod=${paymentMethod}&amount=${amount}&currency=${currency}`;
+  return this.http.get<{ res:any }>(url).pipe(
+    map(res => res),
+    catchError(err => {
+      console.error('MPGS session creation error', err);
+      return throwError(() => err);
+    })
+  );
+}
 }
