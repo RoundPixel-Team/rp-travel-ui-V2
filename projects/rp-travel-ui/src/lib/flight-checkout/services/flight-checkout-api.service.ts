@@ -333,8 +333,8 @@ paymentGates:paymentGateways[]=[
   }
   createMPGSSession(paymentMethod: string, amount: number, currency: string) {
   const url = `${this.env.prepay}/api/CreateMPGsSession?paymentMethod=${paymentMethod}&amount=${amount}&currency=${currency}`;
-  return this.http.get<{ res:any }>(url).pipe(
-    map(res => res),
+  return this.http.get(url, { responseType: 'text' }).pipe(
+    map((res:string) => {return res; }),
     catchError(err => {
       console.error('MPGS session creation error', err);
       return throwError(() => err);
