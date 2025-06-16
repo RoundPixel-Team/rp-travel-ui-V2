@@ -47,7 +47,7 @@ export class FlightResultService {
   /**
    * loading state ..
    */
-  loading: boolean = true;
+  loading: boolean = false;
   roundT: boolean = false;
   airLR: any = [];
   /**fare rules loading state */

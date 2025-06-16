@@ -540,7 +540,8 @@ export class FlightSearchService {
    * @retuen object with empty message if validation is true or object with error messages
    */
   setDepDate(depDate: string, flightIndex: number) {
-    let date = new Date(depDate).toISOString().split('T')[0]; //making date as 2023-08-01 format to check the condition
+    console.log(depDate.length)
+    let date = depDate ? new Date(depDate).toISOString().split('T')[0] : '' //making date as 2023-08-01 format to check the condition
     this.dateAlert.enMsg = '';
     this.dateAlert.arMsg = '';
     //check if date is previous than today or not
