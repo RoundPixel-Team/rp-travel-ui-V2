@@ -166,6 +166,11 @@ paymentGates:paymentGateways[]=[
     cardImg:'assets/cards/checkout_visacredit.png',
     GatewayType:'dafa3nyvisaCredit'
   },
+   {
+    PaymentMethod:'MPGS',
+    cardImg:'assets/cards/visamaster.png',
+    GatewayType:'MPGS'
+  },
 
 ]
   isPnet:boolean = false;
@@ -331,7 +336,7 @@ paymentGates:paymentGateways[]=[
 
 
   }
-  createMPGSSession(paymentMethod: string, amount: number, currency: string) {
+  createMPGSSession(paymentMethod: string, amount: number|undefined, currency: string|undefined) {
   const url = `${this.env.prepay}/api/CreateMPGsSession?paymentMethod=${paymentMethod}&amount=${amount}&currency=${currency}`;
   return this.http.get(url, { responseType: 'text' }).pipe(
     map((res:string) => {return res; }),
