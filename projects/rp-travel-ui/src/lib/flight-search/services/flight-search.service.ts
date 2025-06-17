@@ -863,8 +863,8 @@ export class FlightSearchService {
     return '';
   }
 
-  getAirports(lang: 'en' | 'ar', searchString: string) {
-    return this.flightSearchApiService.getAirportsApi(lang, searchString);
+  getAirports(searchString: string) {
+    return this.flightSearchApiService.getAirportsApi(searchString);
   }
 
   /**
