@@ -865,13 +865,13 @@ export class FlightCheckoutService {
               this.saveBookingLoadeer = false;
               this.selectedFlightError = true;
               console.error('SAVE BOOKING ERROR', err);
-              console.log('eeeeeeeeeeeeeeeeerrrrrrrrrrrrrrrrrr')
+            
             }
           }
         )
     );
   }
-newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandId: number, selectedMethod: mergedGates) {
+newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandId: number, selectedMethod: mergedGates,payToken:string) {
   this.saveBookingLoadeer = true;
   console.log(this.selectedFlight);
   
@@ -899,8 +899,8 @@ newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandI
           const url = res.getPaymentViewResponse.link;
           const urlParams = new URLSearchParams(url.split('?')[1]);
           const tokValue = urlParams.get('tok')!;
-          
-          this.Pay(selectedMethod, this.HG, tokValue);
+         
+          this.Pay(selectedMethod, this.HG, tokValue,payToken);
         },
         error: (err) => {
           this.paymentLinkFailure.next('');
@@ -913,7 +913,9 @@ newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandI
   );
 }
 
-Pay(selectedMethod: mergedGates, HG: string, token: string) {
+Pay(selectedMethod: mergedGates, HG: string, token: string,payToken:string) {
+           
+
   // Loader is already true from the first call, no need to set it again
   this.api.startPaymentProcess(
     HG,
@@ -921,7 +923,9 @@ Pay(selectedMethod: mergedGates, HG: string, token: string) {
     token,
     selectedMethod.PaymentMethod,
     selectedMethod.Amount.toString(),
-    selectedMethod.GatewayType
+    selectedMethod.GatewayType,
+    'mop',
+    payToken
   )
   .subscribe({
     next: (val) => {

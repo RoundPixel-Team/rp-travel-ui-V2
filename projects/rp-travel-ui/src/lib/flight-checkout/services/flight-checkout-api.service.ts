@@ -305,9 +305,10 @@ paymentGates:paymentGateways[]=[
     take(1)
   );
  }
-  startPaymentProcess(hg: string, SID: string, tok: string, paymnntMethod: string, GatewayCharges: string, GatewayType: string, src: string = 'mop', payToken: string = '') {
+  startPaymentProcess(hg: string, SID: string, tok: string, paymnntMethod: string, GatewayCharges: string, GatewayType: string, src: string = 'mop', payToken: string) {
     let api = `${this.env.prepay}/api/startpaymentProcess?HG=${hg}&payToken=${payToken}&SId=${SID}&Tok=${tok}&paymentMethod=${paymnntMethod}&GatewayCharges=${GatewayCharges}&GatewayType=${GatewayType}`;
-    let body = { HG: hg, Tok: tok, SId: SID, payToken: tok, paymentMethod: paymnntMethod, GatewayCharges: GatewayCharges, GatewayType: GatewayType }
+    let body = { HG: hg, Tok: tok, SId: SID, payToken: payToken, paymentMethod: paymnntMethod, GatewayCharges: GatewayCharges, GatewayType: GatewayType }
+  
     if (src === 'mop' || src === '' || !src) {
        if(paymnntMethod ==='pnetKnet' || paymnntMethod ==='PnetCC'){
          this.isPnet = true;
