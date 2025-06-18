@@ -31,6 +31,7 @@ import { EMAIL_VALIDATION } from '../../user-managment/constants/validation';
 import { DatePipe } from '@angular/common';
 import { FORM_ERROR_MESSAGES } from '../constants/error-messages';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 
 type fareCalc = (fare: fare[]) => number;
 type calcEqfare = (
@@ -45,6 +46,7 @@ type calcEqfare = (
 export class FlightCheckoutService {
   api = inject(FlightCheckoutApiService);
   home = inject(HomePageService);
+  router = inject(Router);
   subscription: Subscription = new Subscription();
   serviceFees: number = 0;
 
@@ -913,10 +915,7 @@ newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandI
   );
 }
 
-Pay(selectedMethod: mergedGates, HG: string, token: string,payToken:string) {
-           
-
-  // Loader is already true from the first call, no need to set it again
+Pay(selectedMethod: mergedGates, HG: string, token: string, payToken: string) {
   this.api.startPaymentProcess(
     HG,
     this.selectedFlight?.searchCriteria.searchId!,
@@ -931,11 +930,20 @@ Pay(selectedMethod: mergedGates, HG: string, token: string,payToken:string) {
     next: (val) => {
       this.isPnet = this.api.isPnet;
 
-      if (typeof val === 'string' && !this.isPnet) {
-        if (window.self !== window.top) {
-          window.parent.location.href = val;
+      if (typeof val === 'string') {
+        if (selectedMethod.PaymentMethod === 'MPGS') {
+          // 👇 Store the HTML response to a shared service or route param
+          this.router.navigate(['flights-checkout/mpgs-auth'], {
+            state: { htmlContent: val }
+          });
+        } else if (!this.isPnet) {
+          if (window.self !== window.top) {
+            window.parent.location.href = val;
+          } else {
+            window.location.href = val;
+          }
         } else {
-          window.location.href = val;
+          this.redirect = this.sanitizer.bypassSecurityTrustHtml(val);
         }
       } else {
         this.redirect = this.sanitizer.bypassSecurityTrustHtml(val);
@@ -943,7 +951,7 @@ Pay(selectedMethod: mergedGates, HG: string, token: string,payToken:string) {
     },
     error: (err) => {
       console.error('Payment process error:', err);
-      this.saveBookingLoadeer = false; 
+      this.saveBookingLoadeer = false;
       this.paymentLinkFailure.next('');
     },
     complete: () => {
