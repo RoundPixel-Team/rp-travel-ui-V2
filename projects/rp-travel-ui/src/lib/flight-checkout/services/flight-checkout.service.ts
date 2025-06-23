@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { FlightCheckoutApiService } from './flight-checkout-api.service';
-import { BookingRequest, BreakDownView, CheckOutDetails, Cobon, flightOfflineService, mergedGates, OfflineServices, passengersModel, selectedFlight } from '../interfaces';
+import { BookingRequest, BookingResponse, BreakDownView, CheckOutDetails, Cobon, flightOfflineService, mergedGates, OfflineServices, passengersModel, selectedFlight } from '../interfaces';
 import { FormArray, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { passengerFareBreakDownDTOs,fare } from '../../flight-result/interfaces';
 import { HomePageService } from '../../home-page/services/home-page.service';
@@ -25,6 +25,8 @@ export class FlightCheckoutService {
   yesOrNoVaild:boolean = false;
   packageVaild:boolean = false ;
   addbuttonVaild:boolean = false ;
+  bookingResponse!: BookingResponse;
+  $bookingResponse = new Subject<void>();
   
   /**
    * here is the loaded selected data 
@@ -1063,14 +1065,14 @@ newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandI
         .subscribe(
           {
             next: (res) => {
-              this.HG = res.savedBookingResponse.hgNumber;
-              const url = res.getPaymentViewResponse.link
-              const urlParams = new URLSearchParams(url.split('?')[1]);
-              const tokValue = urlParams.get('tok')!;
+              this.bookingResponse = res;
+
+              if(res.checkFlightValidationResponse?.changedPriceStatus === 'Increased') {
+                this.$bookingResponse.next();
+                return;
+              }
               
-              this.newSaveBookingLoadar = false;
-              this.Pay(selectedMethod,this.HG ,tokValue);
-              
+              this.continuePaymentProcess(selectedMethod);
             },
             complete: () => {
               this.notify.next(2);
@@ -1085,6 +1087,18 @@ newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandI
         )
     );
 }
+
+continuePaymentProcess(selectedMethod: mergedGates) {
+  this.HG = this.bookingResponse.savedBookingResponse.hgNumber;
+
+  const url = this.bookingResponse.getPaymentViewResponse.link
+  const urlParams = new URLSearchParams(url?.split('?')[1]);
+  const tokValue = urlParams.get('tok')!;
+  
+  this.newSaveBookingLoadar = false;
+  this.Pay(selectedMethod,this.HG ,tokValue);
+}
+
 Pay(selectedMethod: mergedGates, HG: string, token: string) {
   this.newSaveBookingLoadar = true; // Start loader here
 

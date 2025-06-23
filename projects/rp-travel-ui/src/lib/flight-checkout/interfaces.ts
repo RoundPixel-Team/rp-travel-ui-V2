@@ -193,3 +193,40 @@ export interface mergedGates{
   cardImg:string,
   GatewayType:string
 }
+
+export interface BookingResponse {
+  savedBookingResponse: SavedBookingResponse;
+  checkFlightValidationResponse: FlightValidationResponse;
+  getPaymentViewResponse: PaymentViewResponse;
+}
+
+export interface SavedBookingResponse {
+  status: string;
+  errorMessage: string | null;
+  hgNumber: string;
+}
+
+export interface FlightValidationResponse {
+  status: string;
+  validationMessage: string;
+  changedPriceStatus: string;
+  changedPrice: number;
+  originalPrice: number;
+  airItineraries: any[]; // Replace with specific type if you know the structure
+  flightValidationException: FlightValidationException;
+}
+
+export interface FlightValidationException {
+  code: string;
+  exceptionMessage: string;
+}
+
+export interface PaymentViewResponse {
+  link: string | null;
+}
+
+export interface BookingResponse {
+  savedBookingResponse: SavedBookingResponse;
+  checkFlightValidationResponse: FlightValidationResponse;
+  getPaymentViewResponse: PaymentViewResponse;
+}

@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
-import { EnvironmentService } from '../../shared/services/environment.service';
-import { BookingRequest, Cobon, flightOfflineService, passengersModel, paymentCharges, paymentGateways, selectedFlight,mergedGates, paymnetdata } from '../interfaces';
-import { catchError, map, mergeMap, retry, take } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { catchError, map, mergeMap, retry, Subject, take } from 'rxjs';
 import { airItineraries } from '../../flight-result/interfaces';
+import { EnvironmentService } from '../../shared/services/environment.service';
+import { BookingRequest, BookingResponse, Cobon, flightOfflineService, mergedGates, passengersModel, paymentCharges, paymentGateways, paymnetdata, selectedFlight } from '../interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +12,7 @@ export class FlightCheckoutApiService {
 
   public http = inject(HttpClient)
   public env = inject(EnvironmentService)
+  #$checkFlightValidationSubject = new Subject<void>();
 
 
 paymentGates:paymentGateways[]=[
@@ -242,7 +243,7 @@ paymentGates:paymentGateways[]=[
   }
   bookItinerary(body: BookingRequest,device:string,os:string,browser:string) {
     let api = `${this.env.BookingFlow}/api/BookItinerary?device=${device}&os=${os}&browser=${browser}`;
-    return this.http.post<any>(api, body).pipe(
+    return this.http.post<BookingResponse>(api, body).pipe(
       take(1),
       retry(1),
       catchError((err) => {
