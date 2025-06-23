@@ -12,7 +12,8 @@ export class HotelResultsService {
   api = inject(HotelResultsApiService);
 
   hotelDataResponse?: hotelResults;
-  hotelLocationsArr: Array<string> = [];
+  hotelLocationsArr: string[] = [];
+  locationsArrSelected: string[] = [];
 
   /**
    * the main varriable to make binding for the hotels results cards
@@ -25,8 +26,6 @@ export class HotelResultsService {
   public selectedInclusionsSubject = new Subject<any>();
   public selectedInclusions$ = this.selectedInclusionsSubject.asObservable();
 
-
-  locationsArrSelected: Array<string> = [];
   ratesArrSelected: Array<number> = [];
   hotelResultsLoader: boolean = false;
   searchID: string = '';
@@ -46,8 +45,6 @@ export class HotelResultsService {
     hotelLocations: new FormArray([]),
     inclusions:new FormArray([])
   });
-
-  constructor() {}
 
   ngOnInit() {}
 
@@ -89,45 +86,48 @@ export class HotelResultsService {
     }
     this.filteredHotels = [];
     this.splicedFiltiredHotels = [];
+
+    this.hotelLocationsArr = [];
+    this.locationsArrSelected = [];
+
+    this.resetHotelForm();
+    this.resultError = false;
+
     //call het hotel data API
     this.subscription.add(
-      this.api.getHotelsRes(hotelSearchObj).subscribe(
-        (res: hotelResults) => {
+      this.api.getHotelsRes(hotelSearchObj).subscribe({
+        next: (res) => {
           if (res && res.HotelResult.length > 0) {
-            this.hotelLocationsArr = [];
-            this.locationsArrSelected = [];
-            this.resetHotelForm();
             this.hotelDataResponse = res;
-            this.resultError = false;
             this.InclusionsArray=res.Inclusion;
             this.filteredHotels = res.HotelResult;
+            
             this.hotelLocationsArr = [
-              ...res.Locations.filter((l) => {
-                return l != '';
-              }),
+              ...res.Locations.filter((location) => {
+                return location;
+              })
             ];
-            this.locationsArrSelected = [
-              ...res.Locations.filter((l) => {
-                return l != '';
-              }),
-            ];
+            this.locationsArrSelected = [ ...this.hotelLocationsArr ];
+
             if (!res.Inclusion) {
               console.log("Inclusionغير موجوده ل.");
               this.hotelResultsLoader = false;
               return;
             }
-                // Set Inclusions Array
-          this.InclusionsArray = res.Inclusion;
 
-          // ✅ Initialize FormArray for inclusions
-          this.InclusionsArray.forEach(() => {
-            this.addInclusion();  // Ensure each inclusion has a FormControl
-          });
+            // Set Inclusions Array
+            this.InclusionsArray = res.Inclusion;
+
+            // ✅ Initialize FormArray for inclusions
+            this.InclusionsArray.forEach(() => {
+              this.addInclusion();  // Ensure each inclusion has a FormControl
+            });
 
             //GET START AND END DATE TO CALCULATE ROOM NIGHTS NUMBER
             let startDate: Date = new Date(
               dateFrom.replace(new RegExp('%20', 'g'), ' ')
             );
+
             let endDate: Date = new Date(
               dateTo.replace(new RegExp('%20', 'g'), ' ')
             );
@@ -162,18 +162,20 @@ export class HotelResultsService {
             this.hotelResultsLoader = false;
           }
         },
-        (err) => {
+        error: (err) => {
           console.log('result response error', err);
           this.hotelResultsLoader = false;
           this.resultError = true;
-        }
-      )
+        },
+      })
     );
   }
+
   addInclusion(){
     (this.filterForm.get('inclusions') as FormArray).push(new FormControl(false));
 
   }
+
   /**
    * this function is responsible to calculate Nights Number from Dates
    * @param startDate get value from URL
@@ -191,6 +193,7 @@ export class HotelResultsService {
         (1000 * 60 * 60 * 24)
     );
   }
+
   /**
    * this function is responsible to generate search rooms Array
    * @param guestInfo get this string from URL after splitting it
@@ -216,6 +219,7 @@ export class HotelResultsService {
 
     return SearchRooms;
   }
+
   /**
    * this function is responsible to sort the hotels data based on Price and Star Rating
    * @param sortIndex based on index of looping on Sort Boxes
@@ -290,6 +294,7 @@ export class HotelResultsService {
     }
     return this.filteredHotels;
   }
+
   hotelsFilter() {
     this.subscription.add(
       this.filterForm.valueChanges.subscribe(() => {
@@ -311,8 +316,6 @@ export class HotelResultsService {
     );
   }
 
-
-
   /**
    * this function is used in case of using load more option to increase the loadded hotels +5
    */
@@ -325,6 +328,7 @@ export class HotelResultsService {
       this.splicedFiltiredHotels = [...this.filteredHotels];
     }
   }
+
   /**
    * filter Hotel Object based on Hotel Name, Hotel Star rate, Hotel Price and hotel Locations
    * @param hotel
@@ -344,6 +348,7 @@ export class HotelResultsService {
     // && this.filterLocations(hotel.Address)
 
   }
+
   /**
    * initialize hotel rates form array with true value to make it selected
    */
@@ -354,6 +359,7 @@ export class HotelResultsService {
       })
     );
   }
+
   /**
    * call it on the hotel rate filter input to fill the hotel Rates Array (selected Values)
    * */
@@ -366,6 +372,7 @@ export class HotelResultsService {
       this.ratesArrSelected.splice(rateIndex, 1);
     }
   }
+
   /**
    * initialize hotel Locations form array with true value to make it selected
    */
@@ -376,6 +383,7 @@ export class HotelResultsService {
       })
     );
   }
+
   /**
    * call it on the locations filter input to fill the Locations Array (selected Values)
    * @param index  index of the current selected or deselected location
@@ -389,9 +397,11 @@ export class HotelResultsService {
       this.locationsArrSelected.splice(locationIndex, 1);
     }
   }
+
   public get hotelRatesArray(): FormArray {
     return this.filterForm.get('hotelRates') as FormArray;
   }
+
   public get hotelLocationsArray(): FormArray {
     return this.filterForm.get('hotelLocations') as FormArray;
   }
@@ -419,6 +429,7 @@ export class HotelResultsService {
     this.filterForm.get('hotelPriceMax')?.setValue(this.maxPriceValueForSlider);
     this.filterForm.get('hotelPriceMin')?.setValue(this.minPriceValueForSlider);
   }
+
   /**
    *  filter locations based on selected location items
    * @param hotelAddres  hotel addres Name from current object
@@ -436,6 +447,7 @@ export class HotelResultsService {
     });
     return addressValuesArr.includes(true) ? true : false; //if (addressValuesArr) Array contains one True value then return True else return False
   }
+
   /**
    * this function is responsible to destory any opened subscription on this service
    */
