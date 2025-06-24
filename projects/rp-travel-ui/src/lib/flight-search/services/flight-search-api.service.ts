@@ -10,8 +10,8 @@ export class FlightSearchApiService {
   public http = inject(HttpClient);
   public env = inject(EnvironmentService);
 
-  getAirportsApi(searchString: string) {
-    let api = `https://backofficeapi.round-pixel.net/api/Airports?searchStr=${searchString}`;
+  getAirportsApi(lang: 'en' | 'ar', searchString: string) {
+    let api = `${this.env.backOffice}/api/GetSearchFlowMapping?langCode=${lang}&searchStr=${searchString}`;
 
     return this.http.get(api)
   }
