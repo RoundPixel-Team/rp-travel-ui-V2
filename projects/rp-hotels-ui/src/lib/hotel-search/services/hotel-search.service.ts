@@ -24,8 +24,8 @@ export class HotelSearchService {
   adultNum: number = 1
   childNum: number = 0
   fromDate: Date=new Date();
-  toDate: Date= new Date(); 
-  
+  toDate: Date= new Date();
+
   stringGuest: string = ''
   citiesNames: string[] = [];
   valuesBeforeA: string[] = [];
@@ -48,14 +48,14 @@ export class HotelSearchService {
 
   subscription: Subscription = new Subscription()
   /**
-     * 
+     *
      * inital form Search Hotel
-     * 
+     *
      */
   HotelSearchForm: FormGroup = new FormGroup({
     location: new FormControl("", [Validators.required, Validators.minLength(3)]),
     nation: new FormControl(""),
-    residence:new FormControl(""), 
+    residence:new FormControl(""),
     checkIn: new FormControl(new Date(), Validators.required),
     checkOut: new FormControl(this.updateCheckoutDate(), Validators.required),
     roomN: new FormControl(1, [Validators.required, Validators.min(1)]),
@@ -66,25 +66,25 @@ export class HotelSearchService {
 
   }
   /**
-   * 
-   *geter value control location 
-   * 
+   *
+   *geter value control location
+   *
    */
   public get citySearchKey(): FormControl {
     return this.HotelSearchForm?.get('location') as FormControl
   }
   /**
-   * 
-   *geter value control guestInfo 
-   * 
+   *
+   *geter value control guestInfo
+   *
    */
   public get GuestData(): FormArray {
     return this.HotelSearchForm.get('guestInfo') as FormArray;
   }
   /**
-   * 
-   *govert String guest num get from url 
-   * 
+   *
+   *govert String guest num get from url
+   *
    */
   convertguestString(guest: string) {
     const parts: string[] = guest.split('A');
@@ -103,9 +103,9 @@ export class HotelSearchService {
     }
   }
    /**
-   * 
+   *
    *get Data Fron route to set value in from as inital value
-   * 
+   *
    */
   getDataFromUrl(Location: hotelCities,nation:string,residence:string, checkIn: Date, checkOut: Date, roomN: number | string, guestInfo:guests[]) {
     let form: any = {
@@ -127,9 +127,9 @@ export class HotelSearchService {
     return checkOutDate;
   }
   /**
-   * 
-   *inital HotelSearchForm Form  
-   * 
+   *
+   *inital HotelSearchForm Form
+   *
    */
   initSearchForm(form: hotelSearchForm) {
     // set data in storage in for
@@ -159,7 +159,7 @@ export class HotelSearchService {
         this.addChildAge(0);
     }
     this.guestNumberValidation()
-    
+
     this.subscription.add(this.HotelSearchForm.get("roomN")?.valueChanges.subscribe(
       (val) => {
         if (val != null) {
@@ -172,9 +172,9 @@ export class HotelSearchService {
 
   }
   /**
-  * 
-  * this function set data from starge in form 
-  * 
+  *
+  * this function set data from starge in form
+  *
   */
   SetDataFromStorage(FormStorage: hotelSearchForm) {
     this.HotelSearchForm = new FormGroup({
@@ -187,7 +187,7 @@ export class HotelSearchService {
       guestInfo: new FormArray([]),
     });
 
-    
+
     for(let i=0; i< FormStorage.guestInfo.length; i++){
       (<FormArray>this.HotelSearchForm.get("guestInfo")).push(
         new FormGroup({
@@ -219,9 +219,9 @@ export class HotelSearchService {
   }
 
   /**
-  * 
-  *get Nationality based on lang 
-  * 
+  *
+  *get Nationality based on lang
+  *
   */
   getNationality(lang: string) {
     this.subscription.add(
@@ -231,9 +231,9 @@ export class HotelSearchService {
     )
   }
   /**
-   * 
-   *extract nationality based on country 
-   * 
+   *
+   *extract nationality based on country
+   *
    */
 
   extractNationality(countries: CountriescodeModule[]) {
@@ -248,13 +248,13 @@ export class HotelSearchService {
  */
   clearAllRooms(){
    this.initSearchForm(undefined!)
-  
+
   }
 
   /**
-  * 
+  *
   * add Roome to Room Array
-  * 
+  *
   */
   addRoom() {
     let numRoom = this.HotelSearchForm.get('roomN')?.value;
@@ -280,9 +280,9 @@ export class HotelSearchService {
   }
 
   /**
-     * 
+     *
      * Remove Roome from Room Array
-     * 
+     *
      */
   removeRoom() {
     let numRoom = this.HotelSearchForm.get("roomN")?.value;
@@ -296,9 +296,9 @@ export class HotelSearchService {
 
   }
   /**
-   * 
+   *
    * validation on guest Number con't be more than  9
-   * 
+   *
    */
   guestNumberValidation() {
     let search = this.HotelSearchForm.get("guestInfo")?.value
@@ -318,23 +318,46 @@ export class HotelSearchService {
   }
 
 
+  // Add to HotelSearchService class
+  removeRoomAtIndex(index: number) {
+    const numRoom = this.HotelSearchForm.get("roomN")?.value;
+    if (numRoom > 1) {
+      this.HotelSearchForm.get('roomN')?.setValue(numRoom - 1);
+      this.HotelSearchForm.get('roomN')?.updateValueAndValidity();
+
+      // Remove room from form array
+      (this.HotelSearchForm.get("guestInfo") as FormArray).removeAt(index);
+
+      // Remove corresponding child age data
+      this.roomChildAgeArray.splice(index, 1);
+
+      // Reindex remaining rooms
+      this.roomChildAgeArray.forEach((room, idx) => {
+        room.roomNo = idx;
+      });
+
+      this.guestNumberValidation();
+    }
+  }
+
+
   /**
-  * 
+  *
   * validation on checkIn & checkout Date
-  * 
+  *
   */
   ValidationDate() {
     if ((this.HotelSearchForm.get('checkIn')?.value > this.HotelSearchForm.get('checkOut')?.value)|| (this.HotelSearchForm.get('checkIn')?.value == this.HotelSearchForm.get('checkOut')?.value) || this.HotelSearchForm.get('checkOut')?.value == '') {
       this.DateMessageError.enMsg = "Checkout Date Should be After CheckIn Date"
-      this.DateMessageError.arMsg = "وقت الوصول يجب أن يكون بعد وقت الذهاب" 
+      this.DateMessageError.arMsg = "وقت الوصول يجب أن يكون بعد وقت الذهاب"
     }
 
     return this.DateMessageError;
   }
   /**
-     *  
-     * search id value 
-     * 
+     *
+     * search id value
+     *
      */
   id() {
     let date = new Date();
@@ -345,9 +368,9 @@ export class HotelSearchService {
   }
 
   /**
-   * 
-   * push cities Data To citiesNames to show data   
-   * 
+   *
+   * push cities Data To citiesNames to show data
+   *
    */
 
   extractcites(hotelcities: hotelCities[]) {
@@ -357,9 +380,9 @@ export class HotelSearchService {
     });
   }
   /**
-  * 
-  * format guestInfo To used in Routing 
-  * 
+  *
+  * format guestInfo To used in Routing
+  *
   */
   formatGuestInfo(guestInfo: any) {
     this.GuestData.setValue(guestInfo)
@@ -373,13 +396,13 @@ export class HotelSearchService {
     }
     return guesttxt;
   }
- 
+
   /**
    * this function is responsible to return link to use it to navigate to search results with all data of search box
    */
 
   onSubmit(lang: string, currency: string, pointOfSale: string, nation:string) {
-   
+
     if (this.HotelSearchForm.valid) {
       let location: hotelCities = this.HotelSearchForm.get("location")?.value;
       let locationId: string = location.CityId;
