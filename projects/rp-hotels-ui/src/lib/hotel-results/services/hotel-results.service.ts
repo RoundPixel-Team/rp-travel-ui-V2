@@ -14,6 +14,7 @@ export class HotelResultsService {
   hotelDataResponse?: hotelResults;
   hotelLocationsArr: string[] = [];
   locationsArrSelected: string[] = [];
+  filteredUnsortedHotels: hotel[] = [];
 
   /**
    * the main varriable to make binding for the hotels results cards
@@ -101,7 +102,7 @@ export class HotelResultsService {
             this.hotelDataResponse = res;
             this.InclusionsArray=res.Inclusion;
             this.filteredHotels = res.HotelResult;
-            
+
             this.hotelLocationsArr = [
               ...res.Locations.filter((location) => {
                 return location;
@@ -175,6 +176,16 @@ export class HotelResultsService {
     (this.filterForm.get('inclusions') as FormArray).push(new FormControl(false));
 
   }
+
+resetSorting() {
+  if (this.filteredUnsortedHotels.length > 0) {
+    this.filteredHotels = [...this.filteredUnsortedHotels];
+    this.splicedFiltiredHotels = [...this.filteredHotels.slice(0, 5)];
+  } else if (this.hotelDataResponse?.HotelResult) {
+    this.filteredHotels = [...this.hotelDataResponse.HotelResult];
+    this.splicedFiltiredHotels = [...this.filteredHotels.slice(0, 5)];
+  }
+}
 
   /**
    * this function is responsible to calculate Nights Number from Dates
@@ -306,7 +317,7 @@ export class HotelResultsService {
               this.filterHotelData(hotel) &&
               this.filterByRoomInclusion(hotel)
           );
-
+          this.filteredUnsortedHotels = [...this.filteredHotels];
           this.splicedFiltiredHotels = [...this.filteredHotels.slice(0, 5)];
         }
       },
