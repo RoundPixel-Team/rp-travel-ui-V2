@@ -1,3 +1,5 @@
+import { searchCriteria } from "../flight-result/interfaces";
+
 export interface ILoginForm {
   email: string;
   password: string;
@@ -136,6 +138,13 @@ export interface IFlightModel {
 }
 
 export interface IAirItinerary {
+  otaName?:string;
+  providerLogo?:string;
+  flightSignature?:string;
+  overNight?:number;
+  stopsTime?:number;
+  experiance:number;
+  searchCriteria?:searchCriteria;
   referralLink: string | null;
   sequenceNum: number;
   pKey: string | null;

@@ -15,6 +15,7 @@ import { FlightResultApiService } from './flight-result-api.service';
 import { customAirlineFilter } from '../interfaces';
 import { FlightSearchService } from '../../flight-search/services/flight-search.service';
 import { Brand } from '../models/brandedFares.models';
+import { IAirItinerary, IFlight } from '../../user-managment/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -33,7 +34,7 @@ export class FlightResultService {
   /**
    * response airItineraries Data from Api  b type airItineraries
    */
-  FilterData: airItineraries[] = [];
+  FilterData: IAirItinerary[] = [];
   /**
    * load error message when no data back from api
    */
@@ -169,14 +170,14 @@ export class FlightResultService {
    *  array return data type airItineraries[] after organize
    *
    */
-  orgnizedResponce: airItineraries[][] = [];
+  orgnizedResponce: IAirItinerary[][] = [];
 
   /**
    * lowest fares for sorting containers
    */
-  cheapestFlight!: airItineraries;
-  shortestFlight!: airItineraries;
-  bestExperienceFlight!: airItineraries;
+  cheapestFlight!: IAirItinerary;
+  shortestFlight!: IAirItinerary;
+  bestExperienceFlight!: IAirItinerary;
   cheapeastLowestFare: number = 0;
   shortestLowestFare: number = 0;
   bestExperienceLowestFare: number = 0;
@@ -419,7 +420,7 @@ export class FlightResultService {
 
   oneForAll(
     filter: filterFlightInterface,
-    fligtsArray: airItineraries[],
+    fligtsArray: IAirItinerary[],
     round: boolean
   ) {
     this.orgnizedResponce = this.orgnize(
@@ -445,9 +446,9 @@ export class FlightResultService {
    * grouping data return two array array airItineraries and array have same price
    **/
 
-  orgnize(array: airItineraries[]) {
-    let out: airItineraries[][] = [];
-    let remain: airItineraries[] = array;
+  orgnize(array: IAirItinerary[]) {
+    let out: IAirItinerary[][] = [];
+    let remain: IAirItinerary[] = array;
     let i = 0;
     while (remain.length > 0 || !remain) {
       if (i > 50) {
@@ -480,7 +481,7 @@ export class FlightResultService {
   /**
    * create an array with the same length of the output
    **/
-  valuesoftrueM(array: airItineraries[]) {
+  valuesoftrueM(array: IAirItinerary[]) {
     let out: any[] = [];
     let arryalengty = array.length;
     for (let index = 0; index < arryalengty; index++) {
@@ -554,7 +555,7 @@ export class FlightResultService {
    * get the lowest fares for all sorting criterias
    * @param data (all the itineraries)
    */
-  fetchLowestFaresForSorting(data: airItineraries[][]) {
+  fetchLowestFaresForSorting(data: IAirItinerary[][]) {
     this.cheapestFlight = [...data].sort((a, b) => {
       return a[0].itinTotalFare.amount - b[0].itinTotalFare.amount;
     })[0][0];
@@ -578,8 +579,8 @@ export class FlightResultService {
   /**
    * Filter Values airItineraries[] by Price And Update Filtiration Slider
    **/
-  minAnMax(data: airItineraries[]) {
-    let arr: airItineraries[] = [...data];
+  minAnMax(data: IAirItinerary[]) {
+    let arr: IAirItinerary[] = [...data];
     let sortedRes = [
       ...arr.sort((a, b) => {
         return a.itinTotalFare.amount - b.itinTotalFare.amount;
@@ -610,7 +611,7 @@ export class FlightResultService {
   /**
    *  Find Min And Max Values Of Flight Departing Dates  And Update Filtiration Slider
    **/
-  findDepartingnMinMax(array: airItineraries[]) {
+  findDepartingnMinMax(array: IAirItinerary[]) {
     let min = this.convertToMin(
       array[0].allJourney.flights[0].flightDTO[0].departureDate
     );
@@ -639,7 +640,7 @@ export class FlightResultService {
    *  Find Min And Max Values Of Flight arriving Dates  And Update Filtiration Slider
    **/
 
-  findArrivingMinMax(array: airItineraries[]) {
+  findArrivingMinMax(array: IAirItinerary[]) {
     let min = this.convertToMin(
       array[0].allJourney.flights[0].flightDTO[
         array[0].allJourney.flights[0].flightDTO.length - 1
@@ -683,7 +684,7 @@ export class FlightResultService {
     let tm = hr + m;
     return tm;
   }
-  filterWithSchedule(flight: airItineraries, isDeparting: Boolean): boolean {
+  filterWithSchedule(flight: IAirItinerary, isDeparting: Boolean): boolean {
     const schedule = this.filterForm.get(
       isDeparting ? 'departSchedule' : 'returnSchedule'
     )?.value;
@@ -726,7 +727,7 @@ export class FlightResultService {
   /**
    *  filter by price value
    **/
-  filterFlighWithPrice(flight: airItineraries): boolean {
+  filterFlighWithPrice(flight: IAirItinerary): boolean {
     return (
       flight.itinTotalFare.amount >=
         this.filterForm.get('minpriceSlider')?.value! &&
@@ -737,7 +738,7 @@ export class FlightResultService {
   /**
    *  filter by DepartingTime
    **/
-  filterFlighWithDepartionTime(flight: airItineraries): boolean {
+  filterFlighWithDepartionTime(flight: IAirItinerary): boolean {
     return (
       this.convertToMin(
         flight.allJourney.flights[0].flightDTO[0].departureDate
@@ -750,7 +751,7 @@ export class FlightResultService {
   /**
    *  filter by ArrivalTime
    **/
-  filterFlighWithArrivalTime(flight: airItineraries): boolean {
+  filterFlighWithArrivalTime(flight: IAirItinerary): boolean {
     return (
       this.convertToMin(
         flight.allJourney.flights[0].flightDTO[
@@ -767,7 +768,7 @@ export class FlightResultService {
   /**
    *  filter by Duration flight
    **/
-  filterFlighWithDuration(flight: airItineraries): boolean {
+  filterFlighWithDuration(flight: IAirItinerary): boolean {
     return (
       flight.totalDuration >=
         this.filterForm.get('mindurationSlider')?.value! &&
@@ -806,7 +807,7 @@ export class FlightResultService {
    *  filter by stops value
    **/
   filterFlightWithNumberofStopsFunction(
-    flight: airItineraries,
+    flight: IAirItinerary,
     filter: filterFlightInterface
   ): boolean {
     let stopFlage: boolean = true;
@@ -885,7 +886,7 @@ export class FlightResultService {
     }
   }
   filterFlightWithAirlineFunction(
-    flight: airItineraries,
+    flight: IAirItinerary,
     filter: filterFlightInterface,
     roundT: boolean
   ): boolean {
@@ -913,7 +914,7 @@ export class FlightResultService {
    **/
 
   filterFlighWithReturnTime(
-    flight: airItineraries,
+    flight: IAirItinerary,
     filter: filterFlightInterface,
     roundT: boolean
   ): boolean {
@@ -989,7 +990,7 @@ export class FlightResultService {
    * check FlextTicket
    **/
   FlexTicketcheck(
-    flight: airItineraries,
+    flight: IAirItinerary,
     filter: filterFlightInterface
   ): boolean {
     if (filter.flexibleTicket![0] && !filter.flexibleTicket![1]) {
@@ -1016,7 +1017,7 @@ export class FlightResultService {
    * filter data based on  experience value
    **/
   filterWithExperience(
-    flight: airItineraries,
+    flight: IAirItinerary,
     filter: filterFlightInterface
   ): boolean {
     if (filter.experience![0] && !filter.experience![1]) {
@@ -1047,7 +1048,7 @@ export class FlightResultService {
    * filter data based on  SameAirline
    **/
   completeTripOnSameAirline(
-    flight: airItineraries,
+    flight: IAirItinerary,
     filter: filterFlightInterface
   ): boolean {
     if (!filter.sameAirline) {
@@ -1297,7 +1298,7 @@ export class FlightResultService {
    * @param airItineraries
    * @returns
    */
-  calcOverNight(airItinerarie: airItineraries): number {
+  calcOverNight(airItinerarie: IAirItinerary): number {
     let arrivalDate: Date = new Date(airItinerarie.arrivalDate);
     let departualDate: Date = new Date(airItinerarie.deptDate);
     return arrivalDate.getDay() === departualDate.getDay()
@@ -1311,7 +1312,7 @@ export class FlightResultService {
    * @param airItineraries
    * @returns
    */
-  calcExperiance(flightObj: airItineraries): number {
+  calcExperiance(flightObj: IAirItinerary): number {
     return (
       flightObj.itinTotalFare.amount +
       this.addStopTime(flightObj.allJourney.flights) +
@@ -1321,9 +1322,9 @@ export class FlightResultService {
   /**
    *
    */
-  addExperiance(airItinerariesArr: airItineraries[]) {
+  addExperiance(airItinerariesArr: IAirItinerary[]) {
     let finalArr = airItinerariesArr.map((v) => {
-      let flightObj: airItineraries = {
+      let flightObj: IAirItinerary = {
         ...v,
         stopsTime: this.addStopTime(v.allJourney.flights),
         overNight: this.calcOverNight(v),
@@ -1338,7 +1339,7 @@ export class FlightResultService {
    * @param flights
    * @returns
    */
-  addStopTime(flights: flight[]): number {
+  addStopTime(flights: IFlight[]): number {
     let TtransitTime: number = 0;
     flights.forEach((flight) => {
       let transitTime = flight.flightDTO

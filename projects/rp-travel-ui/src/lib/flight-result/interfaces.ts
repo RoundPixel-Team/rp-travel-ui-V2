@@ -1,3 +1,5 @@
+import { IAirItinerary } from "../user-managment/interfaces";
+
 // this is the base model for the backend response
 export interface baseSearchResult {
     status: string;
@@ -11,7 +13,7 @@ export interface FlightSearchResult extends baseSearchResult  {
     pnr?:any;
     fareAmount?:any;
     airlines: any[];
-    airItineraries: airItineraries[];
+    airItineraries: IAirItinerary[];
     searchCriteria: searchCriteria;
     cabinClasses:string[]
     passengersDetails?: any[],
