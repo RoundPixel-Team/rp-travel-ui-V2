@@ -34,7 +34,7 @@ export class FlightResultApiService {
     return this.http.get<fareRulesResponse>(api).pipe(take(1));
   }
 
-  getBrandedFaresApi(sid: string, seq: number, pKey: number, pcc: string) {
+  getBrandedFaresApi(sid: string, seq: number, pKey: string, pcc: string) {
     let api = `${this.env.FareRules}/api/GetBrandedFares?SId=${sid}&SeqNum=${seq}&PKey=${pKey}&Pcc=${pcc}`;
 
     return this.http.get<FlightSearchResponse>(api).pipe(take(1));
