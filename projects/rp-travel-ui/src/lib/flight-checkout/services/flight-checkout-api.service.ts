@@ -12,7 +12,7 @@ import {
   paymnetdata,
   selectedFlight
 } from '../interfaces';
-import { airItineraries } from '../../flight-result/interfaces';
+import { IAirItinerary } from '../../flight-result/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -188,7 +188,7 @@ paymentGates:paymentGateways[]=[
   getSelectedFlight(
     searchid: string,
     sequenceNum: number,
-    providerKey: number,
+    providerKey: string,
     pcc: string
   ) {
     let api = `${this.env.searchflow}/api/GetSelectedFlight?searchid=${searchid}&SequenceNum=${sequenceNum}&PKey=${providerKey}&sCode=${pcc}`;
@@ -292,7 +292,7 @@ paymentGates:paymentGateways[]=[
  }
 
 
- addPaymentGateways(userCurrency:string,paymentLoction:string,body:airItineraries){
+ addPaymentGateways(userCurrency:string,paymentLoction:string,body: IAirItinerary){
   let api = `${this.env.BookingFlow}/api/checkoutApplyPaymentGateway?UserCurrency=${userCurrency}&PaymentLocation=${paymentLoction}`;
   return this.http.post<any>(api, body).pipe(
     

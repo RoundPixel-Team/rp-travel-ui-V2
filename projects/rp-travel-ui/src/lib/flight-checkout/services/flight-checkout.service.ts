@@ -23,8 +23,8 @@ import {
   Validators,
 } from '@angular/forms';
 import {
-  passengerFareBreakDownDTOs,
-  fare,
+  IFlightFareDTO,
+  IPassengerFareBreakDownDTO,
 } from '../../flight-result/interfaces';
 import { HomePageService } from '../../home-page/services/home-page.service';
 import { EMAIL_VALIDATION } from '../../user-managment/constants/validation';
@@ -33,9 +33,9 @@ import { FORM_ERROR_MESSAGES } from '../constants/error-messages';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 
-type fareCalc = (fare: fare[]) => number;
+type fareCalc = (fare: IFlightFareDTO[]) => number;
 type calcEqfare = (
-  flightFaresDTO: passengerFareBreakDownDTOs[],
+  flightFaresDTO: IPassengerFareBreakDownDTO[],
   type: string,
   farecalc: fareCalc
 ) => number;
@@ -186,7 +186,7 @@ export class FlightCheckoutService {
   getSelectedFlightData(
     searchId: string,
     sequenceNum: number,
-    providerKey: number,
+    providerKey: string,
     userCombinedNames: boolean,
     pcc: string
   ) {
@@ -1114,7 +1114,7 @@ Pay(selectedMethod: mergedGates, HG: string, token: string, payToken: string) {
    * @returns value of discount or service fees
    */
   returnPassTotalFarDifferance(
-    flightFaresDTO: passengerFareBreakDownDTOs[],
+    flightFaresDTO: IPassengerFareBreakDownDTO[],
     totalAmount: number,
     totalTax: number,
     curruncy: string,
@@ -1143,7 +1143,7 @@ Pay(selectedMethod: mergedGates, HG: string, token: string, payToken: string) {
    * @returns numer of passenger * fare of passenger
    */
   calcEqfare(
-    flightFaresDTO: passengerFareBreakDownDTOs[],
+    flightFaresDTO: IPassengerFareBreakDownDTO[],
     type: string,
     farecalc: fareCalc
   ): number {
@@ -1162,7 +1162,7 @@ Pay(selectedMethod: mergedGates, HG: string, token: string, payToken: string) {
    * @returns validate equivelent fare
    */
 
-  returnCorrectFare(fare: fare[]): number {
+  returnCorrectFare(fare: IFlightFareDTO[]): number {
     if (fare) {
       let equivfare = fare.find(
         (v) => v.fareType.toLowerCase() === 'equivfare'
@@ -1262,11 +1262,11 @@ Pay(selectedMethod: mergedGates, HG: string, token: string, payToken: string) {
    * @returns [total value ,curruncy code]
    */
   returnPassTotalFar(
-    flightFaresDTO: fare[],
+    flightFaresDTO: IFlightFareDTO[],
     passNumber: number,
     calcfare: fareCalc
   ): [number, string] {
-    let Total: fare = flightFaresDTO.filter(
+    let Total: IFlightFareDTO = flightFaresDTO.filter(
       (v) => v.fareType.toLowerCase() === 'equivfare'
     )[0];
     return Total
@@ -1281,11 +1281,11 @@ Pay(selectedMethod: mergedGates, HG: string, token: string, payToken: string) {
    * @returns [total value per passenger ,curruncy code , number of passenger]
    */
   returnPassFareScatterd(
-    flightFaresDTO: fare[],
+    flightFaresDTO: IFlightFareDTO[],
     passNumber: number,
     calcfare: fareCalc
   ): [number, string, number] {
-    let Total: fare = flightFaresDTO.filter(
+    let Total: IFlightFareDTO = flightFaresDTO.filter(
       (v) => v.fareType.toLowerCase() === 'equivfare'
     )[0];
     return Total

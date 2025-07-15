@@ -1,18 +1,17 @@
 
-import { airItineraries, searchCriteria } from "../flight-result/interfaces";
+import { IAirItinerary, ISearchCriteria } from "../flight-result/interfaces";
 import { FORM_ERROR_MESSAGES } from "./constants/error-messages";
-
 
 /**
  * this model is mappping to the get selected flight response
  */
 export interface selectedFlight {
-    airItineraryDTO:airItineraries
-    status: string
-    errorMessage:string
-    searchCriteria:searchCriteria
-    passportDetailsRequired:boolean
-    pcc:string
+  airItineraryDTO: IAirItinerary
+  status: string
+  errorMessage:string
+  searchCriteria: ISearchCriteria;
+  passportDetailsRequired:boolean
+  pcc:string
 }
 
 /**

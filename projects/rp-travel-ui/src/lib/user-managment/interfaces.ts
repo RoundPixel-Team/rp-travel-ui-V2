@@ -1,4 +1,4 @@
-import { searchCriteria } from "../flight-result/interfaces";
+import { IAirItinerary } from "../flight-result/interfaces";
 
 export interface ILoginForm {
   email: string;
@@ -135,99 +135,6 @@ export interface IFlightModel {
   additionalServices: any[];
   airItineraries: IAirItinerary[];
   passengersDetails: IPassengerDetail[];
-}
-
-export interface IAirItinerary {
-  otaName?:string;
-  providerLogo?:string;
-  flightSignature?:string;
-  overNight?:number;
-  stopsTime?:number;
-  experiance:number;
-  searchCriteria?:searchCriteria;
-  referralLink: string | null;
-  sequenceNum: number;
-  pKey: string | null;
-  pcc: string | null;
-  isRefundable: boolean;
-  itinTotalFare: IItineraryFare;
-  totalDuration: number;
-  deptDate: string;
-  arrivalDate: string;
-  cabinClass: string;
-  flightType: string;
-  allJourney: IAllJourney;
-  baggageInformation: any | null;
-  passengerFareBreakDownDTOs: any | null;
-}
-
-export interface IItineraryFare {
-  amount: number;
-  fareAmount: number;
-  promoCode: string;
-  promoDiscount: number;
-  currencyCode: string;
-  totalTaxes: number;
-  dName: string | null;
-  mName: string | null;
-}
-
-export interface IAllJourney {
-  flights: IFlight[];
-}
-
-export interface IFlight {
-  flightDTO: IFlightSegment[];
-  flightAirline: IAirlineInfo;
-  elapsedTime: number;
-  stopsNum: number;
-}
-
-export interface IFlightSegment {
-  departureOffset: number;
-  arrivalOffset: number;
-  isStopSegment: boolean;
-  deptTime: string;
-  landTime: string;
-  departureDate: string;
-  arrivalDate: string;
-  flightAirline: IAirlineInfo;
-  operatedAirline: IAirlineInfo;
-  durationPerLeg: number;
-  departureTerminalAirport: IAirportInfo;
-  arrivalTerminalAirport: IAirportInfo;
-  transitTime: string;
-  flightInfo: IFlightInfo;
-  segmentDetails: any | null;
-  supplierRefID: string;
-}
-
-export interface IAirlineInfo {
-  airlineCode: string;
-  airlineName: string;
-  airlineLogo: string;
-  alternativeBusinessName: string | null;
-  passportDetailsRequired: boolean;
-}
-
-export interface IAirportInfo {
-  airportCode: string;
-  airportName: string;
-  cityName: string;
-  cityCode: string;
-  countryCode: string;
-  countryName: string;
-  regionName: string;
-  terminal: string | null;
-  cityImage: string;
-}
-
-export interface IFlightInfo {
-  flightNumber: string;
-  equipmentNumber: string;
-  mealCode: string;
-  bookingCode: string | null;
-  cabinClass: string;
 }
 
 export interface ITrips {

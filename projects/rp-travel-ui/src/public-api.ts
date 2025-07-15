@@ -29,6 +29,7 @@ export * from './lib/flight-checkout/interfaces'
 export * from './lib/flight-result/services/flight-result-api.service'
 export * from './lib/flight-result/services/flight-result.service'
 export * from './lib/flight-result/interfaces'
+export * from './lib/flight-result/default-values'
 
 
 // Flight Search

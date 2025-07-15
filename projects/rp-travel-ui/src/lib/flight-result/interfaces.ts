@@ -1,5 +1,3 @@
-import { IAirItinerary } from "../user-managment/interfaces";
-
 // this is the base model for the backend response
 export interface baseSearchResult {
     status: string;
@@ -14,29 +12,9 @@ export interface FlightSearchResult extends baseSearchResult  {
     fareAmount?:any;
     airlines: any[];
     airItineraries: IAirItinerary[];
-    searchCriteria: searchCriteria;
+    searchCriteria: ISearchCriteria;
     cabinClasses:string[]
     passengersDetails?: any[],
-}
-
-/**
- * containing the search criteria of the current request
- */
-export interface searchCriteria {
-    adultNum: number;
-    childNum: number;
-    currency: string;
-    flights: searchCriteriaFlights[];
-    flightType: string;
-    infantNum: number;
-    language: string;
-    pos: string;
-    preferredAirline: any;
-    searchId: string;
-    selectDirectFlightsOnly: boolean;
-    selectedFlightClass: string;
-    source: string;
-    totalPassengersNum: number;
 }
 
 export interface searchCriteriaFlights{
@@ -44,37 +22,6 @@ export interface searchCriteriaFlights{
     departingFrom: string;
     departingOnDate: string;
 }
-
-
-/**
- * flight itinerary Mdel
- */
-export interface airItineraries {
-    referralLink?:string; 
-    otaName?:string;
-    providerLogo?:string;
-    pKey?: number;
-    flightSignature?:string;
-    overNight?:number;
-    stopsTime?:number;
-    experiance:number;
-    sequenceNum: number;
-    isRefundable: boolean;
-    itinTotalFare: itinTotalFare;
-    totalDuration: number;
-    deptDate: string;
-    arrivalDate: string;
-    cabinClass: string;
-    flightType: string;
-    allJourney: {
-      flights: flight[];
-    };
-    baggageInformation: baggageInformation[];
-    searchCriteria?:searchCriteria;
-    passengerFareBreakDownDTOs?:passengerFareBreakDownDTOs[],
-    pcc:string
-}
-
 
 /**
  * Filter Form Model 
@@ -126,22 +73,22 @@ export class flightResultFilter {
 
 
 export interface filterFlightInterface{
-   sameAirline?:boolean,
+  sameAirline?:boolean,
   priceMin?:number,
   priceMax?:number,
- durationMin?:number,
+  durationMin?:number,
   durationMax?:number,
-   depatingMin?:number,
-   departingMax?:number,
-    arrivingMin?:number,
-   arrivingMax?:number,
-   returnMin?:number,
-   returnMax?:number,
-   stops?:number[],
-   experience?:boolean[],
-   flexibleTicket?:boolean[],
-   airlines?:string[],
-   bookingSites?:string[],
+  depatingMin?:number,
+  departingMax?:number,
+  arrivingMin?:number,
+  arrivingMax?:number,
+  returnMin?:number,
+  returnMax?:number,
+  stops?:number[],
+  experience?:boolean[],
+  flexibleTicket?:boolean[],
+  airlines?:string[],
+  bookingSites?:string[],
   schedule?:number,
 }
 
@@ -160,138 +107,12 @@ export interface fares {
   fareRule: string;
   title: string;
 }
+
 export interface fareRulesResponse{
-  errorMessage:string;
+  errorMessage: string;
   fares:FareRules[];
 }
-export interface itinTotalFare {
-    amount : number
-    fareAmount? : number
-    promoCode? : string
-    promoDiscount? : number
-    currencyCode : string
-    totalTaxes : number
-}
 
-export interface flight {
-    flightDTO: FlightDTO[];
-    elapsedTime: number;
-    stopsNum: number;
-    flightAirline:FlightAirline
-}
-
-export interface FlightDTO {
-    supplierRefID : any
-    transitPosition?:string;
-    transitWidth?:number;
-    sequenceNum?: number;
-    isStopSegment: boolean;
-    deptTime: any;
-    landTime: any;
-    departureDate: string;
-    arrivalDate: string;
-    flightAirline: {
-      airlineCode: string;
-      airlineName: string;
-      airlineLogo: string;
-      alternativeBusinessName: string;
-      languageCode: string;
-      passportDetailsRequired: boolean;
-    };
-    operatedAirline: {
-      airlineCode: string;
-      airlineName: string;
-      airlineLogo: string;
-      alternativeBusinessName: string;
-      languageCode: string;
-      passportDetailsRequired: boolean;
-    };
-    durationPerLeg: number;
-    departureTerminalAirport: {
-      airportCode: string;
-      airportName: string;
-      cityName: string;
-      cityCode: string;
-      countryCode: string;
-      countryName: string;
-      regionName: string;
-      terminal:string;
-    };
-    arrivalTerminalAirport: {
-      airportCode: string;
-      airportName: string;
-      cityName: string;
-      cityCode: string;
-      countryCode: string;
-      countryName: string;
-      regionName: string;
-      terminal:string;
-    };
-    transitTime: string;
-    flightInfo: {
-      flightNumber: string;
-      equipmentNumber: string;
-      mealCode: string;
-      bookingCode: string;
-      cabinClass: string;
-    };
-    segmentDetails: {
-      uniqueKey: any;
-      baggage: string;
-      childBaggage: any;
-      infantBaggage: any;
-    };
-}
-
-  
-export interface FlightAirline{
-    airlineCode: string
-    airlineLogo: string
-    airlineName: string
-    alternativeBusinessName: string
-    passportDetailsRequired: boolean
-}
-
-export interface baggageInformation {
-    baggage: string;
-    childBaggage: string;
-    infantBaggage: string;
-    airlineName: string;
-    deptCity: string;
-    landCity: string;
-    flightNum: string;
-}
-
-export interface passengerFareBreakDownDTOs{
-    key:string,
-    cancelPenaltyDTOs:Penelty[],
-    changePenaltyDTOs:Penelty[],
-    passengerQuantity:number,
-    passengersRef:any[],
-    pricingMethod:string,
-    passengerType:string,
-    flightFaresDTOs:fare[],
-    taxes:taxes[]
-}
-
-  export interface Penelty {
-    curency:string,
-    percentage:number,
-    price:number
-}
-  export interface fare {
-    currencyCode:string,
-    fareAmount:number,
-    fareType:string
-}
-  export interface taxes {
-    amount:number,
-    contentl:string,
-    countryCode?:string | null,
-    taxCode:string,
-    taxCurrencyCode:string,
-    taxName?:string | null
-}
 export class SearchFlightModule { 
   
   constructor (
@@ -320,17 +141,262 @@ export interface customAirlineFilter {
   name: string;
   selected:boolean;
 }
- /**
-  * This is the fare Rules models
-  */
- export interface FareRules {
-  departureCountry: string;
-  arrivalCountry: string;
-  adtRules: fares[];
-  cnnRules: fares[];
-  infRules: fares[];
+
+export interface IAirItinerary {
+  otaName?:string;
+  providerLogo?:string;
+  flightSignature?:string;
+  overNight?:number;
+  stopsTime?:number;
+  experiance:number;
+  referralLink: string | null;
+  sequenceNum: number;
+  pKey: string;
+  pcc: string;
+  isRefundable: boolean;
+  itinTotalFare: ItinTotalFare;
+  totalDuration: number;
+  deptDate: string;
+  arrivalDate: string;
+  cabinClass: string;
+  flightType: string;
+  allJourney: IAllJourney;
+  baggageInformation: IBaggageInformation[];
+  passengerFareBreakDownDTOs: IPassengerFareBreakDownDTO[];
+  searchCriteria?: ISearchCriteria;
 }
-export interface fares {
-  fareRule: string;
-  title: string;
+
+export interface ISearchCriteria {
+  searchResultReturned: boolean;
+  searchId: string;
+  source: string;
+  device: string | null;
+  pos: string;
+  currency: string;
+  language: string;
+  flights: IFlightSearch[];
+  flightType: string;
+  preferredAirline: string | null;
+  selectedFlightClass: string;
+  adultNum: number;
+  childNum: number;
+  infantNum: number;
+  totalPassengersNum: number;
+  selectDirectFlightsOnly: boolean;
+  childAges: number;
+  infantAges: number;
+}
+
+export interface IFlightSearch {
+  departingFrom: string;
+  arrivingTo: string;
+  departingOnDate: string;
+}
+
+export interface IBaggageInformation {
+  baggage: string;
+  childBaggage: string | null;
+  infantBaggage: string | null;
+  airlineName: string;
+  deptCity: string;
+  landCity: string;
+  flightNum: string;
+}
+
+export interface IPassengerFareBreakDownDTO {
+  key: string;
+  pricingMethod: string;
+  cancelPenaltyDTOs: IPenaltyDTO[];
+  changePenaltyDTOs: IPenaltyDTO[];
+  passengerQuantity: number;
+  passengerType: string;
+  passengersRef: string[];
+  flightFaresDTOs: IFlightFareDTO[];
+  taxes: ITax[];
+}
+
+export interface IPenaltyDTO {
+  price: number;
+  curency: string;
+  percentage: number;
+}
+
+export interface IFlightFareDTO {
+  fareAmount: number;
+  fareType: string;
+  currencyCode: string;
+}
+
+export interface ITax {
+  taxCode: string;
+  amount: number;
+  taxName: string | null;
+  taxCurrencyCode: string;
+  content: string;
+  countryCode: string | null;
+}
+
+export interface IAllJourney {
+  flights: IFlight[];
+}
+
+export interface IFlight {
+  flightDTO: IFlightDTO[];
+  flightAirline: IAirlineInfo;
+  elapsedTime: number;
+  stopsNum: number;
+}
+
+export interface IFlightDTO {
+  departureOffset: number;
+  arrivalOffset: number;
+  isStopSegment: boolean;
+  deptTime: string;
+  landTime: string;
+  departureDate: string;
+  arrivalDate: string;
+  flightAirline: IAirlineInfo;
+  operatedAirline: IAirlineInfo;
+  durationPerLeg: number;
+  departureTerminalAirport: IAirportInfo;
+  arrivalTerminalAirport: IAirportInfo;
+  transitTime: string;
+  flightInfo: IFlightInfo;
+  segmentDetails: ISegmentDetails;
+  supplierRefID: string;
+}
+
+export interface ISegmentDetails {
+  baggage: string;
+  childBaggage: string;
+  infantBaggage: string;
+  uniqueKey: string;
+}
+
+export interface IAirlineInfo {
+  airlineCode: string;
+  airlineName: string;
+  airlineLogo: string;
+  alternativeBusinessName: string | null;
+  passportDetailsRequired: boolean;
+}
+
+export interface IAirportInfo {
+  airportCode: string;
+  airportName: string;
+  cityName: string;
+  cityCode: string;
+  countryCode: string;
+  countryName: string;
+  regionName: string;
+  terminal: string | null;
+  cityImage: string;
+}
+
+export interface IFlightInfo {
+  flightNumber: string;
+  equipmentNumber: string;
+  mealCode: string;
+  bookingCode: string | null;
+  cabinClass: string;
+}
+
+export interface FlightSearchResponse {
+  status: string;
+  errorMessage: string;
+  brands: Brand[];
+  flightType: string;
+}
+
+export interface Brand {
+  brandName: string;
+  brandId: string;
+  sequenceNumber: number;
+  cabinClasse: string;
+  baggageAllowances: BaggageAllowance[] | null;
+  brandedFaresDTOs: FareDetail[];
+  adminCharges: adminCharge[];
+  itinTotalFare: ItinTotalFare;
+  passengerFareBreakDowns: PassengerFareBreakDown[];
+  optionalServices: OptionalService[];
+}
+
+export interface BaggageAllowance {
+  paxType: string;
+  baggageAllowanceDetails: BaggageAllowanceDetail[];
+}
+
+export interface BaggageAllowanceDetail {
+  baggage: string;
+  flightRoute: string;
+  baggageAllowanceInfo: BaggageAllowanceInfo;
+}
+
+export interface BaggageAllowanceInfo {
+  unit: string;
+  size: string;
+  dimensions?: string | null; // Optional since it's sometimes null
+}
+
+export interface FareDetail {
+  fareAmount: number;
+  fareType: string;
+  currencyCode: string;
+}
+
+export interface adminCharge {
+  price: number;
+  curency: string;
+  Type: string;
+  sector: string;
+}
+
+export interface ItinTotalFare {
+  amount: number;
+  fareAmount: number;
+  promoCode: string | null;
+  promoDiscount: number;
+  currencyCode: string;
+  totalTaxes: number;
+  dName: string | null;
+  mName: string | null;
+}
+
+export interface PassengerFareBreakDown {
+  key: string;
+  pricingMethod: string;
+  cancelPenaltyDTOs: Penalty[];
+  changePenaltyDTOs: Penalty[];
+  passengerQuantity: number;
+  passengerType: string;
+  passengersRef: string | null;
+  flightFaresDTOs: FareDetail[];
+  taxes: any; // Define structure if needed
+}
+
+export interface Penalty {
+  price: number;
+  curency: string;
+  percentage: number;
+  percentageApplied: boolean;
+  sector: string;
+  time: string;
+}
+
+export interface OptionalService {
+  chargeable: string;
+  key: string;
+  type: string;
+  tag: string;
+  serviceInfo: ServiceInfo;
+}
+
+export interface ServiceInfo {
+  description: string[];
+  dimension?: Dimension | null;
+}
+
+export interface Dimension {
+  height: string;
+  width: string;
 }

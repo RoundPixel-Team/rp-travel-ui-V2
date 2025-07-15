@@ -1,21 +1,20 @@
 import { Injectable, inject } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
+import { FlightSearchService } from '../../flight-search/services/flight-search.service';
 import {
+  Brand,
   FareRules,
   FlightSearchResult,
+  IAirItinerary,
+  IFlight,
   SearchFlightModule,
-  airItineraries,
+  customAirlineFilter,
   filterFlightInterface,
-  flight,
-  flightResultFilter,
+  flightResultFilter
 } from '../interfaces';
-import { ActivatedRoute, Router } from '@angular/router';
 import { FlightResultApiService } from './flight-result-api.service';
-import { customAirlineFilter } from '../interfaces';
-import { FlightSearchService } from '../../flight-search/services/flight-search.service';
-import { Brand } from '../models/brandedFares.models';
-import { IAirItinerary, IFlight } from '../../user-managment/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -976,7 +975,7 @@ export class FlightResultService {
   /**
    * check value stop
    **/
-  stopscheck(stops: number[], flight: flight[]) {
+  stopscheck(stops: number[], flight: IFlight[]) {
     let status: Boolean = true;
     let t1 = performance.now();
     flight.forEach((element) => {
