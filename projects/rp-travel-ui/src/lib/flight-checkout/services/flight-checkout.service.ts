@@ -875,7 +875,6 @@ export class FlightCheckoutService {
   }
 newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandId: number, selectedMethod: mergedGates,payToken:string) {
   this.saveBookingLoadeer = true;
-  console.log(this.selectedFlight);
   
   this.subscription.add(
     this.api
@@ -1009,7 +1008,6 @@ Pay(selectedMethod: mergedGates, HG: string, token: string, payToken: string) {
           userForm.get('phoneNumber')?.setValue(String(phoneValue));
         }
       }
-      console.log(this.usersArray.at(i).get('countryOfResidence'));
       
 
       this.usersArray
