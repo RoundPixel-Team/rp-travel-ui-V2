@@ -581,16 +581,17 @@ export class FlightSearchService {
     this.retDateAlert.enMsg = '';
     this.retDateAlert.arMsg = '';
     if (retDate) {
-      let depDate = (<FormArray>this.searchFlight?.get('Flights'))
+      let depDate = new Date((<FormArray>this.searchFlight?.get('Flights'))
       .at(0)
-      ?.get('departingD')?.value;
+      ?.get('departingD')?.value);
+      let returnDate = new Date(retDate)
       //check if date is previous than today
       if (retDate <= this.todayDate()) {
         this.retDateAlert.enMsg = 'You Should select a date after this day';
         this.retDateAlert.arMsg = 'يجب عليك تحديد تاريخ بعد هذا اليوم';
       }
       //check of date is is previous than depart date
-      else if (retDate < depDate) {
+      else if (returnDate < depDate) {
         this.retDateAlert.enMsg =
           'You Should Select a date After your Depart Date';
         this.retDateAlert.arMsg =

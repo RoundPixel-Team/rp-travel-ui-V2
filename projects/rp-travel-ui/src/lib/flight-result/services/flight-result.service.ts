@@ -1263,7 +1263,7 @@ export class FlightResultService {
   getBrandedFares(
     searchId: string,
     squencNumber: number,
-    pKey: number,
+    pKey: string,
     pcc: string
   ) {
     this.isBrandedFaresLoading = true;
@@ -1288,6 +1288,7 @@ export class FlightResultService {
         error: (err) => {
           console.error(err.message);
           this.isBrandedFaresLoading = false;
+          this.brandedFareNotifier.error('Faild to load branded fares');
         }
       });
     }
