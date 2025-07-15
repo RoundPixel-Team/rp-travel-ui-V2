@@ -13,6 +13,7 @@ import { LimitToPipe } from './shared/pipes/limit-to.pipe';
 import { ExchangePipe } from './shared/pipes/exchange.pipe';
 import { DatePipe } from '@angular/common';
 import { FilterAirportPipe } from './shared/pipes/filter-airport.pipe';
+import { TimeFormatPipe } from './shared/pipes/timeFormat.pipe';
 
 
 
@@ -27,7 +28,8 @@ import { FilterAirportPipe } from './shared/pipes/filter-airport.pipe';
         HourMinutePipe,
         LimitToPipe,
         ExchangePipe,
-        FilterAirportPipe
+        FilterAirportPipe,
+        TimeFormatPipe
     ],
     exports: [
         RpTravelUiComponent,
@@ -42,7 +44,8 @@ import { FilterAirportPipe } from './shared/pipes/filter-airport.pipe';
         HotelecitesPipe,
         HourMinutePipe,
         LimitToPipe,
-        ExchangePipe
+        ExchangePipe,
+        TimeFormatPipe
     ], imports: [ReactiveFormsModule,
         FormsModule], providers: [HttpClient, DatePipe, provideHttpClient(withInterceptorsFromDi())] })
 export class RpTravelUiModule { }

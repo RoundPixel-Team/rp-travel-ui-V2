@@ -10,10 +10,10 @@ export class HourMinutePipe implements PipeTransform {
     const minutes =  value % 60 | 0;
 
     if(lang === 'ar') {
-      return hours + ' س' + minutes + ' د';
+      return hours + ' س' + ' ' + minutes + ' د';
     }
 
-    return hours + ' h' + minutes + ' m';
+    return hours + ' h' + ' ' + minutes + ' m';
   }
 
 }
