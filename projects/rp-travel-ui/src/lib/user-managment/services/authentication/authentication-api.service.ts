@@ -135,4 +135,8 @@ export class AuthApiService {
       catchError(err => { throw err; })
     );
   }
+
+  facebookLogin(facebookData: any): Observable<any> {
+    return this.http.post(`${this.env.users}/api/User/SigninFacebook`, facebookData);
+  }
 }
