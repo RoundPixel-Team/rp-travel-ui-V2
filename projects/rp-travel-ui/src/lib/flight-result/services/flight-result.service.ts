@@ -142,16 +142,21 @@ export class FlightResultService {
       longStops: new FormControl(false),
     }),
 
-    departSchedule: new FormGroup({
+    goingFlightScheduleDepart: new FormGroup({
       startTime: new FormControl(''),
       endTime: new FormControl(''),
-      isDeparting: new FormControl(false),
     }),
-
-    returnSchedule: new FormGroup({
+    goingFlightScheduleArrival: new FormGroup({
       startTime: new FormControl(''),
       endTime: new FormControl(''),
-      isDeparting: new FormControl(false),
+    }),
+    returnFlightScheduleDepart: new FormGroup({
+      startTime: new FormControl(''),
+      endTime: new FormControl(''),
+    }),
+    returnFlightScheduleArrival: new FormGroup({
+      startTime: new FormControl(''),
+      endTime: new FormControl(''),
     }),
 
     flexibleTickets: new FormGroup({
@@ -292,15 +297,22 @@ export class FlightResultService {
                 overNight: new FormControl(false),
                 longStops: new FormControl(false),
               }),
-              departSchedule: new FormGroup({
+              
+              goingFlightScheduleDepart: new FormGroup({
                 startTime: new FormControl(''),
                 endTime: new FormControl(''),
-                isDeparting: new FormControl(false),
               }),
-              returnSchedule: new FormGroup({
+              goingFlightScheduleArrival: new FormGroup({
                 startTime: new FormControl(''),
                 endTime: new FormControl(''),
-                isDeparting: new FormControl(false),
+              }),
+              returnFlightScheduleDepart: new FormGroup({
+                startTime: new FormControl(''),
+                endTime: new FormControl(''),
+              }),
+              returnFlightScheduleArrival: new FormGroup({
+                startTime: new FormControl(''),
+                endTime: new FormControl(''),
               }),
 
               flexibleTickets: new FormGroup({
@@ -406,8 +418,8 @@ export class FlightResultService {
             this.filteringbyBookingSites(
               this.filterForm.get('bookingSite')?.get('bookingSites')?.value!
             ),
-            this.filterForm.get('departSchedule')?.value!,
-            this.filterForm.get('returnSchedule')?.value!
+            this.filterForm.get('goingFlightSchedule')?.value!,
+            this.filterForm.get('returnFlightSchedule')?.value!
           );
 
           this.oneForAll(filter, this.FilterData, this.roundT);
@@ -435,8 +447,10 @@ export class FlightResultService {
           this.filterFlighWithReturnTime(v, filter, this.roundT) &&
           this.completeTripOnSameAirline(v, filter) &&
           this.filterFlightWithAirlineFunction(v, filter, this.roundT) &&
-          this.filterWithSchedule(v, true) &&
-          this.filterWithSchedule(v, false)
+          this.filterWithSchedule(v, 'goingFlightScheduleDepart') &&
+          this.filterWithSchedule(v, 'goingFlightScheduleArrival') &&
+          this.filterWithSchedule(v, 'returnFlightScheduleDepart') &&
+          this.filterWithSchedule(v, 'returnFlightScheduleArrival')
       )
     );
   }
@@ -683,23 +697,18 @@ export class FlightResultService {
     let tm = hr + m;
     return tm;
   }
-  filterWithSchedule(flight: IAirItinerary, isDeparting: Boolean): boolean {
-    const schedule = this.filterForm.get(
-      isDeparting ? 'departSchedule' : 'returnSchedule'
-    )?.value;
-
-    if (schedule?.endTime && schedule.startTime) {
-      // const date = new Date(schedule.isDeparting ? flight.deptDate : flight.arrivalDate);
-      const flightObj = flight.allJourney.flights[isDeparting ? 0 : 1];
+  filterWithSchedule(flight: IAirItinerary, flightType: 'goingFlightScheduleDepart' | 'returnFlightScheduleDepart' | 'goingFlightScheduleArrival' | 'returnFlightScheduleArrival'): boolean {
+    const schedule = this.filterForm.get(flightType)?.value;
+    const flightIndex = flightType.includes('going') ? 0 : 1;
+    
+    if (schedule?.endTime && schedule?.startTime) {
+      const flightObj = flight.allJourney.flights[flightIndex];
+      const flightSegmentIndex = flightType.includes('Depart') ? 0 : flightObj.flightDTO.length - 1;
 
       const date = new Date(
-        schedule.isDeparting
-          ? flightObj.flightDTO[
-              isDeparting ? 0 : flightObj.flightDTO.length - 1
-            ].departureDate
-          : flightObj.flightDTO[
-              isDeparting ? 0 : flightObj.flightDTO.length - 1
-            ].arrivalDate
+        flightType.includes('Depart') ? 
+          flightObj.flightDTO[flightSegmentIndex].departureDate : 
+          flightObj.flightDTO[flightSegmentIndex].arrivalDate
       );
 
       const currentHours = date.getHours();
@@ -1425,16 +1434,21 @@ export class FlightResultService {
         nonRefund: new FormControl(false),
       }),
 
-      departSchedule: new FormGroup({
+      goingFlightScheduleDepart: new FormGroup({
         startTime: new FormControl(''),
         endTime: new FormControl(''),
-        isDeparting: new FormControl(false),
       }),
-
-      returnSchedule: new FormGroup({
+      goingFlightScheduleArrival: new FormGroup({
         startTime: new FormControl(''),
         endTime: new FormControl(''),
-        isDeparting: new FormControl(false),
+      }),
+      returnFlightScheduleDepart: new FormGroup({
+        startTime: new FormControl(''),
+        endTime: new FormControl(''),
+      }),
+      returnFlightScheduleArrival: new FormGroup({
+        startTime: new FormControl(''),
+        endTime: new FormControl(''),
       }),
     });
 
