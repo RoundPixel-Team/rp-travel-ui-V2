@@ -129,4 +129,25 @@ GetAllOffers(pos: string):Observable<{offers:OfferDTO[]}> {
       let API: string = `${this.env.offlineSeats}${this.env.offers.RetriveItineraryDetails}?ItineraryId=${id}`;
       return this.http.get<Itinerary>(API).pipe(retry(3), take(1), catchError(err => { console.error(err); throw err }));
     }
+
+  getAboutUs(){
+    let API:string = `${this.env.staticPages}/api/Pages/GetPageBySlug?slug=about-us`;
+    return this.http.get(API).pipe(retry(3),take(1),catchError(err=>{console.error(err);throw err}))
+  }
+
+  getContact(){
+    let API:string = `${this.env.staticPages}/api/Pages/GetPageBySlug?slug=contact`;
+    return this.http.get(API).pipe(retry(3),take(1),catchError(err=>{console.error(err);throw err}))
+  }
+
+  getPrivacyPolicy(){
+    let API:string = `${this.env.staticPages}/api/Pages/GetPageBySlug?slug=privacy-policy`;
+    return this.http.get(API).pipe(retry(3),take(1),catchError(err=>{console.error(err);throw err}))
+  }
+
+  getTerms(){
+    let API:string = `${this.env.staticPages}/api/Pages/GetPageBySlug?slug=terms`;
+    return this.http.get(API).pipe(retry(3),take(1),catchError(err=>{console.error(err);throw err}))
+  }
+
 }

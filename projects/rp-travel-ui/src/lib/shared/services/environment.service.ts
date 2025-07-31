@@ -19,6 +19,7 @@ export class EnvironmentService {
     prepay = 'https://prepayapi.rhlaty.com'
     backOffice =  'https://backofficeapi.rhlaty.com'
     FlightTop =   'https://flightsearch.rhlaty.com'
+    staticPages = 'http://154.41.209.93:4081'
     offers= {
       //Ticket boarding offers endpoints
       getAll: 'http://178.63.214.221:7893/api/GetAllOffersAPI?POS=',
@@ -47,6 +48,7 @@ export class EnvironmentService {
     this.bookHotels = env.bookHotels
     this.getDPayment = env.getDPayment
     this.prepay = env.prepay
+    this.staticPages = env.staticPages
     this.offers.BookOffer = env.offers.BookOffer
     this.offers.RetriveItineraryDetails = env.offers.RetriveItineraryDetails
     this.offers.getAll = env.offers.getAll
