@@ -338,7 +338,7 @@ paymentGates:paymentGateways[]=[
 
   }
   createMPGSSession(paymentMethod: string, amount: number|undefined, currency: string|undefined) {
-  const url = `${this.env.prepay}/api/CreateMPGsSession?paymentMethod=${paymentMethod}&amount=${amount}&currency=${currency}`;
+  const url = `${this.env.prepay}/api/CreateMPGsSession?paymentMethod=${paymentMethod}&amount=${amount}&currency=${currency}&hgnumber=&hgToken=&email=`;
   return this.http.get(url, { responseType: 'text' }).pipe(
     map((res:string) => {return res; }),
     catchError(err => {
