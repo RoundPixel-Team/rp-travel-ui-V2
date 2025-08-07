@@ -75,21 +75,10 @@ export class FlightSearchService {
     }
     //no values on local storage
     else {
-      this.searchFlight = new FormGroup({
+       this.searchFlight = new FormGroup({
         flightType: new FormControl('RoundTrip', [Validators.required]),
         Direct: new FormControl(false, [Validators.required]),
-        Flights: new FormArray([
-          new FormGroup({
-            departing: new FormControl('', [Validators.required]),
-            landing: new FormControl('', [Validators.required]),
-            departingD: new FormControl('', [Validators.required]),
-          }),
-          new FormGroup({
-            departing: new FormControl('', [Validators.required]),
-            landing: new FormControl('', [Validators.required]),
-            departingD: new FormControl('', [Validators.required]),
-          })
-        ], [Validators.required]),
+        Flights: new FormArray([], [Validators.required]),
         returnDate: new FormControl(''),
         passengers: new FormGroup(
           {
