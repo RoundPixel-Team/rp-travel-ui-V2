@@ -12,7 +12,7 @@ export interface enviromentModel{
     bookHotels   : string
     backOffice   : string
     FlightTop    : string
-    staticPages  : string
+    staticPages?  : string
     offers:{
       getAll     : string,
       getByID    : string,

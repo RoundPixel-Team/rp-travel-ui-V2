@@ -19,7 +19,7 @@ export class EnvironmentService {
     prepay = 'https://prepayapi.rhlaty.com'
     backOffice =  'https://backofficeapi.rhlaty.com'
     FlightTop =   'https://flightsearch.rhlaty.com'
-    staticPages = 'http://154.41.209.93:4081'
+    staticPages? = 'http://154.41.209.93:4081'
     offers= {
       //Ticket boarding offers endpoints
       getAll: 'http://178.63.214.221:7893/api/GetAllOffersAPI?POS=',
