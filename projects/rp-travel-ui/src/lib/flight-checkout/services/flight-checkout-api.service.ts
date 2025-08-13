@@ -161,7 +161,16 @@ paymentGates:paymentGateways[]=[
     cardImg:'../../../assets/cards/checkout_visacredit.png',
     GatewayType:'dafa3nyvisaCredit'
   },
-
+{
+    PaymentMethod:'myfatoorahmeeza',
+    cardImg:'../../../assets/cards/meeza.jpg',
+    GatewayType:'MyFatoorahMeeza'
+  },
+  {
+    PaymentMethod:'myfatoorahfawrycard',
+    cardImg:'../../../assets/cards/fawry.png',
+    GatewayType:'MyFatoorahFawryCard'
+  },
 ]
   isPnet:boolean = false;
 
