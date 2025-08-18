@@ -18,6 +18,6 @@ export const PASSWORD_VALIDATION = [
 
 export const PHONE_VALIDATION =   [
   Validators.required,
-  Validators.minLength(10),
+  // Validators.minLength(10),
   Validators.pattern(PHONE_PATTERN)
 ]
