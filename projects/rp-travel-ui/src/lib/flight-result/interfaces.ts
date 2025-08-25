@@ -219,6 +219,9 @@ export interface IPenaltyDTO {
   price: number;
   curency: string;
   percentage: number;
+  percentageApplied: boolean;
+  sector: string;
+  time: string | null;
 }
 
 export interface IFlightFareDTO {

@@ -85,6 +85,9 @@ export const PENALTY_DTO_DEFAULT: IPenaltyDTO = {
   price: 0,
   curency: '',
   percentage: 0,
+  sector: '',
+  percentageApplied: false,
+  time: null
 };
 
 export const FLIGHT_FARE_DTO_DEFAULT: IFlightFareDTO = {
