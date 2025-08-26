@@ -363,6 +363,8 @@ export interface ItinTotalFare {
   totalTaxes: number;
   dName: string | null;
   mName: string | null;
+  dValue: number | null;
+  mValue: number | null;
 }
 
 export interface PassengerFareBreakDown {

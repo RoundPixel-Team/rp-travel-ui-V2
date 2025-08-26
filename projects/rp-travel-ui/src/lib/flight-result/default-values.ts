@@ -16,6 +16,8 @@ export const ITINERARY_DEFAULT: IAirItinerary = {
         totalTaxes: 0,
         dName: null,
         mName: null,
+        dValue: null,
+        mValue: null
     },
     totalDuration: 0,
     deptDate: '',
@@ -228,7 +230,7 @@ export const AIR_ITINERARIES_DEFAULT: IAirItinerary = {
   experiance: 0,
   sequenceNum: 0,
   isRefundable: false,
-  itinTotalFare: { amount: 0, currencyCode: '', totalTaxes: 0, dName: '', fareAmount: 0, mName: '', promoCode: '', promoDiscount: 0 },
+  itinTotalFare: { amount: 0, currencyCode: '', totalTaxes: 0, dName: '', fareAmount: 0, mName: '', promoCode: '', promoDiscount: 0, dValue: null, mValue: null },
   totalDuration: 0,
   deptDate: '',
   arrivalDate: '',
@@ -284,7 +286,9 @@ export const ITIN_TOTAL_FARE_DEFAULT: ItinTotalFare = {
   promoCode: '',
   promoDiscount: 0,
   dName: '',
-  mName: ''
+  mName: '',
+  dValue: null,
+  mValue: null,
 };
 
 
