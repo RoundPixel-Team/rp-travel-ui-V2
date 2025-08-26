@@ -32,7 +32,7 @@ export class ConfirmationService {
     this.api.getConfirmation(hgNum,searchId,tok).subscribe((res)=>{
       if(res){
         this.confirmationData = res
-        this.formatWegoClicktUrl()
+        this.formatWegoClicktUrl();
         this.loading = false
       }
     },(err)=>{
@@ -49,10 +49,10 @@ export class ConfirmationService {
    */
   formatWegoClicktUrl(){
     let comm_currency_code ='USD';
-    let bv_currency_code ='KWD';
+    let bv_currency_code ='EGP';
     let transaction_id = this.confirmationData.pnr;
     let total_booking_value = this.confirmationData.fareAmount;
-    let commission =total_booking_value *.02;
+    let commission =0;
     let status ='confirmed';
     if(localStorage.getItem('click_id')){
       var url = `https://srv.wego.com/genzo/v2/conversions?conversion_id=c-wego-travasky.com&click_id=${localStorage.getItem('click_id')}&comm_currency_code=${comm_currency_code}&bv_currency_code=${bv_currency_code}&transaction_id=${transaction_id}&commission=${commission}&total_booking_value=${total_booking_value}&status=${status}`;
