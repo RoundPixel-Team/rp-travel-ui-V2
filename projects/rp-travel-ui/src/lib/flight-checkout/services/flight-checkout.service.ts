@@ -27,25 +27,25 @@ export class FlightCheckoutService {
   addbuttonVaild:boolean = false ;
   bookingResponse!: BookingResponse;
   $bookingResponse = new Subject<void>();
-  
+
   /**
-   * here is the loaded selected data 
+   * here is the loaded selected data
    */
   selectedFlight : selectedFlight | undefined = undefined
 selectedFlightSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   /**
-   * 
+   *
    * here is all the loaded offline services
    */
   allOfflineServices : flightOfflineService[] = []
-  
+
   /**
-   * here is the chosen/selected offline service 
+   * here is the chosen/selected offline service
    */
   selectedOfflineServices : string[] = []
 
   /**
-   * here is all loaded offline services orgnized and grouped by type 
+   * here is all loaded offline services orgnized and grouped by type
    */
   organizedOfllineServices : flightOfflineService[] = []
 
@@ -94,6 +94,15 @@ bookingType:string='standard'
    * indicating which pcc provided the selected itinerary
    */
   pcc:string = ''
+
+
+
+  /**
+  indecating the startPayment process error
+  */
+
+  paymentError: boolean = false;
+
 
 
   /**
@@ -154,10 +163,10 @@ bookingType:string='standard'
 
 
   /**
-   * 
-   * @param searchId 
-   * @param sequenceNum 
-   * @param providerKey 
+   *
+   * @param searchId
+   * @param sequenceNum
+   * @param providerKey
    * this is for fetching the selected flight data and update selected flight state (selectedFlight:selectedFlight)
    * also update loader state
    */
@@ -173,7 +182,7 @@ bookingType:string='standard'
           this.loader = false
           if(res.status == 'Valid'){
             this.priceWithRecommenedService += res.airItineraryDTO.itinTotalFare.amount
-            
+
             // initilize users forms
             this.buildUsersForm(
               res.searchCriteria.adultNum,
@@ -188,10 +197,10 @@ bookingType:string='standard'
               // assign values to fare breakup and fare disscount
               this.calculateFareBreakupDisscount()
               this.calculatePassengersFareBreakupValue()
-              
+
               this.selectedFlightLang.next(res.searchCriteria.language)
           }
-          
+
           else{
             this.selectedFlightError = true
             console.log("now error happens")
@@ -207,9 +216,9 @@ bookingType:string='standard'
   }
 
   /**
-   * 
-   * @param searchId 
-   * @param pos 
+   *
+   * @param searchId
+   * @param pos
    * this is for fetching the flight offline services data and update offline service state (offlineServices:flightOfflineServices[])
    * also update offlineServicesLoader state
    */
@@ -228,7 +237,7 @@ bookingType:string='standard'
           else{
             return {...s,added:false,interaction:false}
           }
-          
+
         })]
         if(multiTypes){
           this.organizedOfllineServices = this.organizeOfflineServices(this.allOfflineServices)
@@ -242,7 +251,7 @@ bookingType:string='standard'
   }
 
   /**
-   * 
+   *
    * @param data [all offline services data]
    * @returns offline services organized and grouped with the new logic
    */
@@ -260,7 +269,7 @@ bookingType:string='standard'
       }
     }
     allPackageServiceParents = [...new Set([...allPackageServiceParents])]
-    
+
     if(allPackageServiceParents.length > 0){
       for(var i =0;i<allPackageServiceParents.length; i++){
         let firstParentMatch : flightOfflineService = packageServices.filter((s)=>{return s.parentService == allPackageServiceParents[i]})[0]
@@ -271,19 +280,19 @@ bookingType:string='standard'
 
     return [...data.filter((s)=>{return s.serviceType != 'package'})].concat(packageServices)
   }
-  
+
 
 
   /**
-   * 
-   * @param adults 
-   * @param childs 
-   * @param infants 
+   *
+   * @param adults
+   * @param childs
+   * @param infants
    * @param passportFlag
    * this function is responsible for creating/building the checkout forms for each passenger according to number
    * of adults and childs and infants and updates the state of the form [usersForm]
    * it also build these forms depending on the paspport flag either required or not
-   * if is been called automatically once the selected flight state is containg data 
+   * if is been called automatically once the selected flight state is containg data
    */
   buildUsersForm(adults:number,childs:number,infants:number,passportFlag:boolean,userCombinedNames:boolean){
     // build form when passports details are required
@@ -373,7 +382,7 @@ bookingType:string='standard'
             })
           )
         }
-        
+
       }
 
       // build childs forms WITH paspport details
@@ -428,7 +437,7 @@ bookingType:string='standard'
             lastName: new FormControl("", [
               Validators.required,
               Validators.pattern("^[a-zA-Z -']+"),
-              Validators.minLength(3),              
+              Validators.minLength(3),
             ]),
             passportnum: new FormControl("", [Validators.maxLength(12)]),
             dateOfBirth: new FormControl("", [Validators.required]),
@@ -544,7 +553,7 @@ bookingType:string='standard'
           lastName: new FormControl("", [
             Validators.required,
             Validators.pattern("^[a-zA-Z -']+"),
-            Validators.minLength(3),              
+            Validators.minLength(3),
           ]),
           passportnum: new FormControl("", [Validators.maxLength(12)]),
           dateOfBirth: new FormControl("", [Validators.required]),
@@ -565,8 +574,8 @@ bookingType:string='standard'
 
 
   /**
-   * 
-   * @param service 
+   *
+   * @param service
    * this for adding a new offline service with the selected flight
    * also adding offline service cost to the whole price
    */
@@ -576,13 +585,13 @@ bookingType:string='standard'
     if(this.selectedFlight != undefined){
       this.selectedFlight.airItineraryDTO.itinTotalFare.amount += service.servicePrice
       this.priceWithRecommenedService += service.servicePrice
-      this.serviceFees += service.servicePrice;    
+      this.serviceFees += service.servicePrice;
          //appear validation message based on boolean value
          switch(service.serviceType) {
-          case 'addbutton':  
+          case 'addbutton':
             this.addbuttonVaild = true;
             break;
-      
+
           case 'yes/no':
             this.yesOrNoVaild = true;
             break;
@@ -596,16 +605,16 @@ bookingType:string='standard'
   }
 
   /**
-   * 
-   * @param service 
+   *
+   * @param service
    * this is to remove an already selected offline service with the selected flight
    * also removing offline service from the whole price
    */
   removeOfflineService(service : flightOfflineService){
     let serviceIndex = this.allOfflineServices.findIndex((s)=>{return s.serviceCode == service.serviceCode})
     this.selectedOfflineServices = this.selectedOfflineServices.filter((s)=>{return s != service.serviceCode})
-    if(this.selectedFlight != undefined){ 
-      //if interacted before 
+    if(this.selectedFlight != undefined){
+      //if interacted before
           if(this.serviceFees == 0){
             this.serviceFees = 0;
           }
@@ -616,10 +625,10 @@ bookingType:string='standard'
       }
          //appear validation message based on boolean value
          switch(service.serviceType) {
-          case 'addbutton':  
+          case 'addbutton':
             this.addbuttonVaild = true;
             break;
-      
+
           case 'yes/no':
             this.yesOrNoVaild = true;
             break;
@@ -634,10 +643,10 @@ bookingType:string='standard'
 
 
   /**
-   * 
-   * @param copounCode 
-   * @param searchId 
-   * @param sequenceNum 
+   *
+   * @param copounCode
+   * @param searchId
+   * @param sequenceNum
    * @param providerKey
    * check if the entered copoun code is valid and apply the disscount amount on the flight price
    * it updates the state of [copounCodeLoader : boolean]
@@ -676,7 +685,7 @@ bookingType:string='standard'
 
 
   /**
-   * 
+   *
    * @returns error type either main form error (email & phone number) or passenger error (error happens while entering passengers data)
    * IT RETURNS (Valid) in the type of string this means that every thing is OK and ready to payment
    */
@@ -703,8 +712,8 @@ bookingType:string='standard'
 
 
   /**
-   * 
-   * @param currentCurrency 
+   *
+   * @param currentCurrency
    * here is the save booking function which returning the payment link if all params is good
    * it updates the behaviour subject (paymentLink) with the link
    * it also updates the behaviour subject (paymentLinkFailure) with the error
@@ -736,7 +745,7 @@ bookingType:string='standard'
       this.loader = false
       this.selectedFlightError = true
     }))
-    
+
   }
   generateSaveBookingBody(
     checkOutDetails: CheckOutDetails,
@@ -860,8 +869,8 @@ bookingType:string='standard'
   }
 
   /**
-   * 
-   * @param currentCurrency 
+   *
+   * @param currentCurrency
    * @returns the passenger details (body param) needed by backend to make the save booking action
    */
   generateSaveBookingBodyParam(currentCurrency:string):passengersModel{
@@ -877,7 +886,7 @@ bookingType:string='standard'
         this.usersArray.at(i).get('phoneNumber')?.setValue(this.usersArray.at(i).get('phoneNumber')?.value.number)
       }
 
-      
+
       this.usersArray.at(i).get('countryOfResidence')?.setValue(this.home.allCountries
         .filter(c=>{return c.countryName == this.usersArray.at(i).get('countryOfResidence')?.value})[0].pseudoCountryCode)
         this.usersArray.at(i).get('IssuedCountry')?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value)
@@ -918,13 +927,13 @@ bookingType:string='standard'
 
 
   /**
-   * 
-   * @param flightFaresDTO 
-   * @param totalAmount 
-   * @param totalTax 
-   * @param curruncy 
-   * @param calcEqfare 
-   * @param fareCalc 
+   *
+   * @param flightFaresDTO
+   * @param totalAmount
+   * @param totalTax
+   * @param curruncy
+   * @param calcEqfare
+   * @param fareCalc
    * @returns value of discount or service fees
    */
   returnPassTotalFarDifferance(flightFaresDTO: passengerFareBreakDownDTOs[], totalAmount: number,totalTax:number,curruncy:string,calcEqfare:calcEqfare,fareCalc:fareCalc): [number, string, string] {
@@ -940,15 +949,15 @@ bookingType:string='standard'
      } else {
        return [0 , '','KWD'];
      }
- 
+
    }
 
 
    /**
-   * 
-   * @param flightFaresDTO 
-   * @param type 
-   * @param farecalc 
+   *
+   * @param flightFaresDTO
+   * @param type
+   * @param farecalc
    * @returns numer of passenger * fare of passenger
    */
    calcEqfare(flightFaresDTO: passengerFareBreakDownDTOs[],type:string,farecalc:fareCalc):number{
@@ -958,13 +967,13 @@ bookingType:string='standard'
    }
 
    /**
-   * 
-   * @param fare 
+   *
+   * @param fare
    * @returns validate equivelent fare
    */
 
    returnCorrectFare(fare:fare[]):number{
-    if(fare){     
+    if(fare){
      let equivfare = fare.find(v=>v.fareType.toLowerCase() === 'equivfare')?.fareAmount;
      let totalFare = fare.find(v=>v.fareType.toLowerCase() === 'totalfare')?.fareAmount;
      let totalTax  = fare.find(v=>v.fareType.toLowerCase() === 'totaltax')?.fareAmount;
@@ -974,15 +983,15 @@ bookingType:string='standard'
      else{
       return 0
      }
-     
+
     } else{
       return 0
     }
-    
+
   }
 
   /**
-   * 
+   *
    */
   calculatePassengersFareBreakupValue(){
       let AdtFares  = this.selectedFlight?.airItineraryDTO.passengerFareBreakDownDTOs?.find(v=>v.passengerType ==='ADT');
@@ -1005,9 +1014,9 @@ bookingType:string='standard'
   }
 
   /**
-   * 
-   * @param flightFaresDTO 
-   * @param passNumber 
+   *
+   * @param flightFaresDTO
+   * @param passNumber
    * @returns [total value ,curruncy code]
    */
   returnPassTotalFar(flightFaresDTO:fare[],passNumber:number,calcfare:fareCalc):[number,string]{
@@ -1016,9 +1025,9 @@ bookingType:string='standard'
   }
 
   /**
-   * 
-   * @param flightFaresDTO 
-   * @param passNumber 
+   *
+   * @param flightFaresDTO
+   * @param passNumber
    * @returns [total value per passenger ,curruncy code , number of passenger]
    */
   returnPassFareScatterd(flightFaresDTO:fare[],passNumber:number,calcfare:fareCalc):[number,string,number]{
@@ -1040,7 +1049,7 @@ bookingType:string='standard'
 newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandId: number,selectedMethod:mergedGates,device:string,os:string,browser:string) {
  this.newSaveBookingLoadar = true;
  console.log(this.selectedFlight);
- 
+
     this.subscription.add(
       this.api
        .bookItinerary(
@@ -1071,7 +1080,7 @@ newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandI
                 this.$bookingResponse.next();
                 return;
               }
-              
+
               this.continuePaymentProcess(selectedMethod);
             },
             complete: () => {
@@ -1094,13 +1103,15 @@ continuePaymentProcess(selectedMethod: mergedGates) {
   const url = this.bookingResponse.getPaymentViewResponse.link
   const urlParams = new URLSearchParams(url?.split('?')[1]);
   const tokValue = urlParams.get('tok')!;
-  
+
   this.newSaveBookingLoadar = false;
   this.Pay(selectedMethod,this.HG ,tokValue);
 }
 
+
 Pay(selectedMethod: mergedGates, HG: string, token: string) {
-  this.newSaveBookingLoadar = true; // Start loader here
+  this.paymentError = false; // Reset error flag
+  this.newSaveBookingLoadar = true;
 
   this.api.startPaymentProcess(
     HG,
@@ -1126,14 +1137,14 @@ Pay(selectedMethod: mergedGates, HG: string, token: string) {
     },
     error: (err) => {
       console.error('Payment process error:', err);
-      this.newSaveBookingLoadar = false; 
+      this.paymentError = true; // Set error flag
+      this.newSaveBookingLoadar = false;
     },
     complete: () => {
-      this.newSaveBookingLoadar = false; 
+      this.newSaveBookingLoadar = false;
     }
   });
 }
-
   /**
    * this function is responsible to destory any opened subscription on this service
    */
