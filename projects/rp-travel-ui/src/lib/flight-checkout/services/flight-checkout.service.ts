@@ -110,6 +110,12 @@ export class FlightCheckoutService {
    */
   copounCodeLoader: boolean = false;
 
+
+  /**
+   * applying error payment flag
+   */
+  paymentError:boolean = false;
+
   /**
    * this contains all the applied copon code details
    */
@@ -875,11 +881,11 @@ export class FlightCheckoutService {
   }
 newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandId: number, selectedMethod: mergedGates,payToken:string) {
   this.saveBookingLoadeer = true;
-  
+  this.paymentError = false;
   this.subscription.add(
     this.api
-      .saveBooking(
-        this.generateSaveBookingBody(
+    .saveBooking(
+      this.generateSaveBookingBody(
           this.generateCheckoutDetails(currentCurrency),
           this.generateOfflineServices(type),
           this.selectedFlight?.searchCriteria.searchId!,
@@ -896,16 +902,20 @@ newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandI
       )
       .subscribe({
         next: (res) => {
+          if(!res.getPaymentViewResponse.link || res.getPaymentViewResponse.link === null){
+            this.paymentError = true;
+            return
+          }
           this.HG = res.savedBookingResponse.hgNumber;
           const url = res.getPaymentViewResponse.link;
           const urlParams = new URLSearchParams(url.split('?')[1]);
-          const tokValue = urlParams.get('tok')!;
-         
+          const tokValue = urlParams.get('tok')!;          
           this.Pay(selectedMethod, this.HG, tokValue,payToken);
         },
         error: (err) => {
           this.paymentLinkFailure.next('');
           this.saveBookingLoadeer = false;
+          this.paymentError = true;
           this.selectedFlightError = true;
           console.error('SAVE BOOKING ERROR', err);
         }
@@ -915,6 +925,7 @@ newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandI
 }
 
 Pay(selectedMethod: mergedGates, HG: string, token: string, payToken: string) {
+  this.paymentError = false; // Reset error flag
   this.api.startPaymentProcess(
     HG,
     this.selectedFlight?.searchCriteria.searchId!,
@@ -951,6 +962,7 @@ Pay(selectedMethod: mergedGates, HG: string, token: string, payToken: string) {
     error: (err) => {
       console.error('Payment process error:', err);
       this.saveBookingLoadeer = false;
+      this.paymentError = true; // Set error flag
       this.paymentLinkFailure.next('');
     },
     complete: () => {
