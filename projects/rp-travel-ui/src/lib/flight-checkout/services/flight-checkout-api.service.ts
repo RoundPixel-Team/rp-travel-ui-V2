@@ -179,10 +179,10 @@ paymentGates:paymentGateways[]=[
   constructor() { }
 
   /**
-   * 
-   * @param searchid 
-   * @param sequenceNum 
-   * @param providerKey 
+   *
+   * @param searchid
+   * @param sequenceNum
+   * @param providerKey
    * @returns all information about the selected flight according to its searchId , sequence number and provider key
    */
   getSelectedFlight(searchid: string,sequenceNum: number,providerKey: number,pcc:string,device:string,os:string,browser:string,skyscannerRedirectId?:string) {
@@ -195,9 +195,9 @@ paymentGates:paymentGateways[]=[
 
 
   /**
-   * 
-   * @param SID 
-   * @param POS 
+   *
+   * @param SID
+   * @param POS
    * @returns a list of offline services provided for a flight reservation using the search ID and the POS
    */
   offlineServices(SID: string,POS:string) {
@@ -207,11 +207,11 @@ paymentGates:paymentGateways[]=[
 
 
   /**
-   * 
-   * @param promo 
-   * @param Sid 
-   * @param sequenceNum 
-   * @param pkey 
+   *
+   * @param promo
+   * @param Sid
+   * @param sequenceNum
+   * @param pkey
    * @returns disscount amount if the copoun code is active and valid
    */
   activateCobon(promo: string, Sid: string, sequenceNum: any, pkey: string,pcc:string) {
@@ -222,20 +222,20 @@ paymentGates:paymentGateways[]=[
 
 
   /**
-   * 
-   * @param searchid 
-   * @param sequenceNum 
-   * @param body 
-   * @param pkey 
-   * @param lang 
-   * @param selectedServices 
+   *
+   * @param searchid
+   * @param sequenceNum
+   * @param body
+   * @param pkey
+   * @param lang
+   * @param selectedServices
    * @returns this function is resposible to call the save booking then checking flight validations and them generate your payment link
    */
   saveBooking(searchid: string, sequenceNum: number, body: passengersModel, pkey: string, lang:string,selectedServices:string[],ip:string,ipLocation:string,pcc:string,device:string,os:string,browser:string) {
     let api = `${this.env.BookingFlow}/api/SaveBooking?SearchId=${searchid}&SeqNum=${sequenceNum}&PKey=${pkey}&sCode=${pcc}&device=${device}&os=${os}&browser=${browser}`;
     return this.http.post<any>(api, body).pipe(take(1),retry(1),
       mergeMap(
-        (result) => { 
+        (result) => {
           let api = `${this.env.BookingFlow}/api/CheckFlightValidation?HGNum=${result.hgNumber}&Language=${lang}&SearchId=${searchid}&SeqNum=${sequenceNum}&PKey=${pkey}`;
           return this.http.get<any>(api).pipe(retry(1),take(1),
           mergeMap(()=>{
@@ -250,9 +250,17 @@ paymentGates:paymentGateways[]=[
       ),catchError(err=>{console.log(err);throw err})
     )
   }
-  bookItinerary(body: BookingRequest,device:string,os:string,browser:string) {
-    let api = `${this.env.BookingFlow}/api/BookItinerary?device=${device}&os=${os}&browser=${browser}`;
-    return this.http.post<BookingResponse>(api, body).pipe(
+  bookItinerary(body: BookingRequest, device: string, os: string, browser: string) {
+    const requestBody = {
+      ...body,
+      device,
+      os,
+      browser
+    };
+
+    let api = `${this.env.BookingFlow}/api/BookItinerary`;
+
+    return this.http.post<BookingResponse>(api, requestBody).pipe(
       take(1),
       retry(1),
       catchError((err) => {
@@ -261,6 +269,7 @@ paymentGates:paymentGateways[]=[
       })
     );
   }
+
    mergePayment(charges:paymentCharges[],gates:paymentGateways[]):mergedGates[]{
   let mergedGates: mergedGates[]=[];
   if (!Array.isArray(charges) || !Array.isArray(gates)) {
@@ -271,9 +280,9 @@ paymentGates:paymentGateways[]=[
   charges.forEach(
       (charge)=>{
         let gate = gates.filter((val)=> val?.GatewayType?.trim().toLowerCase() ===  charge?.paymentMethod?.trim().toLowerCase())[0]
-       
+
         let merge:mergedGates ={
-    
+
           cardImg:gate?.cardImg,
           GatewayType:charge?.paymentMethod,
           Currency:charge?.currency,
@@ -288,7 +297,7 @@ paymentGates:paymentGateways[]=[
   addPaymentGateways(userCurrency:string,paymentLoction:string,body:airItineraries){
   let api = `${this.env.BookingFlow}/api/checkoutApplyPaymentGateway?UserCurrency=${userCurrency}&PaymentLocation=${paymentLoction}`;
   return this.http.post<any>(api, body).pipe(
-    
+
     retry(3),
     map(val=>{return this.mergePayment(val,this.paymentGates)}),
     catchError((err) => {
