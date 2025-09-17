@@ -9,22 +9,23 @@ export class HourMinutePipe implements PipeTransform {
     const hours = value / 60 | 0 ;
     const minutes =  value % 60 | 0;
 
-    if(lang === 'ar') {
-      if(hours && minutes) {
-        return hours + ' ساعة' + ' ' + minutes + ' دقيقة';
-      } if(hours) {
-        return hours + ' ساعة';
-      } else {
-        return minutes + ' دقيقة';
-      }
+    let hourText = '';
+    let minText = '';
+
+    if(lang === 'ar'){
+      hourText = 'ساعة';
+      minText = 'دقيقة';
+    }else{
+      hourText = 'h';
+      minText = 'm';
     }
 
     if(hours && minutes) {
-      return hours + ' h' + ' ' + minutes + ' m';
-    } if(hours) {
-      return hours + ' h' ;
+      return `${hours} ${hourText}  ${minutes} ${minText}`;
+    } else if(hours) {
+      return `${hours} ${hourText}`;
     } else {
-      return minutes + ' m';
+      return `${minutes} ${minText}`;
     }
   }
 }
