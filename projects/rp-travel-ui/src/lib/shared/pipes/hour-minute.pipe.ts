@@ -10,10 +10,21 @@ export class HourMinutePipe implements PipeTransform {
     const minutes =  value % 60 | 0;
 
     if(lang === 'ar') {
-      return hours + ' ساعة' + ' ' + minutes + ' دقيقة';
+      if(hours && minutes) {
+        return hours + ' ساعة' + ' ' + minutes + ' دقيقة';
+      } if(hours) {
+        return hours + ' ساعة';
+      } else {
+        return minutes + ' دقيقة';
+      }
     }
 
-    return hours + ' h' + ' ' + minutes + ' m';
+    if(hours && minutes) {
+      return hours + ' h' + ' ' + minutes + ' m';
+    } if(hours) {
+      return hours + ' h' ;
+    } else {
+      return minutes + ' m';
+    }
   }
-
 }
