@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { EnvironmentService } from '../../shared/services/environment.service';
 import { take } from 'rxjs';
+import { ConfirmHotelStatusResponse, hotelBookingModel, PaymentResultResponse } from '../interfces';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class HotelConfirmationApiService {
   getHotelsPaymentResult(url: string) {
     // get the payment result status for hotels
     let api = `${this.env.prepay}/api/paymentresult?${url}`;
-    return this.http.get<any>(api).pipe(take(1));
+    return this.http.get<PaymentResultResponse>(api).pipe(take(1));
   }
   /**
    *@param HGNu
@@ -33,7 +34,7 @@ export class HotelConfirmationApiService {
     //  get satus after succesful payment
     let api = `${this.env.Apihotels}/api/HotelBooking/ConfirmHotelStatus?sid=${searchid}&bookingNum=${HGNu}&tok=${tok}`;
     console.log(api);
-    return this.http.get<any>(api).pipe(take(1));
+    return this.http.get<ConfirmHotelStatusResponse>(api).pipe(take(1));
   }
    /**
    * 
@@ -44,6 +45,6 @@ export class HotelConfirmationApiService {
   getHotelsConfirmation(HGNu: string, searchid: string) {
     // get return conformtion from the clint
     let api = `${this.env.Apihotels}/Api/Confirmation?sid=${searchid}&bookingNum=${HGNu}`;
-    return this.http.get<any>(api).pipe(take(3));
+    return this.http.get<hotelBookingModel>(api).pipe(take(3));
   }
 }
