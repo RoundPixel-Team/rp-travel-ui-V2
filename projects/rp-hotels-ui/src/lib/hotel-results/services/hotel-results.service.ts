@@ -102,7 +102,8 @@ export class HotelResultsService {
             this.hotelDataResponse = res;
             this.InclusionsArray=res.Inclusion;
             this.filteredHotels = res.HotelResult;
-
+            this.cleanupSessionStorage(hotelSearchObj.sID);
+            sessionStorage.setItem(`hotel-result-${hotelSearchObj.sID}`, JSON.stringify(res));
             this.hotelLocationsArr = [
               ...res.Locations.filter((location) => {
                 return location;
@@ -170,6 +171,21 @@ export class HotelResultsService {
         },
       })
     );
+  }
+
+  private cleanupSessionStorage(currentSearchId: string): void {
+    const keysToKeep = [
+      `hotel-result-${currentSearchId}`,
+      // Add other essential keys you want to keep
+    ];
+
+    // Remove old hotel search results
+    for (let i = 0; i < sessionStorage.length; i++) {
+      const key = sessionStorage.key(i);
+      if (key && key.startsWith('hotel-result-') && !keysToKeep.includes(key)) {
+        sessionStorage.removeItem(key);
+      }
+    }
   }
 
   addInclusion(){
