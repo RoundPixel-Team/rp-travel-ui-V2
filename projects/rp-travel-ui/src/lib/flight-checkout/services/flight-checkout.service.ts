@@ -230,6 +230,7 @@ export class FlightCheckoutService {
               } else {
                 this.selectedFlightError = true;
                 console.error('now error happens');
+                this.notify.next(3);
               }
               this.notify.next(1);
             }
@@ -239,6 +240,7 @@ export class FlightCheckoutService {
             this.loader = false;
             this.selectedFlightError = true;
             this.notify.next(1);
+            this.notify.next(3);
           }
         )
     );
