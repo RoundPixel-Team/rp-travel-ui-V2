@@ -126,6 +126,7 @@ export class SearchFlightModule {
     public serachId:any,
     public showDirect :boolean,
     public preferredAirLine :string,
+    public DestinationType :string
 
 
     

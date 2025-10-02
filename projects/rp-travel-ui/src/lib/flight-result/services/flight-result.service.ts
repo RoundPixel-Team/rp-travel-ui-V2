@@ -214,6 +214,7 @@ export class FlightResultService {
     passengers: string,
     Cclass: string,
     showDirect: boolean,
+    DestinationType: string,
     endCustomAirlineFilter: number,
     endCustomAirlineFilterMobile: number
   ) {
@@ -244,7 +245,8 @@ export class FlightResultService {
       Cclass,
       serachId,
       showDirect,
-      'all'
+      'all',
+      DestinationType
     );
     if (SearchFlightModule) {
       let myapi = searchApi;

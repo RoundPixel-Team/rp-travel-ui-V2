@@ -788,7 +788,8 @@ export class FlightSearchService {
     lang: string,
     currency: string,
     pointOfSale: string,
-    splitPattern: string
+    splitPattern: string,
+    destinationType:string
   ) {
     let flightList = this.getFlightInfo(splitPattern);
     let searchApi: searchFlightModel = {
@@ -804,11 +805,12 @@ export class FlightSearchService {
       serachId: this.id(),
       showDirect: this.searchFlight.get('Direct')?.value,
       preferredAirLine: 'all',
+      DestinationType: destinationType
     };
     this.resultLink = searchApi;
     return `${searchApi.lan}/${searchApi.currency}/${searchApi.pointOfReservation}/${searchApi.flightType}/${searchApi.flightsInfo}/${searchApi.serachId}/${searchApi.passengers}/${searchApi.Cclass}/${searchApi.showDirect}`;
   }
-  onSubmit(lang: string,currency: string,pointOfSale: string,splitPattern: string) {
+  onSubmit(lang: string,currency: string,pointOfSale: string,splitPattern: string,destinationType:string) {
     if (!this.searchFlight.value) {
       this.searchFlight.markAllAsTouched(); //used this function to make a red border around invalid inputs
       return '';
@@ -834,7 +836,7 @@ export class FlightSearchService {
 
       //If All Validations and conditions are true then save the form at local storage and go to search Results
       if (!adult.enMsg &&!child.enMsg &&!infant.enMsg &&!depDate.enMsg && !retDate?.enMsg) {
-        return this.getSearchresultLink(lang,currency,pointOfSale,splitPattern);
+        return this.getSearchresultLink(lang,currency,pointOfSale,splitPattern,destinationType);
       } else {
         return { adult, child, infant, retDate, depDate };
       }

@@ -12,6 +12,7 @@ export interface searchFlightModel{
     serachId:any,
     showDirect :boolean,
     preferredAirLine :string,
+    DestinationType? :string
 }
 
 /**
