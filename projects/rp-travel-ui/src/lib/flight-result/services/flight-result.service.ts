@@ -51,7 +51,7 @@ export class FlightResultService {
   roundT: boolean = false;
   airLR: any = [];
   /**fare rules loading state */
-  fareLoading: boolean = true;
+  fareLoading = false;
   isBrandedFaresLoading: boolean = false;
   ResultFound: boolean = false;
 
@@ -1261,9 +1261,15 @@ export class FlightResultService {
   /** A method to get the fare rules data */
   showFareRules(searchId: string, squencNumber: number, pKey: string) {
     this.fareLoading = true;
-    this.api.fareRules(searchId, squencNumber, pKey).subscribe((result) => {
-      this.fareLoading = false;
-      this.fareRules = result.fares;
+
+    this.api.fareRules(searchId, squencNumber, pKey).subscribe({
+      next: (result) => {
+        this.fareLoading = false;
+        this.fareRules = result.fares;
+      },
+      error: () => {
+        this.fareLoading = false;
+      }
     });
   }
 
