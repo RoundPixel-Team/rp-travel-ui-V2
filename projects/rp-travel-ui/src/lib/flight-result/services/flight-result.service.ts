@@ -26,6 +26,7 @@ export class FlightResultService {
   route = inject(ActivatedRoute);
   filter?: flightResultFilter;
   searchID: string = '';
+  destinationType:string='';
   /**
    * response Data from Api  b type FlightSearchResult
    */
@@ -225,6 +226,7 @@ export class FlightResultService {
     this.customFilteredAirlineEnd = endCustomAirlineFilter;
     this.customFilteredAirlineEndMobile = endCustomAirlineFilterMobile;
     this.searchID = serachId;
+    this.destinationType = DestinationType;
     this.airlinesA = [];
     this.airLR = [];
     this.formINIT = false;

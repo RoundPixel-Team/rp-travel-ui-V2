@@ -808,7 +808,7 @@ export class FlightSearchService {
       DestinationType: destinationType
     };
     this.resultLink = searchApi;
-    return `${searchApi.lan}/${searchApi.currency}/${searchApi.pointOfReservation}/${searchApi.flightType}/${searchApi.flightsInfo}/${searchApi.serachId}/${searchApi.passengers}/${searchApi.Cclass}/${searchApi.showDirect}`;
+    return `${searchApi.lan}/${searchApi.currency}/${searchApi.pointOfReservation}/${searchApi.flightType}/${searchApi.flightsInfo}/${searchApi.serachId}/${searchApi.passengers}/${searchApi.Cclass}/${searchApi.showDirect}/${searchApi.DestinationType}`;
   }
   onSubmit(lang: string,currency: string,pointOfSale: string,splitPattern: string,destinationType:string) {
     if (!this.searchFlight.value) {
