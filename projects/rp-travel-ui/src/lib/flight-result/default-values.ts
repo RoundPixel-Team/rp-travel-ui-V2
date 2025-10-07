@@ -330,4 +330,5 @@ export const CUSTOM_AIRLINE_FILTER_DEFAULT: customAirlineFilter = {
 export const FARE_RULES_RESPONSE_DEFAULT: fareRulesResponse = {
   errorMessage: '',
   fares: [],
+  baggageAllowances:[]
 };

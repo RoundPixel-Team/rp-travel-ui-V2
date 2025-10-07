@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { FlightSearchService } from '../../flight-search/services/flight-search.service';
 import {
+  BaggageAllowance,
   Brand,
   FareRules,
   FlightSearchResult,
@@ -108,6 +109,8 @@ export class FlightResultService {
 
   /**Property for fare Rules */
   fareRules!: FareRules[];
+
+  baggageInfo!:BaggageAllowance[] | null;
   /**
    *  inital from filter
    *
@@ -1270,6 +1273,7 @@ export class FlightResultService {
       next: (result) => {
         this.fareLoading = false;
         this.fareRules = result.fares;
+        this.baggageInfo = result.baggageAllowances
       },
       error: () => {
         this.fareLoading = false;

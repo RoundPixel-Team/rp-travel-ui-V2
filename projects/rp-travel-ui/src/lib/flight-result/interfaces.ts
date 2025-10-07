@@ -111,6 +111,7 @@ export interface fares {
 export interface fareRulesResponse{
   errorMessage: string;
   fares:FareRules[];
+  baggageAllowances:BaggageAllowance[] | null;
 }
 
 export class SearchFlightModule { 
