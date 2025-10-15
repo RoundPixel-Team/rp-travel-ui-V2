@@ -1232,37 +1232,42 @@ export class FlightResultService {
    * Choose From The Sorted Lowest Fare Airline To Filter With And Change The Form
    **/
   chooseCustomFilterAirline(val: customAirlineFilter, index: number) {
-    var indexForForm = this.customFilteredAirline.findIndex(
-      (a) => a.name == val.name
-    );
-    var airlineIndex = this.chosenCustomFilteredAirline.findIndex(
-      (name: string) => name == val.name
-    );
-    if (airlineIndex == -1) {
+    // Find the actual index in the airlinesA array (which matches the form array)
+    var indexInFormArray = this.airlinesA.findIndex((airlineName: string) => airlineName === val.name);
+    
+    if (indexInFormArray === -1) {
+      console.error('Airline not found in form array:', val.name);
+      return;
+    }
+
+    var isCurrentlySelected = this.chosenCustomFilteredAirline.includes(val.name);
+    
+    if (!isCurrentlySelected) {
+      // Add to selected airlines
       (this.filterForm.get('airline')!.get('airlines') as FormArray)
-        .at(indexForForm)
+        .at(indexInFormArray)
         .setValue(true);
       this.chosenCustomFilteredAirline.push(val.name);
     } else {
+      // Remove from selected airlines
       (this.filterForm.get('airline')!.get('airlines') as FormArray)
-        .at(indexForForm)
+        .at(indexInFormArray)
         .setValue(false);
-      this.chosenCustomFilteredAirline.splice(airlineIndex, 1);
+      const removeIndex = this.chosenCustomFilteredAirline.indexOf(val.name);
+      if (removeIndex > -1) {
+        this.chosenCustomFilteredAirline.splice(removeIndex, 1);
+      }
     }
+    
+    // Trigger the filter update
+    this.filterForm.updateValueAndValidity();
   }
 
   /**
-   * Check If The Airline Is Selected Or Not
+   * Check If The Airline Is Selected Or Not - FIXED VERSION
    **/
-  checkCustomFilterAirline(airlineName: string) {
-    var airlineIndex = this.chosenCustomFilteredAirline.findIndex(
-      (name: string) => name == airlineName
-    );
-    if (airlineIndex == -1) {
-      return false;
-    } else {
-      return true;
-    }
+  checkCustomFilterAirline(airlineName: string): boolean {
+    return this.chosenCustomFilteredAirline.includes(airlineName);
   }
 
   /** A method to get the fare rules data */
