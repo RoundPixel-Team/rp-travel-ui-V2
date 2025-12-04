@@ -49,6 +49,10 @@ export class HomePageService {
    */
   allCountries: countries[] = [];
   /**
+   * here is all available English countries
+   */
+  allEnCountries: countries[] = [];
+  /**
    * here is all available offers
    */
   allOffers: OfferDTO[] = [];
@@ -172,6 +176,23 @@ export class HomePageService {
         (res: countries[]) => {
           if (res) {
             this.allCountries = res;
+            this.loader = false;
+          }
+        },
+        (err: any) => {
+          console.error('get all countires error ->', err);
+          this.loader = false;
+        }
+      )
+    );
+  }
+  getEnCountries(currentLang: string) {
+    this.loader = true;
+    this.subscription.add(
+      this.api.getCountries(currentLang).subscribe(
+        (res: countries[]) => {
+          if (res) {
+            this.allEnCountries = res;
             this.loader = false;
           }
         },

@@ -110,11 +110,10 @@ export class FlightCheckoutService {
    */
   copounCodeLoader: boolean = false;
 
-
   /**
    * applying error payment flag
    */
-  paymentError:boolean = false;
+  paymentError: boolean = false;
 
   /**
    * this contains all the applied copon code details
@@ -178,8 +177,7 @@ export class FlightCheckoutService {
     return this.usersForm.get('users') as FormArray;
   }
 
-  constructor(public sanitizer: DomSanitizer
-) {}
+  constructor(public sanitizer: DomSanitizer) {}
 
   /**
    *
@@ -359,15 +357,14 @@ export class FlightCheckoutService {
     passportFlag: boolean,
     userCombinedNames: boolean
   ) {
+    // Clear existing forms first
+    while (this.usersArray.length) {
+      this.usersArray.removeAt(0);
+    }
 
-     // Clear existing forms first
-  while (this.usersArray.length) {
-    this.usersArray.removeAt(0);
-  }
+    // Store current length once at the beginning
+    const initialLength = this.usersArray.length;
 
-  // Store current length once at the beginning
-  const initialLength = this.usersArray.length;
-  
     // build form when passports details are required
     if (passportFlag) {
       // build adults forms WITH paspport details
@@ -403,12 +400,14 @@ export class FlightCheckoutService {
               PassengerType: new FormControl('ADT'),
               countryOfResidence: new FormControl('', [Validators.required]),
               PassportNumber: new FormControl('', [
-                Validators.required,
-                this.passportValidator(),
+                // Validators.required,
+                // this.passportValidator(),
               ]),
               PassportExpiry: new FormControl('', [Validators.required]),
               IssuedCountry: new FormControl('', [Validators.required]),
-              isIssuedCountrySelected: new FormControl(null, [Validators.required]),
+              isIssuedCountrySelected: new FormControl(null, [
+                Validators.required,
+              ]),
               position: new FormControl(this.usersArray.length + 1),
             })
           );
@@ -440,8 +439,8 @@ export class FlightCheckoutService {
               PassengerType: new FormControl('ADT'),
               countryOfResidence: new FormControl('', [Validators.required]),
               PassportNumber: new FormControl('', [
-                Validators.required,
-                this.passportValidator(),
+                // Validators.required,
+                // this.passportValidator(),
               ]),
               PassportExpiry: new FormControl('', [Validators.required]),
               IssuedCountry: new FormControl('', [Validators.required]),
@@ -483,8 +482,8 @@ export class FlightCheckoutService {
             countryCode: new FormControl(''),
             countryOfResidence: new FormControl('', [Validators.required]),
             PassportNumber: new FormControl('', [
-              Validators.required,
-              this.passportValidator(),
+              // Validators.required,
+              // this.passportValidator(),
             ]),
             PassportExpiry: new FormControl('', [Validators.required]),
             IssuedCountry: new FormControl('', [Validators.required]),
@@ -525,8 +524,8 @@ export class FlightCheckoutService {
             countryCode: new FormControl(''),
             countryOfResidence: new FormControl('', [Validators.required]),
             PassportNumber: new FormControl('', [
-              Validators.required,
-              this.passportValidator(),
+              // Validators.required,
+              // this.passportValidator(),
             ]),
             PassportExpiry: new FormControl('', [Validators.required]),
             IssuedCountry: new FormControl('', [Validators.required]),
@@ -573,7 +572,9 @@ export class FlightCheckoutService {
             dateOfBirth: new FormControl('', [Validators.required]),
             PassengerType: new FormControl('ADT'),
             countryOfResidence: new FormControl('', [Validators.required]),
-            PassportNumber: new FormControl('', [this.passportValidator()]),
+            PassportNumber: new FormControl('', [
+              // this.passportValidator()
+            ]),
             PassportExpiry: new FormControl('', [Validators.required]),
             IssuedCountry: new FormControl('', [Validators.required]),
             isIssuedCountrySelected: new FormControl(null, [
@@ -613,7 +614,9 @@ export class FlightCheckoutService {
             phoneNumber: new FormControl(''),
             countryCode: new FormControl(''),
             countryOfResidence: new FormControl(''),
-            PassportNumber: new FormControl('', [this.passportValidator()]),
+            PassportNumber: new FormControl('', [
+              // this.passportValidator()
+            ]),
             PassportExpiry: new FormControl('', [Validators.required]),
             IssuedCountry: new FormControl('', [Validators.required]),
             isIssuedCountrySelected: new FormControl(null, [
@@ -654,7 +657,9 @@ export class FlightCheckoutService {
             phoneNumber: new FormControl(''),
             countryCode: new FormControl(''),
             countryOfResidence: new FormControl(''),
-            PassportNumber: new FormControl('', [this.passportValidator()]),
+            PassportNumber: new FormControl('', [
+              // this.passportValidator()
+            ]),
             PassportExpiry: new FormControl('', [Validators.required]),
             IssuedCountry: new FormControl('', [Validators.required]),
             isIssuedCountrySelected: new FormControl(null, [
@@ -839,7 +844,12 @@ export class FlightCheckoutService {
    * it updates the behaviour subject (paymentLink) with the link
    * it also updates the behaviour subject (paymentLinkFailure) with the error
    */
-  saveBooking(currentCurrency: string, type: string, pcc: string, brandId: number) {
+  saveBooking(
+    currentCurrency: string,
+    type: string,
+    pcc: string,
+    brandId: number
+  ) {
     this.saveBookingLoadeer = true;
     this.subscription.add(
       this.api
@@ -851,127 +861,140 @@ export class FlightCheckoutService {
             this.selectedFlight?.airItineraryDTO.sequenceNum!,
             this.selectedFlight?.airItineraryDTO.pKey!.toString()!,
             pcc,
-            "",
+            '',
             this.home.pointOfSale?.ip || '00.00.000.000',
             this.home.pointOfSale?.country || 'KW',
-            "",
+            '',
             this.selectedFlight?.searchCriteria.language!,
             brandId
           )
         )
 
-        .subscribe(
-          {
-            next: (res) => {
-              this.paymentLink.next(res.getPaymentViewResponse.link);
-              this.saveBookingLoadeer = false;
-            },
-            complete: () => {
-              this.notify.next(2);
-              this.saveBookingLoadeer = false;
-            },
-            error: (err) => {
-              this.paymentLinkFailure.next('');
-              this.saveBookingLoadeer = false;
-              this.selectedFlightError = true;
-              console.error('SAVE BOOKING ERROR', err);
-            
-            }
-          }
-        )
+        .subscribe({
+          next: (res) => {
+            this.paymentLink.next(res.getPaymentViewResponse.link);
+            this.saveBookingLoadeer = false;
+          },
+          complete: () => {
+            this.notify.next(2);
+            this.saveBookingLoadeer = false;
+          },
+          error: (err) => {
+            this.paymentLinkFailure.next('');
+            this.saveBookingLoadeer = false;
+            this.selectedFlightError = true;
+            console.error('SAVE BOOKING ERROR', err);
+          },
+        })
     );
   }
-newPaymentSaveBooking(currentCurrency: string, type: string, pcc: string, brandId: number, selectedMethod: mergedGates,payToken:string) {
-  this.saveBookingLoadeer = true;
-  this.paymentError = false;
-  this.subscription.add(
-    this.api
-    .saveBooking(
-      this.generateSaveBookingBody(
-          this.generateCheckoutDetails(currentCurrency),
-          this.generateOfflineServices(type),
-          this.selectedFlight?.searchCriteria.searchId!,
-          this.selectedFlight?.airItineraryDTO.sequenceNum!,
-          this.selectedFlight?.airItineraryDTO.pKey!.toString()!,
-          pcc,
-          "",
-          this.home.pointOfSale?.ip || '00.00.000.000',
-          this.home.pointOfSale?.country || 'KW',
-          "",
-          this.selectedFlight?.searchCriteria.language!,
-          brandId
+  newPaymentSaveBooking(
+    currentCurrency: string,
+    type: string,
+    pcc: string,
+    brandId: number,
+    selectedMethod: mergedGates,
+    payToken: string
+  ) {
+    this.saveBookingLoadeer = true;
+    this.paymentError = false;
+    this.subscription.add(
+      this.api
+        .saveBooking(
+          this.generateSaveBookingBody(
+            this.generateCheckoutDetails(currentCurrency),
+            this.generateOfflineServices(type),
+            this.selectedFlight?.searchCriteria.searchId!,
+            this.selectedFlight?.airItineraryDTO.sequenceNum!,
+            this.selectedFlight?.airItineraryDTO.pKey!.toString()!,
+            pcc,
+            '',
+            this.home.pointOfSale?.ip || '00.00.000.000',
+            this.home.pointOfSale?.country || 'KW',
+            '',
+            this.selectedFlight?.searchCriteria.language!,
+            brandId
+          )
         )
+        .subscribe({
+          next: (res) => {
+            if (
+              !res.getPaymentViewResponse.link ||
+              res.getPaymentViewResponse.link === null
+            ) {
+              this.paymentError = true;
+              return;
+            }
+            this.HG = res.savedBookingResponse.hgNumber;
+            const url = res.getPaymentViewResponse.link;
+            const urlParams = new URLSearchParams(url.split('?')[1]);
+            const tokValue = urlParams.get('tok')!;
+            this.Pay(selectedMethod, this.HG, tokValue, payToken);
+          },
+          error: (err) => {
+            this.paymentLinkFailure.next('');
+            this.saveBookingLoadeer = false;
+            this.paymentError = true;
+            this.selectedFlightError = true;
+            console.error('SAVE BOOKING ERROR', err);
+          },
+          // Removed complete handler here since we want loader to continue
+        })
+    );
+  }
+
+  Pay(
+    selectedMethod: mergedGates,
+    HG: string,
+    token: string,
+    payToken: string
+  ) {
+    this.paymentError = false; // Reset error flag
+    this.api
+      .startPaymentProcess(
+        HG,
+        this.selectedFlight?.searchCriteria.searchId!,
+        token,
+        selectedMethod.PaymentMethod,
+        selectedMethod.Amount.toString(),
+        selectedMethod.GatewayType,
+        'mop',
+        payToken
       )
       .subscribe({
-        next: (res) => {
-          if(!res.getPaymentViewResponse.link || res.getPaymentViewResponse.link === null){
-            this.paymentError = true;
-            return
+        next: (val) => {
+          this.isPnet = this.api.isPnet;
+
+          if (typeof val === 'string') {
+            if (selectedMethod.PaymentMethod === 'MPGS') {
+              // 👇 Store the HTML response to a shared service or route param
+              this.router.navigate(['flights-checkout/mpgs-auth'], {
+                state: { htmlContent: val },
+              });
+            } else if (!this.isPnet) {
+              if (window.self !== window.top) {
+                window.parent.location.href = val;
+              } else {
+                window.location.href = val;
+              }
+            } else {
+              this.redirect = this.sanitizer.bypassSecurityTrustHtml(val);
+            }
+          } else {
+            this.redirect = this.sanitizer.bypassSecurityTrustHtml(val);
           }
-          this.HG = res.savedBookingResponse.hgNumber;
-          const url = res.getPaymentViewResponse.link;
-          const urlParams = new URLSearchParams(url.split('?')[1]);
-          const tokValue = urlParams.get('tok')!;          
-          this.Pay(selectedMethod, this.HG, tokValue,payToken);
         },
         error: (err) => {
-          this.paymentLinkFailure.next('');
+          console.error('Payment process error:', err);
           this.saveBookingLoadeer = false;
-          this.paymentError = true;
-          this.selectedFlightError = true;
-          console.error('SAVE BOOKING ERROR', err);
-        }
-        // Removed complete handler here since we want loader to continue
-      })
-  );
-}
-
-Pay(selectedMethod: mergedGates, HG: string, token: string, payToken: string) {
-  this.paymentError = false; // Reset error flag
-  this.api.startPaymentProcess(
-    HG,
-    this.selectedFlight?.searchCriteria.searchId!,
-    token,
-    selectedMethod.PaymentMethod,
-    selectedMethod.Amount.toString(),
-    selectedMethod.GatewayType,
-    'mop',
-    payToken
-  )
-  .subscribe({
-    next: (val) => {
-      this.isPnet = this.api.isPnet;
-
-      if (typeof val === 'string') {
-        if (selectedMethod.PaymentMethod === 'MPGS') {
-          // 👇 Store the HTML response to a shared service or route param
-          this.router.navigate(['flights-checkout/mpgs-auth'], {
-            state: { htmlContent: val }
-          });
-        } else if (!this.isPnet) {
-          if (window.self !== window.top) {
-            window.parent.location.href = val;
-          } else {
-            window.location.href = val;
-          }
-        } else {
-          this.redirect = this.sanitizer.bypassSecurityTrustHtml(val);
-        }
-      } else {
-        this.redirect = this.sanitizer.bypassSecurityTrustHtml(val);
-      }
-    },
-    error: (err) => {
-      console.error('Payment process error:', err);
-      this.saveBookingLoadeer = false;
-      this.paymentError = true; // Set error flag
-      this.paymentLinkFailure.next('');
-    },
-    complete: () => {
-      this.saveBookingLoadeer = false;
-    }
-  });
-}
+          this.paymentError = true; // Set error flag
+          this.paymentLinkFailure.next('');
+        },
+        complete: () => {
+          this.saveBookingLoadeer = false;
+        },
+      });
+  }
 
   /**
    *
@@ -985,7 +1008,7 @@ Pay(selectedMethod: mergedGates, HG: string, token: string, payToken: string) {
 
     for (var i = 0; i < this.usersArray.length; i++) {
       const userForm = this.usersArray.at(i);
-      
+
       // Title handling
       const title = userForm.get('title')?.value;
       if (title === 'Male') {
@@ -993,17 +1016,19 @@ Pay(selectedMethod: mergedGates, HG: string, token: string, payToken: string) {
       } else if (title === 'Female') {
         userForm.get('title')?.setValue('Ms');
       }
-      
-      // Date handling
-      const dateOfBirth = this.datePipe.transform(
-        userForm.get('dateOfBirth')?.value,
-        'yyyy-MM-dd'
-      ) || '';
 
-      const passportExpiry = this.datePipe.transform(
-        userForm.get('PassportExpiry')?.value,
-        'yyyy-MM-dd'
-      ) || '';
+      // Date handling
+      const dateOfBirth =
+        this.datePipe.transform(
+          userForm.get('dateOfBirth')?.value,
+          'yyyy-MM-dd'
+        ) || '';
+
+      const passportExpiry =
+        this.datePipe.transform(
+          userForm.get('PassportExpiry')?.value,
+          'yyyy-MM-dd'
+        ) || '';
 
       userForm.get('dateOfBirth')?.setValue(dateOfBirth);
       userForm.get('PassportExpiry')?.setValue(passportExpiry);
@@ -1012,17 +1037,16 @@ Pay(selectedMethod: mergedGates, HG: string, token: string, payToken: string) {
       const phoneControl = userForm.get('phoneNumber');
       if (phoneControl?.value) {
         const phoneValue = phoneControl.value;
-        
+
         if (typeof phoneValue === 'object' && phoneValue.dialCode) {
-          userForm.get('countryCode')?.setValue(
-            String(phoneValue.dialCode).replace('+', '')
-          );
+          userForm
+            .get('countryCode')
+            ?.setValue(String(phoneValue.dialCode).replace('+', ''));
           userForm.get('phoneNumber')?.setValue(phoneValue.number || '');
         } else {
           userForm.get('phoneNumber')?.setValue(String(phoneValue));
         }
       }
-      
 
       this.usersArray
         .at(i)
@@ -1092,7 +1116,7 @@ Pay(selectedMethod: mergedGates, HG: string, token: string, payToken: string) {
       pos,
       notifyToken,
       language,
-      brandId
+      brandId,
     };
   }
 
@@ -1315,12 +1339,16 @@ Pay(selectedMethod: mergedGates, HG: string, token: string, payToken: string) {
     this.yesOrNoVaild = val;
   }
 
-  getErrorMessage(control: AbstractControl, fieldName: userControllersKeys, lang: 'en' | 'ar' = 'en'): string {
+  getErrorMessage(
+    control: AbstractControl,
+    fieldName: userControllersKeys,
+    lang: 'en' | 'ar' = 'en'
+  ): string {
     const errorMessages = FORM_ERROR_MESSAGES[fieldName];
     if (!control || !errorMessages) return '';
-  
+
     const errors = control.errors || {};
-  
+
     for (const errorKey of Object.keys(errors)) {
       if (errorMessages[errorKey as keyof typeof errorMessages]) {
         return errorMessages[errorKey as keyof typeof errorMessages][lang];

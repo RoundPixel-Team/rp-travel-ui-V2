@@ -11,7 +11,7 @@ export class FlightSearchApiService {
   public env = inject(EnvironmentService);
 
   getAirportsApi(searchString: string) {
-    let api = `https://backofficeapi.round-pixel.net/api/Airports?searchStr=${searchString}`;
+    let api = `https://backofficeapi.ejazzatravel.com/api/Airports?searchStr=${searchString}`;
 
     return this.http.get(api)
   }
