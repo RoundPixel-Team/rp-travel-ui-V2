@@ -375,18 +375,16 @@ export class FlightCheckoutService {
               title: new FormControl('', [Validators.required]),
               firstName: new FormControl('', [
                 Validators.required,
-                Validators.pattern(
-                  userCombinedNames ? '[a-zA-Z ]*' : '^[a-zA-Z]+'
-                ),
+                Validators.pattern(/^[A-Za-z]+(?: [A-Za-z]+)*$/),
                 Validators.minLength(3),
               ]),
               middleName: new FormControl('', [
-                Validators.pattern('^[a-zA-Z]+'),
+                Validators.pattern(/^[A-Za-z]+(?: [A-Za-z]+)*$/),
                 Validators.minLength(3),
               ]),
               lastName: new FormControl('', [
                 Validators.required,
-                Validators.pattern('^[a-zA-Z]+'),
+                Validators.pattern('^[A-Za-z]+(?: [A-Za-z]+)*$'),
                 Validators.minLength(3),
               ]),
               email: new FormControl('', EMAIL_VALIDATION),
@@ -418,17 +416,20 @@ export class FlightCheckoutService {
               firstName: new FormControl('', [
                 Validators.required,
                 Validators.pattern(
-                  userCombinedNames ? '[a-zA-Z ]*' : '^[a-zA-Z]+'
+                  userCombinedNames
+                    ? '^[A-Za-z]+(?: [A-Za-z]+)*$' // spaces only in the middle
+                    : '^[A-Za-z]+$' // no spaces
                 ),
                 Validators.minLength(3),
               ]),
+
               middleName: new FormControl('', [
-                Validators.pattern('^[a-zA-Z]+'),
+                Validators.pattern('^[A-Za-z]+(?: [A-Za-z]+)*$'), // spaces only in middle
                 Validators.minLength(3),
               ]),
               lastName: new FormControl('', [
                 Validators.required,
-                Validators.pattern('^[a-zA-Z]+'),
+                Validators.pattern('^[A-Za-z]+(?: [A-Za-z]+)*$'),
                 Validators.minLength(3),
               ]),
               email: new FormControl(''),
@@ -461,17 +462,21 @@ export class FlightCheckoutService {
             firstName: new FormControl('', [
               Validators.required,
               Validators.pattern(
-                userCombinedNames ? '[a-zA-Z ]*' : '^[a-zA-Z]+'
+                userCombinedNames
+                  ? '^[A-Za-z]+(?: [A-Za-z]+)*$' // spaces only in the middle
+                  : '^[A-Za-z]+$' // no spaces
               ),
               Validators.minLength(3),
             ]),
+
             middleName: new FormControl('', [
-              Validators.pattern('^[a-zA-Z]+'),
+              Validators.pattern('^[A-Za-z]+(?: [A-Za-z]+)*$'), // spaces only in middle
               Validators.minLength(3),
             ]),
+
             lastName: new FormControl('', [
               Validators.required,
-              Validators.pattern("^[a-zA-Z -']+"),
+              Validators.pattern("^[A-Za-z]+(?:[ '-][A-Za-z]+)*$"), // space, - , ' only in middle
               Validators.minLength(3),
             ]),
             passportnum: new FormControl('', [Validators.max(16)]),
@@ -503,18 +508,21 @@ export class FlightCheckoutService {
             firstName: new FormControl('', [
               Validators.required,
               Validators.pattern(
-                userCombinedNames ? '[a-zA-Z ]*' : '^[a-zA-Z]+'
+                userCombinedNames
+                  ? '^[A-Za-z]+(?: [A-Za-z]+)*$' // spaces only in the middle
+                  : '^[A-Za-z]+$' // no spaces
               ),
               Validators.minLength(3),
             ]),
+
             middleName: new FormControl('', [
-              // Validators.required,
-              Validators.pattern('^[a-zA-Z]+'),
+              Validators.pattern('^[A-Za-z]+(?: [A-Za-z]+)*$'), // spaces only in middle
               Validators.minLength(3),
             ]),
+
             lastName: new FormControl('', [
               Validators.required,
-              Validators.pattern("^[a-zA-Z -']+"),
+              Validators.pattern("^[A-Za-z]+(?:[ '-][A-Za-z]+)*$"), // space, -, ' only in middle
               Validators.minLength(3),
             ]),
             passportnum: new FormControl('', [Validators.maxLength(12)]),
@@ -549,17 +557,21 @@ export class FlightCheckoutService {
             firstName: new FormControl('', [
               Validators.required,
               Validators.pattern(
-                userCombinedNames ? '[a-zA-Z ]*' : '^[a-zA-Z]+'
+                userCombinedNames
+                  ? '^[A-Za-z]+(?: [A-Za-z]+)*$' // allow spaces only in the middle
+                  : '^[A-Za-z]+$' // no spaces
               ),
               Validators.minLength(3),
             ]),
+
             middleName: new FormControl('', [
-              Validators.pattern('^[a-zA-Z]+'),
+              Validators.pattern('^[A-Za-z]+(?: [A-Za-z]+)*$'), // spaces only in middle
               Validators.minLength(3),
             ]),
+
             lastName: new FormControl('', [
               Validators.required,
-              Validators.pattern('^[a-zA-Z]+'),
+              Validators.pattern('^[A-Za-z]+(?: [A-Za-z]+)*$'), // spaces only in middle
               Validators.minLength(3),
             ]),
             email: new FormControl('', EMAIL_VALIDATION),
@@ -594,17 +606,21 @@ export class FlightCheckoutService {
             firstName: new FormControl('', [
               Validators.required,
               Validators.pattern(
-                userCombinedNames ? '[a-zA-Z ]*' : '^[a-zA-Z]+'
+                userCombinedNames
+                  ? '^[A-Za-z]+(?: [A-Za-z]+)*$' // spaces only in the middle
+                  : '^[A-Za-z]+$' // no spaces
               ),
               Validators.minLength(3),
             ]),
+
             middleName: new FormControl('', [
-              Validators.pattern('^[a-zA-Z]+'),
+              Validators.pattern('^[A-Za-z]+(?: [A-Za-z]+)*$'), // spaces only in middle
               Validators.minLength(3),
             ]),
+
             lastName: new FormControl('', [
               Validators.required,
-              Validators.pattern("^[a-zA-Z -']+"),
+              Validators.pattern("^[A-Za-z]+(?:[ '-][A-Za-z]+)*$"), // space, -, ' only in middle
               Validators.minLength(3),
             ]),
             passportnum: new FormControl('', [Validators.max(16)]),
@@ -636,18 +652,21 @@ export class FlightCheckoutService {
             firstName: new FormControl('', [
               Validators.required,
               Validators.pattern(
-                userCombinedNames ? '[a-zA-Z ]*' : '^[a-zA-Z]+'
+                userCombinedNames
+                  ? '^[A-Za-z]+(?: [A-Za-z]+)*$' // spaces allowed only in the middle
+                  : '^[A-Za-z]+$' // no spaces
               ),
               Validators.minLength(3),
             ]),
+
             middleName: new FormControl('', [
-              // Validators.required,
-              Validators.pattern('^[a-zA-Z]+'),
+              Validators.pattern('^[A-Za-z]+(?: [A-Za-z]+)*$'), // spaces only in middle
               Validators.minLength(3),
             ]),
+
             lastName: new FormControl('', [
               Validators.required,
-              Validators.pattern("^[a-zA-Z -']+"),
+              Validators.pattern("^[A-Za-z]+(?:[ '-][A-Za-z]+)*$"), // space, -, ' only in middle
               Validators.minLength(3),
             ]),
             passportnum: new FormControl('', [Validators.maxLength(12)]),
