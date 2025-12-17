@@ -11,22 +11,30 @@ export const FORM_ERROR_MESSAGES = {
       ar: 'الاسم الأول مطلوب.',
     },
     minlength: {
-      en: 'First Name must be at least 3 characters long.',
-      ar: 'يجب أن يتكون الاسم الأول من 3 أحرف على الأقل.',
+      en: 'Your name is too short (minimum 2 characters).',
+      ar: 'اسمك قصير جداً (الحد الأدنى حرفين).',
     },
-    pattern: {
-      en: 'First Name must contain only letters.',
+    lettersOnly: {
+      en: 'First Name is required to be letters only.',
       ar: 'يجب أن يحتوي الاسم الأول على أحرف فقط.',
+    },
+    leadingTrailingSpaces: {
+      en: 'Please remove any spaces at the beginning or end of your name.',
+      ar: 'يرجى إزالة أي مسافات في بداية أو نهاية اسمك.',
     },
   },
   middleName: {
     minlength: {
-      en: 'Middle Name must be at least 3 characters long.',
-      ar: 'يجب أن يتكون الاسم الأوسط من 3 أحرف على الأقل.',
+      en: 'Middle Name must be at least 2 characters long.',
+      ar: 'يجب أن يتكون الاسم الأوسط من حرفين على الأقل.',
     },
-    pattern: {
-      en: 'Middle Name must contain only letters.',
+    lettersOnly: {
+      en: 'Middle Name is required to be letters only.',
       ar: 'يجب أن يحتوي الاسم الأوسط على أحرف فقط.',
+    },
+    leadingTrailingSpaces: {
+      en: 'Please remove any spaces at the beginning or end of your name.',
+      ar: 'يرجى إزالة أي مسافات في بداية أو نهاية اسمك.',
     },
   },
   lastName: {
@@ -35,12 +43,16 @@ export const FORM_ERROR_MESSAGES = {
       ar: 'الاسم الأخير مطلوب.',
     },
     minlength: {
-      en: 'Last Name must be at least 3 characters long.',
-      ar: 'يجب أن يتكون الاسم الأخير من 3 أحرف على الأقل.',
+      en: 'Last Name must be at least 2 characters long.',
+      ar: 'يجب أن يتكون الاسم الأخير من حرفين على الأقل.',
     },
-    pattern: {
-      en: 'Last Name must contain only letters.',
+    lettersOnly: {
+      en: 'Last Name is required to be letters only.',
       ar: 'يجب أن يحتوي الاسم الأخير على أحرف فقط.',
+    },
+    leadingTrailingSpaces: {
+      en: 'Please remove any spaces at the beginning or end of your name.',
+      ar: 'يرجى إزالة أي مسافات في بداية أو نهاية اسمك.',
     },
   },
   email: {
