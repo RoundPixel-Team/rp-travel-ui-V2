@@ -390,7 +390,7 @@ export class FlightCheckoutService {
                 this.noLeadingTrailingSpacesValidator(),
                 Validators.minLength(2),
               ]),
-              email: new FormControl('', EMAIL_VALIDATION),
+              email: new FormControl('', [this.noLeadingTrailingSpacesValidator(), ...EMAIL_VALIDATION]),
               phoneNumber: new FormControl('', [
                 Validators.required,
                 Validators.maxLength(16),
@@ -434,7 +434,7 @@ export class FlightCheckoutService {
                 this.noLeadingTrailingSpacesValidator(),
                 Validators.minLength(2),
               ]),
-              email: new FormControl(''),
+              email: new FormControl('',this.noLeadingTrailingSpacesValidator()),
               phoneNumber: new FormControl(''),
               countryCode: new FormControl(''),
               nationality: new FormControl('', [Validators.required]),
@@ -575,7 +575,7 @@ export class FlightCheckoutService {
               this.noLeadingTrailingSpacesValidator(),
               Validators.minLength(2),
             ]),
-            email: new FormControl('', EMAIL_VALIDATION),
+            email: new FormControl('', [...EMAIL_VALIDATION, this.noLeadingTrailingSpacesValidator()]),
             phoneNumber: new FormControl('', [
               Validators.required,
               Validators.maxLength(5),
