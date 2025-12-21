@@ -1,35 +1,59 @@
-
-import { baseSearchResult, customAirlineFilter, FareRules, fareRulesResponse, fares, filterFlightInterface, flighFilterForm, FlightSearchResult, IAirItinerary, IAirlineInfo, IAirportInfo, IAllJourney, IBaggageInformation, IFlight, IFlightDTO, IFlightFareDTO, IFlightInfo, IPassengerFareBreakDownDTO, IPenaltyDTO, ISearchCriteria, ISegmentDetails, ITax, ItinTotalFare, searchCriteriaFlights } from './interfaces';
+import {
+  baseSearchResult,
+  customAirlineFilter,
+  FareRules,
+  fareRulesResponse,
+  fares,
+  filterFlightInterface,
+  flighFilterForm,
+  FlightSearchResult,
+  IAirItinerary,
+  IAirlineInfo,
+  IAirportInfo,
+  IAllJourney,
+  IBaggageInformation,
+  IFlight,
+  IFlightDTO,
+  IFlightFareDTO,
+  IFlightInfo,
+  IPassengerFareBreakDownDTO,
+  IPenaltyDTO,
+  ISearchCriteria,
+  ISegmentDetails,
+  ITax,
+  ItinTotalFare,
+  searchCriteriaFlights,
+} from './interfaces';
 
 export const ITINERARY_DEFAULT: IAirItinerary = {
-    referralLink: '',
-    sequenceNum: 0,
-    pKey: '',
-    pcc: '',
-    isRefundable: false,
-    itinTotalFare: {
-        amount: 0,
-        fareAmount: 0,
-        promoCode: '',
-        promoDiscount: 0,
-        currencyCode: '',
-        totalTaxes: 0,
-        dName: null,
-        mName: null,
-        dValue: null,
-        mValue: null
-    },
-    totalDuration: 0,
-    deptDate: '',
-    arrivalDate: '',
-    cabinClass: '',
-    flightType: '',
-    allJourney: {
-        flights: [],
-    },
-    baggageInformation: [],
-    passengerFareBreakDownDTOs: [],
-    experiance: 0
+  referralLink: '',
+  sequenceNum: 0,
+  pKey: '',
+  pcc: '',
+  isRefundable: false,
+  itinTotalFare: {
+    amount: 0,
+    fareAmount: 0,
+    promoCode: '',
+    promoDiscount: 0,
+    currencyCode: '',
+    totalTaxes: 0,
+    dName: null,
+    mName: null,
+    dValue: null,
+    mValue: null,
+  },
+  totalDuration: 0,
+  deptDate: '',
+  arrivalDate: '',
+  cabinClass: '',
+  flightType: '',
+  allJourney: {
+    flights: [],
+  },
+  baggageInformation: [],
+  passengerFareBreakDownDTOs: [],
+  experiance: 0,
 };
 
 export const ALL_JOURNEY_DEFAULT: IAllJourney = {
@@ -89,7 +113,7 @@ export const PENALTY_DTO_DEFAULT: IPenaltyDTO = {
   percentage: 0,
   sector: '',
   percentageApplied: false,
-  time: null
+  time: null,
 };
 
 export const FLIGHT_FARE_DTO_DEFAULT: IFlightFareDTO = {
@@ -137,7 +161,7 @@ export const FLIGHT_SEARCH_DEFAULT: FlightSearchResult = {
   searchResultException: {
     code: '400',
     exceptionMessage: 'Invalid Data',
-  }
+  },
 };
 
 export const FLIGHT_DEFAULT: IFlight = {
@@ -163,7 +187,7 @@ export const FLIGHT_DTO_DEFAULT: IFlightDTO = {
   transitTime: '',
   flightInfo: FLIGHT_INFO_DEFAULT,
   segmentDetails: SEGMENT_DETAILS_DEFAULT,
-  supplierRefID: ''
+  supplierRefID: '',
 };
 
 // Default baseSearchResult
@@ -179,13 +203,13 @@ const SEARCH_CRITERIA_DEFAULT: ISearchCriteria = {
   device: null,
   pos: '',
   currency: 'USD', // or any default currency
-  language: 'en',   // or any default language
+  language: 'en', // or any default language
   flights: [
     {
       departingFrom: '',
       arrivingTo: '',
-      departingOnDate: ''
-    }
+      departingOnDate: '',
+    },
   ],
   flightType: 'OneWay', // or 'RoundTrip' / 'MultiCity' depending on your logic
   preferredAirline: null,
@@ -196,11 +220,11 @@ const SEARCH_CRITERIA_DEFAULT: ISearchCriteria = {
   totalPassengersNum: 1,
   selectDirectFlightsOnly: false,
   childAges: 0,
-  infantAges: 0
+  infantAges: 0,
 };
 
 // Default FlightSearchResult
-export const FLIGHT_SEARCH_RESULT_DEFAULT : FlightSearchResult = {
+export const FLIGHT_SEARCH_RESULT_DEFAULT: FlightSearchResult = {
   ...BASE_SEARCH_RESULT_DEFAULT,
   pnr: null,
   fareAmount: null,
@@ -230,7 +254,18 @@ export const AIR_ITINERARIES_DEFAULT: IAirItinerary = {
   experiance: 0,
   sequenceNum: 0,
   isRefundable: false,
-  itinTotalFare: { amount: 0, currencyCode: '', totalTaxes: 0, dName: '', fareAmount: 0, mName: '', promoCode: '', promoDiscount: 0, dValue: null, mValue: null },
+  itinTotalFare: {
+    amount: 0,
+    currencyCode: '',
+    totalTaxes: 0,
+    dName: '',
+    fareAmount: 0,
+    mName: '',
+    promoCode: '',
+    promoDiscount: 0,
+    dValue: null,
+    mValue: null,
+  },
   totalDuration: 0,
   deptDate: '',
   arrivalDate: '',
@@ -291,7 +326,6 @@ export const ITIN_TOTAL_FARE_DEFAULT: ItinTotalFare = {
   mValue: null,
 };
 
-
 // Default baggageInformation
 export const BAGGAGE_INFORMATION_DEFAULT: IBaggageInformation = {
   baggage: '',
@@ -304,17 +338,18 @@ export const BAGGAGE_INFORMATION_DEFAULT: IBaggageInformation = {
 };
 
 // Default passengerFareBreakDownDTOs
-export const PASSENGER_FARE_BREAKDOWN_DTOS_DEFAULT: IPassengerFareBreakDownDTO = {
-  key: '',
-  cancelPenaltyDTOs: [],
-  changePenaltyDTOs: [],
-  passengerQuantity: 0,
-  passengersRef: [],
-  pricingMethod: '',
-  passengerType: '',
-  flightFaresDTOs: [],
-  taxes: [],
-};
+export const PASSENGER_FARE_BREAKDOWN_DTOS_DEFAULT: IPassengerFareBreakDownDTO =
+  {
+    key: '',
+    cancelPenaltyDTOs: [],
+    changePenaltyDTOs: [],
+    passengerQuantity: 0,
+    passengersRef: [],
+    pricingMethod: '',
+    passengerType: '',
+    flightFaresDTOs: [],
+    taxes: [],
+  };
 
 // Default customAirlineFilter
 export const CUSTOM_AIRLINE_FILTER_DEFAULT: customAirlineFilter = {
@@ -330,4 +365,5 @@ export const CUSTOM_AIRLINE_FILTER_DEFAULT: customAirlineFilter = {
 export const FARE_RULES_RESPONSE_DEFAULT: fareRulesResponse = {
   errorMessage: '',
   fares: [],
+  baggageAllowances: [],
 };

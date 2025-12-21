@@ -1,50 +1,49 @@
 // this is the base model for the backend response
 export interface baseSearchResult {
-    status: string;
-    searchResultException:{code:string,exceptionMessage:string}
+  status: string;
+  searchResultException: { code: string; exceptionMessage: string };
 }
-  
+
 /**
  * this is the the model of the backend on case of status 200
  */
-export interface FlightSearchResult extends baseSearchResult  {
-    pnr?:any;
-    fareAmount?:any;
-    airlines: any[];
-    airItineraries: IAirItinerary[];
-    searchCriteria: ISearchCriteria;
-    cabinClasses:string[]
-    passengersDetails?: any[],
+export interface FlightSearchResult extends baseSearchResult {
+  pnr?: any;
+  fareAmount?: any;
+  airlines: any[];
+  airItineraries: IAirItinerary[];
+  searchCriteria: ISearchCriteria;
+  cabinClasses: string[];
+  passengersDetails?: any[];
 }
 
-export interface searchCriteriaFlights{
-    arrivingTo: string;
-    departingFrom: string;
-    departingOnDate: string;
+export interface searchCriteriaFlights {
+  arrivingTo: string;
+  departingFrom: string;
+  departingOnDate: string;
 }
 
 /**
- * Filter Form Model 
+ * Filter Form Model
  * [this is a generic model for the filter containing all filter criteria and you can use only what you need]
  */
 
-export interface flighFilterForm{
-  airlines?:string[]
-  bookingSite?:string[]
-  stopsForm:{noStops:boolean,oneStop:boolean,twoAndm:boolean}
-  sameAirline?:boolean
-  priceSlider?:number[]
-  durationSlider?:number[]
-  dpartingSlider?:number[]
-  arrivingSlider?:number[]
-  returnSlider?:number[]
-  experience?:{overNight:boolean,longStops:boolean}
-  flexibleTickets?:{refund:boolean,nonRefund:boolean}
+export interface flighFilterForm {
+  airlines?: string[];
+  bookingSite?: string[];
+  stopsForm: { noStops: boolean; oneStop: boolean; twoAndm: boolean };
+  sameAirline?: boolean;
+  priceSlider?: number[];
+  durationSlider?: number[];
+  dpartingSlider?: number[];
+  arrivingSlider?: number[];
+  returnSlider?: number[];
+  experience?: { overNight: boolean; longStops: boolean };
+  flexibleTickets?: { refund: boolean; nonRefund: boolean };
 }
 
-
 /**
- * Filter Model 
+ * Filter Model
  * [this is a generic model for the filter containing all filter criteria and you can use only what you need]
  */
 
@@ -71,25 +70,24 @@ export class flightResultFilter {
   ) {}
 }
 
-
-export interface filterFlightInterface{
-  sameAirline?:boolean,
-  priceMin?:number,
-  priceMax?:number,
-  durationMin?:number,
-  durationMax?:number,
-  depatingMin?:number,
-  departingMax?:number,
-  arrivingMin?:number,
-  arrivingMax?:number,
-  returnMin?:number,
-  returnMax?:number,
-  stops?:number[],
-  experience?:boolean[],
-  flexibleTicket?:boolean[],
-  airlines?:string[],
-  bookingSites?:string[],
-  schedule?:number,
+export interface filterFlightInterface {
+  sameAirline?: boolean;
+  priceMin?: number;
+  priceMax?: number;
+  durationMin?: number;
+  durationMax?: number;
+  depatingMin?: number;
+  departingMax?: number;
+  arrivingMin?: number;
+  arrivingMax?: number;
+  returnMin?: number;
+  returnMax?: number;
+  stops?: number[];
+  experience?: boolean[];
+  flexibleTicket?: boolean[];
+  airlines?: string[];
+  bookingSites?: string[];
+  schedule?: number;
 }
 
 /**
@@ -108,29 +106,30 @@ export interface fares {
   title: string;
 }
 
-export interface fareRulesResponse{
+export interface fareRulesResponse {
   errorMessage: string;
-  fares:FareRules[];
+  fares: FareRules[];
+  baggageAllowances: BaggageAllowance[] | null;
 }
 
-export class SearchFlightModule { 
-  
-  constructor (
-    public lan:string,
-    public currency:string,
-    public pointOfReservation:string,
-    public flightType:string,
-    public flightsInfo:string,
-    public passengers:string,
-    public Cclass:string,
-    public serachId:any,
-    public showDirect :boolean,
-    public preferredAirLine :string,
+export interface BaggageAllowance {
+  paxType: string;
+  baggageAllowanceDetails: BaggageAllowanceDetail[];
+}
 
-
-    
-    ){} 
-
+export class SearchFlightModule {
+  constructor(
+    public lan: string,
+    public currency: string,
+    public pointOfReservation: string,
+    public flightType: string,
+    public flightsInfo: string,
+    public passengers: string,
+    public Cclass: string,
+    public serachId: any,
+    public showDirect: boolean,
+    public preferredAirLine: string
+  ) {}
 }
 
 export interface customAirlineFilter {
@@ -139,16 +138,16 @@ export interface customAirlineFilter {
   price: string | number;
   currency: string;
   name: string;
-  selected:boolean;
+  selected: boolean;
 }
 
 export interface IAirItinerary {
-  otaName?:string;
-  providerLogo?:string;
-  flightSignature?:string;
-  overNight?:number;
-  stopsTime?:number;
-  experiance:number;
+  otaName?: string;
+  providerLogo?: string;
+  flightSignature?: string;
+  overNight?: number;
+  stopsTime?: number;
+  experiance: number;
   referralLink: string | null;
   sequenceNum: number;
   pKey: string;

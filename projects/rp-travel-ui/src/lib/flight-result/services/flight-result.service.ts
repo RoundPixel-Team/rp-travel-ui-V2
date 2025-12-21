@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { FlightSearchService } from '../../flight-search/services/flight-search.service';
 import {
+  BaggageAllowance,
   Brand,
   FareRules,
   FlightSearchResult,
@@ -12,7 +13,7 @@ import {
   SearchFlightModule,
   customAirlineFilter,
   filterFlightInterface,
-  flightResultFilter
+  flightResultFilter,
 } from '../interfaces';
 import { FlightResultApiService } from './flight-result-api.service';
 
@@ -107,6 +108,9 @@ export class FlightResultService {
 
   /**Property for fare Rules */
   fareRules!: FareRules[];
+
+  baggageInfo!: BaggageAllowance[] | null;
+
   /**
    *  inital from filter
    *
@@ -297,7 +301,7 @@ export class FlightResultService {
                 overNight: new FormControl(false),
                 longStops: new FormControl(false),
               }),
-              
+
               goingFlightScheduleDepart: new FormGroup({
                 startTime: new FormControl(''),
                 endTime: new FormControl(''),
@@ -697,18 +701,27 @@ export class FlightResultService {
     let tm = hr + m;
     return tm;
   }
-  filterWithSchedule(flight: IAirItinerary, flightType: 'goingFlightScheduleDepart' | 'returnFlightScheduleDepart' | 'goingFlightScheduleArrival' | 'returnFlightScheduleArrival'): boolean {
+  filterWithSchedule(
+    flight: IAirItinerary,
+    flightType:
+      | 'goingFlightScheduleDepart'
+      | 'returnFlightScheduleDepart'
+      | 'goingFlightScheduleArrival'
+      | 'returnFlightScheduleArrival'
+  ): boolean {
     const schedule = this.filterForm.get(flightType)?.value;
     const flightIndex = flightType.includes('going') ? 0 : 1;
-    
+
     if (schedule?.endTime && schedule?.startTime) {
       const flightObj = flight.allJourney.flights[flightIndex];
-      const flightSegmentIndex = flightType.includes('Depart') ? 0 : flightObj.flightDTO.length - 1;
+      const flightSegmentIndex = flightType.includes('Depart')
+        ? 0
+        : flightObj.flightDTO.length - 1;
 
       const date = new Date(
-        flightType.includes('Depart') ? 
-          flightObj.flightDTO[flightSegmentIndex].departureDate : 
-          flightObj.flightDTO[flightSegmentIndex].arrivalDate
+        flightType.includes('Depart')
+          ? flightObj.flightDTO[flightSegmentIndex].departureDate
+          : flightObj.flightDTO[flightSegmentIndex].arrivalDate
       );
 
       const currentHours = date.getHours();
@@ -1266,10 +1279,11 @@ export class FlightResultService {
       next: (result) => {
         this.fareLoading = false;
         this.fareRules = result.fares;
+        this.baggageInfo = result.baggageAllowances;
       },
       error: () => {
         this.fareLoading = false;
-      }
+      },
     });
   }
 
@@ -1290,12 +1304,12 @@ export class FlightResultService {
       this.brandedFareNotifier.next(null);
       this.isBrandedFaresLoading = false;
     } else {
-      this.isBrandedFaresLoading = true
+      this.isBrandedFaresLoading = true;
       this.api.getBrandedFaresApi(searchId, squencNumber, pKey, pcc).subscribe({
         next: (result) => {
           this.currentSelectedBrands = result.brands;
           this.isBrandedFaresLoading = false;
-          
+
           sessionStorage.setItem(itemKey, JSON.stringify(result.brands));
           this.brandedFareNotifier.next(null);
         },
@@ -1303,7 +1317,7 @@ export class FlightResultService {
           console.error(err.message);
           this.isBrandedFaresLoading = false;
           this.brandedFareNotifier.error('Faild to load branded fares');
-        }
+        },
       });
     }
   }
