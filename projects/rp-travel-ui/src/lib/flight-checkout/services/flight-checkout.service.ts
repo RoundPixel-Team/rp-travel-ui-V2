@@ -376,21 +376,24 @@ export class FlightCheckoutService {
               firstName: new FormControl('', [
                 Validators.required,
                 this.lettersOnlyValidator(true),
-                this.noLeadingTrailingSpacesValidator(),
+                // this.noLeadingTrailingSpacesValidator(),
                 Validators.minLength(2),
               ]),
               middleName: new FormControl('', [
                 this.lettersOnlyValidator(true),
-                this.noLeadingTrailingSpacesValidator(),
+                // this.noLeadingTrailingSpacesValidator(),
                 Validators.minLength(2),
               ]),
               lastName: new FormControl('', [
                 Validators.required,
                 this.lettersOnlyValidator(true),
-                this.noLeadingTrailingSpacesValidator(),
+                // this.noLeadingTrailingSpacesValidator(),
                 Validators.minLength(2),
               ]),
-              email: new FormControl('', [this.noLeadingTrailingSpacesValidator(), ...EMAIL_VALIDATION]),
+              email: new FormControl('', [
+                // this.noLeadingTrailingSpacesValidator(),
+                ...EMAIL_VALIDATION,
+              ]),
               phoneNumber: new FormControl('', [
                 Validators.required,
                 Validators.maxLength(16),
@@ -419,22 +422,25 @@ export class FlightCheckoutService {
               firstName: new FormControl('', [
                 Validators.required,
                 this.lettersOnlyValidator(userCombinedNames),
-                this.noLeadingTrailingSpacesValidator(),
+                // this.noLeadingTrailingSpacesValidator(),
                 Validators.minLength(2),
               ]),
 
               middleName: new FormControl('', [
                 this.lettersOnlyValidator(true),
-                this.noLeadingTrailingSpacesValidator(),
+                // this.noLeadingTrailingSpacesValidator(),
                 Validators.minLength(2),
               ]),
               lastName: new FormControl('', [
                 Validators.required,
                 this.lettersOnlyValidator(true),
-                this.noLeadingTrailingSpacesValidator(),
+                // this.noLeadingTrailingSpacesValidator(),
                 Validators.minLength(2),
               ]),
-              email: new FormControl('',this.noLeadingTrailingSpacesValidator()),
+              email: new FormControl(
+                ''
+                // this.noLeadingTrailingSpacesValidator()
+              ),
               phoneNumber: new FormControl(''),
               countryCode: new FormControl(''),
               nationality: new FormControl('', [Validators.required]),
@@ -464,20 +470,20 @@ export class FlightCheckoutService {
             firstName: new FormControl('', [
               Validators.required,
               this.lettersOnlyValidator(userCombinedNames),
-              this.noLeadingTrailingSpacesValidator(),
+              // this.noLeadingTrailingSpacesValidator(),
               Validators.minLength(2),
             ]),
 
             middleName: new FormControl('', [
               this.lettersOnlyValidator(true),
-              this.noLeadingTrailingSpacesValidator(),
+              // this.noLeadingTrailingSpacesValidator(),
               Validators.minLength(2),
             ]),
 
             lastName: new FormControl('', [
               Validators.required,
               Validators.pattern("^[A-Za-z]+(?:[ '-][A-Za-z]+)*$"), // space, - , ' only in middle
-              this.noLeadingTrailingSpacesValidator(),
+              // this.noLeadingTrailingSpacesValidator(),
               Validators.minLength(2),
             ]),
             passportnum: new FormControl('', [Validators.max(16)]),
@@ -509,7 +515,7 @@ export class FlightCheckoutService {
             firstName: new FormControl('', [
               Validators.required,
               this.lettersOnlyValidator(userCombinedNames),
-              this.noLeadingTrailingSpacesValidator(),
+              // this.noLeadingTrailingSpacesValidator(),
               Validators.minLength(2),
             ]),
 
@@ -522,7 +528,7 @@ export class FlightCheckoutService {
             lastName: new FormControl('', [
               Validators.required,
               Validators.pattern("^[A-Za-z]+(?:[ '-][A-Za-z]+)*$"), // space, -, ' only in middle
-              this.noLeadingTrailingSpacesValidator(),
+              // this.noLeadingTrailingSpacesValidator(),
               Validators.minLength(2),
             ]),
             passportnum: new FormControl('', [Validators.maxLength(12)]),
@@ -556,26 +562,27 @@ export class FlightCheckoutService {
             title: new FormControl('', [Validators.required]),
             firstName: new FormControl('', [
               Validators.required,
-              this.lettersOnlyValidator(
-                i === 0 ? true : userCombinedNames
-              ),
-              this.noLeadingTrailingSpacesValidator(),
+              this.lettersOnlyValidator(i === 0 ? true : userCombinedNames),
+              // this.noLeadingTrailingSpacesValidator(),
               Validators.minLength(2),
             ]),
 
             middleName: new FormControl('', [
               this.lettersOnlyValidator(true),
-              this.noLeadingTrailingSpacesValidator(),
+              // this.noLeadingTrailingSpacesValidator(),
               Validators.minLength(2),
             ]),
 
             lastName: new FormControl('', [
               Validators.required,
               this.lettersOnlyValidator(true),
-              this.noLeadingTrailingSpacesValidator(),
+              // this.noLeadingTrailingSpacesValidator(),
               Validators.minLength(2),
             ]),
-            email: new FormControl('', [...EMAIL_VALIDATION, this.noLeadingTrailingSpacesValidator()]),
+            email: new FormControl('', [
+              ...EMAIL_VALIDATION,
+              // this.noLeadingTrailingSpacesValidator()
+            ]),
             phoneNumber: new FormControl('', [
               Validators.required,
               Validators.maxLength(5),
@@ -607,20 +614,20 @@ export class FlightCheckoutService {
             firstName: new FormControl('', [
               Validators.required,
               this.lettersOnlyValidator(userCombinedNames),
-              this.noLeadingTrailingSpacesValidator(),
+              // this.noLeadingTrailingSpacesValidator(),
               Validators.minLength(2),
             ]),
 
             middleName: new FormControl('', [
               this.lettersOnlyValidator(true),
-              this.noLeadingTrailingSpacesValidator(),
+              // this.noLeadingTrailingSpacesValidator(),
               Validators.minLength(2),
             ]),
 
             lastName: new FormControl('', [
               Validators.required,
               Validators.pattern("^[A-Za-z]+(?:[ '-][A-Za-z]+)*$"), // space, -, ' only in middle
-              this.noLeadingTrailingSpacesValidator(),
+              // this.noLeadingTrailingSpacesValidator(),
               Validators.minLength(2),
             ]),
             passportnum: new FormControl('', [Validators.max(16)]),
@@ -652,20 +659,20 @@ export class FlightCheckoutService {
             firstName: new FormControl('', [
               Validators.required,
               this.lettersOnlyValidator(userCombinedNames),
-              this.noLeadingTrailingSpacesValidator(),
+              // this.noLeadingTrailingSpacesValidator(),
               Validators.minLength(2),
             ]),
 
             middleName: new FormControl('', [
               this.lettersOnlyValidator(true),
-              this.noLeadingTrailingSpacesValidator(),
+              // this.noLeadingTrailingSpacesValidator(),
               Validators.minLength(2),
             ]),
 
             lastName: new FormControl('', [
               Validators.required,
               Validators.pattern("^[A-Za-z]+(?:[ '-][A-Za-z]+)*$"), // space, -, ' only in middle
-              this.noLeadingTrailingSpacesValidator(),
+              // this.noLeadingTrailingSpacesValidator(),
               Validators.minLength(2),
             ]),
             passportnum: new FormControl('', [Validators.maxLength(12)]),
@@ -713,12 +720,12 @@ export class FlightCheckoutService {
         return null; // Let required validator handle empty values
       }
       const value = control.value;
-      
-      const pattern = allowSpaces 
-        ? /^[A-Za-z]+(?: [A-Za-z]+)*$/ 
+
+      const pattern = allowSpaces
+        ? /^[A-Za-z]+(?: [A-Za-z]+)*$/
         : /^[A-Za-z]+$/;
 
-      // We want to give specific feedback. 
+      // We want to give specific feedback.
       // If it fails the pattern, we check WHY.
 
       // Check for illegal characters (numbers, symbols)
@@ -747,7 +754,7 @@ export class FlightCheckoutService {
       }
       const value = control.value;
       if (value.trim().length !== value.length) {
-         return { leadingTrailingSpaces: true };
+        return { leadingTrailingSpaces: true };
       }
       return null;
     };
