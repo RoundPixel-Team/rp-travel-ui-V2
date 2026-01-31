@@ -196,8 +196,8 @@ export class FlightCheckoutService {
     device: string,
     os: string,
     browser: string,
-    skyscannerRedirectId?: string,
     wegoClickId?: string,
+    skyscannerRedirectId?: string,
   ) {
     this.loader = true;
     this.subscription.add(
@@ -210,6 +210,7 @@ export class FlightCheckoutService {
           device,
           os,
           browser,
+          wegoClickId,
           skyscannerRedirectId,
         )
         .subscribe(

@@ -185,13 +185,6 @@ export class FlightCheckoutApiService {
 
   constructor() {}
 
-  /**
-   *
-   * @param searchid
-   * @param sequenceNum
-   * @param providerKey
-   * @returns all information about the selected flight according to its searchId , sequence number and provider key
-   */
   getSelectedFlight(
     searchid: string,
     sequenceNum: number,
@@ -200,13 +193,27 @@ export class FlightCheckoutApiService {
     device: string,
     os: string,
     browser: string,
-    skyscannerRedirectId?: string,
     wegoClickId?: string,
+    skyscannerRedirectId?: string,
   ) {
-    let api = `${this.env.searchflow}/api/GetSelectedFlight?searchid=${searchid}&SequenceNum=${sequenceNum}&PKey=${providerKey}&sCode=${pcc}&device=${device}&os=${os}&browser=${browser}&wegoClickId=${wegoClickId}`;
+    let api =
+      `${this.env.searchflow}/api/GetSelectedFlight` +
+      `?searchid=${searchid}` +
+      `&SequenceNum=${sequenceNum}` +
+      `&PKey=${providerKey}` +
+      `&sCode=${pcc}` +
+      `&device=${device}` +
+      `&os=${os}` +
+      `&browser=${browser}`;
+
+    if (wegoClickId) {
+      api += `&wegoClickId=${encodeURIComponent(wegoClickId)}`;
+    }
+
     if (skyscannerRedirectId) {
       api += `&skyscannerRedirectId=${encodeURIComponent(skyscannerRedirectId)}`;
     }
+
     return this.http.get<selectedFlight>(api).pipe(
       retry(3),
       take(1),
