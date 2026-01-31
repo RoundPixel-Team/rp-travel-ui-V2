@@ -50,7 +50,7 @@ export interface airItineraries {
   referralLink?: string;
   otaName?: string;
   providerLogo?: string;
-  pKey?: number;
+  pKey?: string;
   flightSignature?: string;
   overNight?: number;
   stopsTime?: number;
