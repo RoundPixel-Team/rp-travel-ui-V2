@@ -110,3 +110,32 @@ export const FORM_ERROR_MESSAGES = {
     },
   },
 };
+
+export const VALIDATION_ERROR_MESSAGES = {
+  mainFormError: {
+    en: 'Please fill in the contact information correctly.',
+    ar: 'يرجى ملء معلومات الاتصال بشكل صحيح.',
+  },
+  passengersForm: {
+    en: 'Please complete all passenger details correctly.',
+    ar: 'يرجى إكمال جميع بيانات المسافرين بشكل صحيح.',
+  },
+};
+
+export const FARE_BREAKDOWN_LABELS = {
+  serviceFees: {
+    en: 'Service Fees',
+    ar: 'رسوم الخدمة',
+  },
+  discount: {
+    en: 'Discount',
+    ar: 'خصم',
+  },
+};
+
+export const SYSTEM_ERROR_MESSAGES = {
+  usersArrayNotInitialized: {
+    en: 'Users array is not initialized',
+    ar: 'لم يتم تهيئة مصفوفة المستخدمين',
+  },
+};

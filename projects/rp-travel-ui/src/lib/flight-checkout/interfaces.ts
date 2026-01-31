@@ -1,6 +1,6 @@
 
 import { IAirItinerary, ISearchCriteria } from "../flight-result/interfaces";
-import { FORM_ERROR_MESSAGES } from "./constants/error-messages";
+import { FORM_ERROR_MESSAGES, VALIDATION_ERROR_MESSAGES, FARE_BREAKDOWN_LABELS, SYSTEM_ERROR_MESSAGES } from "./constants/error-messages";
 
 /**
  * this model is mappping to the get selected flight response
@@ -195,3 +195,6 @@ export interface paymentResult {
 
 }
 export type userControllersKeys = keyof typeof FORM_ERROR_MESSAGES;
+export type validationErrorKeys = keyof typeof VALIDATION_ERROR_MESSAGES;
+export type fareBreakdownLabelKeys = keyof typeof FARE_BREAKDOWN_LABELS;
+export type systemErrorKeys = keyof typeof SYSTEM_ERROR_MESSAGES;
