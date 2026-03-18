@@ -32,11 +32,11 @@ import {
 import { HomePageService } from '../../home-page/services/home-page.service';
 import { EMAIL_VALIDATION } from '../../user-managment/constants/validation';
 import { DatePipe } from '@angular/common';
-import { 
-  FORM_ERROR_MESSAGES, 
-  VALIDATION_ERROR_MESSAGES, 
-  FARE_BREAKDOWN_LABELS, 
-  SYSTEM_ERROR_MESSAGES 
+import {
+  FORM_ERROR_MESSAGES,
+  VALIDATION_ERROR_MESSAGES,
+  FARE_BREAKDOWN_LABELS,
+  SYSTEM_ERROR_MESSAGES,
 } from '../constants/error-messages';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Router } from '@angular/router';
@@ -860,6 +860,90 @@ export class FlightCheckoutService {
    * it updates the behaviour subject (paymentLink) with the link
    * it also updates the behaviour subject (paymentLinkFailure) with the error
    */
+  oldSaveBooking(
+    currentCurrency: string,
+    type: string,
+    sCode: string,
+    SearchId: string,
+    SeqNum: number,
+    PKey: number,
+    brandId: number,
+  ) {
+    this.saveBookingLoadeer = true;
+    this.subscription.add(
+      this.api
+        .oldSaveBooking(
+          this.generateSaveBookingBody(
+            this.oldGenerateCheckoutDetails(currentCurrency),
+            this.generateOfflineServices(type),
+            this.selectedFlight?.searchCriteria.searchId!,
+            this.selectedFlight?.airItineraryDTO.sequenceNum!,
+            this.selectedFlight?.airItineraryDTO.pKey!.toString()!,
+            sCode,
+            '',
+            this.home.pointOfSale?.ip || '00.00.000.000',
+            this.home.pointOfSale?.country || 'KW',
+            '',
+            this.selectedFlight?.searchCriteria.language!,
+            brandId,
+          ),
+          sCode,
+          SearchId,
+          SeqNum,
+          PKey,
+        )
+
+        .subscribe({
+          next: (res) => {
+            this.saveBookingLoadeer = false;
+            if (res.errorMessage === null && res.hgNumber) {
+              this.checkFlightValidation(res.hgNumber, SearchId, SeqNum, PKey);
+            }
+          },
+          complete: () => {
+            this.notify.next(2);
+            this.saveBookingLoadeer = false;
+          },
+          error: (err) => {
+            this.paymentLinkFailure.next('');
+            this.saveBookingLoadeer = false;
+            this.selectedFlightError = true;
+            console.error('SAVE BOOKING ERROR', err);
+          },
+        }),
+    );
+  }
+
+  checkFlightValidation(
+    HGNum: string,
+    SearchId: string,
+    SeqNum: number,
+    PKey: number,
+  ) {
+    this.api.checkFlightValidation(HGNum, SearchId, SeqNum, PKey).subscribe(
+      (res: any) => {
+        if (res && res.status === 'Valid') {
+          this.api.preProcessing(SearchId, HGNum).subscribe(
+            (res) => {
+              console.log(res, '----pre---------');
+            },
+            (err) => {
+              console.log(err);
+            },
+          );
+        }
+      },
+      (err) => {},
+    );
+  }
+
+  /**
+   *
+   * @param currentCurrency
+   * here is the save booking function which returning the payment link if all params is good
+   * it updates the behaviour subject (paymentLink) with the link
+   * it also updates the behaviour subject (paymentLinkFailure) with the error
+   */
   saveBooking(
     currentCurrency: string,
     type: string,
@@ -1091,6 +1175,80 @@ export class FlightCheckoutService {
       UserCurrency: currentCurrency,
     };
   }
+  oldGenerateCheckoutDetails(currentCurrency: string): CheckOutDetails {
+    if (!this.usersArray || this.usersArray.length === 0) {
+      throw new Error(this.getSystemError('usersArrayNotInitialized'));
+    }
+
+    for (var i = 0; i < this.usersArray.length; i++) {
+      const userForm = this.usersArray.at(i);
+
+      // Title handling
+      const title = userForm.get('title')?.value;
+      if (title === 'Male') {
+        userForm.get('title')?.setValue('Mr');
+      } else if (title === 'Female') {
+        userForm.get('title')?.setValue('Ms');
+      }
+
+      // Date handling
+      const dateOfBirth =
+        this.datePipe.transform(
+          userForm.get('dateOfBirth')?.value,
+          'yyyy-MM-dd',
+        ) || '';
+
+      const passportExpiry =
+        this.datePipe.transform(
+          userForm.get('PassportExpiry')?.value,
+          'yyyy-MM-dd',
+        ) || '';
+
+      userForm.get('dateOfBirth')?.setValue(dateOfBirth);
+      userForm.get('PassportExpiry')?.setValue(passportExpiry);
+
+      // Phone number handling (with null checks)
+      const phoneControl = userForm.get('phoneNumber');
+      if (phoneControl?.value) {
+        const phoneValue = phoneControl.value;
+
+        if (typeof phoneValue === 'object' && phoneValue.dialCode) {
+          userForm
+            .get('countryCode')
+            ?.setValue(String(phoneValue.dialCode).replace('+', ''));
+          userForm.get('phoneNumber')?.setValue(phoneValue.number || '');
+        } else {
+          userForm.get('phoneNumber')?.setValue(String(phoneValue));
+        }
+      }
+
+      // this.usersArray
+      //   .at(i)
+      //   .get('countryOfResidence')
+      //   ?.setValue(
+      //     this.home.allCountries.filter((c) => {
+      //       return (
+      //         c.countryName ==
+      //         this.usersArray.at(i).get('countryOfResidence')?.value
+      //       );
+      //     })[0].pseudoCountryCode,
+      //   );
+      this.usersArray
+        .at(i)
+        .get('IssuedCountry')
+        ?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value);
+      this.usersArray
+        .at(i)
+        .get('nationality')
+        ?.setValue(this.usersArray.at(i).get('countryOfResidence')?.value);
+    }
+    return {
+      bookingEmail: this.usersArray.at(0).get('email')?.value,
+      DiscountCode: this.copounCodeDetails?.promotionDetails.discountCode || '',
+      passengersDetails: this.usersArray.value,
+      UserCurrency: currentCurrency,
+    };
+  }
 
   generateOfflineServices(type: string): OfflineServices {
     let SeletedServicesCodes =
@@ -1181,7 +1339,11 @@ export class FlightCheckoutService {
     if (fareDiff > 0) {
       return [Math.round(fareDiff), this.getFareLabel('serviceFees'), curruncy];
     } else if (fareDiff < 0) {
-      return [Math.round(-1 * fareDiff), this.getFareLabel('discount'), curruncy];
+      return [
+        Math.round(-1 * fareDiff),
+        this.getFareLabel('discount'),
+        curruncy,
+      ];
     } else {
       return [0, '', 'KWD'];
     }
@@ -1375,7 +1537,9 @@ export class FlightCheckoutService {
   }
 
   private getCurrentLanguage(): 'en' | 'ar' {
-    return (this.selectedFlight?.searchCriteria.language as 'en' | 'ar') || 'en';
+    return (
+      (this.selectedFlight?.searchCriteria.language as 'en' | 'ar') || 'en'
+    );
   }
 
   private getValidationError(key: validationErrorKeys): string {
