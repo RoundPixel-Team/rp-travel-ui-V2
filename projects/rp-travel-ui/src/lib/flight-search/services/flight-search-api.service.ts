@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { EnvironmentService } from '../../shared/services/environment.service';
 
-
 @Injectable({
   providedIn: 'root',
 })
@@ -11,8 +10,8 @@ export class FlightSearchApiService {
   public env = inject(EnvironmentService);
 
   getAirportsApi(searchString: string) {
-    let api = `https://backofficeapi.ejazzatravel.com/api/Airports?searchStr=${searchString}`;
+    let api = `https://stagingbackofficeapi.round-pixel.net/api/Airports?searchStr=${searchString}`;
 
-    return this.http.get(api)
+    return this.http.get(api);
   }
 }

@@ -62,6 +62,11 @@ export class FlightCheckoutApiService {
       GatewayType: 'Knet',
     },
     {
+      PaymentMethod: 'OttuKnet',
+      cardImg: 'assets/cards/KNETL.svg',
+      GatewayType: 'OttuKnet',
+    },
+    {
       PaymentMethod: 'mada',
       cardImg: 'assets/cards/mada.png',
       GatewayType: 'Mada',
@@ -175,6 +180,11 @@ export class FlightCheckoutApiService {
       PaymentMethod: 'MPGS',
       cardImg: 'assets/cards/visamaster.png',
       GatewayType: 'MPGS',
+    },
+    {
+      PaymentMethod: 'OttuCard',
+      cardImg: 'assets/cards/visamaster.png',
+      GatewayType: 'OttuCard',
     },
   ];
   isPnet: boolean = false;
