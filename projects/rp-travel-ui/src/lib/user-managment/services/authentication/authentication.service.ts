@@ -27,7 +27,8 @@ import {
   OTP_STATUS, 
   REGISTER_STATUS, 
   RESET_PASSWORD_STATUS, 
-  VERIFY_TOKEN_STATUS 
+  VERIFY_TOKEN_STATUS,
+  RESEND_OTP_STATUS
 } from "../../constants/statuses";
 import { SharedService } from "../shared.service";
 import * as CryptoJS from 'crypto-js';
@@ -250,6 +251,29 @@ import { GoogleAuthResponse } from "../../interfaces";
         })
       )
     }
+  }
+
+  /**
+   * this function is responsible to make integration between front and backend request (USER RESEND OTP)
+   */
+  resendOtp(userEmail: string) {
+    this.isLoading = true;
+    this.subscription.add(
+      this.authApi.resendOtpApi(userEmail).subscribe({
+        next: (res) => {
+          this.isLoading = false;
+          if (res.status === 0) {
+            this.notify.next(RESEND_OTP_STATUS.success);
+          } else {
+            this.notify.next(RESEND_OTP_STATUS.faild);
+          }
+        },
+        error: (error: any) => {
+          this.notify.next(RESEND_OTP_STATUS.faild);
+          this.isLoading = false;
+        }
+      })
+    );
   }
 
   /**

@@ -27,3 +27,8 @@ export const VERIFY_TOKEN_STATUS = {
   success: "verify reset password token success",
   faild: "verify reset password token faild",
 }
+
+export const RESEND_OTP_STATUS = {
+  success: "resend otp success",
+  faild: "resend otp faild",
+}

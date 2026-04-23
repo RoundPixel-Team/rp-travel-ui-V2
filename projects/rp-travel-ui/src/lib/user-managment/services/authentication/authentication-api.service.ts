@@ -139,4 +139,22 @@ export class AuthApiService {
   facebookLogin(facebookData: any): Observable<any> {
     return this.http.post(`${this.env.users}/api/User/SigninFacebook`, facebookData);
   }
+
+  /**
+   * Resend OTP request
+   *
+   * @param userEmail - The email of the user to resend the OTP to.
+   * @returns An observable with the response.
+   */
+  resendOtpApi(userEmail: string): Observable<any> {
+    const api = `${this.env.users}/api/User/ResendOTP`;
+    return this.http.post<any>(api, {}, {
+      headers: {
+        userEmail: userEmail
+      }
+    }).pipe(
+      take(1),
+      catchError(err => { throw err; })
+    );
+  }
 }
