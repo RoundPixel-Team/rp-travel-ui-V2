@@ -148,7 +148,7 @@ export class AuthApiService {
    */
   resendOtpApi(userEmail: string): Observable<any> {
     const api = `${this.env.users}/api/User/ResendOTP`;
-    return this.http.post<any>(api, {}, {
+    return this.http.get<any>(api, {
       headers: {
         userEmail: userEmail
       }

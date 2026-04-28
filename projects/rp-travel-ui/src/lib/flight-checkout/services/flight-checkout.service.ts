@@ -105,6 +105,10 @@ export class FlightCheckoutService {
   loader: boolean = false;
   saveBookingLoadeer = false;
 
+  payLaterLoader: boolean = false;
+  payLaterSuccess: boolean | null = null;
+  payLaterResponse: any = null;
+
   /**
    * applying copoun code loading state ..
    */
@@ -1014,6 +1018,66 @@ export class FlightCheckoutService {
             console.error('SAVE BOOKING ERROR', err);
           },
           // Removed complete handler here since we want loader to continue
+        })
+    );
+  }
+
+  processPayLater(
+    currentCurrency: string,
+    type: string,
+    pcc: string,
+    brandId: number
+  ) {
+    this.payLaterLoader = true;
+    this.payLaterSuccess = null;
+    this.subscription.add(
+      this.api
+        .saveBooking(
+          this.generateSaveBookingBody(
+            this.generateCheckoutDetails(currentCurrency),
+            this.generateOfflineServices(type),
+            this.selectedFlight?.searchCriteria.searchId!,
+            this.selectedFlight?.airItineraryDTO.sequenceNum!,
+            this.selectedFlight?.airItineraryDTO.pKey!.toString()!,
+            pcc,
+            '',
+            this.home.pointOfSale?.ip || '00.00.000.000',
+            this.home.pointOfSale?.country || 'KW',
+            '',
+            this.selectedFlight?.searchCriteria.language!,
+            brandId
+          )
+        )
+        .subscribe({
+          next: (res) => {
+            if (res && res.savedBookingResponse) {
+              this.HG = res.savedBookingResponse.hgNumber;
+            }
+            const searchId = this.selectedFlight?.searchCriteria.searchId!;
+
+            this.api.payLater(searchId, this.HG).subscribe({
+              next: (payLaterRes) => {
+                this.payLaterLoader = false;
+                this.payLaterResponse = payLaterRes;
+                if (payLaterRes && (payLaterRes.status === 'Valid' || payLaterRes.status === 'Success')) {
+                  this.payLaterSuccess = true;
+                } else {
+                  this.payLaterSuccess = false;
+                }
+              },
+              error: (err) => {
+                console.error('PAY LATER ERROR', err);
+                this.payLaterLoader = false;
+                this.payLaterSuccess = false;
+              }
+            });
+          },
+          error: (err) => {
+            console.error('SAVE BOOKING ERROR IN PAY LATER', err);
+            this.payLaterLoader = false;
+            this.payLaterSuccess = false;
+            this.selectedFlightError = true;
+          },
         })
     );
   }

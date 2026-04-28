@@ -186,6 +186,11 @@ export class FlightCheckoutApiService {
       cardImg: 'assets/cards/visamaster.png',
       GatewayType: 'OttuCard',
     },
+    {
+      PaymentMethod: 'PayLater',
+      cardImg: 'assets/cards/pay-later.png',
+      GatewayType: 'PayLater',
+    },
   ];
   isPnet: boolean = false;
 
@@ -267,6 +272,17 @@ export class FlightCheckoutApiService {
     return this.http.post<any>(api, body).pipe(
       take(1),
       retry(1),
+      catchError((err) => {
+        console.error(err);
+        throw err;
+      }),
+    );
+  }
+
+  payLater(searchId: string, hgNumber: string) {
+    let api = `${this.env.BookingFlow}/api/PayLater?searchId=${searchId}&hgNumber=${hgNumber}`;
+    return this.http.get<any>(api).pipe(
+      take(1),
       catchError((err) => {
         console.error(err);
         throw err;
