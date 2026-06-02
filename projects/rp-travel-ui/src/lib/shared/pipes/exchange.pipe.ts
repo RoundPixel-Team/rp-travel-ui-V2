@@ -15,11 +15,11 @@ export class ExchangePipe implements PipeTransform {
     if (!value || !args) {
       return value;
     } else {
-      if (args == 'value' && this.currentCurruncy.Currency_Code == 'KWD') {
+      if (args == 'value' && this.currentCurruncy.Currency_Code == 'EGP') {
         let total = value * this.currentCurruncy.rate;
         return parseFloat((Math.round(total * 1000) / 1000).toFixed(3));
       }
-      if (args == 'value' && this.currentCurruncy.Currency_Code != 'KWD') {
+      if (args == 'value' && this.currentCurruncy.Currency_Code != 'EGP') {
         let total = value * this.currentCurruncy.rate;
         return parseFloat((Math.round(total * 100) / 100).toFixed(2));
       }

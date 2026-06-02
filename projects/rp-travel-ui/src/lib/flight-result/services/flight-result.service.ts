@@ -469,29 +469,23 @@ export class FlightResultService {
   orgnize(array: IAirItinerary[]) {
     let out: IAirItinerary[][] = [];
     let remain: IAirItinerary[] = array;
-    let i = 0;
-    while (remain.length > 0 || !remain) {
-      if (i > 50) {
-        break;
-      } else {
-        out.push(
-          remain.filter(
-            (v, i, a) =>
-              v.allJourney.flights[0].flightDTO[0].flightAirline.airlineCode ===
-                a[0].allJourney.flights[0].flightDTO[0].flightAirline
-                  .airlineCode &&
-              v.itinTotalFare.amount === a[0].itinTotalFare.amount
-          )
-        );
-        remain = remain.filter(
+    while (remain.length > 0) {
+      out.push(
+        remain.filter(
           (v, i, a) =>
-            v.allJourney.flights[0].flightDTO[0].flightAirline.airlineCode !=
+            v.allJourney.flights[0].flightDTO[0].flightAirline.airlineCode ===
               a[0].allJourney.flights[0].flightDTO[0].flightAirline
-                .airlineCode ||
-            v.itinTotalFare.amount != a[0].itinTotalFare.amount
-        );
-      }
-      i = i + 1;
+                .airlineCode &&
+            v.itinTotalFare.amount === a[0].itinTotalFare.amount
+        )
+      );
+      remain = remain.filter(
+        (v, i, a) =>
+          v.allJourney.flights[0].flightDTO[0].flightAirline.airlineCode !=
+            a[0].allJourney.flights[0].flightDTO[0].flightAirline
+              .airlineCode ||
+          v.itinTotalFare.amount != a[0].itinTotalFare.amount
+      );
     }
 
     return out.sort((a, b) => {
