@@ -18,6 +18,7 @@ export interface enviromentModel{
       BookOffer  : string,
       RetriveItineraryDetails : string
     }
+    trafficSources?: string
 }
 /**
  * used to save error messages with two language (arabic, english)

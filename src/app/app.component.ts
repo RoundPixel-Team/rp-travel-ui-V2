@@ -36,7 +36,8 @@ export class AppComponent implements OnInit{
         getAll:    'http://41.215.243.36:7893/api/GetAllOffersAPI?POS=',
         getByID:   'http://41.215.243.36:7893/api/GetOfferByIdAPI?OfferId=',
         BookOffer: "http://41.215.243.36:7895/api/BookOffer",
-      } 
+      },
+      trafficSources: ''
   }
 
   // configure my endpoints on the application startup (app initilization)

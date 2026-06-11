@@ -27,6 +27,7 @@ export class EnvironmentService {
       BookOffer: "https://flightflow.ticketboarding.com/api/BookOffer",
       RetriveItineraryDetails:'/api/Admin/RetriveItineraryDetails'
     }
+    trafficSources?: string;
 
   constructor() { }
 
@@ -54,5 +55,6 @@ export class EnvironmentService {
     this.offlineSeats = env.offlineSeats
     this.searchflow = env.searchflow
     this.users = env.users
+    this.trafficSources = env.trafficSources
   }
 }

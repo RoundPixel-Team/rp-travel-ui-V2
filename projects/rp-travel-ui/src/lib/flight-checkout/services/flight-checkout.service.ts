@@ -25,8 +25,11 @@ import {
   fare,
 } from '../../flight-result/interfaces';
 import { HomePageService } from '../../home-page/services/home-page.service';
+import { EnvironmentService } from '../../shared/services/environment.service';
 import { DatePipe } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { ExchangePipe } from '../../shared/pipes/exchange.pipe';
+import { ExchangeService } from '../../shared/services/exchange.service';
 
 type fareCalc = (fare: fare[]) => number;
 type calcEqfare = (
@@ -41,6 +44,7 @@ type calcEqfare = (
 export class FlightCheckoutService {
   api = inject(FlightCheckoutApiService);
   home = inject(HomePageService);
+  environment = inject(EnvironmentService);
   subscription: Subscription = new Subscription();
   serviceFees: number = 0;
   notify = new Subject<number>();
@@ -177,6 +181,7 @@ export class FlightCheckoutService {
   constructor(
     private datePipe: DatePipe,
     public sanitizer: DomSanitizer,
+    public exchangeService: ExchangeService,
   ) {}
 
   /**
@@ -245,12 +250,14 @@ export class FlightCheckoutService {
                 this.selectedFlightError = true;
                 console.log('now error happens');
               }
+              this.triggerGoogleFlightsCheckoutLoadedEvent(res);
             }
           },
           (err: any) => {
             console.log('get selected flight error ->', err);
             this.loader = false;
             this.selectedFlightError = true;
+            this.triggerGoogleFlightsCheckoutLoadedEvent(undefined, err);
           },
         ),
     );
@@ -1417,6 +1424,43 @@ export class FlightCheckoutService {
         },
       });
   }
+  triggerGoogleFlightsCheckoutLoadedEvent(res?: selectedFlight, error?: any) {
+    if (this.environment.trafficSources === 'google-search') {
+      let price = 0;
+      let currency = 'EGP';
+      let errorCode = '';
+      let errorMessage = '';
+
+      if (res) {
+        if (res.airItineraryDTO?.itinTotalFare) {
+          price = res.airItineraryDTO.itinTotalFare.amount;
+          currency = res.searchCriteria.currency;
+        }
+        if (res.errorMessage) {
+          errorCode = res.status || 'ERROR';
+          errorMessage = res.errorMessage;
+        } else if (res.status !== 'Valid') {
+          errorCode = res.status || 'ERROR';
+          errorMessage = 'Flight is no longer valid';
+        }
+      } else if (error) {
+        errorCode = 'HTTP_ERROR';
+        errorMessage = error.message || 'Unknown network error';
+      }
+      if (typeof window !== 'undefined') {
+        const dataLayer = (window as any).dataLayer || [];
+        dataLayer.push({
+          event: 'google_flights_checkout_loaded',
+          'Flight Price': this.exchangeService.convert(price),
+          Currency: currency,
+          'Flight Error Code': errorCode,
+          'Flight Error Message': errorMessage,
+        });
+        console.log('event is triggered');
+      }
+    }
+  }
+
   /**
    * this function is responsible to destory any opened subscription on this service
    */

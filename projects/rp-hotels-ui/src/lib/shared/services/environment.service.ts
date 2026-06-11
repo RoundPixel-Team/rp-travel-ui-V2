@@ -22,7 +22,6 @@ export class EnvironmentService {
     prepay =      'https://prepayapi.rhlaty.com'
     backOffice =  'https://backofficeapi.rhlaty.com'
     FlightTop =   'https://flightsearch.rhlaty.com'
-   
     offers= {
       //Ticket boarding offers endpoints
       getAll: 'http://178.63.214.221:7893/api/GetAllOffersAPI?POS=',
@@ -31,6 +30,7 @@ export class EnvironmentService {
       BookOffer: "https://flightflow.ticketboarding.com/api/BookOffer",
       RetriveItineraryDetails:'/api/Admin/RetriveItineraryDetails'
     }
+    trafficSources?: string;
 
 
   /**
@@ -57,5 +57,6 @@ export class EnvironmentService {
     this.offlineSeats = env.offlineSeats
     this.searchflow = env.searchflow
     this.users = env.users
+    this.trafficSources = env.trafficSources
   }
 }
