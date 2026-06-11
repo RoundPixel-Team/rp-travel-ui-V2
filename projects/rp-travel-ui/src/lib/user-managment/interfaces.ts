@@ -1,4 +1,4 @@
-import { IAirItinerary } from "../flight-result/interfaces";
+import { IAirItinerary } from '../flight-result/interfaces';
 
 export interface ILoginForm {
   email: string;
@@ -160,19 +160,43 @@ export interface IResetPasswordForm {
   confirmPassword: string;
 }
 export interface GoogleAuthResponse {
-  iss: string,
-  azp: string,
-  aud: string,
-  sub: string,
-  hd: string,
-  email: string,
-  email_verified: boolean,
-  nbf: number,
-  name: string,
-  picture: string,
-  given_name: string,
-  family_name: string,
-  iat: number,
-  exp: number,
-  jti: string
+  iss: string;
+  azp: string;
+  aud: string;
+  sub: string;
+  hd: string;
+  email: string;
+  email_verified: boolean;
+  nbf: number;
+  name: string;
+  picture: string;
+  given_name: string;
+  family_name: string;
+  iat: number;
+  exp: number;
+  jti: string;
+}
+
+export interface IUserResponse {
+  status: number;
+  message: string;
+  returnObject: {
+    firstName: string;
+    lastName: string;
+    id: string;
+    userName: string;
+    normalizedUserName: string;
+    email: string;
+    normalizedEmail: string;
+    emailConfirmed: boolean;
+    passwordHash: string;
+    securityStamp: string;
+    concurrencyStamp: string;
+    phoneNumber: string | null;
+    phoneNumberConfirmed: boolean;
+    twoFactorEnabled: boolean;
+    lockoutEnd: Date | null;
+    lockoutEnabled: boolean;
+    accessFailedCount: number;
+  };
 }

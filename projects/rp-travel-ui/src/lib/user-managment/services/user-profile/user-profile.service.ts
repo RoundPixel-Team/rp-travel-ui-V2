@@ -1,16 +1,31 @@
-import { inject, Injectable } from "@angular/core";
-import { AbstractControl, FormBuilder, FormControl, FormGroup } from "@angular/forms";
-import { Subject, Subscription } from "rxjs";
-import { USER_DEFAULT } from "../../constants/defaultValues";
-import { FIRST_NAME_ERROR_MESSAGES, LAST_NAME_ERROR_MESSAGES, PASSWORD_ERROR_MESSAGES, PHONE_ERROR_MESSAGES } from "../../constants/error-messages";
-import { PASSWORD_VALIDATION, PHONE_VALIDATION, REQUIRED_VALIDATION } from "../../constants/validation";
-import { IUser } from "../../interfaces";
-import { UserProfileApiService } from "./user-profile-api.service";
-import { SharedService } from "../shared.service";
+import { inject, Injectable } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+} from '@angular/forms';
+import { Subject, Subscription } from 'rxjs';
+import { USER_DEFAULT } from '../../constants/defaultValues';
+import {
+  FIRST_NAME_ERROR_MESSAGES,
+  LAST_NAME_ERROR_MESSAGES,
+  PASSWORD_ERROR_MESSAGES,
+  PHONE_ERROR_MESSAGES,
+} from '../../constants/error-messages';
+import {
+  PASSWORD_VALIDATION,
+  PHONE_VALIDATION,
+  REQUIRED_VALIDATION,
+} from '../../constants/validation';
+import { IUser } from '../../interfaces';
+import { UserProfileApiService } from './user-profile-api.service';
+import { SharedService } from '../shared.service';
 
 @Injectable({
   providedIn: 'root',
-}) export class UserProfileService {
+})
+export class UserProfileService {
   /**
    * Injects the FormBuilder service to handle form controls and validations.
    */
@@ -85,18 +100,20 @@ import { SharedService } from "../shared.service";
    * - `oldPassword`: field with password validation.
    * - `newPassword`: field with password validation.
    * - `confirmPassword`: field with password validation.
-   * 
+   *
    * The form includes a custom validator (`confirmPasswordValidator`) to ensure the new password and confirm password fields match.
    */
   initChangePasswordForm() {
-    this.changePasswordForm = new FormGroup({
-      oldPassword: new FormControl('', PASSWORD_VALIDATION),
-      newPassword: new FormControl('', PASSWORD_VALIDATION),
-      confirmPassword: new FormControl('', PASSWORD_VALIDATION),
-    },
-    {
-      validators: this.confirmPasswordValidator,
-    });
+    this.changePasswordForm = new FormGroup(
+      {
+        oldPassword: new FormControl('', PASSWORD_VALIDATION),
+        newPassword: new FormControl('', PASSWORD_VALIDATION),
+        confirmPassword: new FormControl('', PASSWORD_VALIDATION),
+      },
+      {
+        validators: this.confirmPasswordValidator,
+      },
+    );
   }
 
   /**
@@ -105,12 +122,15 @@ import { SharedService } from "../shared.service";
    * @returns {ValidationErrors | null} - Returns an error object with a `mismatch` key if passwords don't match, or `null` if they do.
    */
   confirmPasswordValidator(control: AbstractControl) {
-    return control.get('newPassword')?.value === control.get('confirmPassword')?.value ? null : {mismatch: true}
+    return control.get('newPassword')?.value ===
+      control.get('confirmPassword')?.value
+      ? null
+      : { mismatch: true };
   }
- 
+
   /**
    * Fetches the user's profile data from the backend using the stored token.
-   * 
+   *
    * This function handles integration between the frontend and backend for user registration data.
    * - Sets `isLoading` to `true` while the request is in progress.
    * - Retrieves the token from localStorage. If no token is found, sets `isLoading` to `false`.
@@ -119,14 +139,13 @@ import { SharedService } from "../shared.service";
    *   - `0` on successful data retrieval.
    *   - `1` on error.
    */
-  getUserProfile(){
+  getUserProfile() {
     this.isLoading = true;
     let token = localStorage.getItem('token');
 
-    if(!token){
+    if (!token) {
       this.isLoading = false;
-    }
-    else{
+    } else {
       token = JSON.parse(token);
       this.subscription.add(
         this.userProfileApi.getUserProfileApi(token!).subscribe({
@@ -135,18 +154,18 @@ import { SharedService } from "../shared.service";
             this.isLoading = false;
             this.notify.next(0);
           },
-          error: (error:any) => {
+          error: (error: any) => {
             this.isLoading = false;
             this.notify.next(1);
           },
-        })
-      )
+        }),
+      );
     }
   }
- 
+
   /**
    * Sends an update request to the backend with the user profile form data.
-   * 
+   *
    * This function handles integration between the frontend and backend for updating user registration data.
    * - Sets `isLoading` to `true` while the request is in progress.
    * - Retrieves the token from localStorage. If no token is found or the form is invalid, marks all form fields as touched and sets `isLoading` to `false`.
@@ -156,35 +175,40 @@ import { SharedService } from "../shared.service";
    *   - `2` on successful update.
    *   - `1` on error.
    */
-  editUserProfile(){
+  editUserProfile() {
     this.isLoading = true;
     let token = localStorage.getItem('token');
-
-    if(this.profileForm.invalid || !token){
-      this.profileForm.markAllAsTouched()
-      this.isLoading = false
-    }
-    else{
+    if (this.profileForm.invalid || !token) {
+      this.profileForm.markAllAsTouched();
+      this.isLoading = false;
+    } else {
       token = JSON.parse(token);
+      let body = {
+        ...this.profileForm.value,
+        userId: this.user.id,
+        phoneNumber: this.user.phoneNumber,
+        operatorId: 0,
+      };
+      (console.log(body), 'body');
       this.subscription.add(
-        this.userProfileApi.editUserProfileApi(token!, this.profileForm.value).subscribe({
+        this.userProfileApi.editUserProfileApi(token!, body).subscribe({
           next: (res) => {
             this.user = res.returnObject;
             this.isLoading = false;
             this.notify.next(2);
           },
-          error: (error:any) => {
+          error: (error: any) => {
             this.isLoading = false;
             this.notify.next(1);
           },
-        })
-      )
+        }),
+      );
     }
   }
- 
+
   /**
    * Sends a request to the backend to change the user's password.
-   * 
+   *
    * This function facilitates the integration between frontend and backend for password change functionality.
    * - Sets `isLoading` to `true` while the request is in progress.
    * - Retrieves the token from localStorage. If no token is found or the form is invalid, marks all form fields as touched and sets `isLoading` to `false`.
@@ -194,37 +218,44 @@ import { SharedService } from "../shared.service";
    *   - `status !== 1`: Emits a notification (`2`) indicating a successful password change.
    * - Emits a notification (`1`) on error.
    */
-  changePassword(){
+  changePassword() {
     this.isLoading = true;
     let token = localStorage.getItem('token');
 
-    if(this.changePasswordForm.invalid || !token){
-      this.changePasswordForm.markAllAsTouched()
-      this.isLoading = false
-    }
-    else{
+    if (this.changePasswordForm.invalid || !token) {
+      this.changePasswordForm.markAllAsTouched();
+      this.isLoading = false;
+    } else {
       token = JSON.parse(token);
       this.subscription.add(
-        this.userProfileApi.changePasswordApi(token!, {
-          oldPassword: this.sharedService.encryptData(this.changePasswordForm.value.oldPassword),
-          newPassword: this.sharedService.encryptData(this.changePasswordForm.value.newPassword),
-          confirmPassword: this.sharedService.encryptData(this.changePasswordForm.value.confirmPassword),
-        }).subscribe({
-          next: (val) => {
-            if(val.status === 1) {
+        this.userProfileApi
+          .changePasswordApi(token!, {
+            oldPassword: this.sharedService.encryptData(
+              this.changePasswordForm.value.oldPassword,
+            ),
+            newPassword: this.sharedService.encryptData(
+              this.changePasswordForm.value.newPassword,
+            ),
+            confirmPassword: this.sharedService.encryptData(
+              this.changePasswordForm.value.confirmPassword,
+            ),
+          })
+          .subscribe({
+            next: (val) => {
+              if (val.status === 1) {
+                this.isLoading = false;
+                this.notify.next(1);
+              } else {
+                this.isLoading = false;
+                this.notify.next(2);
+              }
+            },
+            error: (error: any) => {
               this.isLoading = false;
               this.notify.next(1);
-            } else {
-              this.isLoading = false;
-              this.notify.next(2);
-            }
-          },
-          error: (error:any) => {
-            this.isLoading = false;
-            this.notify.next(1);
-          },
-        })
-      )
+            },
+          }),
+      );
     }
   }
 
@@ -235,13 +266,16 @@ import { SharedService } from "../shared.service";
    * @param {'en' | 'ar'} [lang='en'] - The language code for the error message (default is 'en' for English).
    * @returns {string} - The localized error message if there's a 'required' validation error; otherwise, an empty string.
    */
-  getFirstNameErrorMessage(firstNameControl: AbstractControl, lang: 'en' | 'ar' = 'en') {
+  getFirstNameErrorMessage(
+    firstNameControl: AbstractControl,
+    lang: 'en' | 'ar' = 'en',
+  ) {
     if (firstNameControl.hasError('required')) {
       return FIRST_NAME_ERROR_MESSAGES.required[lang];
     }
     return '';
   }
-  
+
   /**
    * Retrieves the appropriate error message for the last name field based on validation errors.
    *
@@ -249,13 +283,16 @@ import { SharedService } from "../shared.service";
    * @param {'en' | 'ar'} [lang='en'] - The language code for the error message (default is 'en' for English).
    * @returns {string} - The localized error message if there's a 'required' validation error; otherwise, an empty string.
    */
-  getLastNameErrorMessage(lastNameControl: AbstractControl, lang: 'en' | 'ar' = 'en') {
+  getLastNameErrorMessage(
+    lastNameControl: AbstractControl,
+    lang: 'en' | 'ar' = 'en',
+  ) {
     if (lastNameControl.hasError('required')) {
       return LAST_NAME_ERROR_MESSAGES.required[lang];
     }
     return '';
   }
-  
+
   /**
    * Retrieves the appropriate error message for the password field based on validation errors.
    *
@@ -263,7 +300,10 @@ import { SharedService } from "../shared.service";
    * @param {'en' | 'ar'} [lang='en'] - The language code for the error message (default is 'en' for English).
    * @returns {string} - The localized error message if there's a 'required', 'minlength', or 'pattern' validation error; otherwise, an empty string.
    */
-  getPasswordErrorMessage(passwordControl: AbstractControl, lang: 'en' | 'ar' = 'en') {
+  getPasswordErrorMessage(
+    passwordControl: AbstractControl,
+    lang: 'en' | 'ar' = 'en',
+  ) {
     if (passwordControl.hasError('required')) {
       return PASSWORD_ERROR_MESSAGES.required[lang];
     }
@@ -275,7 +315,7 @@ import { SharedService } from "../shared.service";
     }
     return '';
   }
-  
+
   /**
    * Retrieves the appropriate error message for the phone number field based on validation errors.
    *
@@ -283,7 +323,10 @@ import { SharedService } from "../shared.service";
    * @param {'en' | 'ar'} [lang='en'] - The language code for the error message (default is 'en' for English).
    * @returns {string} - The localized error message if there's a 'required', 'minlength', or 'pattern' validation error; otherwise, an empty string.
    */
-  getPhoneErrorMessage(phoneControl: AbstractControl, lang: 'en' | 'ar' = 'en') {
+  getPhoneErrorMessage(
+    phoneControl: AbstractControl,
+    lang: 'en' | 'ar' = 'en',
+  ) {
     if (phoneControl.hasError('required')) {
       return PHONE_ERROR_MESSAGES.required[lang];
     }
@@ -295,7 +338,7 @@ import { SharedService } from "../shared.service";
     }
     return '';
   }
-  
+
   /**
    * Unsubscribes from all active subscriptions to prevent memory leaks.
    *
