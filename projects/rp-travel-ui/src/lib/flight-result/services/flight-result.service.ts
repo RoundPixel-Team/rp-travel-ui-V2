@@ -13,7 +13,8 @@ import {
   SearchFlightModule,
   customAirlineFilter,
   filterFlightInterface,
-  flightResultFilter
+  flightResultFilter,
+  ISearchFlightAi,
 } from '../interfaces';
 import { FlightResultApiService } from './flight-result-api.service';
 
@@ -27,11 +28,15 @@ export class FlightResultService {
   route = inject(ActivatedRoute);
   filter?: flightResultFilter;
   searchID: string = '';
-  destinationType:string='';
+  destinationType: string = '';
   /**
    * response Data from Api  b type FlightSearchResult
    */
   response?: FlightSearchResult;
+  /**
+   * response Data from Api  b type FlightSearchResult
+   */
+  responseAi?: FlightSearchResult;
   /**
    * response airItineraries Data from Api  b type airItineraries
    */
@@ -110,7 +115,7 @@ export class FlightResultService {
   /**Property for fare Rules */
   fareRules!: FareRules[];
 
-  baggageInfo!:BaggageAllowance[] | null;
+  baggageInfo!: BaggageAllowance[] | null;
   /**
    *  inital from filter
    *
@@ -220,7 +225,7 @@ export class FlightResultService {
     showDirect: boolean,
     DestinationType: string,
     endCustomAirlineFilter: number,
-    endCustomAirlineFilterMobile: number
+    endCustomAirlineFilterMobile: number,
   ) {
     this.loading = true;
     this.orgnizedResponce = [];
@@ -251,7 +256,7 @@ export class FlightResultService {
       serachId,
       showDirect,
       'all',
-      DestinationType
+      DestinationType,
     );
     if (SearchFlightModule) {
       let myapi = searchApi;
@@ -304,7 +309,7 @@ export class FlightResultService {
                 overNight: new FormControl(false),
                 longStops: new FormControl(false),
               }),
-              
+
               goingFlightScheduleDepart: new FormGroup({
                 startTime: new FormControl(''),
                 endTime: new FormControl(''),
@@ -357,11 +362,11 @@ export class FlightResultService {
               ?.setValue(this.maxPriceValueForSlider);
             this.filterForm.updateValueAndValidity();
 
-            this.stopsvalues(), (this.airlinesA = this.response.airlines);
+            (this.stopsvalues(), (this.airlinesA = this.response.airlines));
             this.airlinesForm = [];
             this.airlinesA.forEach((element) => {
               (<FormArray>this.filterForm.get('airline')?.get('airlines')).push(
-                new FormControl(false)
+                new FormControl(false),
               );
             });
 
@@ -388,7 +393,7 @@ export class FlightResultService {
             this.loading = false;
             this.ResultFound = false;
           }
-        })
+        }),
       );
     }
   }
@@ -420,26 +425,26 @@ export class FlightResultService {
             ],
 
             this.filteringbyairline(
-              this.filterForm.get('airline')?.get('airlines')?.value!
+              this.filterForm.get('airline')?.get('airlines')?.value!,
             ),
             this.filteringbyBookingSites(
-              this.filterForm.get('bookingSite')?.get('bookingSites')?.value!
+              this.filterForm.get('bookingSite')?.get('bookingSites')?.value!,
             ),
             this.filterForm.get('goingFlightSchedule')?.value!,
-            this.filterForm.get('returnFlightSchedule')?.value!
+            this.filterForm.get('returnFlightSchedule')?.value!,
           );
 
           this.oneForAll(filter, this.FilterData, this.roundT);
         } else {
         }
-      })
+      }),
     );
   }
 
   oneForAll(
     filter: filterFlightInterface,
     fligtsArray: IAirItinerary[],
-    round: boolean
+    round: boolean,
   ) {
     this.orgnizedResponce = this.orgnize(
       fligtsArray.filter(
@@ -457,8 +462,8 @@ export class FlightResultService {
           this.filterWithSchedule(v, 'goingFlightScheduleDepart') &&
           this.filterWithSchedule(v, 'goingFlightScheduleArrival') &&
           this.filterWithSchedule(v, 'returnFlightScheduleDepart') &&
-          this.filterWithSchedule(v, 'returnFlightScheduleArrival')
-      )
+          this.filterWithSchedule(v, 'returnFlightScheduleArrival'),
+      ),
     );
   }
 
@@ -476,15 +481,14 @@ export class FlightResultService {
             v.allJourney.flights[0].flightDTO[0].flightAirline.airlineCode ===
               a[0].allJourney.flights[0].flightDTO[0].flightAirline
                 .airlineCode &&
-            v.itinTotalFare.amount === a[0].itinTotalFare.amount
-        )
+            v.itinTotalFare.amount === a[0].itinTotalFare.amount,
+        ),
       );
       remain = remain.filter(
         (v, i, a) =>
           v.allJourney.flights[0].flightDTO[0].flightAirline.airlineCode !=
-            a[0].allJourney.flights[0].flightDTO[0].flightAirline
-              .airlineCode ||
-          v.itinTotalFare.amount != a[0].itinTotalFare.amount
+            a[0].allJourney.flights[0].flightDTO[0].flightAirline.airlineCode ||
+          v.itinTotalFare.amount != a[0].itinTotalFare.amount,
       );
     }
 
@@ -627,14 +631,14 @@ export class FlightResultService {
    **/
   findDepartingnMinMax(array: IAirItinerary[]) {
     let min = this.convertToMin(
-      array[0].allJourney.flights[0].flightDTO[0].departureDate
+      array[0].allJourney.flights[0].flightDTO[0].departureDate,
     );
     let max = this.convertToMin(
-      array[0].allJourney.flights[0].flightDTO[0].departureDate
+      array[0].allJourney.flights[0].flightDTO[0].departureDate,
     );
     array.forEach((element) => {
       let t = this.convertToMin(
-        element.allJourney.flights[0].flightDTO[0].departureDate
+        element.allJourney.flights[0].flightDTO[0].departureDate,
       );
       if (t < min) {
         min = t;
@@ -658,18 +662,18 @@ export class FlightResultService {
     let min = this.convertToMin(
       array[0].allJourney.flights[0].flightDTO[
         array[0].allJourney.flights[0].flightDTO.length - 1
-      ].arrivalDate
+      ].arrivalDate,
     );
     let max = this.convertToMin(
       array[0].allJourney.flights[0].flightDTO[
         array[0].allJourney.flights[0].flightDTO.length - 1
-      ].arrivalDate
+      ].arrivalDate,
     );
     array.forEach((element) => {
       let t = this.convertToMin(
         element.allJourney.flights[0].flightDTO[
           element.allJourney.flights[0].flightDTO.length - 1
-        ].arrivalDate
+        ].arrivalDate,
       );
       if (t < min) {
         min = t;
@@ -698,18 +702,27 @@ export class FlightResultService {
     let tm = hr + m;
     return tm;
   }
-  filterWithSchedule(flight: IAirItinerary, flightType: 'goingFlightScheduleDepart' | 'returnFlightScheduleDepart' | 'goingFlightScheduleArrival' | 'returnFlightScheduleArrival'): boolean {
+  filterWithSchedule(
+    flight: IAirItinerary,
+    flightType:
+      | 'goingFlightScheduleDepart'
+      | 'returnFlightScheduleDepart'
+      | 'goingFlightScheduleArrival'
+      | 'returnFlightScheduleArrival',
+  ): boolean {
     const schedule = this.filterForm.get(flightType)?.value;
     const flightIndex = flightType.includes('going') ? 0 : 1;
-    
+
     if (schedule?.endTime && schedule?.startTime) {
       const flightObj = flight.allJourney.flights[flightIndex];
-      const flightSegmentIndex = flightType.includes('Depart') ? 0 : flightObj.flightDTO.length - 1;
+      const flightSegmentIndex = flightType.includes('Depart')
+        ? 0
+        : flightObj.flightDTO.length - 1;
 
       const date = new Date(
-        flightType.includes('Depart') ? 
-          flightObj.flightDTO[flightSegmentIndex].departureDate : 
-          flightObj.flightDTO[flightSegmentIndex].arrivalDate
+        flightType.includes('Depart')
+          ? flightObj.flightDTO[flightSegmentIndex].departureDate
+          : flightObj.flightDTO[flightSegmentIndex].arrivalDate,
       );
 
       const currentHours = date.getHours();
@@ -750,10 +763,10 @@ export class FlightResultService {
   filterFlighWithDepartionTime(flight: IAirItinerary): boolean {
     return (
       this.convertToMin(
-        flight.allJourney.flights[0].flightDTO[0].departureDate
+        flight.allJourney.flights[0].flightDTO[0].departureDate,
       ) >= this.filterForm.get('mindepartingSlider')?.value! &&
       this.convertToMin(
-        flight.allJourney.flights[0].flightDTO[0].departureDate
+        flight.allJourney.flights[0].flightDTO[0].departureDate,
       ) <= this.filterForm.get('maxdepartingSlider')?.value!
     );
   }
@@ -765,12 +778,12 @@ export class FlightResultService {
       this.convertToMin(
         flight.allJourney.flights[0].flightDTO[
           flight.allJourney.flights[0].flightDTO.length - 1
-        ].arrivalDate
+        ].arrivalDate,
       ) >= this.filterForm.get('minarrivingSlider')?.value! &&
       this.convertToMin(
         flight.allJourney.flights[0].flightDTO[
           flight.allJourney.flights[0].flightDTO.length - 1
-        ].arrivalDate
+        ].arrivalDate,
       ) <= this.filterForm.get('maxarrivingSlider')?.value!
     );
   }
@@ -817,7 +830,7 @@ export class FlightResultService {
    **/
   filterFlightWithNumberofStopsFunction(
     flight: IAirItinerary,
-    filter: filterFlightInterface
+    filter: filterFlightInterface,
   ): boolean {
     let stopFlage: boolean = true;
     if (
@@ -897,22 +910,22 @@ export class FlightResultService {
   filterFlightWithAirlineFunction(
     flight: IAirItinerary,
     filter: filterFlightInterface,
-    roundT: boolean
+    roundT: boolean,
   ): boolean {
     if (roundT) {
       return (
         filter.airlines!.indexOf(
-          flight.allJourney.flights[0]['flightAirline']['airlineName']
+          flight.allJourney.flights[0]['flightAirline']['airlineName'],
         ) != -1 ||
         filter.airlines!.indexOf(
-          flight.allJourney.flights[1]['flightAirline']['airlineName']
+          flight.allJourney.flights[1]['flightAirline']['airlineName'],
         ) != -1 ||
         filter.airlines?.length == 0
       );
     } else {
       return (
         filter.airlines!.indexOf(
-          flight.allJourney.flights[0]['flightAirline']['airlineName']
+          flight.allJourney.flights[0]['flightAirline']['airlineName'],
         ) != -1 || filter.airlines?.length == 0
       );
     }
@@ -925,16 +938,16 @@ export class FlightResultService {
   filterFlighWithReturnTime(
     flight: IAirItinerary,
     filter: filterFlightInterface,
-    roundT: boolean
+    roundT: boolean,
   ): boolean {
     roundT = this.roundT;
     if (roundT) {
       return (
         this.convertToMin(
-          flight.allJourney.flights[1].flightDTO[0].departureDate
+          flight.allJourney.flights[1].flightDTO[0].departureDate,
         ) >= filter.returnMin! &&
         this.convertToMin(
-          flight.allJourney.flights[1].flightDTO[0].departureDate
+          flight.allJourney.flights[1].flightDTO[0].departureDate,
         ) < filter.returnMax!
       );
     } else {
@@ -1000,7 +1013,7 @@ export class FlightResultService {
    **/
   FlexTicketcheck(
     flight: IAirItinerary,
-    filter: filterFlightInterface
+    filter: filterFlightInterface,
   ): boolean {
     if (filter.flexibleTicket![0] && !filter.flexibleTicket![1]) {
       if (flight.isRefundable) {
@@ -1027,7 +1040,7 @@ export class FlightResultService {
    **/
   filterWithExperience(
     flight: IAirItinerary,
-    filter: filterFlightInterface
+    filter: filterFlightInterface,
   ): boolean {
     if (filter.experience![0] && !filter.experience![1]) {
       if (flight.overNight == 0) {
@@ -1058,7 +1071,7 @@ export class FlightResultService {
    **/
   completeTripOnSameAirline(
     flight: IAirItinerary,
-    filter: filterFlightInterface
+    filter: filterFlightInterface,
   ): boolean {
     if (!filter.sameAirline) {
       return true;
@@ -1125,7 +1138,7 @@ export class FlightResultService {
       let airlineNow = this.response.airlines[i];
       let index = sorted.findIndex(
         (air) =>
-          air.allJourney.flights[0].flightAirline.airlineName == airlineNow
+          air.allJourney.flights[0].flightAirline.airlineName == airlineNow,
       );
       if (index != -1) {
         var maxStops = sorted[index].allJourney.flights.slice().sort((a, b) => {
@@ -1144,11 +1157,11 @@ export class FlightResultService {
     // this.code = sorted[0].itinTotalFare.currencyCode
     this.customFilteredAirlineSlice = this.customFilteredAirline.slice(
       this.customFilteredAirlineStart,
-      this.customFilteredAirlineEnd
+      this.customFilteredAirlineEnd,
     );
     this.customFilteredAirlineSliceMobile = this.customFilteredAirline.slice(
       this.customFilteredAirlineStartMobile,
-      this.customFilteredAirlineEndMobile
+      this.customFilteredAirlineEndMobile,
     );
   }
 
@@ -1164,7 +1177,7 @@ export class FlightResultService {
       this.customFilteredAirlineEnd += 1;
       this.customFilteredAirlineSlice = this.customFilteredAirline.slice(
         this.customFilteredAirlineStart,
-        this.customFilteredAirlineEnd
+        this.customFilteredAirlineEnd,
       );
     }
   }
@@ -1181,7 +1194,7 @@ export class FlightResultService {
       this.customFilteredAirlineEnd -= 1;
       this.customFilteredAirlineSlice = this.customFilteredAirline.slice(
         this.customFilteredAirlineStart,
-        this.customFilteredAirlineEnd
+        this.customFilteredAirlineEnd,
       );
     }
   }
@@ -1200,7 +1213,7 @@ export class FlightResultService {
       this.customFilteredAirlineEndMobile += 1;
       this.customFilteredAirlineSliceMobile = this.customFilteredAirline.slice(
         this.customFilteredAirlineStartMobile,
-        this.customFilteredAirlineEndMobile
+        this.customFilteredAirlineEndMobile,
       );
     }
   }
@@ -1217,7 +1230,7 @@ export class FlightResultService {
       this.customFilteredAirlineEndMobile -= 1;
       this.customFilteredAirlineSliceMobile = this.customFilteredAirline.slice(
         this.customFilteredAirlineStartMobile,
-        this.customFilteredAirlineEndMobile
+        this.customFilteredAirlineEndMobile,
       );
     }
   }
@@ -1227,15 +1240,19 @@ export class FlightResultService {
    **/
   chooseCustomFilterAirline(val: customAirlineFilter, index: number) {
     // Find the actual index in the airlinesA array (which matches the form array)
-    var indexInFormArray = this.airlinesA.findIndex((airlineName: string) => airlineName === val.name);
-    
+    var indexInFormArray = this.airlinesA.findIndex(
+      (airlineName: string) => airlineName === val.name,
+    );
+
     if (indexInFormArray === -1) {
       console.error('Airline not found in form array:', val.name);
       return;
     }
 
-    var isCurrentlySelected = this.chosenCustomFilteredAirline.includes(val.name);
-    
+    var isCurrentlySelected = this.chosenCustomFilteredAirline.includes(
+      val.name,
+    );
+
     if (!isCurrentlySelected) {
       // Add to selected airlines
       (this.filterForm.get('airline')!.get('airlines') as FormArray)
@@ -1252,7 +1269,7 @@ export class FlightResultService {
         this.chosenCustomFilteredAirline.splice(removeIndex, 1);
       }
     }
-    
+
     // Trigger the filter update
     this.filterForm.updateValueAndValidity();
   }
@@ -1272,11 +1289,11 @@ export class FlightResultService {
       next: (result) => {
         this.fareLoading = false;
         this.fareRules = result.fares;
-        this.baggageInfo = result.baggageAllowances
+        this.baggageInfo = result.baggageAllowances;
       },
       error: () => {
         this.fareLoading = false;
-      }
+      },
     });
   }
 
@@ -1285,24 +1302,24 @@ export class FlightResultService {
     searchId: string,
     squencNumber: number,
     pKey: string,
-    pcc: string
+    pcc: string,
   ) {
     this.isBrandedFaresLoading = true;
     const itemKey = searchId + squencNumber + pKey + pcc;
 
     if (sessionStorage.getItem(itemKey)) {
       this.currentSelectedBrands = JSON.parse(
-        sessionStorage.getItem(itemKey) ?? ''
+        sessionStorage.getItem(itemKey) ?? '',
       );
       this.brandedFareNotifier.next(null);
       this.isBrandedFaresLoading = false;
     } else {
-      this.isBrandedFaresLoading = true
+      this.isBrandedFaresLoading = true;
       this.api.getBrandedFaresApi(searchId, squencNumber, pKey, pcc).subscribe({
         next: (result) => {
           this.currentSelectedBrands = result.brands;
           this.isBrandedFaresLoading = false;
-          
+
           sessionStorage.setItem(itemKey, JSON.stringify(result.brands));
           this.brandedFareNotifier.next(null);
         },
@@ -1310,7 +1327,7 @@ export class FlightResultService {
           console.error(err.message);
           this.isBrandedFaresLoading = false;
           this.brandedFareNotifier.error('Faild to load branded fares');
-        }
+        },
       });
     }
   }
@@ -1375,6 +1392,44 @@ export class FlightResultService {
       TtransitTime += transitTime;
     });
     return TtransitTime;
+  }
+
+  getDataFromAiUrl(searchData: ISearchFlightAi) {
+    this.loading = true;
+    this.normalError = '';
+    this.normalErrorStatus = false;
+    this.api.searchFlightAi(searchData).subscribe({
+      next: (value) => {
+        if (value.status == 'Valid') {
+          console.log('Flight search result:', value);
+          this.loading = false;
+          this.ResultFound = true;
+          this.responseAi = value;
+          this.normalError = '';
+          this.normalErrorStatus = false;
+        } else if (value.output) {
+          console.log('AI search response (welcome/chat):', value);
+          this.loading = false;
+          this.ResultFound = true;
+          this.responseAi = value;
+          this.normalError = '';
+          this.normalErrorStatus = false;
+        } else {
+          console.error('Flight search status invalid:', value);
+          this.loading = false;
+          this.ResultFound = false;
+          this.normalError = 'Something went wrong. Please try again later.';
+          this.normalErrorStatus = true;
+        }
+      },
+      error: (err) => {
+        console.error('Error searching flights:', err);
+        this.loading = false;
+        this.ResultFound = false;
+        this.normalError = 'Something went wrong. Please try again later.';
+        this.normalErrorStatus = true;
+      },
+    });
   }
 
   /**

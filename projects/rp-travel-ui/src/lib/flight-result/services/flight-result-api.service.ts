@@ -1,7 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { EnvironmentService } from '../../shared/services/environment.service';
-import { FareRules, FlightSearchResponse, FlightSearchResult, SearchFlightModule, fareRulesResponse } from '../interfaces';
+import {
+  FareRules,
+  FlightSearchResponse,
+  FlightSearchResult,
+  SearchFlightModule,
+  fareRulesResponse,
+  ISearchFlightAi,
+} from '../interfaces';
 import { catchError, retry, take } from 'rxjs';
 import { searchFlightModel } from '../../flight-search/interfaces';
 
@@ -23,7 +30,18 @@ export class FlightResultApiService {
       catchError((err) => {
         console.error(err);
         throw err;
-      })
+      }),
+    );
+  }
+  searchFlightAi(searchFlight: ISearchFlightAi) {
+    let api: string = `${this.env.searchflowAi}/webhook/Search`;
+    return this.http.post<FlightSearchResult>(api, searchFlight).pipe(
+      retry(2),
+      take(1),
+      catchError((err) => {
+        console.error(err);
+        throw err;
+      }),
     );
   }
 
