@@ -27,6 +27,11 @@ export class FlightCheckoutApiService {
       GatewayType: 'FSSCard',
     },
     {
+      PaymentMethod: 'FawaterakCard',
+      cardImg: 'assets/cards/visamaster.png',
+      GatewayType: 'FawaterakCard',
+    },
+    {
       PaymentMethod: 'Paytabscc',
       cardImg: 'assets/cards/visamaster.png',
       GatewayType: 'Paytabscc',
