@@ -64,6 +64,7 @@ export class FlightResultService {
   maxPriceValueForSlider: number = 100;
 
   FilterChanges$: Subscription = new Subscription();
+  pollSubscription?: Subscription;
   notify = new Subject<null>();
   brandedFareNotifier = new Subject<null>();
 
@@ -256,133 +257,326 @@ export class FlightResultService {
     if (SearchFlightModule) {
       let myapi = searchApi;
 
+      if (this.pollSubscription) {
+        this.pollSubscription.unsubscribe();
+      }
+      this.pollSubscription = new Subscription();
+      this.getBrandedFares(serachId, 52, '3dfg', 'hfg');
       this.subscription.add(
-        this.api.searchFlight(myapi).subscribe((result) => {
-          this.formINIT = false;
-          if (result.status == 'Valid') {
-            this.loading = false;
-            this.ResultFound = true;
-            this.response = result;
-            this.FlightType = this.response.searchCriteria.flightType;
-            this.minAnMax(this.response.airItineraries); //get Min And Max price
-            this.findDepartingnMinMax(this.response.airItineraries); //get Min And Max Depart Date
-            this.findArrivingMinMax(this.response.airItineraries); //get Min And Max Arrival Date
-            this.findDurationMinMax(this.response.airItineraries); //get Min And Max Duration Stops
+        this.api.searchFlight(myapi).subscribe({
+          next: (initialResult) => {
+            this.formINIT = false;
+            
+            // If the initial result has valid flight itineraries immediately (fallback / backward-compatibility)
+            if (initialResult && initialResult.status === 'Valid' && initialResult.airItineraries && initialResult.airItineraries.length > 0) {
+              this.loading = false;
+              this.ResultFound = true;
+              this.response = initialResult;
+              this.FlightType = this.response.searchCriteria.flightType;
+              this.minAnMax(this.response.airItineraries); //get Min And Max price
+              this.findDepartingnMinMax(this.response.airItineraries); //get Min And Max Depart Date
+              this.findArrivingMinMax(this.response.airItineraries); //get Min And Max Arrival Date
+              this.findDurationMinMax(this.response.airItineraries); //get Min And Max Duration Stops
 
-            this.filterAirlines();
-            this.FilterData = this.addExperiance(result.airItineraries); //add new optional value to airItineraries object
-            this.orgnizedResponce = this.orgnize(this.FilterData);
-            this.fetchLowestFaresForSorting(this.orgnizedResponce);
-            this.FilterChanges$.unsubscribe();
+              this.filterAirlines();
+              this.FilterData = this.addExperiance(initialResult.airItineraries); //add new optional value to airItineraries object
+              this.orgnizedResponce = this.orgnize(this.FilterData);
+              this.fetchLowestFaresForSorting(this.orgnizedResponce);
+              this.FilterChanges$.unsubscribe();
 
-            this.filterForm = new FormGroup({
-              airline: new FormGroup({
-                airlines: new FormArray([]),
-              }),
+              this.filterForm = new FormGroup({
+                airline: new FormGroup({
+                  airlines: new FormArray([]),
+                }),
+                bookingSite: new FormGroup({
+                  bookingSites: new FormArray([]),
+                }),
 
-              bookingSite: new FormGroup({
-                bookingSites: new FormArray([]),
-              }),
+                stopsForm: new FormGroup({
+                  noStops: new FormControl(false),
+                  oneStop: new FormControl(false),
+                  twoAndm: new FormControl(false),
+                }),
+                sameAirline: new FormControl(false),
+                minpriceSlider: new FormControl(0),
+                maxpriceSlider: new FormControl(0),
+                mindurationSlider: new FormControl(0),
+                maxdurationSlider: new FormControl(7000),
+                mindepartingSlider: new FormControl(0),
+                maxdepartingSlider: new FormControl(20000),
+                minarrivingSlider: new FormControl(0),
+                maxarrivingSlider: new FormControl(20000),
+                returnSlider: new FormControl([0, 7000]),
+                experience: new FormGroup({
+                  overNight: new FormControl(false),
+                  longStops: new FormControl(false),
+                }),
+                
+                goingFlightScheduleDepart: new FormGroup({
+                  startTime: new FormControl(''),
+                  endTime: new FormControl(''),
+                }),
+                goingFlightScheduleArrival: new FormGroup({
+                  startTime: new FormControl(''),
+                  endTime: new FormControl(''),
+                }),
+                returnFlightScheduleDepart: new FormGroup({
+                  startTime: new FormControl(''),
+                  endTime: new FormControl(''),
+                }),
+                returnFlightScheduleArrival: new FormGroup({
+                  startTime: new FormControl(''),
+                  endTime: new FormControl(''),
+                }),
 
-              stopsForm: new FormGroup({
-                noStops: new FormControl(false),
-                oneStop: new FormControl(false),
-                twoAndm: new FormControl(false),
-              }),
-              sameAirline: new FormControl(false),
-              minpriceSlider: new FormControl(0),
-              maxpriceSlider: new FormControl(0),
-              mindurationSlider: new FormControl(0),
-              maxdurationSlider: new FormControl(7000),
-              mindepartingSlider: new FormControl(0),
-              maxdepartingSlider: new FormControl(20000),
-              minarrivingSlider: new FormControl(0),
-              maxarrivingSlider: new FormControl(20000),
-              returnSlider: new FormControl([0, 7000]),
+                flexibleTickets: new FormGroup({
+                  refund: new FormControl(false),
+                  nonRefund: new FormControl(false),
+                }),
+              });
 
-              experience: new FormGroup({
-                overNight: new FormControl(false),
-                longStops: new FormControl(false),
-              }),
-              
-              goingFlightScheduleDepart: new FormGroup({
-                startTime: new FormControl(''),
-                endTime: new FormControl(''),
-              }),
-              goingFlightScheduleArrival: new FormGroup({
-                startTime: new FormControl(''),
-                endTime: new FormControl(''),
-              }),
-              returnFlightScheduleDepart: new FormGroup({
-                startTime: new FormControl(''),
-                endTime: new FormControl(''),
-              }),
-              returnFlightScheduleArrival: new FormGroup({
-                startTime: new FormControl(''),
-                endTime: new FormControl(''),
-              }),
+              this.filterForm
+                .get('mindepartingSlider')
+                ?.setValue(this.minDepartingValueForSlider);
+              this.filterForm
+                .get('maxdepartingSlider')
+                ?.setValue(this.maxDepartingValueForSlider);
 
-              flexibleTickets: new FormGroup({
-                refund: new FormControl(false),
-                nonRefund: new FormControl(false),
-              }),
-            });
+              this.filterForm
+                .get('mindurationSlider')
+                ?.setValue(this.minDurationValueForSlider);
+              this.filterForm
+                .get('maxdurationSlider')
+                ?.setValue(this.maxDurationValueForSlider);
 
-            this.filterForm
-              .get('mindepartingSlider')
-              ?.setValue(this.minDepartingValueForSlider);
-            this.filterForm
-              .get('maxdepartingSlider')
-              ?.setValue(this.maxDepartingValueForSlider);
+              this.filterForm
+                .get('minarrivingSlider')
+                ?.setValue(this.minArrivingValueForSlider);
+              this.filterForm
+                .get('maxarrivingSlider')
+                ?.setValue(this.maxArrivingValueForSlider);
 
-            this.filterForm
-              .get('mindurationSlider')
-              ?.setValue(this.minDurationValueForSlider);
-            this.filterForm
-              .get('maxdurationSlider')
-              ?.setValue(this.maxDurationValueForSlider);
+              this.filterForm
+                .get('minpriceSlider')
+                ?.setValue(this.minPriceValueForSlider);
+              this.filterForm
+                .get('maxpriceSlider')
+                ?.setValue(this.maxPriceValueForSlider);
+              this.filterForm.updateValueAndValidity();
 
-            this.filterForm
-              .get('minarrivingSlider')
-              ?.setValue(this.minArrivingValueForSlider);
-            this.filterForm
-              .get('maxarrivingSlider')
-              ?.setValue(this.maxArrivingValueForSlider);
+              this.stopsvalues(), (this.airlinesA = this.response.airlines);
+              this.airlinesForm = [];
+              this.airlinesA.forEach((element) => {
+                (<FormArray>this.filterForm.get('airline')?.get('airlines')).push(
+                  new FormControl(false)
+                );
+              });
 
-            this.filterForm
-              .get('minpriceSlider')
-              ?.setValue(this.minPriceValueForSlider);
-            this.filterForm
-              .get('maxpriceSlider')
-              ?.setValue(this.maxPriceValueForSlider);
-            this.filterForm.updateValueAndValidity();
+              this.bookingSitesForm = [];
+              this.bookingSites.forEach((element) => {
+                (<FormArray>(
+                  this.filterForm.get('bookingSite')?.get('bookingSites')
+                )).push(new FormControl(false));
+              });
+              this.filterForm.updateValueAndValidity();
+              this.formINIT = true;
+              this.refundedItineries = initialResult.airItineraries.filter((res) => {
+                return res.isRefundable;
+              }).length;
+              this.nonRefundedItieneries = initialResult.airItineraries.filter((res) => {
+                return !res.isRefundable;
+              }).length;
+              this.updateFilter();
 
-            this.stopsvalues(), (this.airlinesA = this.response.airlines);
-            this.airlinesForm = [];
-            this.airlinesA.forEach((element) => {
-              (<FormArray>this.filterForm.get('airline')?.get('airlines')).push(
-                new FormControl(false)
-              );
-            });
+              this.notify.next(null);
+            } else {
+              // Otherwise, we poll the new endpoint using the searchId from the initial response
+              const searchId = initialResult && initialResult.searchCriteria && initialResult.searchCriteria.searchId
+                ? initialResult.searchCriteria.searchId
+                : serachId;
+              if (searchId) {
+                let pollCount = 0;
+                const maxPolls = 15;
 
-            this.bookingSitesForm = [];
-            this.bookingSites.forEach((element) => {
-              (<FormArray>(
-                this.filterForm.get('bookingSite')?.get('bookingSites')
-              )).push(new FormControl(false));
-            });
-            this.filterForm.updateValueAndValidity();
-            this.formINIT = true;
-            this.refundedItineries = result.airItineraries.filter((res) => {
-              return res.isRefundable;
-            }).length;
-            this.nonRefundedItieneries = result.airItineraries.filter((res) => {
-              return !res.isRefundable;
-            }).length;
-            this.updateFilter();
+                const runPoll = () => {
+                  pollCount++;
+                  const pollSub = this.api.pollFlightResults(searchId).subscribe({
+                    next: (pollResult) => {
+                      const data = pollResult ? pollResult.airItineraryListDTO : null;
+                      const hasItineraries = data && data.airItineraries && data.airItineraries.length > 0;
 
-            this.notify.next(null);
-          } else {
+                      if (hasItineraries) {
+                        this.loading = false;
+                        this.ResultFound = true;
+                        this.response = data;
+                        
+                        if (this.response) {
+                          if (initialResult && initialResult.searchCriteria && (!this.response.searchCriteria || this.response.searchCriteria.searchId !== initialResult.searchCriteria.searchId)) {
+                            this.response.searchCriteria = initialResult.searchCriteria;
+                          }
+                          this.FlightType = this.response.searchCriteria.flightType;
+                          this.minAnMax(this.response.airItineraries); //get Min And Max price
+                          this.findDepartingnMinMax(this.response.airItineraries); //get Min And Max Depart Date
+                          this.findArrivingMinMax(this.response.airItineraries); //get Min And Max Arrival Date
+                          this.findDurationMinMax(this.response.airItineraries); //get Min And Max Duration Stops
+
+                          this.filterAirlines();
+                          this.FilterData = this.addExperiance(this.response.airItineraries); //add new optional value to airItineraries object
+                          this.orgnizedResponce = this.orgnize(this.FilterData);
+                          this.fetchLowestFaresForSorting(this.orgnizedResponce);
+                          this.FilterChanges$.unsubscribe();
+
+                          this.filterForm = new FormGroup({
+                            airline: new FormGroup({
+                              airlines: new FormArray([]),
+                            }),
+                            bookingSite: new FormGroup({
+                              bookingSites: new FormArray([]),
+                            }),
+
+                            stopsForm: new FormGroup({
+                              noStops: new FormControl(false),
+                              oneStop: new FormControl(false),
+                              twoAndm: new FormControl(false),
+                            }),
+                            sameAirline: new FormControl(false),
+                            minpriceSlider: new FormControl(0),
+                            maxpriceSlider: new FormControl(0),
+                            mindurationSlider: new FormControl(0),
+                            maxdurationSlider: new FormControl(7000),
+                            mindepartingSlider: new FormControl(0),
+                            maxdepartingSlider: new FormControl(20000),
+                            minarrivingSlider: new FormControl(0),
+                            maxarrivingSlider: new FormControl(20000),
+                            returnSlider: new FormControl([0, 7000]),
+                            experience: new FormGroup({
+                              overNight: new FormControl(false),
+                              longStops: new FormControl(false),
+                            }),
+                            
+                            goingFlightScheduleDepart: new FormGroup({
+                              startTime: new FormControl(''),
+                              endTime: new FormControl(''),
+                            }),
+                            goingFlightScheduleArrival: new FormGroup({
+                              startTime: new FormControl(''),
+                              endTime: new FormControl(''),
+                            }),
+                            returnFlightScheduleDepart: new FormGroup({
+                              startTime: new FormControl(''),
+                              endTime: new FormControl(''),
+                            }),
+                            returnFlightScheduleArrival: new FormGroup({
+                              startTime: new FormControl(''),
+                              endTime: new FormControl(''),
+                            }),
+
+                            flexibleTickets: new FormGroup({
+                              refund: new FormControl(false),
+                              nonRefund: new FormControl(false),
+                            }),
+                          });
+
+                          this.filterForm
+                            .get('mindepartingSlider')
+                            ?.setValue(this.minDepartingValueForSlider);
+                          this.filterForm
+                            .get('maxdepartingSlider')
+                            ?.setValue(this.maxDepartingValueForSlider);
+
+                          this.filterForm
+                            .get('mindurationSlider')
+                            ?.setValue(this.minDurationValueForSlider);
+                          this.filterForm
+                            .get('maxdurationSlider')
+                            ?.setValue(this.maxDurationValueForSlider);
+
+                          this.filterForm
+                            .get('minarrivingSlider')
+                            ?.setValue(this.minArrivingValueForSlider);
+                          this.filterForm
+                            .get('maxarrivingSlider')
+                            ?.setValue(this.maxArrivingValueForSlider);
+
+                          this.filterForm
+                            .get('minpriceSlider')
+                            ?.setValue(this.minPriceValueForSlider);
+                          this.filterForm
+                            .get('maxpriceSlider')
+                            ?.setValue(this.maxPriceValueForSlider);
+                          this.filterForm.updateValueAndValidity();
+
+                          this.stopsvalues();
+                          this.airlinesA = this.response.airlines || [];
+                          this.airlinesForm = [];
+                          this.airlinesA.forEach((element) => {
+                            (<FormArray>this.filterForm.get('airline')?.get('airlines')).push(
+                              new FormControl(false)
+                            );
+                          });
+
+                          this.bookingSitesForm = [];
+                          this.bookingSites.forEach((element) => {
+                            (<FormArray>(
+                              this.filterForm.get('bookingSite')?.get('bookingSites')
+                            )).push(new FormControl(false));
+                          });
+                          this.filterForm.updateValueAndValidity();
+                          this.formINIT = true;
+                          this.refundedItineries = this.response.airItineraries.filter((res) => {
+                            return res.isRefundable;
+                          }).length;
+                          this.nonRefundedItieneries = this.response.airItineraries.filter((res) => {
+                            return !res.isRefundable;
+                          }).length;
+                          this.updateFilter();
+
+                          this.notify.next(null);
+                        }
+                      }
+
+                      // Check if completed or max polls reached
+                      const isCompleted = pollResult && pollResult.isCompleted;
+                      if (isCompleted || pollCount >= maxPolls) {
+                        if (!this.ResultFound) {
+                          this.normalError = 'No result found. <br> please search again';
+                          this.normalErrorStatus = true;
+                          this.loading = false;
+                          this.ResultFound = false;
+                        }
+                      } else {
+                        setTimeout(runPoll, 1000);
+                      }
+                    },
+                    error: (err) => {
+                      console.error('Polling error:', err);
+                      if (pollCount >= maxPolls) {
+                        if (!this.ResultFound) {
+                          this.normalError = 'No result found. <br> please search again';
+                          this.normalErrorStatus = true;
+                          this.loading = false;
+                          this.ResultFound = false;
+                        }
+                      } else {
+                        setTimeout(runPoll, 1000);
+                      }
+                    }
+                  });
+                  this.pollSubscription?.add(pollSub);
+                };
+
+                // Run the first poll after 1 second
+                setTimeout(runPoll, 1000);
+              } else {
+                this.normalError = 'No result found. <br> please search again';
+                this.normalErrorStatus = true;
+                this.loading = false;
+                this.ResultFound = false;
+              }
+            }
+          },
+          error: (err) => {
+            console.error('Initial search error:', err);
             this.normalError = 'No result found. <br> please search again';
             this.normalErrorStatus = true;
             this.loading = false;
@@ -1381,6 +1575,10 @@ export class FlightResultService {
    * this function is responsible to destory any opened subscription on this service
    */
   destroyer() {
+    if (this.pollSubscription) {
+      this.pollSubscription.unsubscribe();
+      this.pollSubscription = undefined;
+    }
     // this.subscription.unsubscribe()
     this.response = undefined;
     this.FilterData = [];

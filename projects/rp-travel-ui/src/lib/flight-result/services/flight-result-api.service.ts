@@ -27,6 +27,18 @@ export class FlightResultApiService {
     );
   }
 
+  pollFlightResults(searchId: string) {
+    let api = `${this.env.searchflow}/Flights/FlightsResults?SearchId=${searchId}`;
+
+    return this.http.get<any>(api).pipe(
+      take(1),
+      catchError((err) => {
+        console.error(err);
+        throw err;
+      })
+    );
+  }
+
   fareRules(sid: string, seq: number, pKey: string) {
     let api = `${this.env.FareRules}/api/GetFareRules?SId=${sid}&SeqNum=${seq}&PKey=${pKey}`;
 
