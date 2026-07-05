@@ -261,7 +261,6 @@ export class FlightResultService {
         this.pollSubscription.unsubscribe();
       }
       this.pollSubscription = new Subscription();
-      this.getBrandedFares(serachId, 52, '3dfg', 'hfg');
       this.subscription.add(
         this.api.searchFlight(myapi).subscribe({
           next: (initialResult) => {
@@ -396,7 +395,7 @@ export class FlightResultService {
                 : serachId;
               if (searchId) {
                 let pollCount = 0;
-                const maxPolls = 15;
+                const maxPolls = 30;
 
                 const runPoll = () => {
                   pollCount++;
