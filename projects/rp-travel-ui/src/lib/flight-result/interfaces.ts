@@ -3,6 +3,7 @@ export interface baseSearchResult {
   status?: string;
   searchResultException?: { code: string; exceptionMessage: string };
   output?: string;
+  itineraries: IAirItinerary[];
 }
 
 /**
@@ -404,4 +405,70 @@ export interface ServiceInfo {
 export interface Dimension {
   height: string;
   width: string;
+}
+
+export interface Conversation {
+  id: string;
+  title: string;
+}
+
+export interface ConversationsResponse {
+  success: boolean;
+  data: Conversation[];
+  message: string | null;
+  errors: string[] | null;
+}
+
+export interface Traveler {
+  travelerType: string | null;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string | null;
+  passportNumber: string | null;
+  passportExpiry: string | null;
+  passportIssuedCountry: string | null;
+}
+
+export interface TravelerResponse {
+  status: 'missing' | 'completed';
+  traveler: Traveler;
+  missingFields: string[];
+  reply: string;
+}
+export interface Contact {
+  email: string ;
+  phoneNumber: string;
+}
+export interface ContactResponse {
+  status: 'missing' | 'completed';
+  contact: Contact;
+  missingFields: string[];
+  reply: string;
+}
+
+export interface ConversationMessage {
+  id: string;
+  conversationId: string;
+  role: 'User' | 'Assistant';
+  content: string;
+  metadata: unknown | null;
+  sequenceNumber: number;
+  createdAt: string;
+}
+
+export interface ConversationMessagesData {
+  items: ConversationMessage[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface ConversationMessagesResponse {
+  success: boolean;
+  data: ConversationMessagesData;
+  message: string | null;
+  errors: unknown | null;
 }

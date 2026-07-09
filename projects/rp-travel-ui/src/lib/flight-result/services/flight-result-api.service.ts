@@ -8,6 +8,8 @@ import {
   SearchFlightModule,
   fareRulesResponse,
   ISearchFlightAi,
+  TravelerResponse,
+  ContactResponse,
 } from '../interfaces';
 import { catchError, retry, take } from 'rxjs';
 import { searchFlightModel } from '../../flight-search/interfaces';
@@ -45,6 +47,30 @@ export class FlightResultApiService {
     );
   }
 
+  contactDetails(searchFlight: ISearchFlightAi) { 
+    let api: string = `${this.env.searchflowAi}/webhook/Contact`;
+    return this.http.post<ContactResponse>(api, searchFlight).pipe(
+      retry(2),
+      take(1),
+      catchError((err) => {
+        console.error(err);
+        throw err;
+      }),
+    );
+  }
+  
+  bookFlightAi(searchFlight: ISearchFlightAi) {
+    let api: string = `${this.env.searchflowAi}/webhook/Book`;
+    return this.http.post<TravelerResponse>(api, searchFlight).pipe(
+      retry(2),
+      take(1),
+      catchError((err) => {
+        console.error(err);
+        throw err;
+      }),
+    );
+  }
+
   fareRules(sid: string, seq: number, pKey: string) {
     let api = `${this.env.FareRules}/api/GetFareRules?SId=${sid}&SeqNum=${seq}&PKey=${pKey}`;
 
@@ -55,5 +81,17 @@ export class FlightResultApiService {
     let api = `${this.env.FareRules}/api/GetBrandedFares?SId=${sid}&SeqNum=${seq}&PKey=${pKey}&Pcc=${pcc}`;
 
     return this.http.get<FlightSearchResponse>(api).pipe(take(1));
+  }
+
+  getSearchHistory() {
+    let api = `http://154.41.209.93:9091/api/conversations/user/titles`;
+
+    return this.http.get(api).pipe(take(2));
+  }
+
+  getConversationDetails(chatId: string) {
+    let api = `http://154.41.209.93:9091/api/conversations/${chatId}/messages?page=1&pageSize=100`;
+
+    return this.http.get(api).pipe(take(2));
   }
 }

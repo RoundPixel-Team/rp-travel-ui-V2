@@ -15,6 +15,10 @@ import {
   filterFlightInterface,
   flightResultFilter,
   ISearchFlightAi,
+  ConversationsResponse,
+  TravelerResponse,
+  ConversationMessagesResponse,
+  ContactResponse,
 } from '../interfaces';
 import { FlightResultApiService } from './flight-result-api.service';
 
@@ -37,6 +41,20 @@ export class FlightResultService {
    * response Data from Api  b type FlightSearchResult
    */
   responseAi?: FlightSearchResult;
+
+  searchHistoryResponse?: ConversationsResponse;
+
+  searchHistoryError?: string;
+  
+  conversationsLoading = false;
+  
+  conversationResponse?: ConversationMessagesResponse;
+  
+  conversationError?: string;
+
+  bookResponseAi?: TravelerResponse;
+
+  ContactResponseAi?: ContactResponse;
   /**
    * response airItineraries Data from Api  b type airItineraries
    */
@@ -61,6 +79,8 @@ export class FlightResultService {
   fareLoading = false;
   isBrandedFaresLoading: boolean = false;
   ResultFound: boolean = false;
+
+  searchHistoryLoading = false;
 
   //Price Filter Values
   priceMinValue: number = 0;
@@ -1414,6 +1434,12 @@ export class FlightResultService {
           this.responseAi = value;
           this.normalError = '';
           this.normalErrorStatus = false;
+        } else if (value.itineraries && value.itineraries.length > 0) {
+          this.loading = false;
+          this.ResultFound = true;
+          this.responseAi = value;
+          this.normalError = '';
+          this.normalErrorStatus = false;
         } else {
           console.error('Flight search status invalid:', value);
           this.loading = false;
@@ -1431,7 +1457,79 @@ export class FlightResultService {
       },
     });
   }
+  bookFromAiUrl(searchData: ISearchFlightAi) {
+    this.loading = true;
+    this.normalError = '';
+    this.normalErrorStatus = false;
+    this.api.bookFlightAi(searchData).subscribe({
+      next: (value) => {
+        console.log(value, 'value');
+        console.log('Flight search result:', value);
+        this.loading = false;
+        this.ResultFound = true;
+        this.bookResponseAi = value;
+        this.normalError = '';
+        this.normalErrorStatus = false;
+      },
+      error: (err) => {
+        console.error('Error searching flights:', err);
+        this.loading = false;
+        this.ResultFound = false;
+        this.normalError = 'Something went wrong. Please try again later.';
+        this.normalErrorStatus = true;
+      },
+    });
+  }
 
+  getContactDetails(searchData: ISearchFlightAi) {
+    this.loading = true;
+    this.normalError = '';
+    this.normalErrorStatus = false;
+    this.api.contactDetails(searchData).subscribe({
+      next: (value) => {
+        this.loading = false;
+        this.ResultFound = true;
+        this.ContactResponseAi = value;
+        this.normalError = '';
+        this.normalErrorStatus = false;
+      },
+      error: (err) => {
+        console.error('Error searching flights:', err);
+        this.loading = false;
+        this.ResultFound = false;
+        this.normalError = 'Something went wrong. Please try again later.';
+        this.normalErrorStatus = true;
+      },
+    });
+  }
+
+  getSearchHistory() {
+    this.searchHistoryLoading = true;
+    this.api.getSearchHistory().subscribe({
+      next: (res: any) => {
+        this.searchHistoryLoading = false;
+        this.searchHistoryResponse = res;
+      },
+      error: (err) => {
+        this.searchHistoryLoading = false;
+        this.searchHistoryError = err;
+      },
+    });
+  }
+
+  getConversationDetails(chatId: string) {
+    this.conversationsLoading = true;
+    this.api.getConversationDetails(chatId).subscribe({
+      next: (res: any) => {
+        this.conversationsLoading = false;
+        this.conversationResponse = res;
+      },
+      error: (err) => {
+        this.conversationsLoading = false;
+        this.conversationError = err;
+      },
+    });
+  }
   /**
    * this function is responsible to destory any opened subscription on this service
    */

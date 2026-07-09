@@ -49,6 +49,7 @@ export class FlightCheckoutService {
   router = inject(Router);
   subscription: Subscription = new Subscription();
   serviceFees: number = 0;
+  travellersDetails: any;
 
   yesOrNoVaild: boolean = false;
   packageVaild: boolean = false;
@@ -1141,6 +1142,103 @@ export class FlightCheckoutService {
    * @returns the passenger details (body param) needed by backend to make the save booking action
    */
   generateCheckoutDetails(currentCurrency: string): CheckOutDetails {
+    if (this.travellersDetails) {
+      const contact = this.travellersDetails.contactDetails;
+      const travellers = this.travellersDetails.travellers;
+      const passengersDetails: any[] = [];
+
+      let index = 1;
+      for (const key of Object.keys(travellers)) {
+        const traveler = travellers[key];
+        if (!traveler) continue;
+
+        // Parse birthDate and PassportExpiration
+        const dobParts = traveler.dateOfBirth ? traveler.dateOfBirth.split('-') : [];
+        const expParts = traveler.passportExpiry ? traveler.passportExpiry.split('-') : [];
+
+        const birthDate = dobParts.length === 3 ? {
+          year: parseInt(dobParts[0], 10),
+          month: parseInt(dobParts[1], 10),
+          day: parseInt(dobParts[2], 10)
+        } : null;
+
+        const PassportExpiration = expParts.length === 3 ? {
+          year: parseInt(expParts[0], 10),
+          month: parseInt(expParts[1], 10),
+          day: parseInt(expParts[2], 10)
+        } : null;
+
+        // Determine PassengerType based on age
+        let PassengerType = 'ADT';
+        if (traveler.dateOfBirth) {
+          const dob = new Date(traveler.dateOfBirth);
+          const today = new Date();
+          let age = today.getFullYear() - dob.getFullYear();
+          const monthDiff = today.getMonth() - dob.getMonth();
+          if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+            age--;
+          }
+          if (age < 2) {
+            PassengerType = 'INF';
+          } else if (age < 12) {
+            PassengerType = 'CNN';
+          }
+        }
+
+        // Title mapping
+        let title = 'Mr';
+        if (traveler.travelerType === 'Female') {
+          title = 'Ms';
+        }
+
+        // Map IssuedCountry, nationality, countryName, countryOfResidence to passportIssuedCountry
+        let countryCode = 'AE';
+        let countryName = traveler.passportIssuedCountry || 'United Arab Emirates';
+        if (traveler.passportIssuedCountry && traveler.passportIssuedCountry.length === 2) {
+          countryCode = traveler.passportIssuedCountry.toUpperCase();
+        }
+        if (this.home?.allCountries && this.home.allCountries.length > 0) {
+          const matched = this.home.allCountries.find(
+            (c: any) => c.countryName?.toLowerCase() === countryName.toLowerCase() || c.pseudoCountryCode?.toLowerCase() === countryName.toLowerCase()
+          );
+          if (matched) {
+            countryCode = matched.pseudoCountryCode;
+            countryName = matched.countryName;
+          }
+        }
+
+        passengersDetails.push({
+          title,
+          firstName: traveler.firstName,
+          middleName: '',
+          lastName: traveler.lastName,
+          email: contact.email,
+          phoneNumber: contact.phone,
+          countryCode: '20',
+          nationality: countryCode,
+          dateOfBirth: traveler.dateOfBirth || '',
+          PassengerType,
+          countryOfResidence: countryCode,
+          PassportNumber: traveler.passportNumber || '',
+          PassportExpiry: traveler.passportExpiry || '',
+          IssuedCountry: countryCode,
+          isIssuedCountrySelected: true,
+          position: index,
+          birthDate,
+          PassportExpiration,
+          countryName
+        });
+        index++;
+      }
+
+      return {
+        bookingEmail: contact.email,
+        DiscountCode: this.copounCodeDetails?.promotionDetails.discountCode || '',
+        passengersDetails,
+        UserCurrency: currentCurrency
+      };
+    }
+
     if (!this.usersArray || this.usersArray.length === 0) {
       throw new Error('Users array is not initialized');
     }

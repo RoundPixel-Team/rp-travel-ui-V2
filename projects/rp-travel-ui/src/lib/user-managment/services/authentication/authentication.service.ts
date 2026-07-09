@@ -544,33 +544,27 @@ import { GoogleAuthResponse } from "../../interfaces";
    * this function is responsible to make intgeration between front and backend request (USER LOGIN USING GOOGLE)
    */
   googleLoginSubmit(payload:GoogleAuthResponse){
-    this.isLoading = true
-    if(this.loginForm.invalid){
-      this.loginForm.markAllAsTouched()
-      this.isLoading = false
-    }
-    else {
-      this.subscription.add(
-        this.authApi.googleLogin(payload)
-        .subscribe({
-          next: (res) => {
-            this.isLoading = false;
+    this.isLoading = true;
+    this.subscription.add(
+      this.authApi.googleLogin(payload)
+      .subscribe({
+        next: (res) => {
+          this.isLoading = false;
 
-            if(res.status === 0){
-              const token = JSON.stringify(res.returnObject.token);
-              this.setToken(token);
-              this.notify.next(LOGIN_STATUS.success);
-            }else{
-              this.notify.next(LOGIN_STATUS.faild);
-            }
-          },
-          error: (error: any) => {
+          if(res.status === 0){
+            const token = JSON.stringify(res.returnObject.token);
+            this.setToken(token);
+            this.notify.next(LOGIN_STATUS.success);
+          }else{
             this.notify.next(LOGIN_STATUS.faild);
-            this.isLoading = false
           }
-        })
-      )
-    }
+        },
+        error: (error: any) => {
+          this.notify.next(LOGIN_STATUS.faild);
+          this.isLoading = false;
+        }
+      })
+    );
   }
 
   destroyer() {

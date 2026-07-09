@@ -131,6 +131,7 @@ export const FLIGHT_SEARCH_CRITERIA_DEFAULT: ISearchCriteria = {
 export const FLIGHT_SEARCH_DEFAULT: FlightSearchResult = {
   status: 'Invalid',
   airItineraries: [],
+  itineraries:[],
   airlines: [],
   cabinClasses: [],
   searchCriteria: FLIGHT_SEARCH_CRITERIA_DEFAULT,
@@ -170,6 +171,7 @@ export const FLIGHT_DTO_DEFAULT: IFlightDTO = {
 export const BASE_SEARCH_RESULT_DEFAULT: baseSearchResult = {
   status: '',
   searchResultException: { code: '', exceptionMessage: '' },
+  itineraries:[]
 };
 
 const SEARCH_CRITERIA_DEFAULT: ISearchCriteria = {
