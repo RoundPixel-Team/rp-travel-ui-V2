@@ -1003,6 +1003,8 @@ export class FlightCheckoutService {
               res.getPaymentViewResponse.link === null
             ) {
               this.paymentError = true;
+              this.saveBookingLoadeer = false;
+              this.paymentLinkFailure.next('');
               return;
             }
             this.HG = res.savedBookingResponse.hgNumber;
@@ -1060,16 +1062,18 @@ export class FlightCheckoutService {
               next: (payLaterRes) => {
                 this.payLaterLoader = false;
                 this.payLaterResponse = payLaterRes;
-                if (payLaterRes && (payLaterRes.status === 'Valid' || payLaterRes.status === 'Success')) {
+                 if (payLaterRes && (payLaterRes.status === 'Valid' || payLaterRes.status === 'Success')) {
                   this.payLaterSuccess = true;
                 } else {
                   this.payLaterSuccess = false;
+                  this.paymentLinkFailure.next('');
                 }
               },
               error: (err) => {
                 console.error('PAY LATER ERROR', err);
                 this.payLaterLoader = false;
                 this.payLaterSuccess = false;
+                this.paymentLinkFailure.next('');
               }
             });
           },
@@ -1078,6 +1082,7 @@ export class FlightCheckoutService {
             this.payLaterLoader = false;
             this.payLaterSuccess = false;
             this.selectedFlightError = true;
+            this.paymentLinkFailure.next('');
           },
         })
     );

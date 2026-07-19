@@ -4,6 +4,7 @@ import {
   BookedOffer,
   Image,
   Itinerary,
+  MostSearchedFlightsResponse,
   OfferDTO,
   airPorts,
   countries,
@@ -23,6 +24,11 @@ export class HomePageService {
   route = inject(ActivatedRoute);
   subscription: Subscription = new Subscription();
   notify = new Subject<null>();
+
+  public isLoading = false;
+  public isError = false;
+  public isEmpty = false;
+  public mostSearchedFlights: MostSearchedFlightsResponse[] = [];
 
   /**
    * here is all available currencies
@@ -127,8 +133,8 @@ export class HomePageService {
         (err: any) => {
           console.error('get all currency error ->', err);
           this.loader = false;
-        }
-      )
+        },
+      ),
     );
   }
 
@@ -159,8 +165,8 @@ export class HomePageService {
         (err: any) => {
           console.error('get all airports error ->', err);
           this.loader = false;
-        }
-      )
+        },
+      ),
     );
   }
   /**
@@ -182,8 +188,8 @@ export class HomePageService {
         (err: any) => {
           console.error('get all countires error ->', err);
           this.loader = false;
-        }
-      )
+        },
+      ),
     );
   }
   getEnCountries(currentLang: string) {
@@ -199,8 +205,8 @@ export class HomePageService {
         (err: any) => {
           console.error('get all countires error ->', err);
           this.loader = false;
-        }
-      )
+        },
+      ),
     );
   }
   /**
@@ -221,8 +227,8 @@ export class HomePageService {
         (err: any) => {
           console.error('get all pointofsales error ->', err);
           this.loader = false;
-        }
-      )
+        },
+      ),
     );
   }
   /**
@@ -244,8 +250,8 @@ export class HomePageService {
         (err: any) => {
           console.error('get all offers error ->', err);
           this.loader = false;
-        }
-      )
+        },
+      ),
     );
   }
   /**
@@ -267,8 +273,8 @@ export class HomePageService {
         (err: any) => {
           console.error('get offer by ID err==>', err);
           this.loader = false;
-        }
-      )
+        },
+      ),
     );
   }
   /**
@@ -297,8 +303,8 @@ export class HomePageService {
             },
             (err: any) => {
               console.error('offline itinerary err==>', err);
-            }
-          )
+            },
+          ),
         );
       }
     });
@@ -331,13 +337,43 @@ export class HomePageService {
           },
           (err: any) => {
             console.error('Book offer err==>', err);
-          }
-        )
+          },
+        ),
       );
     } else {
       return;
     }
   }
+
+  getMostSearchedFlights() {
+    this.isLoading = true;
+
+    const mostSearchedFlights = sessionStorage.getItem('mostSearchedFlights');
+
+    if (mostSearchedFlights) {
+      this.mostSearchedFlights = JSON.parse(mostSearchedFlights);
+
+      this.isLoading = false;
+      this.isEmpty = !this.mostSearchedFlights.length;
+
+      return;
+    }
+
+    this.api.getMostSearchedFlights().subscribe({
+        next: (res) => {
+          sessionStorage.setItem('mostSearchedFlights', JSON.stringify(res));
+
+          this.mostSearchedFlights = res;
+          this.isEmpty = !res.length;
+          this.isLoading = false;
+        },
+        error: () => {
+          this.isLoading = false;
+          this.isError = true;
+        },
+      });
+  }
+
   /**
    * this function is responsible to destory any opened subscription on this service
    */

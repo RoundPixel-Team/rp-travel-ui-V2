@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map, mergeMap, retry, take } from 'rxjs';
-import { BookedOffer, Itinerary, OfferDTO, airPorts, countries, currencyModel, pointOfSaleModel } from '../interfaces';
+import { BookedOffer, Itinerary, MostSearchedFlightsResponse, OfferDTO, airPorts, countries, currencyModel, pointOfSaleModel } from '../interfaces';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EnvironmentService } from '../../shared/services/environment.service';
 
@@ -148,6 +148,22 @@ GetAllOffers(pos: string):Observable<{offers:OfferDTO[]}> {
   getTerms(){
     let API:string = `${this.env.staticPages}/api/Pages/GetPageBySlug?slug=terms`;
     return this.http.get(API).pipe(retry(3),take(1),catchError(err=>{console.error(err);throw err}))
+  }
+
+  getMostSearchedFlights() {
+    let API: string = `${this.env.searchflow}/api/GetCheapestFlights?resCount=5`;
+    return this.http
+      .get<MostSearchedFlightsResponse[]>(
+        'https://flightsearch.bookingwep.com/api/GetCheapestFlights?resCount=5',
+      )
+      .pipe(
+        retry(3),
+        take(1),
+        catchError((err) => {
+          console.error(err);
+          throw err;
+        }),
+      )
   }
 
 }
