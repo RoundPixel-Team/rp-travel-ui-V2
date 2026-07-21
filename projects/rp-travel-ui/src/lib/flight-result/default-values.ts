@@ -138,6 +138,16 @@ export const FLIGHT_SEARCH_DEFAULT: FlightSearchResult = {
   searchResultException: {
     code: '400',
     exceptionMessage: 'Invalid Data',
+  },
+  recommendation: {
+    type: '',
+    ai: {
+      title: '',
+      summary: '',
+      recommendation:'',
+      pros: [''],
+      cons: ['']
+    }
   }
 };
 
@@ -202,7 +212,7 @@ const SEARCH_CRITERIA_DEFAULT: ISearchCriteria = {
 };
 
 // Default FlightSearchResult
-export const FLIGHT_SEARCH_RESULT_DEFAULT : FlightSearchResult = {
+export const FLIGHT_SEARCH_RESULT_DEFAULT: FlightSearchResult = {
   ...BASE_SEARCH_RESULT_DEFAULT,
   pnr: null,
   fareAmount: null,
@@ -211,6 +221,16 @@ export const FLIGHT_SEARCH_RESULT_DEFAULT : FlightSearchResult = {
   searchCriteria: SEARCH_CRITERIA_DEFAULT,
   cabinClasses: [],
   passengersDetails: [],
+  recommendation: {
+    type: '',
+    ai: {
+      title: '',
+      summary: '',
+      recommendation: '',
+      pros: [''],
+      cons: [''],
+    },
+  },
 };
 
 // Default searchCriteriaFlights

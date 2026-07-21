@@ -1420,7 +1420,147 @@ export class FlightResultService {
     this.normalErrorStatus = false;
     this.api.searchFlightAi(searchData).subscribe({
       next: (value) => {
-        if (value.status == 'Valid') {
+        const itineraries = value.itineraries || value.airItineraries;
+        if (itineraries && itineraries.length > 0) {
+          this.loading = false;
+          this.ResultFound = true;
+          this.response = value;
+          this.response.airItineraries = itineraries;
+          if (!this.response.airlines || this.response.airlines.length === 0) {
+            const uniqueAirlines = new Set<string>();
+            this.response.airItineraries.forEach((itin: any) => {
+              const name = itin.allJourney?.flights?.[0]?.flightAirline?.airlineName;
+              if (name) {
+                uniqueAirlines.add(name);
+              }
+            });
+            this.response.airlines = Array.from(uniqueAirlines);
+          }
+          this.FlightType = this.response.searchCriteria?.flightType || 'OneWay';
+          this.minAnMax(this.response.airItineraries);
+          this.findDepartingnMinMax(this.response.airItineraries);
+          this.findArrivingMinMax(this.response.airItineraries);
+          this.findDurationMinMax(this.response.airItineraries);
+
+          this.filterAirlines();
+          this.FilterData = this.addExperiance(this.response.airItineraries);
+          this.orgnizedResponce = this.orgnize(this.FilterData);
+          this.fetchLowestFaresForSorting(this.orgnizedResponce);
+
+          this.FilterChanges$.unsubscribe();
+
+          this.filterForm = new FormGroup({
+            airline: new FormGroup({
+              airlines: new FormArray([]),
+            }),
+
+            bookingSite: new FormGroup({
+              bookingSites: new FormArray([]),
+            }),
+
+            stopsForm: new FormGroup({
+              noStops: new FormControl(false),
+              oneStop: new FormControl(false),
+              twoAndm: new FormControl(false),
+            }),
+            sameAirline: new FormControl(false),
+            minpriceSlider: new FormControl(0),
+            maxpriceSlider: new FormControl(0),
+            mindurationSlider: new FormControl(0),
+            maxdurationSlider: new FormControl(7000),
+            mindepartingSlider: new FormControl(0),
+            maxdepartingSlider: new FormControl(20000),
+            minarrivingSlider: new FormControl(0),
+            maxarrivingSlider: new FormControl(20000),
+            returnSlider: new FormControl([0, 7000]),
+
+            experience: new FormGroup({
+              overNight: new FormControl(false),
+              longStops: new FormControl(false),
+            }),
+
+            goingFlightScheduleDepart: new FormGroup({
+              startTime: new FormControl(''),
+              endTime: new FormControl(''),
+            }),
+            goingFlightScheduleArrival: new FormGroup({
+              startTime: new FormControl(''),
+              endTime: new FormControl(''),
+            }),
+            returnFlightScheduleDepart: new FormGroup({
+              startTime: new FormControl(''),
+              endTime: new FormControl(''),
+            }),
+            returnFlightScheduleArrival: new FormGroup({
+              startTime: new FormControl(''),
+              endTime: new FormControl(''),
+            }),
+
+            flexibleTickets: new FormGroup({
+              refund: new FormControl(false),
+              nonRefund: new FormControl(false),
+            }),
+          });
+
+          this.filterForm
+            .get('mindepartingSlider')
+            ?.setValue(this.minDepartingValueForSlider);
+          this.filterForm
+            .get('maxdepartingSlider')
+            ?.setValue(this.maxDepartingValueForSlider);
+
+          this.filterForm
+            .get('mindurationSlider')
+            ?.setValue(this.minDurationValueForSlider);
+          this.filterForm
+            .get('maxdurationSlider')
+            ?.setValue(this.maxDurationValueForSlider);
+
+          this.filterForm
+            .get('minarrivingSlider')
+            ?.setValue(this.minArrivingValueForSlider);
+          this.filterForm
+            .get('maxarrivingSlider')
+            ?.setValue(this.maxArrivingValueForSlider);
+
+          this.filterForm
+            .get('minpriceSlider')
+            ?.setValue(this.minPriceValueForSlider);
+          this.filterForm
+            .get('maxpriceSlider')
+            ?.setValue(this.maxPriceValueForSlider);
+          this.filterForm.updateValueAndValidity();
+
+          (this.stopsvalues(), (this.airlinesA = this.response.airlines || []));
+          this.airlinesForm = [];
+          this.airlinesA.forEach((element) => {
+            (<FormArray>this.filterForm.get('airline')?.get('airlines')).push(
+              new FormControl(false),
+            );
+          });
+
+          this.bookingSitesForm = [];
+          this.bookingSites.forEach((element) => {
+            (<FormArray>(
+              this.filterForm.get('bookingSite')?.get('bookingSites')
+            )).push(new FormControl(false));
+          });
+          this.filterForm.updateValueAndValidity();
+          this.formINIT = true;
+          this.refundedItineries = this.response.airItineraries.filter((res) => {
+            return res.isRefundable;
+          }).length;
+          this.nonRefundedItieneries = this.response.airItineraries.filter((res) => {
+            return !res.isRefundable;
+          }).length;
+          this.updateFilter();
+
+          this.responseAi = this.response;
+          this.normalError = '';
+          this.normalErrorStatus = false;
+          
+          this.notify.next(null);
+        } else if (value.status == 'Valid') {
           console.log('Flight search result:', value);
           this.loading = false;
           this.ResultFound = true;
@@ -1429,12 +1569,6 @@ export class FlightResultService {
           this.normalErrorStatus = false;
         } else if (value.output) {
           console.log('AI search response (welcome/chat):', value);
-          this.loading = false;
-          this.ResultFound = true;
-          this.responseAi = value;
-          this.normalError = '';
-          this.normalErrorStatus = false;
-        } else if (value.itineraries && value.itineraries.length > 0) {
           this.loading = false;
           this.ResultFound = true;
           this.responseAi = value;

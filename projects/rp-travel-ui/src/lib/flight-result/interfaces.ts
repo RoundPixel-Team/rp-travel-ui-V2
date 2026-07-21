@@ -17,7 +17,21 @@ export interface FlightSearchResult extends baseSearchResult {
   searchCriteria: ISearchCriteria;
   cabinClasses: string[];
   passengersDetails?: any[];
+  recommendation:recommendation
 }
+
+
+export interface recommendation {
+  type: string;
+  ai: {
+    title: string;
+    summary: string;
+    recommendation:string;
+    pros: string[];
+    cons: string[]
+  }
+}
+
 
 export interface searchCriteriaFlights {
   arrivingTo: string;
