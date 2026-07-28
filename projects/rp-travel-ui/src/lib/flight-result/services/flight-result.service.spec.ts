@@ -64,4 +64,36 @@ describe('FlightResultService', () => {
     expect(service.normalError).toBe('');
     expect(service.normalErrorStatus).toBeFalse();
   });
+
+  it('should handle empty object response from searchFlightAi by hiding loader and setting normalErrorStatus to true', () => {
+    apiMock.searchFlightAi.and.returnValue(of({}));
+
+    const searchData: ISearchFlightAi = {
+      chat: 'test',
+      chatID: '123'
+    };
+
+    service.getDataFromAiUrl(searchData);
+
+    expect(service.loading).toBeFalse();
+    expect(service.ResultFound).toBeFalse();
+    expect(service.normalErrorStatus).toBeTrue();
+    expect(service.normalError).toBe('Something went wrong. Please try again later.');
+  });
+
+  it('should handle null response from searchFlightAi by hiding loader and setting normalErrorStatus to true', () => {
+    apiMock.searchFlightAi.and.returnValue(of(null));
+
+    const searchData: ISearchFlightAi = {
+      chat: 'test',
+      chatID: '123'
+    };
+
+    service.getDataFromAiUrl(searchData);
+
+    expect(service.loading).toBeFalse();
+    expect(service.ResultFound).toBeFalse();
+    expect(service.normalErrorStatus).toBeTrue();
+    expect(service.normalError).toBe('Something went wrong. Please try again later.');
+  });
 });

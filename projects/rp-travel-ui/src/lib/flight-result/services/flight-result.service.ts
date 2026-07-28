@@ -1420,7 +1420,15 @@ export class FlightResultService {
     this.normalErrorStatus = false;
     this.api.searchFlightAi(searchData).subscribe({
       next: (value) => {
-        const itineraries = value.itineraries || value.airItineraries;
+        if (!value || (typeof value === 'object' && Object.keys(value).length === 0)) {
+          console.error('Flight search reply was empty or invalid:', value);
+          this.loading = false;
+          this.ResultFound = false;
+          this.normalError = 'Something went wrong. Please try again later.';
+          this.normalErrorStatus = true;
+          return;
+        }
+        const itineraries = value?.itineraries || value?.airItineraries;
         if (itineraries && itineraries.length > 0) {
           this.loading = false;
           this.ResultFound = true;
@@ -1558,16 +1566,16 @@ export class FlightResultService {
           this.responseAi = this.response;
           this.normalError = '';
           this.normalErrorStatus = false;
-          
+
           this.notify.next(null);
-        } else if (value.status == 'Valid') {
+        } else if (value?.status == 'Valid') {
           console.log('Flight search result:', value);
           this.loading = false;
           this.ResultFound = true;
           this.responseAi = value;
           this.normalError = '';
           this.normalErrorStatus = false;
-        } else if (value.output) {
+        } else if (value?.output) {
           console.log('AI search response (welcome/chat):', value);
           this.loading = false;
           this.ResultFound = true;
@@ -1588,6 +1596,15 @@ export class FlightResultService {
         this.ResultFound = false;
         this.normalError = 'Something went wrong. Please try again later.';
         this.normalErrorStatus = true;
+      },
+      complete: () => {
+        if (this.loading) {
+          this.loading = false;
+          if (!this.ResultFound) {
+            this.normalError = 'Something went wrong. Please try again later.';
+            this.normalErrorStatus = true;
+          }
+        }
       },
     });
   }
