@@ -192,7 +192,8 @@ import { GoogleAuthResponse } from "../../interfaces";
       this.registerForm.markAllAsTouched();
       this.isLoading = false
     }
-    else{
+    else {
+      this.registerForm.value.email = this.registerForm.value.email.toLowerCase()
       this.subscription.add(
         this.authApi.registeration(
           {
