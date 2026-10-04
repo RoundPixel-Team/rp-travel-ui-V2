@@ -8,6 +8,7 @@ import {
   SearchFlightModule,
   fareRulesResponse,
   ISearchFlightAi,
+  IVoiceSearchResponse,
   TravelerResponse,
   ContactResponse,
 } from '../interfaces';
@@ -38,6 +39,21 @@ export class FlightResultApiService {
   searchFlightAi(searchFlight: ISearchFlightAi) {
     let api: string = `${this.env.searchflowAi}/webhook/Search`;
     return this.http.post<FlightSearchResult>(api, searchFlight).pipe(
+      retry(2),
+      take(1),
+      catchError((err) => {
+        console.error(err);
+        throw err;
+      }),
+    );
+  }
+
+  voiceSearch(file: File | Blob, chatId: string) {
+    let api = `${this.env.searchflowAi}/webhook/voiceSearch`;
+    const body = new FormData();
+    body.append('data', file);
+    body.append('chatId', chatId);
+    return this.http.post<IVoiceSearchResponse>(api, body).pipe(
       retry(2),
       take(1),
       catchError((err) => {

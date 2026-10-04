@@ -1422,6 +1422,58 @@ export class FlightResultService {
     return String(raw).trim();
   }
 
+  searchFromVoice(
+    file: File | Blob,
+    chatId: string,
+    onTranscript?: (text: string) => void | string | Promise<void | string>,
+  ) {
+    this.loading = true;
+    this.normalError = '';
+    this.normalErrorStatus = false;
+    this.api.voiceSearch(file, chatId).subscribe({
+      next: (value) => {
+        const text = value?.text?.trim();
+        if (!text) {
+          this.loading = false;
+          this.ResultFound = false;
+          this.normalError = 'Something went wrong. Please try again later.';
+          this.normalErrorStatus = true;
+          return;
+        }
+        const result = onTranscript?.(text);
+        if (result && typeof (result as Promise<void | string>).then === 'function') {
+          (result as Promise<void | string>)
+            .then((nextChatId) => {
+              this.getDataFromAiUrl({
+                chat: text,
+                chatID: this.resolveVoiceChatId(nextChatId, chatId),
+              });
+            })
+            .catch((err) => {
+              console.error('Error preparing voice search:', err);
+              this.getDataFromAiUrl({ chat: text, chatID: chatId });
+            });
+          return;
+        }
+        this.getDataFromAiUrl({
+          chat: text,
+          chatID: this.resolveVoiceChatId(result as string | void, chatId),
+        });
+      },
+      error: (err) => {
+        console.error('Error transcribing voice search:', err);
+        this.loading = false;
+        this.ResultFound = false;
+        this.normalError = 'Something went wrong. Please try again later.';
+        this.normalErrorStatus = true;
+      },
+    });
+  }
+
+  private resolveVoiceChatId(nextChatId: string | void | undefined, fallback: string): string {
+    return typeof nextChatId === 'string' && nextChatId.trim() ? nextChatId.trim() : fallback;
+  }
+
   getDataFromAiUrl(searchData: ISearchFlightAi, isFollowUp = false) {
     this.loading = true;
     this.normalError = '';

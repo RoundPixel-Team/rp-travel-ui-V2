@@ -149,6 +149,16 @@ export interface ISearchFlightAi {
   chat: string;
   chatID: string;
 }
+
+export interface IVoiceSearchUsage {
+  type: string;
+  seconds: number;
+}
+
+export interface IVoiceSearchResponse {
+  text: string;
+  usage: IVoiceSearchUsage;
+}
 export interface customAirlineFilter {
   logo: string;
   stops: string | number;

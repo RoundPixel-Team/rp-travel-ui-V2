@@ -15,7 +15,8 @@ describe('FlightResultService', () => {
 
   beforeEach(() => {
     apiMock = {
-      searchFlightAi: jasmine.createSpy('searchFlightAi').and.returnValue(of({}))
+      searchFlightAi: jasmine.createSpy('searchFlightAi').and.returnValue(of({})),
+      voiceSearch: jasmine.createSpy('voiceSearch').and.returnValue(of({ text: '', usage: { type: 'duration', seconds: 0 } }))
     };
     
     flightSearchMock = {
@@ -190,5 +191,42 @@ describe('FlightResultService', () => {
     expect(service.ResultFound).toBeTrue();
     expect(service.loading).toBeFalse();
     expect(service.response?.airItineraries?.length).toBe(1);
+  });
+
+  it('should transcribe voice and continue the AI search with the returned text', () => {
+    const file = new Blob(['audio'], { type: 'audio/webm' });
+    const transcript = 'I want to travel from Cairo to Dubai on October 23.';
+    apiMock.voiceSearch.and.returnValue(of({
+      text: transcript,
+      usage: { type: 'duration', seconds: 7 }
+    }));
+    apiMock.searchFlightAi.and.returnValue(of({
+      output: 'Here are flights from Cairo to Dubai.'
+    }));
+
+    service.searchFromVoice(file, '123');
+
+    expect(apiMock.voiceSearch).toHaveBeenCalledWith(file, '123');
+    expect(apiMock.searchFlightAi).toHaveBeenCalledWith({
+      chat: transcript,
+      chatID: '123'
+    });
+    expect(service.loading).toBeFalse();
+    expect(service.ResultFound).toBeTrue();
+    expect(service.normalErrorStatus).toBeFalse();
+  });
+
+  it('should stop when the voice response has no text', () => {
+    apiMock.voiceSearch.and.returnValue(of({
+      text: '   ',
+      usage: { type: 'duration', seconds: 2 }
+    }));
+
+    service.searchFromVoice(new Blob(['audio']), '123');
+
+    expect(apiMock.searchFlightAi).not.toHaveBeenCalled();
+    expect(service.loading).toBeFalse();
+    expect(service.ResultFound).toBeFalse();
+    expect(service.normalErrorStatus).toBeTrue();
   });
 });
