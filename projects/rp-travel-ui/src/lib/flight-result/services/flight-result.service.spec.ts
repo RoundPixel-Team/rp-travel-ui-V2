@@ -96,4 +96,99 @@ describe('FlightResultService', () => {
     expect(service.normalErrorStatus).toBeTrue();
     expect(service.normalError).toBe('Something went wrong. Please try again later.');
   });
+
+  it('should send a follow-up search when searchMessage has a value and there are no itineraries', () => {
+    const firstResponse = {
+      output: 'I recommend searching for beach destinations to find the best options. Would you like me to search for flights to top beach destinations?',
+      searchMessage: 'beach destination'
+    };
+    const secondResponse = {
+      output: 'Here are beach destination flights.'
+    };
+    apiMock.searchFlightAi.and.returnValues(of(firstResponse), of(secondResponse));
+
+    service.getDataFromAiUrl({
+      chat: 'something new',
+      chatID: '123'
+    });
+
+    expect(apiMock.searchFlightAi).toHaveBeenCalledTimes(2);
+    expect(apiMock.searchFlightAi.calls.argsFor(1)[0]).toEqual({
+      chat: 'beach destination',
+      chatID: '123'
+    });
+    expect(service.aiFollowUpOutput).toBe(firstResponse.output);
+    expect(service.aiFollowUpSearch).toBe('beach destination');
+    expect(service.loading).toBeFalse();
+    expect(service.ResultFound).toBeTrue();
+    expect(service.responseAi).toEqual(secondResponse as any);
+  });
+
+  it('should ignore empty or null searchMessage and keep the original chat response', () => {
+    const chatResponse = {
+      output: 'Hello! How can I help you?',
+      searchMessage: null
+    };
+    apiMock.searchFlightAi.and.returnValue(of(chatResponse));
+
+    service.getDataFromAiUrl({
+      chat: 'hello',
+      chatID: '123'
+    });
+
+    expect(apiMock.searchFlightAi).toHaveBeenCalledTimes(1);
+    expect(service.responseAi).toEqual(chatResponse as any);
+    expect(service.aiFollowUpOutput).toBeUndefined();
+  });
+
+  it('should ignore empty searchMessage and keep the original chat response', () => {
+    const chatResponse = {
+      output: 'Hello! How can I help you?',
+      searchMessage: '   '
+    };
+    apiMock.searchFlightAi.and.returnValue(of(chatResponse));
+
+    service.getDataFromAiUrl({
+      chat: 'hello',
+      chatID: '123'
+    });
+
+    expect(apiMock.searchFlightAi).toHaveBeenCalledTimes(1);
+    expect(service.responseAi).toEqual(chatResponse as any);
+  });
+
+  it('should not follow up searchMessage when airItineraries already exist', () => {
+    const flightResponse = {
+      status: 'Valid',
+      searchMessage: 'beach destination',
+      airItineraries: [{ sequenceNum: 1, itinTotalFare: { amount: 100 }, allJourney: { flights: [{ flightDTO: [{ flightAirline: { airlineCode: 'MS', airlineName: 'EgyptAir' }, departureDate: '2026-10-10T08:00:00', transitTime: '00:00:00' }] }] } }]
+    };
+    apiMock.searchFlightAi.and.returnValue(of(flightResponse));
+
+    service.getDataFromAiUrl({
+      chat: 'cairo to dubai',
+      chatID: '123'
+    });
+
+    expect(apiMock.searchFlightAi).toHaveBeenCalledTimes(1);
+  });
+
+  it('should use airItineraries when itineraries is an empty array', () => {
+    const flightResponse = {
+      status: 'Valid',
+      itineraries: [],
+      airItineraries: [{ sequenceNum: 1, itinTotalFare: { amount: 100 }, allJourney: { flights: [{ flightDTO: [{ flightAirline: { airlineCode: 'MS', airlineName: 'EgyptAir' }, departureDate: '2026-10-10T08:00:00', transitTime: '00:00:00' }] }] } }]
+    };
+    apiMock.searchFlightAi.and.returnValue(of(flightResponse));
+
+    service.getDataFromAiUrl({
+      chat: 'cairo to dubai',
+      chatID: '123'
+    });
+
+    expect(apiMock.searchFlightAi).toHaveBeenCalledTimes(1);
+    expect(service.ResultFound).toBeTrue();
+    expect(service.loading).toBeFalse();
+    expect(service.response?.airItineraries?.length).toBe(1);
+  });
 });

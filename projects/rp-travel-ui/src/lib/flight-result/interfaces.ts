@@ -3,6 +3,7 @@ export interface baseSearchResult {
   status?: string;
   searchResultException?: { code: string; exceptionMessage: string };
   output?: string;
+  searchMessage?: string | null;
   itineraries: IAirItinerary[];
 }
 

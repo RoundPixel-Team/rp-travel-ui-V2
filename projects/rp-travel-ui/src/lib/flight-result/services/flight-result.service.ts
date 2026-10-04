@@ -41,6 +41,8 @@ export class FlightResultService {
    * response Data from Api  b type FlightSearchResult
    */
   responseAi?: FlightSearchResult;
+  aiFollowUpOutput?: string;
+  aiFollowUpSearch?: string;
 
   searchHistoryResponse?: ConversationsResponse;
 
@@ -1414,10 +1416,21 @@ export class FlightResultService {
     return TtransitTime;
   }
 
-  getDataFromAiUrl(searchData: ISearchFlightAi) {
+  getSearchMessage(value: any): string {
+    const raw = value?.searchMessage;
+    if (raw == null) return '';
+    return String(raw).trim();
+  }
+
+  getDataFromAiUrl(searchData: ISearchFlightAi, isFollowUp = false) {
     this.loading = true;
     this.normalError = '';
     this.normalErrorStatus = false;
+    if (!isFollowUp) {
+      this.aiFollowUpOutput = undefined;
+      this.aiFollowUpSearch = undefined;
+    }
+    let startedFollowUp = false;
     this.api.searchFlightAi(searchData).subscribe({
       next: (value) => {
         if (!value || (typeof value === 'object' && Object.keys(value).length === 0)) {
@@ -1428,7 +1441,22 @@ export class FlightResultService {
           this.normalErrorStatus = true;
           return;
         }
-        const itineraries = value?.itineraries || value?.airItineraries;
+        const itineraries = (Array.isArray(value?.itineraries) && value.itineraries.length > 0)
+          ? value.itineraries
+          : (Array.isArray(value?.airItineraries) && value.airItineraries.length > 0)
+            ? value.airItineraries
+            : [];
+        const followUpSearch = this.getSearchMessage(value);
+        if (followUpSearch && !isFollowUp && !(itineraries && itineraries.length > 0)) {
+          startedFollowUp = true;
+          this.aiFollowUpOutput = value?.output || '';
+          this.aiFollowUpSearch = followUpSearch;
+          this.getDataFromAiUrl(
+            { chat: followUpSearch, chatID: searchData.chatID },
+            true,
+          );
+          return;
+        }
         if (itineraries && itineraries.length > 0) {
           this.loading = false;
           this.ResultFound = true;
@@ -1598,6 +1626,9 @@ export class FlightResultService {
         this.normalErrorStatus = true;
       },
       complete: () => {
+        if (startedFollowUp) {
+          return;
+        }
         if (this.loading) {
           this.loading = false;
           if (!this.ResultFound) {
