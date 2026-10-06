@@ -27,10 +27,14 @@ export interface recommendation {
   ai: {
     title: string;
     summary: string;
-    recommendation:string;
+    recommendation: string;
     pros: string[];
-    cons: string[]
-  }
+    cons: string[];
+    sequenceNum: string | number;
+    pkey: string | number;
+    pcc: string | number;
+    details: string | number;
+  };
 }
 
 

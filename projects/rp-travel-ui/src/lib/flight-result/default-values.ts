@@ -146,7 +146,11 @@ export const FLIGHT_SEARCH_DEFAULT: FlightSearchResult = {
       summary: '',
       recommendation:'',
       pros: [''],
-      cons: ['']
+      cons: [''],
+      sequenceNum: '',
+      pkey: '',
+      pcc: '',
+      details: '',
     }
   }
 };
@@ -229,6 +233,10 @@ export const FLIGHT_SEARCH_RESULT_DEFAULT: FlightSearchResult = {
       recommendation: '',
       pros: [''],
       cons: [''],
+      sequenceNum: '',
+      pkey: '',
+      pcc: '',
+      details: '',
     },
   },
 };
