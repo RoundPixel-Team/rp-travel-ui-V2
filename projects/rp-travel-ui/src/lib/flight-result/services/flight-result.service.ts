@@ -56,6 +56,8 @@ export class FlightResultService {
 
   bookResponseAi?: TravelerResponse;
 
+  uploadPassportResponseAi?: TravelerResponse;
+
   ContactResponseAi?: ContactResponse;
   /**
    * response airItineraries Data from Api  b type airItineraries
@@ -1729,6 +1731,29 @@ export class FlightResultService {
       },
       error: (err) => {
         console.error('Error searching flights:', err);
+        this.loading = false;
+        this.ResultFound = false;
+        this.normalError = 'Something went wrong. Please try again later.';
+        this.normalErrorStatus = true;
+      },
+    });
+  }
+
+  uploadPassportFromAiUrl(image: File | Blob , chatID: string ) {
+    this.loading = true;
+    this.normalError = '';
+    this.normalErrorStatus = false;
+    this.api.uploadPassportAi(image, chatID).subscribe({
+      next: (value) => {
+        console.log(value, 'value');
+        this.loading = false;
+        this.ResultFound = true;
+        this.uploadPassportResponseAi = value;
+        this.normalError = '';
+        this.normalErrorStatus = false;
+      },
+      error: (err) => {
+        console.error('Error uploading passport:', err);
         this.loading = false;
         this.ResultFound = false;
         this.normalError = 'Something went wrong. Please try again later.';

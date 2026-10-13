@@ -12,7 +12,7 @@ import {
   TravelerResponse,
   ContactResponse,
 } from '../interfaces';
-import { catchError, retry, take } from 'rxjs';
+import { catchError, from, retry, switchMap, take } from 'rxjs';
 import { searchFlightModel } from '../../flight-search/interfaces';
 
 @Injectable({
@@ -85,6 +85,34 @@ export class FlightResultApiService {
         throw err;
       }),
     );
+  }
+  uploadPassportAi(searchFlight: File | Blob, chatId: string) {
+    let api: string = `${this.env.searchflowAi}/webhook/passportCopy`;
+    return from(this.imageToBase64(searchFlight)).pipe(
+      switchMap((image) =>
+        this.http.post<TravelerResponse>(api, { image, chatID: chatId }).pipe(
+          retry(2),
+          take(1),
+          catchError((err) => {
+            console.error(err);
+            throw err;
+          }),
+        ),
+      ),
+    );
+  }
+
+  private imageToBase64(image: File | Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = typeof reader.result === 'string' ? reader.result : '';
+        const encoded = result.includes(',') ? result.slice(result.indexOf(',') + 1) : result;
+        resolve(encoded);
+      };
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(image);
+    });
   }
 
   fareRules(sid: string, seq: number, pKey: string) {
