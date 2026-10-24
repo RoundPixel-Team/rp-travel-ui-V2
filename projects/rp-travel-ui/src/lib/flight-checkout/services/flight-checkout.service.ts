@@ -408,8 +408,8 @@ export class FlightCheckoutService {
               PassengerType: new FormControl('ADT'),
               countryOfResidence: new FormControl('', [Validators.required]),
               PassportNumber: new FormControl('', [
-                // Validators.required,
-                // this.passportValidator(),
+                Validators.required,
+                this.passportValidator(),
               ]),
               PassportExpiry: new FormControl('', [Validators.required]),
               IssuedCountry: new FormControl('', [Validators.required]),
@@ -452,8 +452,8 @@ export class FlightCheckoutService {
               PassengerType: new FormControl('ADT'),
               countryOfResidence: new FormControl('', [Validators.required]),
               PassportNumber: new FormControl('', [
-                // Validators.required,
-                // this.passportValidator(),
+                Validators.required,
+                this.passportValidator(),
               ]),
               PassportExpiry: new FormControl('', [Validators.required]),
               IssuedCountry: new FormControl('', [Validators.required]),
@@ -498,8 +498,8 @@ export class FlightCheckoutService {
             countryCode: new FormControl(''),
             countryOfResidence: new FormControl('', [Validators.required]),
             PassportNumber: new FormControl('', [
-              // Validators.required,
-              // this.passportValidator(),
+              Validators.required,
+              this.passportValidator(),
             ]),
             PassportExpiry: new FormControl('', [Validators.required]),
             IssuedCountry: new FormControl('', [Validators.required]),
@@ -542,8 +542,8 @@ export class FlightCheckoutService {
             countryCode: new FormControl(''),
             countryOfResidence: new FormControl('', [Validators.required]),
             PassportNumber: new FormControl('', [
-              // Validators.required,
-              // this.passportValidator(),
+              Validators.required,
+              this.passportValidator(),
             ]),
             PassportExpiry: new FormControl('', [Validators.required]),
             IssuedCountry: new FormControl('', [Validators.required]),
@@ -597,7 +597,8 @@ export class FlightCheckoutService {
             PassengerType: new FormControl('ADT'),
             countryOfResidence: new FormControl('', [Validators.required]),
             PassportNumber: new FormControl('', [
-              // this.passportValidator()
+              Validators.required,
+              this.passportValidator()
             ]),
             PassportExpiry: new FormControl('', [Validators.required]),
             IssuedCountry: new FormControl('', [Validators.required]),
@@ -642,7 +643,8 @@ export class FlightCheckoutService {
             countryCode: new FormControl(''),
             countryOfResidence: new FormControl(''),
             PassportNumber: new FormControl('', [
-              // this.passportValidator()
+              Validators.required,
+              this.passportValidator()
             ]),
             PassportExpiry: new FormControl('', [Validators.required]),
             IssuedCountry: new FormControl('', [Validators.required]),
@@ -687,7 +689,8 @@ export class FlightCheckoutService {
             countryCode: new FormControl(''),
             countryOfResidence: new FormControl(''),
             PassportNumber: new FormControl('', [
-              // this.passportValidator()
+              Validators.required,
+              this.passportValidator()
             ]),
             PassportExpiry: new FormControl('', [Validators.required]),
             IssuedCountry: new FormControl('', [Validators.required]),
@@ -707,7 +710,7 @@ export class FlightCheckoutService {
    */
   passportValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const passportPattern = /^[A-Z0-9]{4,9}$/i; // Alphanumeric, 6-9 characters
+      const passportPattern = /^[A-Z0-9]{4,15}$/i; // Alphanumeric, 6-9 characters
       const isValid = passportPattern.test(control.value);
 
       return isValid ? null : { invalidPassport: true };
@@ -1102,8 +1105,13 @@ export class FlightCheckoutService {
       )
       .subscribe({
         next: (val) => {
+          
           this.isPnet = this.api.isPnet;
-
+          if (val === null) {
+            this.saveBookingLoadeer = false;
+            this.paymentError = true; // Set error flag
+            this.paymentLinkFailure.next('');
+          }
           if (typeof val === 'string') {
             if (selectedMethod.PaymentMethod === 'MPGS') {
               // 👇 Store the HTML response to a shared service or route param
