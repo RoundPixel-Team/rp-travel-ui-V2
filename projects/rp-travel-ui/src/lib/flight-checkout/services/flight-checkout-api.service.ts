@@ -77,22 +77,22 @@ export class FlightCheckoutApiService {
       GatewayType: 'Mada',
     },
     {
-      PaymentMethod: 'cards',
+      PaymentMethod: 'card',
       cardImg: 'assets/cards/checkout_masterdebit.png',
       GatewayType: 'TapMasterDebit',
     },
     {
-      PaymentMethod: 'cards',
+      PaymentMethod: 'card',
       cardImg: 'assets/cards/checkout_mastercredit.png',
       GatewayType: 'TapMasterCredit',
     },
     {
-      PaymentMethod: 'cards',
+      PaymentMethod: 'card',
       cardImg: 'assets/cards/checkout_visadebit.png',
       GatewayType: 'TapVisaDebit',
     },
     {
-      PaymentMethod: 'cards',
+      PaymentMethod: 'card',
       cardImg: 'assets/cards/checkout_visacredit.png',
       GatewayType: 'TapVisaCredit',
     },

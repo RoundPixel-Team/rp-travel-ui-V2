@@ -33,13 +33,19 @@ export class HomePageService {
    * Here's the value of selected currency
    */
   selectedCurrency: currencyModel = {
-    ID: 2026,
-    Currency_Code: 'EGP',
-    Currency_Name: 'Egyptian Pound',
+    ID: 4039,
+    Currency_Code: 'AED',
+    Currency_Name: 'United Arab Emirates Dirham',
     Is_Base_Currency: true,
-    Image_Url: 'https://images.Travasky.com/Content/Currencies/EGP.JPG',
+    Image_Url: 'https://images.travelnow.global/Content/Currencies/AED.JPG',
     rate: 1,
   };
+
+  /**
+   * Currency sent with the price. The pipe leaves the amount as-is when this
+   * matches the selected currency.
+   */
+  responseCurrency = '';
   /**
    * here is all available airports
    */
@@ -127,8 +133,8 @@ export class HomePageService {
         (err: any) => {
           console.error('get all currency error ->', err);
           this.loader = false;
-        }
-      )
+        },
+      ),
     );
   }
 
@@ -159,8 +165,8 @@ export class HomePageService {
         (err: any) => {
           console.error('get all airports error ->', err);
           this.loader = false;
-        }
-      )
+        },
+      ),
     );
   }
   /**
@@ -182,8 +188,8 @@ export class HomePageService {
         (err: any) => {
           console.error('get all countires error ->', err);
           this.loader = false;
-        }
-      )
+        },
+      ),
     );
   }
   getEnCountries(currentLang: string) {
@@ -199,8 +205,8 @@ export class HomePageService {
         (err: any) => {
           console.error('get all countires error ->', err);
           this.loader = false;
-        }
-      )
+        },
+      ),
     );
   }
   /**
@@ -221,8 +227,8 @@ export class HomePageService {
         (err: any) => {
           console.error('get all pointofsales error ->', err);
           this.loader = false;
-        }
-      )
+        },
+      ),
     );
   }
   /**
@@ -244,8 +250,8 @@ export class HomePageService {
         (err: any) => {
           console.error('get all offers error ->', err);
           this.loader = false;
-        }
-      )
+        },
+      ),
     );
   }
   /**
@@ -267,8 +273,8 @@ export class HomePageService {
         (err: any) => {
           console.error('get offer by ID err==>', err);
           this.loader = false;
-        }
-      )
+        },
+      ),
     );
   }
   /**
@@ -297,8 +303,8 @@ export class HomePageService {
             },
             (err: any) => {
               console.error('offline itinerary err==>', err);
-            }
-          )
+            },
+          ),
         );
       }
     });
@@ -331,8 +337,8 @@ export class HomePageService {
           },
           (err: any) => {
             console.error('Book offer err==>', err);
-          }
-        )
+          },
+        ),
       );
     } else {
       return;

@@ -32,6 +32,8 @@ export class ConfirmationService {
       (res) => {
         if (res) {
           this.confirmationData = res;
+          console.log(res,'res----------');
+          
           this.formatWegoClicktUrl();
           this.loading = false;
         }

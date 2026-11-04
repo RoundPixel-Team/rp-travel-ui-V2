@@ -1482,30 +1482,46 @@ export class FlightResultService {
   ) {
     this.isBrandedFaresLoading = true;
     const itemKey = searchId + squencNumber + pKey + pcc;
+    const cached = this.readCachedBrands(itemKey);
 
-    if (sessionStorage.getItem(itemKey)) {
-      this.currentSelectedBrands = JSON.parse(
-        sessionStorage.getItem(itemKey) ?? ''
-      );
-      this.brandedFareNotifier.next(null);
-      this.isBrandedFaresLoading = false;
-    } else {
-      this.isBrandedFaresLoading = true
-      this.api.getBrandedFaresApi(searchId, squencNumber, pKey, pcc).subscribe({
-        next: (result) => {
-          this.currentSelectedBrands = result.brands;
-          this.isBrandedFaresLoading = false;
-          
-          sessionStorage.setItem(itemKey, JSON.stringify(result.brands));
-          this.brandedFareNotifier.next(null);
-        },
-        error: (err) => {
-          console.error(err.message);
-          this.isBrandedFaresLoading = false;
-          this.brandedFareNotifier.error('Faild to load branded fares');
-        }
-      });
+    if (cached) {
+      this.bindBrands(cached, itemKey);
+      return;
     }
+
+    this.api.getBrandedFaresApi(searchId, squencNumber, pKey, pcc).subscribe({
+      next: (result) => {
+        const brands = Array.isArray(result?.brands) ? result.brands : [];
+        this.bindBrands(brands, itemKey);
+      },
+      error: (err) => {
+        console.error(err?.message);
+        this.bindBrands([], itemKey);
+      }
+    });
+  }
+
+  private readCachedBrands(itemKey: string): Brand[] | null {
+    if (typeof sessionStorage === 'undefined') return null;
+
+    const raw = sessionStorage.getItem(itemKey);
+    if (!raw) return null;
+
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) && parsed.length ? parsed : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private bindBrands(brands: Brand[], itemKey: string) {
+    this.currentSelectedBrands = brands;
+    this.isBrandedFaresLoading = false;
+    if (brands.length && typeof sessionStorage !== 'undefined') {
+      sessionStorage.setItem(itemKey, JSON.stringify(brands));
+    }
+    this.brandedFareNotifier.next(null);
   }
 
   /**

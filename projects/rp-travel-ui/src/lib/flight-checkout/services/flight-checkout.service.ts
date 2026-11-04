@@ -207,6 +207,7 @@ export class FlightCheckoutService {
             if (res) {
               // updating the selected flight state
               this.selectedFlight = res;
+              console.log(this.selectedFlight)
               // updating the loading state
               this.loader = false;
               if (res.status == 'Valid') {
@@ -889,6 +890,7 @@ export class FlightCheckoutService {
    * it depends on local storage key called (lastPassengers) which contains data for array of passengers
    */
   fetchLastPassengerData() {
+    if (typeof localStorage === 'undefined') return;
     if (localStorage.getItem('lastPassengers')) {
       this.usersArray.setValue(
         JSON.parse(localStorage.getItem('lastPassengers')!)
@@ -1004,7 +1006,9 @@ export class FlightCheckoutService {
               !res.getPaymentViewResponse.link ||
               res.getPaymentViewResponse.link === null
             ) {
+              this.saveBookingLoadeer = false;
               this.paymentError = true;
+              this.paymentLinkFailure.next('');
               return;
             }
             this.HG = res.savedBookingResponse.hgNumber;
