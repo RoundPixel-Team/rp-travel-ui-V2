@@ -153,9 +153,7 @@ GetAllOffers(pos: string):Observable<{offers:OfferDTO[]}> {
   getMostSearchedFlights() {
     let API: string = `${this.env.searchflow}/api/GetCheapestFlights?resCount=5`;
     return this.http
-      .get<MostSearchedFlightsResponse[]>(
-        'https://flightsearch.bookingwep.com/api/GetCheapestFlights?resCount=5',
-      )
+      .get<MostSearchedFlightsResponse[]>(API)
       .pipe(
         retry(3),
         take(1),
